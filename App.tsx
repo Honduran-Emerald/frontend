@@ -21,7 +21,7 @@ export default function App() {
                 iconName = "home";
                 break;
               case "Questlog":
-                iconName = "history";
+                iconName = "book-open-variant";
                 break;
               case "Map":
                 iconName = "map-marker-outline";
