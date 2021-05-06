@@ -4,14 +4,41 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { MaterialCommunityIcons }from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="Home" component={Dummy} /> 
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({focused, color, size}) => {
+            let iconName : React.ComponentProps<typeof MaterialCommunityIcons>['name'] = "turtle";
+
+            switch (route.name) {
+              case "Home":
+                iconName = "home";
+                break;
+              case "Questlog":
+                iconName = "history";
+                break;
+              case "Map":
+                iconName = "map-marker-outline";
+                break;
+              case "Chat":
+                iconName = "message-text-outline";
+                break;
+              case "Profile":
+                iconName = "account-outline";
+                break;
+            }
+
+            return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+          }
+        })}
+      >
+        <Tab.Screen name="Home" component={Dummy}/> 
         <Tab.Screen name="Questlog" component={Dummy} />
         <Tab.Screen name="Map" component={Dummy}/>
         <Tab.Screen name="Chat" component={Dummy}/>
