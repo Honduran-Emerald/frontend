@@ -26,7 +26,7 @@ export default function App() {
               case "Map":
                 iconName = "map-marker-outline";
                 return (
-                  <View style={{backgroundColor: "#1D79AC", borderRadius: 100, bottom: 10, padding: 5}}>
+                  <View style={{backgroundColor: focused ? "#1D79AC" : "#41A8DF", borderRadius: 100, bottom: 10, padding: 5}}>
                     <MaterialCommunityIcons name={iconName} size={size + 20} color={"white"}/>
                   </View>
                   );
