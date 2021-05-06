@@ -2,71 +2,50 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 
-export default function LoginScreen({ navigation }: any) {
+export default function ForgotPasswordScreen({ navigation }: any) {
 
   const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState(false);
 
-  const handleLogin = () => {
+  const handleEmailSubmit = () => {
     //TODO
     setError(true);
-  };
-
-  const handleRegister = () => {
-    navigation.navigate('Register');
-  };
-
-  const handleForgotPW = () => {
-    navigation.navigate('ForgotPW');
-    setError(false);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>HONDURAN EMERALD</Text>
+      <Text style={styles.text}>Enter the email address associated with your account to get instructions on how to reset the password.</Text>
       <TextInput
         style={{...styles.input, borderColor: error ? '#d32f2f' : '#111111'}}
         onChangeText={setEmail}
         value={email}
         placeholder={'Email'}
-        returnKeyType={'next'}
-        autoCorrect={false}
-      />
-      <TextInput
-        style={{...styles.input, borderColor: error ? '#d32f2f' : '#111111'}}
-        onChangeText={setPassword}
-        value={password}
-        placeholder={'Password'}
         returnKeyType={'done'}
         autoCorrect={false}
-        secureTextEntry={true}
-        onSubmitEditing={handleLogin}
+        onSubmitEditing={handleEmailSubmit}
       />
-      <View style={styles.forgotPW}>
-        <Text onPress={handleForgotPW} style={{color: '#1D79AC'}}>Forgot Password?</Text>
-      </View>
       <View style={styles.spacer}>
         {
           error &&
-          <Text style={styles.errorText}>Email or password incorrect</Text>
+          <Text style={styles.errorText}>No existing account with that email found</Text>
         }
         {
           !error &&
-          <Text style={styles.hiddenText}>Email or password incorrect</Text>
+          <Text style={styles.hiddenText}>No existing account with that email found</Text>
         }
       </View>
       <View style={styles.buttons}>
         <View style={styles.button}>
-          <Button color={'#1D79AC'} title={'Login'} onPress={handleLogin}/>
+          <Button color={'#1D79AC'} title={'Send reset email'} onPress={handleEmailSubmit}/>
         </View>
         <View style={styles.button}>
-          <Button color={'#41A8DF'} title={'Create new account'} onPress={handleRegister}/>
+          <Button color={'#41A8DF'} title={'Back'} onPress={() => {navigation.navigate('Login')}}/>
         </View>
       </View>
       <StatusBar style={'auto'}/>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -80,17 +59,16 @@ const styles = StyleSheet.create({
     fontSize: 25,
     margin: 24,
   },
+  text: {
+    fontSize: 15,
+    width: '80%',
+  },
   input: {
     height: 40,
     width: '80%',
     margin: 14,
     borderWidth: 2,
     paddingLeft: 6,
-  },
-  forgotPW: {
-    marginTop: -10,
-    width: '80%',
-    alignItems: 'flex-end',
   },
   spacer: {
     margin: 14,

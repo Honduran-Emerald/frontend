@@ -2,29 +2,29 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 
-export default function LoginScreen({ navigation }: any) {
+export default function RegisterScreen({ navigation }: any) {
 
+  const [username, setUsername] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState(false);
 
-  const handleLogin = () => {
+  const handleRegister = () => {
     //TODO
     setError(true);
-  };
-
-  const handleRegister = () => {
-    navigation.navigate('Register');
-  };
-
-  const handleForgotPW = () => {
-    navigation.navigate('ForgotPW');
-    setError(false);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>HONDURAN EMERALD</Text>
+      <TextInput
+        style={{...styles.input, borderColor: error ? '#d32f2f' : '#111111'}}
+        onChangeText={setUsername}
+        value={username}
+        placeholder={'Username'}
+        returnKeyType={'next'}
+        autoCorrect={false}
+      />
       <TextInput
         style={{...styles.input, borderColor: error ? '#d32f2f' : '#111111'}}
         onChangeText={setEmail}
@@ -41,27 +41,24 @@ export default function LoginScreen({ navigation }: any) {
         returnKeyType={'done'}
         autoCorrect={false}
         secureTextEntry={true}
-        onSubmitEditing={handleLogin}
+        onSubmitEditing={handleRegister}
       />
-      <View style={styles.forgotPW}>
-        <Text onPress={handleForgotPW} style={{color: '#1D79AC'}}>Forgot Password?</Text>
-      </View>
       <View style={styles.spacer}>
         {
           error &&
-          <Text style={styles.errorText}>Email or password incorrect</Text>
+          <Text style={styles.errorText}>Username or email already used</Text>
         }
         {
           !error &&
-          <Text style={styles.hiddenText}>Email or password incorrect</Text>
+          <Text style={styles.hiddenText}>Username or email already used</Text>
         }
       </View>
       <View style={styles.buttons}>
         <View style={styles.button}>
-          <Button color={'#1D79AC'} title={'Login'} onPress={handleLogin}/>
+          <Button color={'#1D79AC'} title={'Create account'} onPress={handleRegister}/>
         </View>
         <View style={styles.button}>
-          <Button color={'#41A8DF'} title={'Create new account'} onPress={handleRegister}/>
+          <Button color={'#41A8DF'} title={'Back'} onPress={() => {navigation.navigate('Login')}}/>
         </View>
       </View>
       <StatusBar style={'auto'}/>
@@ -86,11 +83,6 @@ const styles = StyleSheet.create({
     margin: 14,
     borderWidth: 2,
     paddingLeft: 6,
-  },
-  forgotPW: {
-    marginTop: -10,
-    width: '80%',
-    alignItems: 'flex-end',
   },
   spacer: {
     margin: 14,
