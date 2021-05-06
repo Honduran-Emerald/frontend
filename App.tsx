@@ -25,7 +25,11 @@ export default function App() {
                 break;
               case "Map":
                 iconName = "map-marker-outline";
-                break;
+                return (
+                  <View style={{backgroundColor: "#1D79AC", borderRadius: 100, bottom: 10, padding: 5}}>
+                    <MaterialCommunityIcons name={iconName} size={size + 20} color={"white"}/>
+                  </View>
+                  );
               case "Chat":
                 iconName = "message-text-outline";
                 break;
@@ -34,9 +38,13 @@ export default function App() {
                 break;
             }
 
-            return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+            return <MaterialCommunityIcons name={iconName} size={size + 5} color={color} />;
           }
         })}
+        tabBarOptions={{
+          showLabel: false,
+          activeTintColor: "#1D79AC"
+        }}
       >
         <Tab.Screen name="Home" component={Dummy}/> 
         <Tab.Screen name="Questlog" component={Dummy} />
