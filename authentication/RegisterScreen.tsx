@@ -1,6 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+
+async function save(key: string, value: string) {
+  await SecureStore.setItemAsync(key, value);
+}
+
+async function getValueFor(key: string) {
+  let result = await SecureStore.getItemAsync(key);
+  if (result) {
+    return result;
+  } else {
+    return null;
+  }
+}
 
 export default function RegisterScreen({ navigation }: any) {
 
@@ -11,6 +25,30 @@ export default function RegisterScreen({ navigation }: any) {
 
   const handleRegister = () => {
     //TODO
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: username,
+        email: email,
+        password: password,
+      })
+    };
+
+    fetch(``, requestOptions)
+      .then((res) => {
+        res.json().then((data) => {
+          if(data.errors) {
+            setError(true)
+          } else {
+            setUsername(username)
+            save('UserToken', data.token);
+          }
+        })
+      })
+
     setError(true);
   };
 

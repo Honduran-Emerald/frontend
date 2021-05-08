@@ -15,6 +15,7 @@ export default function LoginScreen({ navigation }: any) {
 
   const handleRegister = () => {
     navigation.navigate('Register');
+    setError(false);
   };
 
   const handleForgotPW = () => {
