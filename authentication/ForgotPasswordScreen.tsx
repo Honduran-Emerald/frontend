@@ -8,7 +8,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
   const [error, setError] = React.useState(false);
 
   const handleEmailSubmit = () => {
-    //TODO
+    //TODO fetch to get password reset email
     setError(true);
   };
 
