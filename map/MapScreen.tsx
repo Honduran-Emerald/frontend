@@ -4,12 +4,14 @@ import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { MaterialCommunityIcons }from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { Magnetometer } from 'expo-sensors';
+import { Subscription } from '@unimodules/react-native-adapter';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [heading, setHeading] = useState<number>();
-  const [subscription, setSubscription] = useState<Location.LocationSubscription | null>(null);
+  const [magnetometerSubscription, setMagnetometerSubscription] = useState<Subscription | null>(null);
+  const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription>();
   
   // Get Location Permission and set initial Location
   useEffect(() => {
@@ -19,22 +21,42 @@ export const MapScreen = () => {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-
+  
       let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
       setLocation(location);
     })();
     
-  }, []); 
+  }, []);
 
-  // Effect hook for setting up the subscription to Magnetometer updates and writing the current heading degree into heading-state
+  // Subscribe to Location updates and write them to location-state
+  useEffect(() => {
+    (async () => {
+      const LOCATION_SETTINGS = {
+        accuracy: Location.Accuracy.Highest,
+        distanceInterval: 0
+      };
+      
+      const unsubscribe = await Location.watchPositionAsync(LOCATION_SETTINGS, (location : Location.LocationObject) => {
+        setLocation(location);
+      })
+  
+      setLocationSubscription(unsubscribe);
+    })();
+
+    return () => {
+      locationSubscription?.remove();
+    }
+  }, [])
+
+  // Subscribe to Magnetometer updates and write the current heading degree to heading-state
   useEffect(() => {
     const unsubscribeMagnetometer = () => {
-      subscription && subscription.remove();
-      setSubscription(null)
+      magnetometerSubscription?.remove();
+      setMagnetometerSubscription(null)
     }
   
     const subscribeMagnetometer = async () => {
-      setSubscription(Magnetometer.addListener((data) => {
+      setMagnetometerSubscription(Magnetometer.addListener((data) => {
         setHeading(magnetometerDegree(magnetometerAngle(data)));
       }))
     }
