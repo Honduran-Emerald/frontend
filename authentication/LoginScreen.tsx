@@ -33,6 +33,13 @@ export default function LoginScreen({ navigation }: any) {
   //TODO remove token hook, add prop again, remove rendering of token, how to retrieve token from response
   const [token, setToken] = React.useState('No token');
 
+  const resetError = () => {
+    setError(false);
+    setErrorEmail(false);
+    setErrorPassword(false);
+    setErrorMessage('Email or password incorrect');
+  }
+
 
   const handleLogin = () => {
 
@@ -84,12 +91,12 @@ export default function LoginScreen({ navigation }: any) {
 
   const handleRegister = () => {
     navigation.navigate('Register');
-    setError(false);
+    resetError();
   };
 
   const handleForgotPW = () => {
     navigation.navigate('ForgotPW');
-    setError(false);
+    resetError();
   };
 
   return (
