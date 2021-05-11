@@ -2,18 +2,30 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 
-const emailRegex = new RegExp('(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\\])')
+import { EMAILREGEX } from '../GLOBALCONFIG';
 
 export default function ForgotPasswordScreen({ navigation }: any) {
 
   const [email, setEmail] = React.useState('');
   const [error, setError] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('No existing account with that email found');
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
 
   const handleEmailSubmit = () => {
-    //TODO fetch to get password reset email
+
     setIsButtonDisabled(true);
-    setError(true);
+
+    setError(false);
+    setErrorMessage('No existing account with that email found');
+
+    if(email.length === 0 || !EMAILREGEX.test(email)) {
+      setError(true);
+      setErrorMessage('Enter a valid email')
+      setIsButtonDisabled(false);
+      return;
+    }
+
+    //TODO fetch to get password reset email
     setIsButtonDisabled(false);
   };
 
@@ -26,6 +38,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
         onChangeText={setEmail}
         value={email}
         placeholder={'Email'}
+        keyboardType={'email-address'}
         returnKeyType={'done'}
         autoCorrect={false}
         onSubmitEditing={handleEmailSubmit}
@@ -33,11 +46,11 @@ export default function ForgotPasswordScreen({ navigation }: any) {
       <View style={styles.spacer}>
         {
           error &&
-          <Text style={styles.errorText}>No existing account with that email found</Text>
+          <Text style={styles.errorText}>{errorMessage}</Text>
         }
         {
           !error &&
-          <Text style={styles.hiddenText}>No existing account with that email found</Text>
+          <Text style={styles.hiddenText}>{errorMessage}</Text>
         }
       </View>
       <View style={styles.buttons}>
