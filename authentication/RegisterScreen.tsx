@@ -2,9 +2,8 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
-import {backendIP} from './LoginScreen';
 
-const emailRegex = new RegExp('(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\\])')
+import { BACKENDIP, EMAILREGEX } from '../GLOBALCONFIG';
 
 async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
@@ -21,14 +20,19 @@ export default function RegisterScreen({ navigation }: any) {
   const [errorPassword, setErrorPassword] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('Username or email already used');
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
-  //TODO remove token hook, add prop again, remove rendering of token, how to retrieve token from response
+  //TODO remove token hook, add prop again, remove rendering of token, add token context
   const [token, setToken] = React.useState('No token');
 
   const handleRegister = () => {
 
+    // prevent API call spamming
     setIsButtonDisabled(true);
 
-    setError(false); setErrorName(false); setErrorEmail(false); setErrorPassword(false);
+    // reset error hooks
+    setError(false);
+    setErrorName(false);
+    setErrorEmail(false);
+    setErrorPassword(false);
 
     if(username.length === 0) {
       setErrorMessage('Please enter a username');
@@ -36,7 +40,7 @@ export default function RegisterScreen({ navigation }: any) {
       setErrorName(true);
       setIsButtonDisabled(false);
       return;
-    } else if(email.length === 0 || !emailRegex.test(email)) {
+    } else if(email.length === 0 || !EMAILREGEX.test(email)) {
       setErrorMessage('Please enter a valid email');
       setError(true);
       setErrorEmail(true);
@@ -62,16 +66,18 @@ export default function RegisterScreen({ navigation }: any) {
       body: formData,
     };
 
-    fetch(`${backendIP}/auth/create`, requestOptions)
+    fetch(`${BACKENDIP}/auth/create`, requestOptions)
       .then((res) =>
-        res.json().then(data => {
+        res.text().then(data => {
           if (res.status !== 200) {
             setError(true);
-            data.Code === 'DuplicateUserName' ? setErrorName(true) : setErrorEmail(true);
-            setErrorMessage(data.Description);
+            // TODO reenable feedback (needs .json())
+            //data.Code === 'DuplicateUserName' ? setErrorName(true) : setErrorEmail(true);
+            //setErrorMessage(data.Code === 'DuplicateUserName' ? 'Username already used' : 'Email already used');
           } else {
-            save('UserToken', data);
+            save('UserToken', data).then((() => alert('Saved login')), (() => alert('Can\'t save login on this device')));
             setToken(data);
+            navigation.navigate('MainApp');
           }
           setIsButtonDisabled(false);
         })
