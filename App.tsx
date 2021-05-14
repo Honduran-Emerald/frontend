@@ -6,6 +6,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import AuthNavigator from './authentication/AuthNavigator';
 import MainAppNavigator from './MainAppNavigator';
+import { TokenContext } from './context/TokenContext';
 
 const Stack = createStackNavigator();
 
@@ -21,13 +22,20 @@ async function getToken() {
 
 export default function App() {
 
+  const [token, setToken] = React.useState('');
+  const updateToken = (newToken: string) => {
+    setToken(newToken);
+  };
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={() => ({headerShown: false})}>
-        <Stack.Screen name='Authentication' component={AuthNavigator}/>
-        <Stack.Screen name='MainApp' component={MainAppNavigator}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <TokenContext.Provider value={{token, updateToken}}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={() => ({headerShown: false})}>
+          <Stack.Screen name='Authentication' component={AuthNavigator}/>
+          <Stack.Screen name='MainApp' component={MainAppNavigator}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </TokenContext.Provider>
   );
 }
 
