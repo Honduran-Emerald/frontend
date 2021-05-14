@@ -4,12 +4,15 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 import { BACKENDIP, EMAILREGEX } from '../GLOBALCONFIG';
+import { TokenContext } from '../context/TokenContext';
 
 async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
 }
 
 export default function LoginScreen({ navigation }: any) {
+
+  const {token , updateToken} = React.useContext(TokenContext)
 
   const [email, setEmail] = React.useState('test@test.de');
   const [password, setPassword] = React.useState('T3st*2');
@@ -18,8 +21,14 @@ export default function LoginScreen({ navigation }: any) {
   const [errorPassword, setErrorPassword] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('Email or password incorrect');
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
-  //TODO remove token hook, add prop again, remove rendering of token, add token context
-  const [token, setToken] = React.useState('No token');
+
+  const updateEmail = (input: string) => {
+    setEmail(input.replace(/\s/g, ""));
+  };
+
+  const updatePassword = (input: string) => {
+    setPassword(input.replace(/\s/g, ""));
+  };
 
   const resetError = () => {
     setError(false);
@@ -65,14 +74,14 @@ export default function LoginScreen({ navigation }: any) {
         res.text().then(data => {
           if (res.status !== 200) {
             // TODO remove
-            setToken(`${res.status}`);
+            updateToken(`${res.status}`);
 
             setError(true);
             setErrorEmail(true);
             setErrorPassword(true);
           } else {
             save('UserToken', data).then((() => alert('Saved login')), (() => alert('Can\'t save login on this device')));
-            setToken(data);
+            updateToken(data);
             navigation.navigate('MainApp');
           }
           setIsButtonDisabled(false);
@@ -95,7 +104,7 @@ export default function LoginScreen({ navigation }: any) {
       <Text style={styles.header}>HONDURAN EMERALD</Text>
       <TextInput
         style={{...styles.input, borderColor: errorEmail ? '#d32f2f' : '#111111'}}
-        onChangeText={setEmail}
+        onChangeText={(input) => updateEmail(input)}
         value={email}
         placeholder={'Email'}
         keyboardType={'email-address'}
@@ -104,7 +113,7 @@ export default function LoginScreen({ navigation }: any) {
       />
       <TextInput
         style={{...styles.input, borderColor: errorPassword ? '#d32f2f' : '#111111'}}
-        onChangeText={setPassword}
+        onChangeText={(input) => updatePassword(input)}
         value={password}
         placeholder={'Password'}
         returnKeyType={'done'}
@@ -133,7 +142,6 @@ export default function LoginScreen({ navigation }: any) {
           <Button color={'#41A8DF'} disabled={isButtonDisabled} title={'Create new account'} onPress={handleRegister}/>
         </View>
       </View>
-      <Text>{token}</Text>
       <StatusBar style={'auto'}/>
     </View>
   );

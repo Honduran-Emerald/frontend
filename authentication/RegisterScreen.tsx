@@ -4,12 +4,15 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 import { BACKENDIP, EMAILREGEX } from '../GLOBALCONFIG';
+import { TokenContext } from '../context/TokenContext';
 
 async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
 }
 
 export default function RegisterScreen({ navigation }: any) {
+
+  const {token , updateToken} = React.useContext(TokenContext)
 
   const [username, setUsername] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -20,8 +23,18 @@ export default function RegisterScreen({ navigation }: any) {
   const [errorPassword, setErrorPassword] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('Username or email already used');
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
-  //TODO remove token hook, add prop again, remove rendering of token, add token context
-  const [token, setToken] = React.useState('No token');
+
+  const updateUsername = (input: string) => {
+    setUsername(input.replace(/\s/g, ""));
+  };
+
+  const updateEmail = (input: string) => {
+    setEmail(input.replace(/\s/g, ""));
+  };
+
+  const updatePassword = (input: string) => {
+    setPassword(input.replace(/\s/g, ""));
+  };
 
   const handleRegister = () => {
 
@@ -76,7 +89,7 @@ export default function RegisterScreen({ navigation }: any) {
             //setErrorMessage(data.Code === 'DuplicateUserName' ? 'Username already used' : 'Email already used');
           } else {
             save('UserToken', data).then((() => alert('Saved login')), (() => alert('Can\'t save login on this device')));
-            setToken(data);
+            updateToken(data);
             navigation.navigate('MainApp');
           }
           setIsButtonDisabled(false);
@@ -89,7 +102,7 @@ export default function RegisterScreen({ navigation }: any) {
       <Text style={styles.header}>HONDURAN EMERALD</Text>
       <TextInput
         style={{...styles.input, borderColor: errorName ? '#d32f2f' : '#111111'}}
-        onChangeText={setUsername}
+        onChangeText={(input) => updateUsername(input)}
         value={username}
         placeholder={'Username'}
         returnKeyType={'next'}
@@ -97,7 +110,7 @@ export default function RegisterScreen({ navigation }: any) {
       />
       <TextInput
         style={{...styles.input, borderColor: errorEmail ? '#d32f2f' : '#111111'}}
-        onChangeText={setEmail}
+        onChangeText={(input) => updateEmail(input)}
         value={email}
         placeholder={'Email'}
         keyboardType={'email-address'}
@@ -106,7 +119,7 @@ export default function RegisterScreen({ navigation }: any) {
       />
       <TextInput
         style={{...styles.input, borderColor: errorPassword ? '#d32f2f' : '#111111'}}
-        onChangeText={setPassword}
+        onChangeText={(input) => updatePassword(input)}
         value={password}
         placeholder={'Password'}
         returnKeyType={'done'}
@@ -132,7 +145,6 @@ export default function RegisterScreen({ navigation }: any) {
           <Button color={'#41A8DF'} disabled={isButtonDisabled} title={'Back'} onPress={() => {navigation.navigate('Login')}}/>
         </View>
       </View>
-      <Text>{token}</Text>
       <StatusBar style={'auto'}/>
     </View>
   );
