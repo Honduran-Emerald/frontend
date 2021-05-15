@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, Ref } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
-import { MaterialCommunityIcons }from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { Magnetometer } from 'expo-sensors';
 import { Subscription } from '@unimodules/react-native-adapter';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -12,7 +13,9 @@ export const MapScreen = () => {
   const [heading, setHeading] = useState<number>();
   const [magnetometerSubscription, setMagnetometerSubscription] = useState<Subscription | null>(null);
   const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription>();
-  
+  const _map : Ref<MapView> = useRef(null);
+
+
   // Get Location Permission and set initial Location
   useEffect(() => {
     (async () => {
@@ -81,13 +84,18 @@ export const MapScreen = () => {
       return Math.round(angle);
     };
 
-
+    
     subscribeMagnetometer();
     return () => {
       unsubscribeMagnetometer();
     }
   }, [])
 
+  // Animate the camera to the current position set in location-state
+  const animateCameraToLocation = () => {
+    if(_map.current && location?.coords)
+    _map.current.animateCamera({center: location.coords, zoom: 15})
+  }
 
   if (errorMsg) {
     return (
@@ -98,8 +106,9 @@ export const MapScreen = () => {
   
   return(
     <View style={styles.container}>
-      {(location != null && location.coords != null) ?
+      {(location != null && location.coords != null) &&
       (<MapView
+        ref={_map}
         zoomEnabled={true}
         scrollEnabled={true}
         rotateEnabled={false}
@@ -108,8 +117,19 @@ export const MapScreen = () => {
         initialRegion={{latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0461, longitudeDelta: 0.0210}}
       >
         <UserMarker rotation={heading} coordinate={location.coords}/>
-      </MapView>)
-      : <MapView style={styles.map} />}
+      </MapView>
+      )}
+      <ZoomToLocationButton animateCameraToLocation={animateCameraToLocation}/>
+    </View>
+  );
+};
+
+const ZoomToLocationButton : React.FC<{animateCameraToLocation: Function}> = ({animateCameraToLocation}) => {
+  return(
+    <View style={{position: 'absolute', right: 10, bottom: 20, backgroundColor: '#FFF', borderRadius: 100, padding: 12, elevation: 3}}>
+      <TouchableOpacity onPress={() => {animateCameraToLocation()}}>
+        <MaterialIcons name='my-location' size={30} color='#1D79AC'/>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -121,7 +141,7 @@ const UserMarker : React.FC<{rotation: number | undefined | null, coordinate: {l
         <MaterialCommunityIcons name='navigation' size={30} color={'#1D79AC'}/>
       </View>
     </Marker>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
