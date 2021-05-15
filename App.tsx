@@ -1,11 +1,12 @@
 import 'react-native-gesture-handler';
+
 import React, { useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import AuthNavigator from './src/authentication/AuthNavigator';
 import MainAppNavigator from './src/MainAppNavigator';
 import { TokenContext } from './src/context/TokenContext';
 import { LoadingScreen } from './src/common/LoadingScreen'
 import { TokenManager } from './src/utils/TokenManager';
+import { NavigationContainer } from '@react-navigation/native'
 
 
 export default function App() {
@@ -20,7 +21,6 @@ export default function App() {
       .then(token => setToken(token))
       .then(() => setIsLoading(false));
   }, [])
-
 
   if(isLoading) {
     return <LoadingScreen/>
