@@ -52,7 +52,7 @@ export const MapScreen = () => {
   // Animate the camera to the current position set in location-state
   const animateCameraToLocation = () => {
     if(_map.current && location?.coords)
-    _map.current.animateCamera({center: location.coords, zoom: 15})
+    _map.current.animateCamera({center: location.coords, zoom: 15, heading:0})
   }
 
   if (errorMsg) {
