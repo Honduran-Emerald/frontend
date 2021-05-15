@@ -12,8 +12,9 @@ async function save(key: string, value: string) {
 
 export default function LoginScreen({ navigation }: any) {
 
-  const {token , updateToken} = React.useContext(TokenContext)
+  const {token , updateToken} = React.useContext(TokenContext);
 
+  // TODO remove default mail and pw
   const [email, setEmail] = React.useState('test@test.de');
   const [password, setPassword] = React.useState('T3st*2');
   const [error, setError] = React.useState(false);
@@ -34,7 +35,6 @@ export default function LoginScreen({ navigation }: any) {
     setError(false);
     setErrorEmail(false);
     setErrorPassword(false);
-    setErrorMessage('Email or password incorrect');
   }
 
   const handleLogin = () => {
@@ -44,20 +44,26 @@ export default function LoginScreen({ navigation }: any) {
 
     resetError();
 
+    let invalidField = false;
+
     if(email.length === 0 || !EMAILREGEX.test(email)) {
-      setErrorMessage('Please enter a valid email');
+      setErrorMessage('Enter a valid email');
       setError(true);
       setErrorEmail(true);
       setIsButtonDisabled(false);
-      return;
-    } else if(password.length === 0) {
-      setErrorMessage('Please enter a password');
+      invalidField = true;
+    } if(password.length === 0) {
+      setErrorMessage(invalidField ? 'Enter your credentials' : 'Enter a password');
       setError(true);
       setErrorPassword(true);
       setIsButtonDisabled(false);
-      return;
-    } else {
+      invalidField = true;
+    }
+
+    if(!invalidField) {
       setErrorMessage('Email or password incorrect');
+    } else {
+      return;
     }
 
     let formData = new FormData();
@@ -73,13 +79,11 @@ export default function LoginScreen({ navigation }: any) {
       .then((res) =>
         res.text().then(data => {
           if (res.status !== 200) {
-            // TODO remove
-            updateToken(`${res.status}`);
-
             setError(true);
             setErrorEmail(true);
             setErrorPassword(true);
           } else {
+            // TODO remove alerts
             save('UserToken', data).then((() => alert('Saved login')), (() => alert('Can\'t save login on this device')));
             updateToken(data);
             navigation.navigate('MainApp');

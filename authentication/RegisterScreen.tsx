@@ -12,7 +12,7 @@ async function save(key: string, value: string) {
 
 export default function RegisterScreen({ navigation }: any) {
 
-  const {token , updateToken} = React.useContext(TokenContext)
+  const {token , updateToken} = React.useContext(TokenContext);
 
   const [username, setUsername] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -47,26 +47,32 @@ export default function RegisterScreen({ navigation }: any) {
     setErrorEmail(false);
     setErrorPassword(false);
 
+    let invalidField = false;
+
     if(username.length === 0) {
       setErrorMessage('Please enter a username');
       setError(true);
       setErrorName(true);
       setIsButtonDisabled(false);
-      return;
-    } else if(email.length === 0 || !EMAILREGEX.test(email)) {
-      setErrorMessage('Please enter a valid email');
+      invalidField = true;
+    } if(email.length === 0 || !EMAILREGEX.test(email)) {
+      setErrorMessage(invalidField ? 'Enter your new credentials' : 'Enter a valid email');
       setError(true);
       setErrorEmail(true);
       setIsButtonDisabled(false);
-      return;
-    } else if(password.length === 0) {
-      setErrorMessage('Please enter a password');
+      invalidField = true;
+    } if(password.length === 0) {
+      setErrorMessage(invalidField ? 'Enter your new credentials' : 'Enter a password');
       setError(true);
       setErrorPassword(true);
       setIsButtonDisabled(false);
-      return;
-    } else {
+      invalidField = true;
+    }
+
+    if(!invalidField) {
       setErrorMessage('Username or email already used');
+    } else {
+      return;
     }
 
     let formData = new FormData();
