@@ -126,7 +126,7 @@ export const MapScreen = () => {
 
 const ZoomToLocationButton : React.FC<{animateCameraToLocation: Function}> = ({animateCameraToLocation}) => {
   return(
-    <View style={{position: 'absolute', right: 10, bottom: 20, backgroundColor: '#FFF', borderRadius: 100, padding: 12, elevation: 3}}>
+    <View style={styles.locationButton}>
       <TouchableOpacity onPress={() => {animateCameraToLocation()}}>
         <MaterialIcons name='my-location' size={30} color='#1D79AC'/>
       </TouchableOpacity>
@@ -149,10 +149,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   map: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    height: Dimensions.get('window').height
   },
+  locationButton: {
+    position: 'absolute',
+    right: 10,
+    bottom: 20,
+    backgroundColor: '#FFF',
+    borderRadius: 100,
+    padding: 12,
+    elevation: 3
+  }
 });
