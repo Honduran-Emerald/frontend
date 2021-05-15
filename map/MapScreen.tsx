@@ -3,9 +3,9 @@ import MapView, { Marker } from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import { Magnetometer } from 'expo-sensors';
 import { Subscription } from '@unimodules/react-native-adapter';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { MagnetometerSubscription } from './MagnetometerSubscription';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -21,73 +21,31 @@ export const MapScreen = () => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
+        return Promise.reject(new Error("Permission to access location was denied"))
       }
   
       let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
       setLocation(location);
-    })();
-    
-  }, []);
-
-  // Subscribe to Location updates and write them to location-state
-  useEffect(() => {
-    (async () => {
+    })()
+    .then(async () => {
       const LOCATION_SETTINGS = {
         accuracy: Location.Accuracy.Highest,
         distanceInterval: 0
       };
       
+      // subscribe to Location updates
       const unsubscribe = await Location.watchPositionAsync(LOCATION_SETTINGS, (location : Location.LocationObject) => {
         setLocation(location);
-      })
-  
+      }).then()
+      
       setLocationSubscription(unsubscribe);
-    })();
-
+    })
+    .then(() => MagnetometerSubscription.subscribe(setMagnetometerSubscription, setHeading))
+    .catch((err : Error) => {setErrorMsg(err.message)});
+    
     return () => {
       locationSubscription?.remove();
-    }
-  }, [])
-
-  // Subscribe to Magnetometer updates and write the current heading degree to heading-state
-  useEffect(() => {
-    const unsubscribeMagnetometer = () => {
-      magnetometerSubscription?.remove();
-      setMagnetometerSubscription(null)
-    }
-  
-    const subscribeMagnetometer = async () => {
-      setMagnetometerSubscription(Magnetometer.addListener((data) => {
-        setHeading(magnetometerDegree(magnetometerAngle(data)));
-      }))
-    }
-
-    const magnetometerDegree = (magnetometer : any) => {
-      return magnetometer - 90 >= 0 ? magnetometer - 90 : magnetometer + 271;
-    };
-
-    const magnetometerAngle = (magnetometer : any) => {
-      let angle = 0
-      if (magnetometer) {
-        let { x, y, z } = magnetometer;
-  
-        if (Math.atan2(y, x) >= 0) {
-          angle = Math.atan2(y, x) * (180 / Math.PI);
-        }
-        else {
-          angle = (Math.atan2(y, x) + 2 * Math.PI) * (180 / Math.PI);
-        }
-      }
-  
-      return Math.round(angle);
-    };
-
-    
-    subscribeMagnetometer();
-    return () => {
-      unsubscribeMagnetometer();
+      MagnetometerSubscription.unsubscribe(magnetometerSubscription, setMagnetometerSubscription);
     }
   }, [])
 
@@ -99,7 +57,7 @@ export const MapScreen = () => {
 
   if (errorMsg) {
     return (
-    <View>
+    <View style={styles.container}>
       <Text>{errorMsg}</Text>
     </View>)
   }
