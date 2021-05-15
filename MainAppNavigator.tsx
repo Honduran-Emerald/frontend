@@ -1,8 +1,10 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {Button, StyleSheet, Text, View} from 'react-native';
 import { MaterialCommunityIcons }from '@expo/vector-icons';
+import { TokenContext } from './context/TokenContext';
+import * as SecureStore from 'expo-secure-store';
 
 const Tab = createBottomTabNavigator();
 
@@ -52,10 +54,22 @@ export default function MainAppNavigator() {
   );
 }
 
-const Dummy = () => {
+async function deleteToken() {
+  await SecureStore.deleteItemAsync('UserToken');
+}
+
+const Dummy = ({ navigation }: any) => {
+  const {token , updateToken} = React.useContext(TokenContext)
+
+  const handleLogout = () => {
+    deleteToken().then(() => {});
+    navigation.navigate('Login');
+  }
+
   return(
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+      <Text>{token}</Text>
+      <Button color={'#1D79AC'} title={'Logout'} onPress={handleLogout}/>
       <StatusBar style="auto" />
     </View>
   );
