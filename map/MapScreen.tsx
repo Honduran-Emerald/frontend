@@ -109,9 +109,10 @@ export const MapScreen = () => {
       {(location != null && location.coords != null) &&
       (<MapView
         ref={_map}
+        showsCompass={false}
         zoomEnabled={true}
         scrollEnabled={true}
-        rotateEnabled={false}
+        rotateEnabled={true}
         style={styles.map}
         showsPointsOfInterest={false}
         initialRegion={{latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0461, longitudeDelta: 0.0210}}
@@ -136,7 +137,7 @@ const ZoomToLocationButton : React.FC<{animateCameraToLocation: Function}> = ({a
 
 const UserMarker : React.FC<{rotation: number | undefined | null, coordinate: {latitude: number, longitude: number}}> = ({rotation, coordinate}) => {
   return (
-    <Marker anchor={{x: 0.5, y: 0.5}} rotation={rotation ? rotation : 0} coordinate={coordinate}>
+    <Marker anchor={{x: 0.5, y: 0.5}} rotation={rotation ? rotation : 0} coordinate={coordinate} flat>
       <View>
         <MaterialCommunityIcons name='navigation' size={30} color={'#1D79AC'}/>
       </View>
