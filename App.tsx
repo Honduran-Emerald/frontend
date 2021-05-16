@@ -5,9 +5,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 
-import AuthNavigator from './authentication/AuthNavigator';
+import AuthNavigator from './src/authentication/AuthNavigator';
 import MainAppNavigator from './MainAppNavigator';
-import { TokenContext } from './context/TokenContext';
+import { TokenContext } from './src/context/TokenContext';
 
 const Stack = createStackNavigator();
 

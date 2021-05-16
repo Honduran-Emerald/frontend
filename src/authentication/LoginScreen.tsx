@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { sha512 } from 'js-sha512';
 
-import { BACKENDIP, EMAILREGEX } from '../GLOBALCONFIG';
+import { BACKENDIP, EMAILREGEX } from '../../GLOBALCONFIG';
 import { TokenContext } from '../context/TokenContext';
 
 async function save(key: string, value: string) {
