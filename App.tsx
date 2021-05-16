@@ -4,7 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
-
 import AuthNavigator from './src/authentication/AuthNavigator';
 import MainAppNavigator from './src/MainAppNavigator';
 import { TokenContext } from './src/context/TokenContext';
@@ -17,6 +16,7 @@ export default function App() {
   const updateToken = (newToken: string) => {
     setToken(newToken);
   };
+
 
   return (
     <TokenContext.Provider value={{token, updateToken}}>
