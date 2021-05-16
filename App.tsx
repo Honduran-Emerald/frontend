@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons }from '@expo/vector-icons';
+import { MapNavigator } from './map/MapNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,7 +49,7 @@ export default function App() {
       >
         <Tab.Screen name="Home" component={Dummy}/> 
         <Tab.Screen name="Questlog" component={Dummy} />
-        <Tab.Screen name="Map" component={Dummy}/>
+        <Tab.Screen name="Map" component={MapNavigator}/>
         <Tab.Screen name="Chat" component={Dummy}/>
         <Tab.Screen name="Profile" component={Dummy} />
       </Tab.Navigator>
