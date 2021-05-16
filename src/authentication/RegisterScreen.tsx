@@ -11,12 +11,27 @@ async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
 }
 
+const colors = {
+  primary: '#1D79AC',
+  secondary: '#41A8DF',
+  error: '#d32f2f',
+  black: '#111111',
+  white: '#fff',
+}
+
 const english = {
+  createAccountButton: 'Create account',
+  backButton: 'Back',
+  usernamePlaceholder: 'Username',
+  emailPlaceholder: 'Email',
+  passwordPlaceholder: 'Password',
+  password2Placeholder: 'Confirm password',
   errorNameMessage: 'Enter a username',
   errorEmailMessage: 'Enter a valid email',
   errorPasswordMessage: 'Enter a password',
   errorPasswordMessage2: 'Passwords don\'t match',
-  errorFetchMessage: 'Username or email already used'
+  errorFetchMessageName: 'Username already used',
+  errorFetchMessageEmail: 'Email already used',
 }
 
 export default function RegisterScreen({ navigation }: any) {
@@ -31,6 +46,7 @@ export default function RegisterScreen({ navigation }: any) {
   const [errorEmail, setErrorEmail] = React.useState(false);
   const [errorPassword, setErrorPassword] = React.useState(false);
   const [errorFetch, setErrorFetch] = React.useState(false);
+  const [errorFetchReasonName, setErrorFetchReasonName] = React.useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
 
   const updateUsername = (input: string) => {
@@ -68,62 +84,65 @@ export default function RegisterScreen({ navigation }: any) {
 
     if(username.length === 0) {
       setErrorName(true);
-      setIsButtonDisabled(false);
       invalidField = true;
     } if(email.length === 0 || !EMAILREGEX.test(email)) {
       setErrorEmail(true);
-      setIsButtonDisabled(false);
       invalidField = true;
     } if(password.length === 0) {
       setErrorPassword(true);
-      setIsButtonDisabled(false);
       invalidField = true;
     } if(password !== password2) {
       setErrorPassword(true);
-      setIsButtonDisabled(false);
       invalidField = true;
     }
 
     if(invalidField) {
+      setIsButtonDisabled(false);
       return;
     }
 
-    let formData = new FormData();
-    formData.append('Username', username);
-    formData.append('Email', email);
-    formData.append('Password', sha512(password));
-
     const requestOptions = {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: username,
+        email: email,
+        password: sha512(password),
+      }),
     };
 
     fetch(`${BACKENDIP}/auth/create`, requestOptions)
-      .then((res) =>
-        res.text().then(data => {
-          if (res.status !== 200) {
-            setErrorFetch(true);
-            // TODO reenable feedback (needs .json())
-            //data.Code === 'DuplicateUserName' ? setErrorName(true) : setErrorEmail(true);
-            //setErrorMessage(data.Code === 'DuplicateUserName' ? 'Username already used' : 'Email already used');
-          } else {
-            save('UserToken', data).then((() => {}), (() => {}));
-            updateToken(data);
+      .then((response) => {
+        if(response.ok) {
+          response.json().then((data) => {
+            save('UserToken', data.token).then((() => {}), (() => {}));
+            updateToken(data.token);
             navigation.navigate('MainApp');
-          }
-          setIsButtonDisabled(false);
-        })
-      )
+          })
+        } else if(response.status === 400) {
+          response.json().then((data) => {
+            setErrorFetch(true);
+            data.message.code === 'DuplicateUserName' ? setErrorFetchReasonName(true) : setErrorFetchReasonName(false);
+          })
+        } else {
+          //TODO handle server error
+          alert(`server error ${response.status}, contact nico kunz`)
+        }
+        setIsButtonDisabled(false);
+      })
+
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>HONDURAN EMERALD</Text>
       <TextInput
-        style={{...styles.input, borderColor: errorName ? '#d32f2f' : '#111111'}}
+        style={{...styles.input, borderColor: errorName ? colors.error : colors.black}}
         onChangeText={(input) => updateUsername(input)}
         value={username}
-        placeholder={'Username'}
+        placeholder={english.usernamePlaceholder}
         returnKeyType={'next'}
         autoCorrect={false}
       />
@@ -134,10 +153,10 @@ export default function RegisterScreen({ navigation }: any) {
         }
       </View>
       <TextInput
-        style={{...styles.input, borderColor: errorEmail ? '#d32f2f' : '#111111'}}
+        style={{...styles.input, borderColor: errorEmail ? colors.error : colors.black}}
         onChangeText={(input) => updateEmail(input)}
         value={email}
-        placeholder={'Email'}
+        placeholder={english.emailPlaceholder}
         keyboardType={'email-address'}
         returnKeyType={'next'}
         autoCorrect={false}
@@ -149,20 +168,20 @@ export default function RegisterScreen({ navigation }: any) {
         }
       </View>
       <TextInput
-        style={{...styles.input, borderColor: errorPassword ? '#d32f2f' : '#111111'}}
+        style={{...styles.input, borderColor: errorPassword ? colors.error : colors.black}}
         onChangeText={(input) => updatePassword(input)}
         value={password}
-        placeholder={'Password'}
+        placeholder={english.passwordPlaceholder}
         returnKeyType={'done'}
         autoCorrect={false}
         secureTextEntry={true}
         onSubmitEditing={handleRegister}
       />
       <TextInput
-        style={{...styles.input, borderColor: errorPassword ? '#d32f2f' : '#111111'}}
+        style={{...styles.confirmPassword, borderColor: errorPassword ? colors.error : colors.black}}
         onChangeText={(input) => updatePassword2(input)}
         value={password2}
-        placeholder={'Confirm password'}
+        placeholder={english.password2Placeholder}
         returnKeyType={'done'}
         autoCorrect={false}
         secureTextEntry={true}
@@ -174,22 +193,18 @@ export default function RegisterScreen({ navigation }: any) {
           <Text style={styles.errorText}>{password !== password2 ? english.errorPasswordMessage2 : english.errorPasswordMessage}</Text>
         }
       </View>
-      <View style={styles.spacer}>
+      <View>
         {
           errorFetch &&
-          <Text style={styles.errorText}>{english.errorFetchMessage}</Text>
-        }
-        {
-          !errorFetch &&
-          <Text style={styles.hiddenText}>{english.errorFetchMessage}</Text>
+          <Text style={styles.errorText}>{errorFetchReasonName ? english.errorFetchMessageName: english.errorFetchMessageEmail}</Text>
         }
       </View>
       <View style={styles.buttons}>
         <View style={styles.button}>
-          <Button color={'#1D79AC'} disabled={isButtonDisabled} title={'Create account'} onPress={handleRegister}/>
+          <Button color={colors.primary} disabled={isButtonDisabled} title={english.createAccountButton} onPress={handleRegister}/>
         </View>
         <View style={styles.button}>
-          <Button color={'#41A8DF'} disabled={isButtonDisabled} title={'Back'} onPress={() => {navigation.navigate('Login')}}/>
+          <Button color={colors.secondary} disabled={isButtonDisabled} title={english.backButton} onPress={() => {navigation.navigate('Login')}}/>
         </View>
       </View>
       <StatusBar style={'auto'}/>
@@ -200,7 +215,7 @@ export default function RegisterScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -215,16 +230,17 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     paddingLeft: 6,
   },
-  spacer: {
+  confirmPassword: {
+    height: 40,
+    width: '80%',
     margin: 14,
+    marginTop: 0,
+    borderWidth: 2,
+    paddingLeft: 6,
   },
   errorText: {
-    marginTop: -10,
-    color: '#d32f2f',
-  },
-  hiddenText: {
-    marginTop: -10,
-    opacity: 0,
+    marginTop: -12,
+    color: colors.error,
   },
   buttons: {
     width: '100%',
