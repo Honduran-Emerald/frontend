@@ -6,6 +6,8 @@ import { MaterialCommunityIcons }from '@expo/vector-icons';
 import { TokenContext } from './context/TokenContext';
 import * as SecureStore from 'expo-secure-store';
 
+import { MapNavigator } from '../map/MapNavigator';
+
 const Tab = createBottomTabNavigator();
 
 export default function MainAppNavigator() {
@@ -47,7 +49,7 @@ export default function MainAppNavigator() {
     >
       <Tab.Screen name="Home" component={Dummy}/>
       <Tab.Screen name="Questlog" component={Dummy} />
-      <Tab.Screen name="Map" component={Dummy}/>
+      <Tab.Screen name="Map" component={MapNavigator}/>
       <Tab.Screen name="Chat" component={Dummy}/>
       <Tab.Screen name="Profile" component={Dummy} />
     </Tab.Navigator>
