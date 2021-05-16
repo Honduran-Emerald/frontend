@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
 import { MaterialCommunityIcons }from '@expo/vector-icons';
-import { TokenContext } from './src/context/TokenContext';
+import { TokenContext } from './context/TokenContext';
 import * as SecureStore from 'expo-secure-store';
 
 const Tab = createBottomTabNavigator();
