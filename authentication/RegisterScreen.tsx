@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { sha512 } from 'js-sha512';
 
 import { BACKENDIP, EMAILREGEX } from '../GLOBALCONFIG';
 import { TokenContext } from '../context/TokenContext';
@@ -78,7 +79,7 @@ export default function RegisterScreen({ navigation }: any) {
     let formData = new FormData();
     formData.append('Username', username);
     formData.append('Email', email);
-    formData.append('Password', password);
+    formData.append('Password', sha512(password));
 
     const requestOptions = {
       method: 'POST',

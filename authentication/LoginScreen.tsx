@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { sha512 } from 'js-sha512';
 
 import { BACKENDIP, EMAILREGEX } from '../GLOBALCONFIG';
 import { TokenContext } from '../context/TokenContext';
@@ -15,8 +16,8 @@ export default function LoginScreen({ navigation }: any) {
   const {token , updateToken} = React.useContext(TokenContext);
 
   // TODO remove default mail and pw
-  const [email, setEmail] = React.useState('test@test.de');
-  const [password, setPassword] = React.useState('T3st*2');
+  const [email, setEmail] = React.useState('t3st@test.de');
+  const [password, setPassword] = React.useState('test');
   const [error, setError] = React.useState(false);
   const [errorEmail, setErrorEmail] = React.useState(false);
   const [errorPassword, setErrorPassword] = React.useState(false);
@@ -68,7 +69,7 @@ export default function LoginScreen({ navigation }: any) {
 
     let formData = new FormData();
     formData.append('Email', email);
-    formData.append('Password', password);
+    formData.append('Password', sha512(password));
 
     const requestOptions = {
       method: 'POST',
