@@ -1,67 +1,68 @@
 import 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { MaterialCommunityIcons }from '@expo/vector-icons';
-import { MapNavigator } from './map/MapNavigator';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import * as SecureStore from 'expo-secure-store';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import AuthNavigator from './src/authentication/AuthNavigator';
+import MainAppNavigator from './src/MainAppNavigator';
+import { TokenContext } from './src/context/TokenContext';
 
-const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 export default function App() {
+
+  const [token, setToken] = React.useState('');
+  const updateToken = (newToken: string) => {
+    setToken(newToken);
+  };
+
+
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({focused, color, size}) => {
-            let iconName : React.ComponentProps<typeof MaterialCommunityIcons>['name'] = "turtle";
-
-            switch (route.name) {
-              case "Home":
-                iconName = "home";
-                break;
-              case "Questlog":
-                iconName = "book-open-variant";
-                break;
-              case "Map":
-                iconName = "map-marker-outline";
-                return (
-                  <View style={{backgroundColor: focused ? "#1D79AC" : "#41A8DF", borderRadius: 100, bottom: 10, padding: 5}}>
-                    <MaterialCommunityIcons name={iconName} size={size + 20} color={"white"}/>
-                  </View>
-                  );
-              case "Chat":
-                iconName = "message-text-outline";
-                break;
-              case "Profile":
-                iconName = "account-outline";
-                break;
-            }
-
-            return <MaterialCommunityIcons name={iconName} size={size + 5} color={color} />;
-          }
-        })}
-        tabBarOptions={{
-          showLabel: false,
-          activeTintColor: "#1D79AC"
-        }}
-      >
-        <Tab.Screen name="Home" component={Dummy}/> 
-        <Tab.Screen name="Questlog" component={Dummy} />
-        <Tab.Screen name="Map" component={MapNavigator}/>
-        <Tab.Screen name="Chat" component={Dummy}/>
-        <Tab.Screen name="Profile" component={Dummy} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <TokenContext.Provider value={{token, updateToken}}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={() => ({headerShown: false})}>
+          <Stack.Screen name='Loading' component={LoadingScreen}/>
+          <Stack.Screen name='Authentication' component={AuthNavigator}/>
+          <Stack.Screen name='MainApp' component={MainAppNavigator}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </TokenContext.Provider>
   );
 }
 
-const Dummy = () => {
-  return(
+async function getToken() {
+  let result = await SecureStore.getItemAsync('UserToken');
+  if (result) {
+    return result;
+  } else {
+    return null;
+  }
+}
+
+const LoadingScreen = ({ navigation }: any) => {
+
+  const {token , updateToken} = React.useContext(TokenContext);
+
+  const [isLoaded, setIsLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    //TODO validate token
+    getToken().then((token => {token ? updateToken(token) : null; setIsLoaded(true)}), (() => {setIsLoaded(true)}));
+  });
+
+  React.useEffect(() => {
+    if (isLoaded) {
+      token === '' ? navigation.navigate('Authentication') : navigation.navigate('MainApp')
+    }
+  }, [isLoaded]);
+
+  return (
     <View style={styles.container}>
-        <Text>Open up App.tsx to start working on your app!</Text>
-        <StatusBar style="auto" />
+      <ActivityIndicator size='large' color='#1D79AC' />
+      <Text>
+        Getting things ready
+      </Text>
     </View>
   );
 }
