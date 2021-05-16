@@ -63,7 +63,7 @@ const Dummy = ({ navigation }: any) => {
 
   const handleLogout = () => {
     deleteToken().then(() => {});
-    navigation.navigate('Login');
+    navigation.navigate('Authentication');
   }
 
   return(
