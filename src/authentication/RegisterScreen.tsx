@@ -4,11 +4,19 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { sha512 } from 'js-sha512';
 
-import { BACKENDIP, EMAILREGEX } from '../GLOBALCONFIG';
+import { BACKENDIP, EMAILREGEX } from '../../GLOBALCONFIG';
 import { TokenContext } from '../context/TokenContext';
 
 async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
+}
+
+const english = {
+  errorNameMessage: 'Enter a username',
+  errorEmailMessage: 'Enter a valid email',
+  errorPasswordMessage: 'Enter a password',
+  errorPasswordMessage2: 'Passwords don\'t match',
+  errorFetchMessage: 'Username or email already used'
 }
 
 export default function RegisterScreen({ navigation }: any) {
@@ -18,23 +26,31 @@ export default function RegisterScreen({ navigation }: any) {
   const [username, setUsername] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [error, setError] = React.useState(false);
+  const [password2, setPassword2] = React.useState('');
   const [errorName, setErrorName] = React.useState(false);
   const [errorEmail, setErrorEmail] = React.useState(false);
   const [errorPassword, setErrorPassword] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('Username or email already used');
+  const [errorFetch, setErrorFetch] = React.useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
 
   const updateUsername = (input: string) => {
     setUsername(input.replace(/\s/g, ""));
+    setErrorName(false);
   };
 
   const updateEmail = (input: string) => {
     setEmail(input.replace(/\s/g, ""));
+    setErrorEmail(false);
   };
 
   const updatePassword = (input: string) => {
     setPassword(input.replace(/\s/g, ""));
+    setErrorPassword(false);
+  };
+
+  const updatePassword2 = (input: string) => {
+    setPassword2(input.replace(/\s/g, ""));
+    setErrorPassword(false);
   };
 
   const handleRegister = () => {
@@ -43,36 +59,32 @@ export default function RegisterScreen({ navigation }: any) {
     setIsButtonDisabled(true);
 
     // reset error hooks
-    setError(false);
     setErrorName(false);
     setErrorEmail(false);
     setErrorPassword(false);
+    setErrorFetch(false);
 
     let invalidField = false;
 
     if(username.length === 0) {
-      setErrorMessage('Please enter a username');
-      setError(true);
       setErrorName(true);
       setIsButtonDisabled(false);
       invalidField = true;
     } if(email.length === 0 || !EMAILREGEX.test(email)) {
-      setErrorMessage(invalidField ? 'Enter your new credentials' : 'Enter a valid email');
-      setError(true);
       setErrorEmail(true);
       setIsButtonDisabled(false);
       invalidField = true;
     } if(password.length === 0) {
-      setErrorMessage(invalidField ? 'Enter your new credentials' : 'Enter a password');
-      setError(true);
+      setErrorPassword(true);
+      setIsButtonDisabled(false);
+      invalidField = true;
+    } if(password !== password2) {
       setErrorPassword(true);
       setIsButtonDisabled(false);
       invalidField = true;
     }
 
-    if(!invalidField) {
-      setErrorMessage('Username or email already used');
-    } else {
+    if(invalidField) {
       return;
     }
 
@@ -90,12 +102,12 @@ export default function RegisterScreen({ navigation }: any) {
       .then((res) =>
         res.text().then(data => {
           if (res.status !== 200) {
-            setError(true);
+            setErrorFetch(true);
             // TODO reenable feedback (needs .json())
             //data.Code === 'DuplicateUserName' ? setErrorName(true) : setErrorEmail(true);
             //setErrorMessage(data.Code === 'DuplicateUserName' ? 'Username already used' : 'Email already used');
           } else {
-            save('UserToken', data).then((() => alert('Saved login')), (() => alert('Can\'t save login on this device')));
+            save('UserToken', data).then((() => {}), (() => {}));
             updateToken(data);
             navigation.navigate('MainApp');
           }
@@ -115,6 +127,12 @@ export default function RegisterScreen({ navigation }: any) {
         returnKeyType={'next'}
         autoCorrect={false}
       />
+      <View>
+        {
+          errorName &&
+          <Text style={styles.errorText}>{english.errorNameMessage}</Text>
+        }
+      </View>
       <TextInput
         style={{...styles.input, borderColor: errorEmail ? '#d32f2f' : '#111111'}}
         onChangeText={(input) => updateEmail(input)}
@@ -124,6 +142,12 @@ export default function RegisterScreen({ navigation }: any) {
         returnKeyType={'next'}
         autoCorrect={false}
       />
+      <View>
+        {
+          errorEmail &&
+          <Text style={styles.errorText}>{english.errorEmailMessage}</Text>
+        }
+      </View>
       <TextInput
         style={{...styles.input, borderColor: errorPassword ? '#d32f2f' : '#111111'}}
         onChangeText={(input) => updatePassword(input)}
@@ -134,14 +158,30 @@ export default function RegisterScreen({ navigation }: any) {
         secureTextEntry={true}
         onSubmitEditing={handleRegister}
       />
+      <TextInput
+        style={{...styles.input, borderColor: errorPassword ? '#d32f2f' : '#111111'}}
+        onChangeText={(input) => updatePassword2(input)}
+        value={password2}
+        placeholder={'Confirm password'}
+        returnKeyType={'done'}
+        autoCorrect={false}
+        secureTextEntry={true}
+        onSubmitEditing={handleRegister}
+      />
+      <View>
+        {
+          errorPassword &&
+          <Text style={styles.errorText}>{password !== password2 ? english.errorPasswordMessage2 : english.errorPasswordMessage}</Text>
+        }
+      </View>
       <View style={styles.spacer}>
         {
-          error &&
-          <Text style={styles.errorText}>{errorMessage}</Text>
+          errorFetch &&
+          <Text style={styles.errorText}>{english.errorFetchMessage}</Text>
         }
         {
-          !error &&
-          <Text style={styles.hiddenText}>{errorMessage}</Text>
+          !errorFetch &&
+          <Text style={styles.hiddenText}>{english.errorFetchMessage}</Text>
         }
       </View>
       <View style={styles.buttons}>
