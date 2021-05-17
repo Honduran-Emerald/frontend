@@ -7,6 +7,7 @@ import { Subscription } from '@unimodules/react-native-adapter';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { MagnetometerSubscription } from './MagnetometerSubscription';
 import { Colors, Containers } from '../src/styles';
+import { Magnetometer } from 'expo-sensors';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -37,18 +38,24 @@ export const MapScreen = () => {
       // subscribe to Location updates
       const unsubscribe = await Location.watchPositionAsync(LOCATION_SETTINGS, (location : Location.LocationObject) => {
         setLocation(location);
-      }).then()
+      })
+      MagnetometerSubscription.subscribe(setMagnetometerSubscription, setHeading)
       
       setLocationSubscription(unsubscribe);
     })
-    .then(() => MagnetometerSubscription.subscribe(setMagnetometerSubscription, setHeading))
     .catch((err : Error) => {setErrorMsg(err.message)});
     
     return () => {
-      locationSubscription?.remove();
-      MagnetometerSubscription.unsubscribe(magnetometerSubscription, setMagnetometerSubscription);
+      MagnetometerSubscription.unsubscribeAll();
     }
   }, [])
+
+  // Hook to remove locationSubscription, I don't know how and why this works, pls don't touch
+  useEffect(() => {
+    return () => {
+      locationSubscription?.remove();
+    }
+  }, [locationSubscription])
 
   // Animate the camera to the current position set in location-state
   const animateCameraToLocation = () => {
