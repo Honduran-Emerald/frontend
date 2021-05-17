@@ -1,13 +1,11 @@
 import { Subscription } from '@unimodules/react-native-adapter';
 import { Magnetometer } from 'expo-sensors';
 
-type SubscriptionType = Subscription | null;
 type SubscriptionSetter = React.Dispatch<React.SetStateAction<Subscription | null>>;
 
 export class MagnetometerSubscription {
-    static unsubscribe(subscription : SubscriptionType, setSubscription : SubscriptionSetter) {
-        subscription?.remove();
-        setSubscription(null);
+    static unsubscribeAll() {
+        Magnetometer.removeAllListeners();
     }
 
     static magnetometerAngle(magnetometer : any) {
