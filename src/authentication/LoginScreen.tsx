@@ -4,19 +4,12 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { sha512 } from 'js-sha512';
 
+import { Colors } from '../styles';
 import { BACKENDIP, EMAILREGEX } from '../../GLOBALCONFIG';
 import { TokenContext } from '../context/TokenContext';
 
 async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
-}
-
-const colors = {
-  primary: '#1D79AC',
-  secondary: '#41A8DF',
-  error: '#d32f2f',
-  black: '#111111',
-  white: '#fff',
 }
 
 const english = {
@@ -123,7 +116,7 @@ export default function LoginScreen({ navigation }: any) {
     <View style={styles.container}>
       <Text style={styles.header}>HONDURAN EMERALD</Text>
       <TextInput
-        style={{...styles.input, borderColor: errorEmail ? colors.error : colors.black}}
+        style={{...styles.input, borderColor: errorEmail ? Colors.error : Colors.black}}
         onChangeText={(input) => updateEmail(input)}
         value={email}
         placeholder={'Email'}
@@ -138,7 +131,7 @@ export default function LoginScreen({ navigation }: any) {
         }
       </View>
       <TextInput
-        style={{...styles.input, borderColor: errorPassword ? colors.error : colors.black}}
+        style={{...styles.input, borderColor: errorPassword ? Colors.error : Colors.black}}
         onChangeText={(input) => updatePassword(input)}
         value={password}
         placeholder={'Password'}
@@ -160,14 +153,14 @@ export default function LoginScreen({ navigation }: any) {
         }
       </View>
       <View style={styles.forgotPW}>
-        <Text onPress={handleForgotPW} style={{color: colors.primary}}>{english.forgotPassword}</Text>
+        <Text onPress={handleForgotPW} style={{color: Colors.primary}}>{english.forgotPassword}</Text>
       </View>
       <View style={styles.buttons}>
         <View style={styles.button}>
-          <Button color={colors.primary} disabled={isButtonDisabled} title={english.loginButton} onPress={handleLogin}/>
+          <Button color={Colors.primary} disabled={isButtonDisabled} title={english.loginButton} onPress={handleLogin}/>
         </View>
         <View style={styles.button}>
-          <Button color={colors.secondary} disabled={isButtonDisabled} title={english.createAccountButton} onPress={handleRegister}/>
+          <Button color={Colors.primaryLight} disabled={isButtonDisabled} title={english.createAccountButton} onPress={handleRegister}/>
         </View>
       </View>
       <StatusBar style={'auto'}/>
@@ -178,7 +171,7 @@ export default function LoginScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: Colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -200,7 +193,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     marginTop: -12,
-    color: colors.error,
+    color: Colors.error,
   },
   buttons: {
     width: '100%',

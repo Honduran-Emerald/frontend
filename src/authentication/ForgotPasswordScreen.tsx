@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 
+import { Colors } from '../styles';
 import { EMAILREGEX } from '../../GLOBALCONFIG';
 
 export default function ForgotPasswordScreen({ navigation }: any) {
@@ -34,7 +35,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
       <Text style={styles.header}>HONDURAN EMERALD</Text>
       <Text style={styles.text}>Enter the email address associated with your account to get instructions on how to reset the password.</Text>
       <TextInput
-        style={{...styles.input, borderColor: error ? '#d32f2f' : '#111111'}}
+        style={{...styles.input, borderColor: error ? Colors.error : Colors.black}}
         onChangeText={setEmail}
         value={email}
         placeholder={'Email'}
@@ -55,10 +56,10 @@ export default function ForgotPasswordScreen({ navigation }: any) {
       </View>
       <View style={styles.buttons}>
         <View style={styles.button}>
-          <Button color={'#1D79AC'} disabled={isButtonDisabled} title={'Send reset email'} onPress={handleEmailSubmit}/>
+          <Button color={Colors.primary} disabled={isButtonDisabled} title={'Send reset email'} onPress={handleEmailSubmit}/>
         </View>
         <View style={styles.button}>
-          <Button color={'#41A8DF'} disabled={isButtonDisabled} title={'Back'} onPress={() => {navigation.navigate('Login')}}/>
+          <Button color={Colors.primaryLight} disabled={isButtonDisabled} title={'Back'} onPress={() => {navigation.navigate('Login')}}/>
         </View>
       </View>
       <StatusBar style={'auto'}/>
@@ -69,7 +70,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     marginTop: -10,
-    color: '#d32f2f',
+    color: Colors.error,
   },
   hiddenText: {
     marginTop: -10,
