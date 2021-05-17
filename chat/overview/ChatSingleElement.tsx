@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native';
 
 
 interface ChatSingleElementInterface {
