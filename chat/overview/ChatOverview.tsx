@@ -6,7 +6,7 @@ import phisn from '../phi.jpg';
 import { ChatSingleElement } from './ChatSingleElement';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { NavigationState } from '@react-navigation/routers';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 
 const messages = [
@@ -30,31 +30,35 @@ const messages = [
   },
 ]
 
+const messagesLong = messages.concat(messages, messages, messages, messages, messages, messages, messages, messages)
+
 export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={{fontWeight: 'bold', fontSize: 25}}>Chat</Text>
-      <View style={styles.chats}>
-        {messages.map((val, idx) => 
-          <TouchableOpacity onPress={() => navigation.navigate('Chat', {
-                                                                  screen: 'ChatPersonal',
-                                                                  params: {
-                                                                    userName: val.name,
-                                                                    userImgSource: val.pb,
-                                                                    messages: val.messages
-                                                                  }})}
-                            key={idx}>
+      <ScrollView style={styles.scrollable}>
+       
+        <View style={styles.chats}>
+          {messagesLong.map((val, idx) => 
+            <TouchableOpacity onPress={() => navigation.navigate('Chat', {
+                                                                    screen: 'ChatPersonal',
+                                                                    params: {
+                                                                      userName: val.name,
+                                                                      userImgSource: val.pb,
+                                                                      messages: val.messages
+                                                                    }})}
+                              key={idx}>
 
-            <ChatSingleElement 
-              userName={val.name} 
-              lastMessage={val.message} 
-              userImgSource={val.pb} 
-              />
+              <ChatSingleElement 
+                userName={val.name} 
+                lastMessage={val.message} 
+                userImgSource={val.pb} 
+                />
 
-          </TouchableOpacity>
-          )}
-      </View>
-        
+            </TouchableOpacity>
+            )}
+        </View>
+          
+      </ScrollView>
     </View>
   )
 }
@@ -66,7 +70,10 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: '#fff',
       alignItems: 'center',
-      paddingTop: StatusBar.currentHeight,
+      //paddingTop: StatusBar.currentHeight // not needed if navigation header is shown
+    },
+    scrollable: {
+      
     },
     chats: {
       borderTopWidth: 1,

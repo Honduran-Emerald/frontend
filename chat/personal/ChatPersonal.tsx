@@ -1,6 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/core';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
 
 interface ChatPersonalInterface {
     route: any,
@@ -17,8 +17,19 @@ export const ChatPersonal: React.FC = () => {
     const navigation = useNavigation();
 
     return (
-        <View>
-            {route.params.userName}
+        <View style={styles.container}>
+            <Text>
+                {route.params.userName}
+            </Text>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        paddingTop: StatusBar.currentHeight
+    }
+}) 
