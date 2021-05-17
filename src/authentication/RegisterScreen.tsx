@@ -111,7 +111,6 @@ export default function RegisterScreen({ navigation }: any) {
           response.json().then((data) => {
             save('UserToken', data.token).then((() => {}), (() => {}));
             setTokenContext(data.token);
-            navigation.navigate('MainApp');
           })
         } else if(response.status === 400) {
           response.json().then((data) => {
