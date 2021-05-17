@@ -21,7 +21,7 @@ export default function App() {
       .then(() => setIsLoading(false));
   }, [])
 
-  
+
   if(isLoading) {
     return <LoadingScreen/>
   }
