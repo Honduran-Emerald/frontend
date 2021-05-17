@@ -11,6 +11,10 @@ export interface QuestAPI {
     votes: number,
     plays: number,
     finishes: number,
+    location: {
+        longitude: number,
+        latitude: number
+    }
 }
 
 export interface EventAPI {
