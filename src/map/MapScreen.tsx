@@ -7,6 +7,8 @@ import { Subscription } from '@unimodules/react-native-adapter';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { MagnetometerSubscription } from './MagnetometerSubscription';
 import { Colors, Containers } from '../styles';
+import { RoundIconButton } from '../common/RoundIconButton'
+import { FAB } from 'react-native-paper';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -85,7 +87,12 @@ export const MapScreen = () => {
         <UserMarker rotation={heading} coordinate={location.coords}/>
       </MapView>
       )}
-      <ZoomToLocationButton animateCameraToLocation={animateCameraToLocation}/>
+      <FAB 
+        style={styles.locationButton}
+        icon="crosshairs-gps"
+        onPress={animateCameraToLocation}
+        color={Colors.primary}
+      />
     </View>
   );
 };
@@ -125,8 +132,5 @@ const styles = StyleSheet.create({
     right: 10,
     bottom: 20,
     backgroundColor: Colors.background,
-    borderRadius: 100,
-    padding: 12,
-    elevation: 3
   }
 });
