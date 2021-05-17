@@ -45,32 +45,16 @@ export const MapScreen = () => {
     .catch((err : Error) => {setErrorMsg(err.message)});
     
     return () => {
-      //console.log("unmount")
       MagnetometerSubscription.unsubscribeAll();
-     // console.log(locationSubscription);
-      locationSubscription?.remove();
-      //locationSubscription?.remove();
-      //magnetometerSubscription?.remove();
-      //MagnetometerSubscription.unsubscribe(magnetometerSubscription, setMagnetometerSubscription);
     }
   }, [])
 
+  // Hook to remove locationSubscription, I don't know how and why this works, pls don't touch
   useEffect(() => {
     return () => {
-      console.log("fire!")
-      console.log(locationSubscription)
       locationSubscription?.remove();
     }
-    //console.log(magnetometerSubscription)
   }, [locationSubscription])
-
-  //useEffect(() => {
-    //console.log(locationSubscription)
-  //  return () => {/* console.log("what"); */locationSubscription?.remove();magnetometerSubscription?.remove()}
-  //},[magnetometerSubscription])
-  /* useEffect(() => {
-    return () => {locationSubscription?.remove()}
-  }, [locationSubscription]) */
 
   // Animate the camera to the current position set in location-state
   const animateCameraToLocation = () => {
