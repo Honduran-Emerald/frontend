@@ -6,7 +6,7 @@ import { MaterialCommunityIcons }from '@expo/vector-icons';
 import { TokenContext } from './context/TokenContext';
 import * as SecureStore from 'expo-secure-store';
 
-import { MapNavigator } from '../map/MapNavigator';
+import { MapNavigator } from './map/MapNavigator';
 
 const Tab = createBottomTabNavigator();
 
