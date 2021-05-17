@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import dagre from 'dagre';
 import { ScrollView } from 'react-native-gesture-handler';
+import Svg, { Circle, Line, Text as SvgText } from 'react-native-svg';
 
 const horizontalPadding = 50;
 const verticalPadding = 100;
@@ -73,7 +74,31 @@ export const ModuleGraph: React.FC = () => {
     
     return (
         <ScrollView>
-            <View style={{height: maxY+nodeSize+verticalPadding}} />
+            <View style={{height: maxY+nodeSize+verticalPadding}} >
+                <Svg 
+                    height="100%" 
+                    width="100%" 
+                    viewBox={"0 0 "+Dimensions.get('screen').width+" "+(maxY+nodeSize+verticalPadding)}
+                    >
+                    <Line
+                        x1="0"
+                        y1="0"
+                        x2={Dimensions.get('screen').width}
+                        y2={maxY+nodeSize+verticalPadding}
+                        stroke="red"
+                        strokeWidth="2" />
+                    <Line
+                        x2="0"
+                        y1="0"
+                        x1={Dimensions.get('screen').width}
+                        y2={maxY+nodeSize+verticalPadding}
+                        stroke="green"
+                        strokeWidth="2" />
+                    <SvgText x={Dimensions.get('screen').width/2} y="30" stroke="#600" fill="#600" textAnchor="middle">
+                        SVG Experiments
+                    </SvgText>
+                </Svg>
+            </View>
             {graph && graph.nodes().map((node: any) => {
                 const ne = graph.node(node);
                 return (
