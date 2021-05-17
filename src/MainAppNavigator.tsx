@@ -60,17 +60,17 @@ async function deleteToken() {
   await SecureStore.deleteItemAsync('UserToken');
 }
 
-const Dummy = ({ navigation }: any) => {
-  const {token , updateToken} = React.useContext(TokenContext)
+const Dummy = () => {
+  const {tokenContext , setTokenContext} = React.useContext(TokenContext)
 
   const handleLogout = () => {
     deleteToken().then(() => {});
-    navigation.navigate('Authentication');
+    setTokenContext('');
   }
 
   return(
     <View style={styles.container}>
-      <Text>{token}</Text>
+      <Text>{tokenContext}</Text>
       <Button color={'#1D79AC'} title={'Logout'} onPress={handleLogout}/>
       <StatusBar style="auto" />
     </View>

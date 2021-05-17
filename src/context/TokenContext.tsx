@@ -1,6 +1,6 @@
 import React, { createContext } from 'react';
 
 export const TokenContext = createContext({
-  token: '',
-  updateToken: (newToken :string) => {},
+  tokenContext: '',
+  setTokenContext: (newToken :string) => {},
 });

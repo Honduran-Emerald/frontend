@@ -28,8 +28,7 @@ const english = {
 }
 
 export default function RegisterScreen({ navigation }: any) {
-
-  const {token , updateToken} = React.useContext(TokenContext);
+  const {tokenContext , setTokenContext} = React.useContext(TokenContext);
 
   const [username, setUsername] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -111,7 +110,7 @@ export default function RegisterScreen({ navigation }: any) {
         if(response.ok) {
           response.json().then((data) => {
             save('UserToken', data.token).then((() => {}), (() => {}));
-            updateToken(data.token);
+            setTokenContext(data.token);
             navigation.navigate('MainApp');
           })
         } else if(response.status === 400) {
