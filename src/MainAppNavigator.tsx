@@ -7,6 +7,8 @@ import { TokenContext } from './context/TokenContext';
 import * as SecureStore from 'expo-secure-store';
 
 import { MapNavigator } from './map/MapNavigator';
+import { ModuleGraph } from './quest-editor/ModuleGraph';
+import { QuestEditorNavigator } from './quest-editor/QuestEditorNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,7 +50,7 @@ export default function MainAppNavigator() {
       }}
     >
       <Tab.Screen name="Home" component={Dummy}/>
-      <Tab.Screen name="Questlog" component={Dummy} />
+      <Tab.Screen name="Questlog" component={QuestEditorNavigator} />
       <Tab.Screen name="Map" component={MapNavigator}/>
       <Tab.Screen name="Chat" component={Dummy}/>
       <Tab.Screen name="Profile" component={Dummy} />
