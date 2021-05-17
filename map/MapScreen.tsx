@@ -7,7 +7,6 @@ import { Subscription } from '@unimodules/react-native-adapter';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { MagnetometerSubscription } from './MagnetometerSubscription';
 import { Colors, Containers } from '../src/styles';
-import { Magnetometer } from 'expo-sensors';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
