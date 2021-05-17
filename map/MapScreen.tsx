@@ -6,6 +6,7 @@ import * as Location from 'expo-location';
 import { Subscription } from '@unimodules/react-native-adapter';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { MagnetometerSubscription } from './MagnetometerSubscription';
+import { Colors, Containers } from '../src/styles';
 import { Magnetometer } from 'expo-sensors';
 
 export const MapScreen = () => {
@@ -94,7 +95,7 @@ const ZoomToLocationButton : React.FC<{animateCameraToLocation: Function}> = ({a
   return(
     <View style={styles.locationButton}>
       <TouchableOpacity onPress={() => {animateCameraToLocation()}}>
-        <MaterialIcons name='my-location' size={30} color='#1D79AC'/>
+        <MaterialIcons name='my-location' size={30} color={Colors.primary}/>
       </TouchableOpacity>
     </View>
   );
@@ -104,7 +105,7 @@ const UserMarker : React.FC<{rotation: number | undefined | null, coordinate: {l
   return (
     <Marker anchor={{x: 0.5, y: 0.5}} rotation={rotation ? rotation : 0} coordinate={coordinate} flat>
       <View>
-        <MaterialCommunityIcons name='navigation' size={30} color={'#1D79AC'}/>
+        <MaterialCommunityIcons name='navigation' size={30} color={Colors.primary}/>
       </View>
     </Marker>
   );
@@ -113,9 +114,8 @@ const UserMarker : React.FC<{rotation: number | undefined | null, coordinate: {l
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
+    ...Containers.center,
+    backgroundColor: Colors.background,
   },
   map: {
     width: Dimensions.get('window').width,
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
     bottom: 20,
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.background,
     borderRadius: 100,
     padding: 12,
     elevation: 3
