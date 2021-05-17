@@ -6,6 +6,7 @@ import * as Location from 'expo-location';
 import { Subscription } from '@unimodules/react-native-adapter';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { MagnetometerSubscription } from './MagnetometerSubscription';
+import { Magnetometer } from 'expo-sensors';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -36,18 +37,40 @@ export const MapScreen = () => {
       // subscribe to Location updates
       const unsubscribe = await Location.watchPositionAsync(LOCATION_SETTINGS, (location : Location.LocationObject) => {
         setLocation(location);
-      }).then()
+      })
+      MagnetometerSubscription.subscribe(setMagnetometerSubscription, setHeading)
       
       setLocationSubscription(unsubscribe);
     })
-    .then(() => MagnetometerSubscription.subscribe(setMagnetometerSubscription, setHeading))
     .catch((err : Error) => {setErrorMsg(err.message)});
     
     return () => {
+      //console.log("unmount")
+      MagnetometerSubscription.unsubscribeAll();
+     // console.log(locationSubscription);
       locationSubscription?.remove();
-      MagnetometerSubscription.unsubscribe(magnetometerSubscription, setMagnetometerSubscription);
+      //locationSubscription?.remove();
+      //magnetometerSubscription?.remove();
+      //MagnetometerSubscription.unsubscribe(magnetometerSubscription, setMagnetometerSubscription);
     }
   }, [])
+
+  useEffect(() => {
+    return () => {
+      console.log("fire!")
+      console.log(locationSubscription)
+      locationSubscription?.remove();
+    }
+    //console.log(magnetometerSubscription)
+  }, [locationSubscription])
+
+  //useEffect(() => {
+    //console.log(locationSubscription)
+  //  return () => {/* console.log("what"); */locationSubscription?.remove();magnetometerSubscription?.remove()}
+  //},[magnetometerSubscription])
+  /* useEffect(() => {
+    return () => {locationSubscription?.remove()}
+  }, [locationSubscription]) */
 
   // Animate the camera to the current position set in location-state
   const animateCameraToLocation = () => {
