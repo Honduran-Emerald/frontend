@@ -24,8 +24,7 @@ const english = {
 }
 
 export default function LoginScreen({ navigation }: any) {
-
-  const {token , updateToken} = React.useContext(TokenContext);
+  const {tokenContext , setTokenContext} = React.useContext(TokenContext);
 
   // TODO remove default mail and pw
   const [email, setEmail] = React.useState('t3st@test.de');
@@ -89,8 +88,7 @@ export default function LoginScreen({ navigation }: any) {
         if(response.ok) {
           response.json().then((data) => {
             save('UserToken', data.token).then((() => {}), (() => {}));
-            updateToken(data.token);
-            navigation.navigate('MainApp');
+            setTokenContext(data.token);
           })
         } else if(response.status === 400) {
           setErrorFetch(true);
