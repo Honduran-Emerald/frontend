@@ -4,7 +4,7 @@ import {StatusBar} from "expo-status-bar";
 
 export const DiscoveryScreen = () => {
     return (
-        <View style={{justifyContent: "center", flexGrow: 1, alignItems: "center", backgroundColor: "#F"}}>
+        <View style={{justifyContent: "center", flexGrow: 1, alignItems: "center", backgroundColor: "#FFF"}}>
             <Text>
                 aaaaaaaaaaaaaaaaaaaaaaaaaaaaa
             </Text>
