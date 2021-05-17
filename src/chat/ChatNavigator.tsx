@@ -1,5 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { Image } from 'react-native';
 import { ChatOverview } from './overview/ChatOverview';
 import { ChatHeaderTitle } from './personal/ChatHeaderTitle';
 import { ChatPersonal } from './personal/ChatPersonal';
@@ -17,9 +18,9 @@ export const ChatNavigator: React.FC = () => {
                 options={({ route }: {route: any}) => 
                 ({
                     title: route.params?.userName || 'Personal Chat',
-                    header: props => <ChatHeaderTitle {...props} userName={route.params.userName} userImgSource={route.params.userImgSource}/>
-
-                    })}/>
+                    headerTitle: props => <ChatHeaderTitle {...props} userName={route.params.userName} userImgSource={route.params.userImgSource}/>,
+                    headerTitleContainerStyle: {left: 50}
+                })}/>
         </Stack.Navigator>
     )
 }
