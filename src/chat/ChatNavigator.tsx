@@ -11,7 +11,13 @@ export const ChatNavigator: React.FC = () => {
 
     return (
         <Stack.Navigator>
-            <Stack.Screen name='ChatOverview' component={ChatOverview}/>
+            <Stack.Screen 
+                name='ChatOverview' 
+                component={ChatOverview}
+                options={{
+                    title: 'Chat',
+                    headerTitle: 'Chat'
+                }}/>
             <Stack.Screen 
                 name='ChatPersonal' 
                 component={ChatPersonal}
