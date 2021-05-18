@@ -3,32 +3,21 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { sha512 } from 'js-sha512';
+import i18n from 'i18n-js';
+import './translations';
 
 import { Colors } from '../styles';
 import { BACKENDIP, EMAILREGEX } from '../../GLOBALCONFIG';
-import { TokenContext } from '../context/TokenContext';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { setToken } from '../redux/authentication/authenticationSlice';
 
 async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
 }
 
-const english = {
-  createAccountButton: 'Create account',
-  backButton: 'Back',
-  usernamePlaceholder: 'Username',
-  emailPlaceholder: 'Email',
-  passwordPlaceholder: 'Password',
-  password2Placeholder: 'Confirm password',
-  errorNameMessage: 'Enter a username',
-  errorEmailMessage: 'Enter a valid email',
-  errorPasswordMessage: 'Enter a password',
-  errorPasswordMessage2: 'Passwords don\'t match',
-  errorFetchMessageName: 'Username already used',
-  errorFetchMessageEmail: 'Email already used',
-}
-
 export default function RegisterScreen({ navigation }: any) {
-  const {tokenContext , setTokenContext} = React.useContext(TokenContext);
+
+  const dispatch = useAppDispatch()
 
   const [username, setUsername] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -110,7 +99,7 @@ export default function RegisterScreen({ navigation }: any) {
         if(response.ok) {
           response.json().then((data) => {
             save('UserToken', data.token).then((() => {}), (() => {}));
-            setTokenContext(data.token);
+            dispatch(setToken(data.token))
           })
         } else if(response.status === 400) {
           response.json().then((data) => {
@@ -128,26 +117,26 @@ export default function RegisterScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>HONDURAN EMERALD</Text>
+      <Text style={styles.header}>{i18n.t('appName')}</Text>
       <TextInput
         style={{...styles.input, borderColor: errorName ? Colors.error : Colors.black}}
         onChangeText={(input) => updateUsername(input)}
         value={username}
-        placeholder={english.usernamePlaceholder}
+        placeholder={i18n.t('usernamePlaceholder')}
         returnKeyType={'next'}
         autoCorrect={false}
       />
       <View>
         {
           errorName &&
-          <Text style={styles.errorText}>{english.errorNameMessage}</Text>
+          <Text style={styles.errorText}>{i18n.t('errorNameMessage')}</Text>
         }
       </View>
       <TextInput
         style={{...styles.input, borderColor: errorEmail ? Colors.error : Colors.black}}
         onChangeText={(input) => updateEmail(input)}
         value={email}
-        placeholder={english.emailPlaceholder}
+        placeholder={i18n.t('emailPlaceholder')}
         keyboardType={'email-address'}
         returnKeyType={'next'}
         autoCorrect={false}
@@ -155,14 +144,14 @@ export default function RegisterScreen({ navigation }: any) {
       <View>
         {
           errorEmail &&
-          <Text style={styles.errorText}>{english.errorEmailMessage}</Text>
+          <Text style={styles.errorText}>{i18n.t('errorEmailMessage')}</Text>
         }
       </View>
       <TextInput
         style={{...styles.input, borderColor: errorPassword ? Colors.error : Colors.black}}
         onChangeText={(input) => updatePassword(input)}
         value={password}
-        placeholder={english.passwordPlaceholder}
+        placeholder={i18n.t('passwordPlaceholder')}
         returnKeyType={'done'}
         autoCorrect={false}
         secureTextEntry={true}
@@ -172,7 +161,7 @@ export default function RegisterScreen({ navigation }: any) {
         style={{...styles.confirmPassword, borderColor: errorPassword ? Colors.error : Colors.black}}
         onChangeText={(input) => updatePassword2(input)}
         value={password2}
-        placeholder={english.password2Placeholder}
+        placeholder={i18n.t('password2Placeholder')}
         returnKeyType={'done'}
         autoCorrect={false}
         secureTextEntry={true}
@@ -181,21 +170,21 @@ export default function RegisterScreen({ navigation }: any) {
       <View>
         {
           errorPassword &&
-          <Text style={styles.errorText}>{password !== password2 ? english.errorPasswordMessage2 : english.errorPasswordMessage}</Text>
+          <Text style={styles.errorText}>{password !== password2 ? i18n.t('errorPasswordMessage2') : i18n.t('errorPasswordMessage')}</Text>
         }
       </View>
       <View>
         {
           errorFetch &&
-          <Text style={styles.errorText}>{errorFetchReasonName ? english.errorFetchMessageName: english.errorFetchMessageEmail}</Text>
+          <Text style={styles.errorText}>{errorFetchReasonName ? i18n.t('errorFetchMessageName'): i18n.t('errorFetchMessageEmail')}</Text>
         }
       </View>
       <View style={styles.buttons}>
         <View style={styles.button}>
-          <Button color={Colors.primary} disabled={isButtonDisabled} title={english.createAccountButton} onPress={handleRegister}/>
+          <Button color={Colors.primary} disabled={isButtonDisabled} title={i18n.t('createAccountConfirm')} onPress={handleRegister}/>
         </View>
         <View style={styles.button}>
-          <Button color={Colors.primaryLight} disabled={isButtonDisabled} title={english.backButton} onPress={() => {navigation.navigate('Login')}}/>
+          <Button color={Colors.primaryLight} disabled={isButtonDisabled} title={i18n.t('backButton')} onPress={() => {navigation.navigate('Login')}}/>
         </View>
       </View>
       <StatusBar style={'auto'}/>
