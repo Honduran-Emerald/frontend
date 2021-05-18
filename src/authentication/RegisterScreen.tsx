@@ -10,6 +10,7 @@ import { Colors } from '../styles';
 import { BACKENDIP, EMAILREGEX } from '../../GLOBALCONFIG';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setToken } from '../redux/authentication/authenticationSlice';
+import { registerRequest } from '../utils/requestHandler';
 
 async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
@@ -94,7 +95,7 @@ export default function RegisterScreen({ navigation }: any) {
       }),
     };
 
-    fetch(`${BACKENDIP}/auth/create`, requestOptions)
+    registerRequest(username, email, sha512(password))
       .then((response) => {
         if(response.ok) {
           response.json().then((data) => {
