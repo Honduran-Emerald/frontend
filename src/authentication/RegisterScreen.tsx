@@ -6,7 +6,8 @@ import { sha512 } from 'js-sha512';
 
 import { Colors } from '../styles';
 import { BACKENDIP, EMAILREGEX } from '../../GLOBALCONFIG';
-import { TokenContext } from '../context/TokenContext';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { setToken } from '../redux/authentication/authenticationSlice';
 
 async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
@@ -28,7 +29,8 @@ const english = {
 }
 
 export default function RegisterScreen({ navigation }: any) {
-  const {tokenContext , setTokenContext} = React.useContext(TokenContext);
+
+  const dispatch = useAppDispatch()
 
   const [username, setUsername] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -110,7 +112,7 @@ export default function RegisterScreen({ navigation }: any) {
         if(response.ok) {
           response.json().then((data) => {
             save('UserToken', data.token).then((() => {}), (() => {}));
-            setTokenContext(data.token);
+            dispatch(setToken(data.token))
           })
         } else if(response.status === 400) {
           response.json().then((data) => {
