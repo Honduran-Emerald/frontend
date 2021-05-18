@@ -1,145 +1,116 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import dagre from 'dagre';
 import { ScrollView } from 'react-native-gesture-handler';
-import Svg, { Circle, Line, Text as SvgText } from 'react-native-svg';
+import Svg, { Line, Path } from 'react-native-svg';
+import { GraphModuleWrapper } from './GraphModuleWrapper';
 
 const horizontalPadding = 50;
 const verticalPadding = 100;
-const nodeSize = 60;
-const ranksep = nodeSize + 40;
+const ranksepBase = 10
 const horizontalClampRatio = 0.6;
 
-const nodes = [
-    { id: 'n1', label: 'n1', width: nodeSize, height: nodeSize},
-    { id: 'n2', label: 'n2', width: nodeSize, height: nodeSize},
-    { id: 'n3', label: 'n3', width: nodeSize, height: nodeSize},
-    { id: 'n4', label: 'n4', width: nodeSize, height: nodeSize},
-    { id: 'n5', label: 'n5', width: nodeSize, height: nodeSize},
-    { id: 'n6', label: 'n6', width: nodeSize, height: nodeSize},
-]
-
-const links = [
-    ['n1', 'n2'],
-    ['n2', 'n3'],
-    ['n2', 'n4'],
-    ['n3', 'n5'],
-    ['n3', 'n4'],
-    ['n4', 'n5'],
-    ['n4', 'n6'],
-    ['n5', 'n6'],
-]
-
-const normalize = (x: number, minX: number, maxX: number) => {
-    if (maxX - minX > Dimensions.get('screen').width*horizontalClampRatio) {
-        return (x - minX) * (Dimensions.get('screen').width - nodeSize - horizontalPadding) / (maxX - minX) + horizontalPadding/2
-    }
-    return (x - minX) * (Dimensions.get('screen').width*horizontalClampRatio - nodeSize) / (maxX - minX) + (Dimensions.get('screen').width/2 - (Dimensions.get('screen').width*horizontalClampRatio - nodeSize)/2 - nodeSize/2)
+export interface IGraphModuleNode {
+    id: string,
+    component: React.ReactElement,
+    width: number,
+    height: number,
+}
+export interface IModuleGraph {
+    nodes: IGraphModuleNode[],
+    links: [string, string][],
+    nodeWidth: number
 }
 
-export const ModuleGraph: React.FC = () => {
+export const ModuleGraph: React.FC<IModuleGraph> = ({ nodes, links, nodeWidth }) => {
 
     const [graph, setGraph] = useState<any>(undefined);
+
+    const normalize = (x: number, minX: number, maxX: number, nodeWidth: number) => {
+        if (maxX - minX > Dimensions.get('screen').width*horizontalClampRatio) {
+            return (x - minX) * (Dimensions.get('screen').width - nodeWidth - horizontalPadding) / (maxX - minX) + horizontalPadding/2
+        }
+        return (x - minX) * (Dimensions.get('screen').width*horizontalClampRatio - nodeWidth) / (maxX - minX) + (Dimensions.get('screen').width/2 - (Dimensions.get('screen').width*horizontalClampRatio - nodeWidth)/2 - nodeWidth/2)
+    }
+
+    const ranksep = Math.max(...nodes.map(node => node.height)) + ranksepBase
+
+    const viewHeight = graph ? verticalPadding + Math.max(...graph.nodes().map((node: any) => (
+        graph.node(node).y + graph.node(node).n_height
+    ))) : 0;
+
+    const maxX = graph ? Math.max(...graph.nodes().map((node: any) => graph.node(node).x)) : 0
+    const minX = graph ? Math.min(...graph.nodes().map((node: any) => graph.node(node).x)) : 0
     
-    const [minX, setMinX] = useState(0);
-    const [maxX, setMaxX] = useState(0);
-    const [maxY, setMaxY] = useState(0);
 
     useEffect(() => {
         
         var g = new dagre.graphlib.Graph().setGraph({
-            rankdir: 'TB',
             ranksep: ranksep
         });
         
         g.setDefaultEdgeLabel(function() { return {}; });
-        
+
         nodes.forEach(node => g.setNode(node.id, {
-            label: node.label,
+            component: node.component,
             width: node.width,
-            heigth: node.height
+            n_height: node.height
         }))
 
         links.forEach(link => g.setEdge(link[0], link[1]))
 
         dagre.layout(g)
 
-        setMaxX(Math.max(...g.nodes().map((node: any) => g.node(node).x)))
-        setMinX(Math.min(...g.nodes().map((node: any) => g.node(node).x)))
-        setMaxY(Math.max(...g.nodes().map((node: any) => g.node(node).y)))
-
         setGraph(g)
 
-    }, [])
+    }, [nodes, links, nodeWidth])
     
     return (
         <ScrollView>
-            <View style={{height: maxY+nodeSize+verticalPadding}} >
+            <View style={{height: viewHeight}} >
                 <Svg 
                     height="100%" 
                     width="100%" 
-                    viewBox={"0 0 "+Dimensions.get('screen').width+" "+(maxY+nodeSize+verticalPadding)}
+                    viewBox={"0 0 "+Dimensions.get('screen').width+" "+viewHeight}
+
                     >
-                    <Line
-                        x1="0"
-                        y1="0"
-                        x2={Dimensions.get('screen').width}
-                        y2={maxY+nodeSize+verticalPadding}
-                        stroke="red"
-                        strokeWidth="2" />
-                    <Line
-                        x2="0"
-                        y1="0"
-                        x1={Dimensions.get('screen').width}
-                        y2={maxY+nodeSize+verticalPadding}
-                        stroke="green"
-                        strokeWidth="2" />
-                    <SvgText x={Dimensions.get('screen').width/2} y="30" stroke="#600" fill="#600" textAnchor="middle">
-                        SVG Experiments
-                    </SvgText>
+                    <Line x1={0} x2={Dimensions.get('screen').width} y1={0} y2={viewHeight} opacity='0.2' stroke='red'/>
+                    <Line x2={0} x1={Dimensions.get('screen').width} y1={0} y2={viewHeight} opacity='0.2' stroke='red'/>
+                    {graph && graph.edges().map((edge: any, idx: number) => {
+
+                        const nX = (x: number) => (normalize(x, minX, maxX, nodeWidth) + nodeWidth/2)
+                        const nY = (y: number, node: any) => (y + verticalPadding/2 + graph.node(node).n_height/2)
+
+                        const points = graph.edge(edge).points;
+
+                        const path = ['M', nX(points[0].x), nY(points[0].y, edge.v)]
+                        for (var i = 1; i < points.length; i=i+2) {
+                            path.push('Q', nX(points[i].x), nY(points[i].y, edge.v), nX(points[i+1].x), nY(points[i+1].y, edge.v));
+                        }
+
+                        return (
+                            <Path
+                                key={idx}
+                                d={path.join(' ')}
+                                stroke='black'   
+                                strokeWidth='1'
+                            />
+                        )
+                    })}
                 </Svg>
             </View>
             {graph && graph.nodes().map((node: any) => {
                 const ne = graph.node(node);
                 return (
-                    <SingleModule 
+                    <GraphModuleWrapper 
                         key={node} 
-                        title={ne.label} 
-                        x={normalize(ne.x, minX, maxX)} 
-                        y={ne.y + verticalPadding/2}/>
+                        component={ne.component} 
+                        x={normalize(ne.x, minX, maxX, nodeWidth)} 
+                        y={ne.y + verticalPadding/2}
+                        width={ne.width}
+                        height={ne.n_height}/>
                 )
-                })}
+                })} 
         </ScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    scrollView: {
-
-    },
-})
-
-interface ISingleModule {
-    title: string,
-    x: number,
-    y: number
-}
-
-const SingleModule: React.FC<ISingleModule> = ({ title, x, y }) => (
-    <View style={{
-        borderWidth: 1,
-        width: nodeSize,
-        height: nodeSize,
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'absolute',
-        left: x,
-        top: y,
-        borderRadius: 20
-    
-        }}>
-        <Text>
-            {title}
-        </Text>
-    </View>
-)
