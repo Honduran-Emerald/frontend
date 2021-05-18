@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authenticationReducer from './authentication/authenticationSlice'
+import authenticationReducer from './authentication/authenticationSlice';
+import questsReducer from './quests/questsSlice';
 
 export const store = configureStore({
     reducer: {
-        authentication: authenticationReducer
+        authentication: authenticationReducer,
+        quests: questsReducer
     },
 })
 
