@@ -36,7 +36,7 @@ i18n.translations = {
     createAccountConfirm: 'Account erstellen',
     backButton: 'Zurück',
     usernamePlaceholder: 'Benutzername',
-    password2Placeholder: 'Passwort bestätigend',
+    password2Placeholder: 'Passwort bestätigen',
     errorNameMessage: 'Gib einen Benutzernamen an',
     errorPasswordMessage2: 'Passwörter stimmen nicht überein',
     errorFetchMessageName: 'Benutzername bereits vergeben',
