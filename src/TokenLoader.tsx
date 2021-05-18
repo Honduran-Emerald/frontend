@@ -7,6 +7,11 @@ import { LoadingScreen } from './common/LoadingScreen'
 import { TokenManager } from './utils/TokenManager';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setToken } from './redux/authentication/authenticationSlice';
+import i18n from 'i18n-js';
+import * as Localization from "expo-localization";
+
+i18n.fallbacks = true;
+i18n.locale = Localization.locale;
 
 export const TokenLoader = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -22,7 +27,7 @@ export const TokenLoader = () => {
 
 
   return (
-      
+
     (isLoading) ? (<LoadingScreen/>) : (
         <NavigationContainer>
         {token ? (
@@ -30,7 +35,7 @@ export const TokenLoader = () => {
         ) : (
             <AuthNavigator/>
         )}
-    </NavigationContainer>) 
-    
+    </NavigationContainer>)
+
   );
 }
