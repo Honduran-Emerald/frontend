@@ -3,10 +3,11 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
 import { MaterialCommunityIcons }from '@expo/vector-icons';
-import { TokenContext } from './context/TokenContext';
 import * as SecureStore from 'expo-secure-store';
 
 import { MapNavigator } from './map/MapNavigator';
+import { useAppDispatch, useAppSelector } from './redux/hooks';
+import { unsetToken } from './redux/authentication/authenticationSlice';
 
 const Tab = createBottomTabNavigator();
 
@@ -61,16 +62,18 @@ async function deleteToken() {
 }
 
 const Dummy = () => {
-  const {tokenContext , setTokenContext} = React.useContext(TokenContext)
+
+  const token = useAppSelector((state) => state.authentication.token);
+  const dispatch = useAppDispatch();
 
   const handleLogout = () => {
     deleteToken().then(() => {});
-    setTokenContext('');
+    dispatch(unsetToken())
   }
 
   return(
     <View style={styles.container}>
-      <Text>{tokenContext}</Text>
+      <Text>{token}</Text>
       <Button color={'#1D79AC'} title={'Logout'} onPress={handleLogout}/>
       <StatusBar style="auto" />
     </View>
