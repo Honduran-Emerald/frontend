@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useRef, Ref } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { Subscription } from '@unimodules/react-native-adapter';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { MagnetometerSubscription } from './MagnetometerSubscription';
 import { Colors, Containers } from '../styles';
+import { FAB } from 'react-native-paper';
+import { useAppSelector } from '../redux/hooks';
+import { useDispatch } from 'react-redux';
+import { queryQuestsRequest } from '../utils/requestHandler';
+import { setLocalQuests } from '../redux/quests/questsSlice';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -16,6 +20,15 @@ export const MapScreen = () => {
   const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription>();
   const _map : Ref<MapView> = useRef(null);
 
+  const localQuests = useAppSelector((state) => state.quests.localQuests);
+  const dispatch = useDispatch();
+
+  // TEMP, REMOVE LATER
+  useEffect(() => {
+    queryQuestsRequest()
+      .then(res => res.json())
+      .then(res => dispatch(setLocalQuests(res.quests.map((q:any) => [q.id, q.location.longitude, q.location.latitude]))))
+  }, [])
 
   // Get Location Permission and set initial Location
   useEffect(() => {
@@ -58,7 +71,7 @@ export const MapScreen = () => {
 
   // Animate the camera to the current position set in location-state
   const animateCameraToLocation = () => {
-    if(_map.current && location?.coords)
+    if (_map.current && location?.coords)
     _map.current.animateCamera({center: location.coords, zoom: 15, heading:0})
   }
 
@@ -83,21 +96,30 @@ export const MapScreen = () => {
         initialRegion={{latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0461, longitudeDelta: 0.0210}}
       >
         <UserMarker rotation={heading} coordinate={location.coords}/>
+        {localQuests.map((quest) => (
+          <QuestMarker key={quest[0]} coordinate={{longitude: quest[2], latitude: quest[1]}}/>
+        ))}
       </MapView>
       )}
-      <ZoomToLocationButton animateCameraToLocation={animateCameraToLocation}/>
+
+      <FAB 
+        style={styles.locationButton}
+        icon="crosshairs-gps"
+        onPress={animateCameraToLocation}
+        color={Colors.primary}
+      />
     </View>
   );
 };
 
-const ZoomToLocationButton : React.FC<{animateCameraToLocation: Function}> = ({animateCameraToLocation}) => {
-  return(
-    <View style={styles.locationButton}>
-      <TouchableOpacity onPress={() => {animateCameraToLocation()}}>
-        <MaterialIcons name='my-location' size={30} color={Colors.primary}/>
-      </TouchableOpacity>
-    </View>
-  );
+const QuestMarker : React.FC<{coordinate : {longitude: number, latitude: number}}> = ({coordinate}) => {
+  return (
+    <Marker coordinate={coordinate}>
+      <View>
+        <MaterialCommunityIcons name='map-marker-alert' size={40} color={Colors.primary}/>
+      </View>
+    </Marker>
+  )
 };
 
 const UserMarker : React.FC<{rotation: number | undefined | null, coordinate: {latitude: number, longitude: number}}> = ({rotation, coordinate}) => {
@@ -125,8 +147,5 @@ const styles = StyleSheet.create({
     right: 10,
     bottom: 20,
     backgroundColor: Colors.background,
-    borderRadius: 100,
-    padding: 12,
-    elevation: 3
   }
 });
