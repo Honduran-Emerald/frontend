@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, Text, View } from 'react-native';
 import dagre from 'dagre';
 import { ScrollView } from 'react-native-gesture-handler';
 import Svg, { Line, Path } from 'react-native-svg';
@@ -26,46 +26,47 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ nodes, links, nodeWidth })
 
     const [graph, setGraph] = useState<any>(undefined);
 
+    const ranksep = Math.max(...nodes.map(node => node.height)) + ranksepBase
+
+
+    useEffect(() => {
+        const graph: any = new dagre.graphlib.Graph().setGraph({
+            ranksep: ranksep
+        });
+        
+        graph.setDefaultEdgeLabel(function() { return {}; });
+    
+        nodes.forEach(node => graph.setNode(node.id, {
+            component: node.component,
+            width: node.width,
+            n_height: node.height
+        }))
+    
+        links.forEach(link => graph.setEdge(link[0], link[1]))
+
+        dagre.layout(graph)
+
+        setGraph(graph)
+    }, [nodes,links,nodeWidth])
+
+    
+
     const normalize = (x: number, minX: number, maxX: number, nodeWidth: number) => {
         if (maxX - minX > Dimensions.get('screen').width*horizontalClampRatio) {
             return (x - minX) * (Dimensions.get('screen').width - nodeWidth - horizontalPadding) / (maxX - minX) + horizontalPadding/2
         }
         return (x - minX) * (Dimensions.get('screen').width*horizontalClampRatio - nodeWidth) / (maxX - minX) + (Dimensions.get('screen').width/2 - (Dimensions.get('screen').width*horizontalClampRatio - nodeWidth)/2 - nodeWidth/2)
     }
-
-    const ranksep = Math.max(...nodes.map(node => node.height)) + ranksepBase
-
-    const viewHeight = graph ? verticalPadding + Math.max(...graph.nodes().map((node: any) => (
-        graph.node(node).y + graph.node(node).n_height
-    ))) : 0;
-
-    const maxX = graph ? Math.max(...graph.nodes().map((node: any) => graph.node(node).x)) : 0
-    const minX = graph ? Math.min(...graph.nodes().map((node: any) => graph.node(node).x)) : 0
     
+    const viewHeight = graph ? verticalPadding + Math.max(...graph.nodes().map((node: any) => (
+        graph.node(node)?.y + graph.node(node).n_height
+    )), 0) : 0;
 
-    useEffect(() => {
-        
-        var g = new dagre.graphlib.Graph().setGraph({
-            ranksep: ranksep
-        });
-        
-        g.setDefaultEdgeLabel(function() { return {}; });
-
-        nodes.forEach(node => g.setNode(node.id, {
-            component: node.component,
-            width: node.width,
-            n_height: node.height
-        }))
-
-        links.forEach(link => g.setEdge(link[0], link[1]))
-
-        dagre.layout(g)
-
-        setGraph(g)
-
-    }, [nodes, links, nodeWidth])
+    const maxX = graph ? Math.max(...graph.nodes().map((node: any) => graph.node(node)?.x), 0) : 0
+    const minX = graph ? Math.min(...graph.nodes().map((node: any) => graph.node(node)?.x), 0) : 0
     
     return (
+        (nodes.length > 0) ?
         <ScrollView>
             <View style={{height: viewHeight}} >
                 <Svg 
@@ -111,6 +112,6 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ nodes, links, nodeWidth })
                         height={ne.n_height}/>
                 )
                 })} 
-        </ScrollView>
+        </ScrollView> : <Text>Loading Graph</Text>
     );
 }
