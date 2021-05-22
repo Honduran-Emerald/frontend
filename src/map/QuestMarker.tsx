@@ -6,11 +6,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../styles';
 
 
-export const QuestMarker : React.FC<{quest: QuestMeta}> = ({quest}) => {
-    const [showPreview, setShowPreview] = useState(false);
+export const QuestMarker : React.FC<{quest: QuestMeta, showPreview:Boolean, setShowPreview: () => void}> = ({quest, showPreview, setShowPreview}) => {
   
     return (
-      <Marker key={quest.id} coordinate={{latitude: quest.location.longitude, longitude: quest.location.latitude}} onPress={() => setShowPreview(true)}>
+      <Marker key={quest.id} coordinate={{latitude: quest.location.longitude, longitude: quest.location.latitude}} onPress={setShowPreview}>
         <View>
           {
             (showPreview) ? (
