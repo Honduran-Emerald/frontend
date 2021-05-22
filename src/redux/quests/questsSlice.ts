@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { QuestMeta, QuestPath } from '../../types/quest';
 
 interface QuestsState {
-    localQuests: [string, number, number][],
+    localQuests: QuestMeta[],
     acceptedQuests: (QuestMeta | QuestPath)[],
     trackedQuest: QuestPath | undefined
 }
@@ -17,7 +17,7 @@ export const questsSlice = createSlice({
     name: 'quests',
     initialState,
     reducers: {
-        setLocalQuests: (state, action: PayloadAction<[string, number, number][]>) => {
+        setLocalQuests: (state, action: PayloadAction<QuestMeta[]>) => {
             state.localQuests = action.payload
         },
 
