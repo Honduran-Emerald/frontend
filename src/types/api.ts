@@ -1,25 +1,20 @@
-import { Module } from "./quest";
+import { QuestModule, QuestMeta } from "./quest";
 
-export interface QuestAPI {
-    id: string,
-    owner: string,
-    title: string,
-    description: string,
-    image: string,
-    version: number,
-    createdAt: string,
-    votes: number,
-    plays: number,
-    finishes: number,
-    location: {
-        longitude: number,
-        latitude: number
-    }
-}
+export interface QuestAPI extends QuestMeta {}
 
 export interface EventAPI {
     type: string,
     reponseEvent: {
-        module?: Module
+        module?: QuestModule
     }
+}
+
+export interface QuestQueryAPI {
+    quests: QuestMeta[]
+}
+
+export interface CreateQueryAPI {
+    quest: QuestMeta,
+    modules: QuestModule[],
+    firstModuleId: string
 }
