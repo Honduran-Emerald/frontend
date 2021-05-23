@@ -5,9 +5,13 @@ import { QuestMeta } from '../types/quest';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../styles';
 
+interface QuestMarkerProps {
+  quest: QuestMeta;
+  showPreview: Boolean;
+  setShowPreview: () => void;
+}
 
-export const QuestMarker : React.FC<{quest: QuestMeta, showPreview:Boolean, setShowPreview: () => void}> = ({quest, showPreview, setShowPreview}) => {
-  
+export const QuestMarker : React.FC<QuestMarkerProps> = ({quest, showPreview, setShowPreview}) => {
     return (
       <Marker key={quest.id} coordinate={{latitude: quest.location.longitude, longitude: quest.location.latitude}} onPress={setShowPreview}>
         <View>
