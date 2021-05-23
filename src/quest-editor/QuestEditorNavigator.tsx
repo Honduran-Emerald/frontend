@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { ModuleGraph } from './ModuleGraph';
-import { ModuleGraphCaller } from './ModuleGraphCaller';
+import { ModuleGraph } from './graph/ModuleGraph';
+import { ModuleGraphCaller } from './graph/ModuleGraphCaller';
 
 const Stack = createStackNavigator();
 
