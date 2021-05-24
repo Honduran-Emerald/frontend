@@ -2,12 +2,14 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import i18n from 'i18n-js';
-import './translations';
 
 import { Colors } from '../styles';
 import { EMAILREGEX } from '../../GLOBALCONFIG';
+import { authTranslations } from './translations';
 
 export default function ForgotPasswordScreen({ navigation }: any) {
+
+  i18n.translations = authTranslations;
 
   const [email, setEmail] = React.useState('');
   const [error, setError] = React.useState(false);

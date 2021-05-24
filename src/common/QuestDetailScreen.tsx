@@ -2,12 +2,14 @@ import React from 'react';
 import {StyleSheet, Text, View, Button, Image, SafeAreaView, ScrollView, Dimensions} from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
-import {Avatar} from 'react-native-paper';
+import { Avatar } from 'react-native-paper';
 
 import { Colors } from '../styles';
-import './translations';
+import { commonTranslations } from './translations';
 
 export default function QuestDetailScreen() {
+
+  i18n.translations = commonTranslations;
 
   const quest = {
     id: "51243",

@@ -4,13 +4,13 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { sha512 } from 'js-sha512';
 import i18n from 'i18n-js';
-import './translations';
 
 import { Colors } from '../styles';
-import { BACKENDIP, EMAILREGEX } from '../../GLOBALCONFIG';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { EMAILREGEX } from '../../GLOBALCONFIG';
+import { useAppDispatch } from '../redux/hooks';
 import { setToken } from '../redux/authentication/authenticationSlice';
 import { loginRequest } from '../utils/requestHandler';
+import { authTranslations } from './translations';
 
 async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
@@ -18,8 +18,9 @@ async function save(key: string, value: string) {
 
 export default function LoginScreen({ navigation }: any) {
 
-  const token = useAppSelector((state) => state.authentication.token)
-  const dispatch = useAppDispatch()
+  i18n.translations = authTranslations;
+
+  const dispatch = useAppDispatch();
 
   // TODO remove default mail and pw
   const [email, setEmail] = React.useState('t3st@test.de');
@@ -66,17 +67,6 @@ export default function LoginScreen({ navigation }: any) {
       setIsButtonDisabled(false);
       return;
     }
-
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email,
-        password: sha512(password),
-      }),
-    };
 
     loginRequest(email, sha512(password))
       .then((response) => {
