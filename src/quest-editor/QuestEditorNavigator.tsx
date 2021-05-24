@@ -7,6 +7,9 @@ import { loadQuest, unloadQuest } from '../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { SvgDemo } from './graph/SvgAnimationDemo';
+import { CreateModuleScreen } from './CreateModuleScreen';
+import i18n from 'i18n-js';
+import './translations'
 
 const Stack = createStackNavigator();
 
@@ -40,6 +43,7 @@ export const QuestEditorNavigator = () => {
       </Stack.Screen>
       <Stack.Screen name='ModuleGraph' component={ModuleGraphCaller}/>
       <Stack.Screen name='SvgDemo' component={SvgDemo}/>
+      <Stack.Screen name='CreateModule' component={CreateModuleScreen} options={{headerTitle: i18n.t('createModuleTitle')}}/>
     </Stack.Navigator>
   );
 };

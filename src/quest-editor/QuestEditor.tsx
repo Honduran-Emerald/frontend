@@ -23,6 +23,7 @@ export const QuestEditor = () => {
             })}} title='Load other'/>
             <Button onPress={() => {navigation.navigate('ModuleGraph')}} title='Load graph'/>
             <Button onPress={() => {navigation.navigate('SvgDemo')}} title='Load SvgDemo'/>
+            <Button onPress={() => {navigation.navigate('CreateModule')}} title='Create Module'/>
         </View>
     )
 }

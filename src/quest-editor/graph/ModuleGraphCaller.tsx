@@ -30,6 +30,9 @@ export const ModuleGraphCaller = () => {
             'p7',
             'p8',
             'p9',
+
+            'a1',
+            'a2'
             
         ]);
 
@@ -60,6 +63,9 @@ export const ModuleGraphCaller = () => {
             ['p9', 'p6'],
             
             ['p5', 'p6'],
+
+            ['a1', 'a2'],
+            ['a2', 'n4']
         ])
 
         const { positions, graph } = fromLists(nodes.map(node => ({ 

@@ -3,6 +3,7 @@ import { Dimensions, Text, View } from 'react-native';
 import dagre from 'dagre';
 import { ScrollView } from 'react-native-gesture-handler';
 import Svg, { Line, Path } from 'react-native-svg';
+import AppLoading from 'expo-app-loading';
 
 const bezierOffset = 80;
 const rowMargin = 40;
@@ -52,16 +53,12 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
 
     return (
         (positions.length > 0) ?
-        <ScrollView style={{height: 1000}}>
-            
+        <ScrollView>
             <View style={{position: 'absolute'}}>
                  <View>
                     <Svg
                         height={svgHeight}
                         width={Dimensions.get('screen').width}>
-
-                    <Line x1={0} x2={Dimensions.get('screen').width} y1={0} y2='100%' opacity='0.2' stroke='red'/>
-                    <Line x2={0} x1={Dimensions.get('screen').width} y1={0} y2='100%' opacity='0.2' stroke='red'/>
 
                     {indexPath.map(edge => (<Path 
                         key={[edge.v.columnIdx, edge.v.rowIdx, edge.w.columnIdx, edge.w.rowIdx].join('|')}
@@ -89,7 +86,9 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
                 </View>
                     </View>
             
-            <View onLayout={(event) => setSvgHeight(event.nativeEvent.layout.height)}> 
+            <View 
+                onLayout={(event) => setSvgHeight(event.nativeEvent.layout.height)}
+                style={{marginBottom: 50}}> 
                 {positions.map((posLine, rowId) => (
                     <ScrollView 
                         key={rowId} 
