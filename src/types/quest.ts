@@ -6,19 +6,23 @@ export interface QuestMeta {
     title: string,
     description: string,
     image: string,
-    version: number,
     createdAt: string,
     votes: number,
     plays: number,
     finishes: number,
-    location: {
-        longitude: number,
-        latitude: number
-    }
+    location: Location
 }
 
-export interface QuestPath extends QuestMeta {
+export interface QuestMetaUpdate {
+    title?: string,
+    description?: string,
+    image?: string,
+    location?: Location
+}
 
+export interface QuestPath {
+
+    quest: QuestMeta
     modules: {
         module: QuestModule,
         memento: ModuleMememto
@@ -28,18 +32,20 @@ export interface QuestPath extends QuestMeta {
 
 export type ModuleMememto = any
 
-export interface QuestDeep extends QuestMeta {
+export interface QuestDeep {
 
-    firstModuleId: string,
-    modules: QuestModule[]
+    quest: QuestMeta,
+    modules: QuestModule[],
+    firstModuleId: number
 
 }
 
 export interface QuestModule {
-    moduleId: string,
+    moduleId: number,
     type: string,
     objective: string,
-    components: QuestComponent[]
+    components: QuestComponent[],
+    links: number[]
 }
 
 export interface QuestComponent {
