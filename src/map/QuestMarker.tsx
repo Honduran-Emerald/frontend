@@ -15,30 +15,34 @@ interface QuestMarkerProps {
 
 export const QuestMarker : React.FC<QuestMarkerProps> = ({quest, showPreview, setShowPreview}) => {
   return (
-    <Marker key={quest.id} coordinate={{latitude: quest.location.latitude, longitude: quest.location.longitude}} onPress={() => {!showPreview ? setShowPreview() : console.log(quest.id)}}>
-        {
-          (showPreview) ? (
-            <TouchableWithoutFeedback onPress={() => {console.log(quest.id)}}>
-              <View style={styles.preview}>
-                <View>
-                  <Text style={styles.title}>{quest.title}</Text>
-                  <Text>{quest.description}</Text>
-                </View>
-                <View style={[styles.bottom, {flex:1}]}>
-                  <Text>Votes: {quest.votes}</Text>
-                  <View style={[styles.creator]}>
-                    <Text numberOfLines={1} style={{marginRight: 8}}>{quest.ownerId.substr(0, 10)}</Text>
-                    <Avatar.Image source={{uri: "https://cdn.discordapp.com/avatars/204349580475760640/e80fb00612d26169ba7145a630ca1f38.png?size=256"}} size={30} />
-                  </View>
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-            ) : (
+    <Marker 
+      key={quest.id} 
+      coordinate={{latitude: quest.location.latitude, longitude: quest.location.longitude}} 
+      onPress={() => {!showPreview ? setShowPreview() : console.log(quest.id)}}
+    >
+      {
+        (showPreview) ? (
+          <TouchableWithoutFeedback onPress={() => {console.log(quest.id)}}>
+            <View style={styles.preview}>
               <View>
-                <MaterialCommunityIcons name='map-marker-alert' size={40} color={Colors.primary}/>
+                <Text style={styles.title}>{quest.title}</Text>
+                <Text>{quest.description}</Text>
               </View>
-            )
-        }
+              <View style={styles.bottom}>
+                <Text>Votes: {quest.votes}</Text>
+                <View style={[styles.creator]}>
+                  <Text style={styles.votes}>{quest.ownerId.substr(0, 10)}</Text>
+                  <Avatar.Image source={{uri: "https://cdn.discordapp.com/avatars/204349580475760640/e80fb00612d26169ba7145a630ca1f38.png?size=256"}} size={30} />
+                </View>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+          ) : (
+            <View>
+              <MaterialCommunityIcons name='map-marker-alert' size={40} color={Colors.primary}/>
+            </View>
+          )
+      }
     </Marker>
   )
 };
@@ -64,5 +68,8 @@ const styles = StyleSheet.create({
   creator: {
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  votes: {
+    marginRight: 8
   }
 })
