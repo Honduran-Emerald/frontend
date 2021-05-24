@@ -11,6 +11,7 @@ import { useAppSelector } from '../redux/hooks';
 import { useDispatch } from 'react-redux';
 import { queryQuestsRequest } from '../utils/requestHandler';
 import { setLocalQuests } from '../redux/quests/questsSlice';
+import { QuestMarker } from './QuestMarker';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -18,6 +19,7 @@ export const MapScreen = () => {
   const [heading, setHeading] = useState<number>();
   const [magnetometerSubscription, setMagnetometerSubscription] = useState<Subscription | null>(null);
   const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription>();
+  const [indexPreviewQuest, setIndexPreviewQuest] = useState<Number>();
   const _map : Ref<MapView> = useRef(null);
 
   const localQuests = useAppSelector((state) => state.quests.localQuests);
@@ -27,7 +29,8 @@ export const MapScreen = () => {
   useEffect(() => {
     queryQuestsRequest()
       .then(res => res.json())
-      .then(res => dispatch(setLocalQuests(res.quests.map((q:any) => [q.id, q.location.longitude, q.location.latitude]))))
+      .then(res => dispatch(setLocalQuests(res.quests)))
+      .catch(err => setErrorMsg(err.message))
   }, [])
 
   // Get Location Permission and set initial Location
@@ -86,6 +89,7 @@ export const MapScreen = () => {
     <View style={styles.container}>
       {(location != null && location.coords != null) &&
       (<MapView
+        onPress={() => {setIndexPreviewQuest(undefined)}}
         ref={_map}
         showsCompass={false}
         zoomEnabled={true}
@@ -96,8 +100,8 @@ export const MapScreen = () => {
         initialRegion={{latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0461, longitudeDelta: 0.0210}}
       >
         <UserMarker rotation={heading} coordinate={location.coords}/>
-        {localQuests.map((quest) => (
-          <QuestMarker key={quest[0]} coordinate={{longitude: quest[2], latitude: quest[1]}}/>
+        {localQuests && localQuests.map((quest, index) => (
+          <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
         ))}
       </MapView>
       )}
@@ -110,16 +114,6 @@ export const MapScreen = () => {
       />
     </View>
   );
-};
-
-const QuestMarker : React.FC<{coordinate : {longitude: number, latitude: number}}> = ({coordinate}) => {
-  return (
-    <Marker coordinate={coordinate}>
-      <View>
-        <MaterialCommunityIcons name='map-marker-alert' size={40} color={Colors.primary}/>
-      </View>
-    </Marker>
-  )
 };
 
 const UserMarker : React.FC<{rotation: number | undefined | null, coordinate: {latitude: number, longitude: number}}> = ({rotation, coordinate}) => {
