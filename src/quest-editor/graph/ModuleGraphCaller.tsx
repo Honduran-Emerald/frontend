@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { ModuleGraph, IGraphModuleNode } from './ModuleGraph';
+import { StyleSheet, Text } from 'react-native';
+import { ModuleGraph } from './ModuleGraph';
+import { fromLists } from './sugiyama';
 
 const nodeSize = 60;
 
 export const ModuleGraphCaller = () => {
 
-    const [nodes, setNodes] = useState<string[]>([])
+    const [positions, setPositions] = useState<string[][]>([])
 
-    const [links, setLinks] = useState<[string, string][]>([])
+    const [graph, setGraph] = useState<dagre.graphlib.Graph<{}>>();
     
 
     useEffect(() => {
-        setNodes([
+        let nodes = ([
             'n1',
             'n2',
             'n3',
@@ -25,13 +26,14 @@ export const ModuleGraphCaller = () => {
             'p4',
             'p5',
             'p6',
+
             'p7',
             'p8',
             'p9',
-            'p10',
+            
         ]);
 
-        setLinks([
+        let links = ([
             ['n1', 'n2'],
             ['n2', 'n3'],
             ['n2', 'n4'],
@@ -48,27 +50,32 @@ export const ModuleGraphCaller = () => {
             ['p2', 'p6'],
             ['p3', 'p6'],
             ['p4', 'p6'],
+
+
+            ['p1', 'p7'],
+            ['p1', 'p8'],
+            ['p1', 'p9'],
             ['p7', 'p6'],
             ['p8', 'p6'],
             ['p9', 'p6'],
-            ['p10', 'p6'],
             
             ['p5', 'p6'],
         ])
+
+        const { positions, graph } = fromLists(nodes.map(node => ({ 
+            id: node, component: 
+            <Text style={styles.textcomponent}>{node}</Text>
+        })), links);
+
+        setPositions(positions);
+        setGraph(graph)
+
+
     }, [])
 
     return (<ModuleGraph 
-        nodes={nodes.map(node => ({ 
-            id: node, component: 
-            <Text style={styles.textcomponent} 
-                onPress={() => {
-                    setNodes(nodes.concat('x' + (nodes.length-1)));
-                    setLinks(links.concat([[node, 'x' + (nodes.length-1)]]))
-                }}>{node}</Text>
-           , width: nodeSize, height: nodeSize
-        }))}
-        links={links}
-        nodeWidth={60}
+        positions={positions}
+        graph={graph}
     />)
 }
 
@@ -78,7 +85,13 @@ export const IncComp = ({t} : {t: string}) => {
 
 const styles = StyleSheet.create({
     textcomponent: {
-        //width: nodeSize,
-        //height: nodeSize
+        width: 70,
+        height: 60,
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        borderRadius: 20,
+        backgroundColor: 'white',
+        borderColor: 'black',
+        borderWidth: 1
     }
 })

@@ -55,7 +55,7 @@ export default function MainAppNavigator() {
       }}
     >
       <Tab.Screen name="Home" component={Dummy}/>
-      <Tab.Screen name="Questlog" component={QuestEditorNavigator} />
+      <Tab.Screen name="Questlog" component={QuestEditorNavigator} initialParams={{questId: '60a403f4af6922a6f2aa21ec'}}/>
       <Tab.Screen name="Map" component={MapNavigator}/>
       <Tab.Screen name="Chat" component={Dummy}/>
       <Tab.Screen name="Profile" component={Dummy} />

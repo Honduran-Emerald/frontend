@@ -3,115 +3,149 @@ import { Dimensions, Text, View } from 'react-native';
 import dagre from 'dagre';
 import { ScrollView } from 'react-native-gesture-handler';
 import Svg, { Line, Path } from 'react-native-svg';
-import { GraphModuleWrapper } from './GraphModuleWrapper';
 
-const horizontalPadding = 50;
-const verticalPadding = 100;
-const ranksepBase = 10
-const horizontalClampRatio = 0.6;
+const bezierOffset = 80;
+const rowMargin = 40;
+const contentHorizontalMargin = 10;
+const virtualHorizontalMargin = 10;
 
 export interface IGraphModuleNode {
-    id: string,
+    id: number | string,
     component: React.ReactElement,
-    width: number,
-    height: number,
 }
 export interface IModuleGraph {
-    nodes: IGraphModuleNode[],
-    links: [string, string][],
-    nodeWidth: number
+    graph: dagre.graphlib.Graph<{}>,
+    positions: string[][]
 }
 
-export const ModuleGraph: React.FC<IModuleGraph> = ({ nodes, links, nodeWidth }) => {
+export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
 
-    const [graph, setGraph] = useState<any>(undefined);
-
-    const ranksep = Math.max(...nodes.map(node => node.height)) + ranksepBase
+    const [posMap, setPosMap] = useState<{[id: string]: {x: number, y: number}}>();
+    const [svgHeight, setSvgHeight] = useState(0);
+    const [outerNodeOffset, setOuterNodeOffset] = useState<{[indices: string]: {x: number, y: number}}>({});
+    const [outerHorizontalScrollOffset, setOuterHorizontalScrollOffset] = useState<{x: number, y: number}[]>([])
+    const [innerHorizontalScrollOffset, setInnerHorizontalScrollOffset] = useState<number[]>([]);
+    const [indexPath, setIndexPath] = useState<{v: {rowIdx: number, columnIdx: number}, w: {rowIdx: number, columnIdx: number}}[]>([]);
 
 
     useEffect(() => {
-        const graph: any = new dagre.graphlib.Graph().setGraph({
-            ranksep: ranksep
-        });
+        setIndexPath(graph ? graph.edges()
+        .map(e => {
+            let lineIdx = positions.findIndex((line) => line.includes(e.v));
+            return ({
+                v: {
+                    rowIdx: lineIdx,
+                    columnIdx: positions[lineIdx].findIndex(n => n === e.v)
+                },
+                w: {
+                    rowIdx: lineIdx + 1,
+                    columnIdx: positions[lineIdx + 1].findIndex(n => n === e.w)
+                },
+            })
         
-        graph.setDefaultEdgeLabel(function() { return {}; });
-    
-        nodes.forEach(node => graph.setNode(node.id, {
-            component: node.component,
-            width: node.width,
-            n_height: node.height
-        }))
-    
-        links.forEach(link => graph.setEdge(link[0], link[1]))
+        }) : []);
+    }, [graph, positions])
 
-        dagre.layout(graph)
-
-        setGraph(graph)
-    }, [nodes,links,nodeWidth])
-
-    
-
-    const normalize = (x: number, minX: number, maxX: number, nodeWidth: number) => {
-        if (maxX - minX > Dimensions.get('screen').width*horizontalClampRatio) {
-            return (x - minX) * (Dimensions.get('screen').width - nodeWidth - horizontalPadding) / (maxX - minX) + horizontalPadding/2
-        }
-        return (x - minX) * (Dimensions.get('screen').width*horizontalClampRatio - nodeWidth) / (maxX - minX) + (Dimensions.get('screen').width/2 - (Dimensions.get('screen').width*horizontalClampRatio - nodeWidth)/2 - nodeWidth/2)
+    const s = {
+        margin: 0
     }
-    
-    const viewHeight = graph ? verticalPadding + Math.max(...graph.nodes().map((node: any) => (
-        graph.node(node)?.y + graph.node(node).n_height
-    )), 0) : 0;
 
-    const maxX = graph ? Math.max(...graph.nodes().map((node: any) => graph.node(node)?.x), 0) : 0
-    const minX = graph ? Math.min(...graph.nodes().map((node: any) => graph.node(node)?.x), 0) : 0
-    
     return (
-        (nodes.length > 0) ?
-        <ScrollView>
-            <View style={{height: viewHeight}} >
-                <Svg 
-                    height="100%" 
-                    width="100%" 
-                    viewBox={"0 0 "+Dimensions.get('screen').width+" "+viewHeight}
+        (positions.length > 0) ?
+        <ScrollView style={{height: 1000}}>
+            
+            <View style={{position: 'absolute'}}>
+                 <View>
+                    <Svg
+                        height={svgHeight}
+                        width={Dimensions.get('screen').width}>
 
-                    >
-                    <Line x1={0} x2={Dimensions.get('screen').width} y1={0} y2={viewHeight} opacity='0.2' stroke='red'/>
-                    <Line x2={0} x1={Dimensions.get('screen').width} y1={0} y2={viewHeight} opacity='0.2' stroke='red'/>
-                    {graph && graph.edges().map((edge: any, idx: number) => {
+                    <Line x1={0} x2={Dimensions.get('screen').width} y1={0} y2='100%' opacity='0.2' stroke='red'/>
+                    <Line x2={0} x1={Dimensions.get('screen').width} y1={0} y2='100%' opacity='0.2' stroke='red'/>
 
-                        const nX = (x: number) => (normalize(x, minX, maxX, nodeWidth) + nodeWidth/2)
-                        const nY = (y: number, node: any) => (y + verticalPadding/2 + graph.node(node).n_height/2)
+                    {indexPath.map(edge => (<Path 
+                        key={[edge.v.columnIdx, edge.v.rowIdx, edge.w.columnIdx, edge.w.rowIdx].join('|')}
+                        d={`M ${
+                            (outerHorizontalScrollOffset[edge.v.rowIdx]?.x || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.v.rowIdx] || 0)
+                        } ${
+                            (outerHorizontalScrollOffset[edge.v.rowIdx]?.y || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.y || 0)
+                        } C ${
+                            (outerHorizontalScrollOffset[edge.v.rowIdx]?.x || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.v.rowIdx] || 0)
+                        } ${
+                            (outerHorizontalScrollOffset[edge.v.rowIdx]?.y || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.y || 0) + bezierOffset
+                        } ${
+                            (outerHorizontalScrollOffset[edge.w.rowIdx]?.x || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.w.rowIdx] || 0)
+                        } ${
+                            (outerHorizontalScrollOffset[edge.w.rowIdx]?.y || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.y || 0) - bezierOffset
+                        } ${
+                            (outerHorizontalScrollOffset[edge.w.rowIdx]?.x || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.w.rowIdx] || 0)
+                        } ${
+                            (outerHorizontalScrollOffset[edge.w.rowIdx]?.y || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.y || 0)
+                        }`}
+                        stroke='black'
+                        strokeWidth='1'
+                    />))}
+                    </Svg>
+                </View>
+                    </View>
+            
+            <View onLayout={(event) => setSvgHeight(event.nativeEvent.layout.height)}> 
+                {positions.map((posLine, rowId) => (
+                    <ScrollView 
+                        key={rowId} 
+                        horizontal={true} 
+                        style={{marginTop: rowMargin, alignSelf: 'center'}}
+                        onLayout={(event) => {
+                            const c = outerHorizontalScrollOffset.slice()
+                            c[rowId] = {
+                                x: event.nativeEvent.layout.x,
+                                y: event.nativeEvent.layout.y
+                            }
+                            setOuterHorizontalScrollOffset(c)
+                            }}
+                        onScroll={(event) => {
+                            const c = innerHorizontalScrollOffset.slice()
+                            c[rowId] = event.nativeEvent.contentOffset.x
+                            setInnerHorizontalScrollOffset(c)
+                        }}
+                        showsHorizontalScrollIndicator={false}>
+                    
+                    {//@ts-ignore
+                    posLine.map((element, columnId) => {
+                        const ne = graph.node(element);
 
-                        const points = graph.edge(edge).points;
+                        if (ne === undefined) {
+                            return (
+                                <View 
+                                    key={element} 
+                                    onLayout={(event) => {
+                                        var {x, y, width, height} = event.nativeEvent.layout;
+                                        setPosMap({...posMap, [element]: {x: x+width/2, y: y+height/2}})
+                                        setOuterNodeOffset({...outerNodeOffset, [[rowId, columnId].join('|')]: {x: x+width/2, y: y+height/2} })
+                                    }}
+                                    style={{marginHorizontal: virtualHorizontalMargin}}>
 
-                        const path = ['M', nX(points[0].x), nY(points[0].y, edge.v)]
-                        for (var i = 1; i < points.length; i=i+2) {
-                            path.push('Q', nX(points[i].x), nY(points[i].y, edge.v), nX(points[i+1].x), nY(points[i+1].y, edge.v));
+                                </View>
+                            )
                         }
 
                         return (
-                            <Path
-                                key={idx}
-                                d={path.join(' ')}
-                                stroke='black'   
-                                strokeWidth='1'
-                            />
+                            <View key={element} style={{
+                                marginHorizontal: contentHorizontalMargin
+                            }} onLayout={(event) => {
+                                var {x, y, width, height} = event.nativeEvent.layout;
+                                setPosMap({...posMap, [element]: {x: x+width/2, y: y+height/2}})
+                                setOuterNodeOffset({...outerNodeOffset, [[rowId, columnId].join('|')]: {x: x+width/2, y: y+height/2} })
+                            }}>
+                                {//@ts-ignore
+                                ne.component}
+                            </View>
                         )
                     })}
-                </Svg>
+                </ScrollView>
+            ))}
             </View>
-            {graph && graph.nodes().map((node: any) => {
-                const ne = graph.node(node);
-                return (
-                    <GraphModuleWrapper 
-                        key={node} 
-                        component={ne.component} 
-                        x={normalize(ne.x, minX, maxX, nodeWidth)} 
-                        y={ne.y + verticalPadding/2}
-                        width={ne.width}
-                        height={ne.n_height}/>
-                )
-                })} 
-        </ScrollView> : <Text>Loading Graph</Text>
+            
+        </ScrollView> : <Text>Loading Graph...</Text>
     );
 }
