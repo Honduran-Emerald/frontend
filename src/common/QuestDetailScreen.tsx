@@ -6,28 +6,29 @@ import { Avatar } from 'react-native-paper';
 
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
-import { QuestMeta } from "../types/quest";
+import { QuestMeta } from '../types/quest';
 
 export default function QuestDetailScreen({ route }: any) {
 
   i18n.translations = commonTranslations;
 
   // TODO location, author, approx time missing, image fetch needed
-  const quest: QuestMeta = route.params ?  route.params.quest : {
+  // route.params ?  route.params.quest :
+  // approximateTime: "2 hours",
+  const quest: QuestMeta = {
     id: "51243",
     ownerId: "8127549",
-    title: "Rush B",
+    title: "Find phisn's bird",
     description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n",
     image: "87132984761298",
-    approximateTime: "5 seconds",
     version: 7,
     creationTime: "2021-05-18T18:14:12.793Z",
     votes: 356,
     plays: 1425,
     finishes: 780,
     location: {
-      longitude: 32.451234,
-      latitude: -2.24421
+      longitude: 49.873219,
+      latitude: 8.650930
     }
   };
 
@@ -50,11 +51,11 @@ export default function QuestDetailScreen({ route }: any) {
           <View style={styles.info}>
             <Entypo name='location-pin' size={24} color='black'/>
             <Text style={styles.location}>
-              de_dust2, T-Spawn
+              Darmstadt, Luisenplatz
             </Text>
             <Entypo name='stopwatch' size={24} color='black'/>
             <Text style={styles.time}>
-              5 seconds
+              2 hours
             </Text>
           </View>
           <Text style={styles.description}>
