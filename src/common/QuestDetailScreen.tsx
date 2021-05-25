@@ -6,13 +6,14 @@ import { Avatar } from 'react-native-paper';
 
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
+import { QuestMeta } from "../types/quest";
 
 export default function QuestDetailScreen({ route }: any) {
 
   i18n.translations = commonTranslations;
 
   // TODO location, author, approx time missing, image fetch needed
-  const quest = route.params ?  route.params.quest : {
+  const quest: QuestMeta = route.params ?  route.params.quest : {
     id: "51243",
     ownerId: "8127549",
     title: "Rush B",
@@ -53,7 +54,7 @@ export default function QuestDetailScreen({ route }: any) {
             </Text>
             <Entypo name='stopwatch' size={24} color='black'/>
             <Text style={styles.time}>
-              {quest.approximateTime}
+              5 seconds
             </Text>
           </View>
           <Text style={styles.description}>
