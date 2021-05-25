@@ -2,7 +2,7 @@
 
 export interface QuestMeta {
     id: string,
-    owner: string,
+    ownerId: string,
     title: string,
     description: string,
     image: string,
