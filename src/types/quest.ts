@@ -7,7 +7,7 @@ export interface QuestMeta {
     description: string,
     image: string,
     version: number,
-    createdAt: string,
+    creationTime: string,
     votes: number,
     plays: number,
     finishes: number,
