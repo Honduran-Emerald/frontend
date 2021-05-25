@@ -2,14 +2,14 @@ export const commonTranslations = {
   en: {
     'loading': 'Getting things ready',
     'acceptButton': 'Accept quest',
-    'votes': 'UPVOTES',
+    'votes': 'VOTES',
     'plays': 'PLAYED',
     'finished': 'FINISHED',
   },
   de: {
     'loading': 'Bereite App vor',
     'acceptButton': 'Quest akzeptieren',
-    'votes': 'UPVOTES',
+    'votes': 'VOTES',
     'plays': 'GESPIELT',
     'finished': 'BEENDET',
   },
