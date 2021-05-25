@@ -3,28 +3,23 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { sha512 } from 'js-sha512';
+import i18n from 'i18n-js';
+import './translations';
 
 import { Colors } from '../styles';
 import { BACKENDIP, EMAILREGEX } from '../../GLOBALCONFIG';
-import { TokenContext } from '../context/TokenContext';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { setToken } from '../redux/authentication/authenticationSlice';
+import { loginRequest } from '../utils/requestHandler';
 
 async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
 }
 
-const english = {
-  forgotPassword: 'Forgot Password?',
-  loginButton: 'Login',
-  createAccountButton: 'Create new account',
-  emailPlaceholder: 'Email',
-  passwordPlaceholder: 'Password',
-  errorEmailMessage: 'Enter a valid email',
-  errorPasswordMessage: 'Enter a password',
-  errorFetchMessage: 'Email or password incorrect',
-}
-
 export default function LoginScreen({ navigation }: any) {
-  const {tokenContext , setTokenContext} = React.useContext(TokenContext);
+
+  const token = useAppSelector((state) => state.authentication.token)
+  const dispatch = useAppDispatch()
 
   // TODO remove default mail and pw
   const [email, setEmail] = React.useState('t3st@test.de');
@@ -83,12 +78,12 @@ export default function LoginScreen({ navigation }: any) {
       }),
     };
 
-    fetch(`${BACKENDIP}/auth/login`, requestOptions)
+    loginRequest(email, sha512(password))
       .then((response) => {
         if(response.ok) {
           response.json().then((data) => {
             save('UserToken', data.token).then((() => {}), (() => {}));
-            setTokenContext(data.token);
+            dispatch(setToken(data.token));
           })
         } else if(response.status === 400) {
           setErrorFetch(true);
@@ -112,7 +107,7 @@ export default function LoginScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>HONDURAN EMERALD</Text>
+      <Text style={styles.header}>{i18n.t('appName')}</Text>
       <TextInput
         style={{...styles.input, borderColor: errorEmail ? Colors.error : Colors.black}}
         onChangeText={(input) => updateEmail(input)}
@@ -125,7 +120,7 @@ export default function LoginScreen({ navigation }: any) {
       <View>
         {
           errorEmail &&
-          <Text style={styles.errorText}>{english.errorEmailMessage}</Text>
+          <Text style={styles.errorText}>{i18n.t('errorEmailMessage')}</Text>
         }
       </View>
       <TextInput
@@ -141,24 +136,24 @@ export default function LoginScreen({ navigation }: any) {
       <View>
         {
           errorPassword &&
-          <Text style={styles.errorText}>{english.errorPasswordMessage}</Text>
+          <Text style={styles.errorText}>{i18n.t('errorPasswordMessage')}</Text>
         }
       </View>
       <View>
         {
           errorFetch &&
-          <Text style={styles.errorText}>{english.errorFetchMessage}</Text>
+          <Text style={styles.errorText}>{i18n.t('errorFetchMessage')}</Text>
         }
       </View>
       <View style={styles.forgotPW}>
-        <Text onPress={handleForgotPW} style={{color: Colors.primary}}>{english.forgotPassword}</Text>
+        <Text onPress={handleForgotPW} style={{color: Colors.primary}}>{i18n.t('forgotPassword')}</Text>
       </View>
       <View style={styles.buttons}>
         <View style={styles.button}>
-          <Button color={Colors.primary} disabled={isButtonDisabled} title={english.loginButton} onPress={handleLogin}/>
+          <Button color={Colors.primary} disabled={isButtonDisabled} title={i18n.t('loginButton')} onPress={handleLogin}/>
         </View>
         <View style={styles.button}>
-          <Button color={Colors.primaryLight} disabled={isButtonDisabled} title={english.createAccountButton} onPress={handleRegister}/>
+          <Button color={Colors.primaryLight} disabled={isButtonDisabled} title={i18n.t('createAccountButton')} onPress={handleRegister}/>
         </View>
       </View>
       <StatusBar style={'auto'}/>

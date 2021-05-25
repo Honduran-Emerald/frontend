@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useRef, Ref } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { Subscription } from '@unimodules/react-native-adapter';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { MagnetometerSubscription } from './MagnetometerSubscription';
 import { Colors, Containers } from '../styles';
+import { FAB } from 'react-native-paper';
+import { useAppSelector } from '../redux/hooks';
+import { useDispatch } from 'react-redux';
+import { queryQuestsRequest } from '../utils/requestHandler';
+import { setLocalQuests } from '../redux/quests/questsSlice';
+import { QuestMarker } from './QuestMarker';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -14,8 +19,19 @@ export const MapScreen = () => {
   const [heading, setHeading] = useState<number>();
   const [magnetometerSubscription, setMagnetometerSubscription] = useState<Subscription | null>(null);
   const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription>();
+  const [indexPreviewQuest, setIndexPreviewQuest] = useState<Number>();
   const _map : Ref<MapView> = useRef(null);
 
+  const localQuests = useAppSelector((state) => state.quests.localQuests);
+  const dispatch = useDispatch();
+
+  // TEMP, REMOVE LATER
+  useEffect(() => {
+    queryQuestsRequest()
+      .then(res => res.json())
+      .then(res => dispatch(setLocalQuests(res.quests)))
+      .catch(err => setErrorMsg(err.message))
+  }, [])
 
   // Get Location Permission and set initial Location
   useEffect(() => {
@@ -58,7 +74,7 @@ export const MapScreen = () => {
 
   // Animate the camera to the current position set in location-state
   const animateCameraToLocation = () => {
-    if(_map.current && location?.coords)
+    if (_map.current && location?.coords)
     _map.current.animateCamera({center: location.coords, zoom: 15, heading:0})
   }
 
@@ -73,6 +89,7 @@ export const MapScreen = () => {
     <View style={styles.container}>
       {(location != null && location.coords != null) &&
       (<MapView
+        onPress={() => {setIndexPreviewQuest(undefined)}}
         ref={_map}
         showsCompass={false}
         zoomEnabled={true}
@@ -83,19 +100,18 @@ export const MapScreen = () => {
         initialRegion={{latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0461, longitudeDelta: 0.0210}}
       >
         <UserMarker rotation={heading} coordinate={location.coords}/>
+        {localQuests && localQuests.map((quest, index) => (
+          <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
+        ))}
       </MapView>
       )}
-      <ZoomToLocationButton animateCameraToLocation={animateCameraToLocation}/>
-    </View>
-  );
-};
 
-const ZoomToLocationButton : React.FC<{animateCameraToLocation: Function}> = ({animateCameraToLocation}) => {
-  return(
-    <View style={styles.locationButton}>
-      <TouchableOpacity onPress={() => {animateCameraToLocation()}}>
-        <MaterialIcons name='my-location' size={30} color={Colors.primary}/>
-      </TouchableOpacity>
+      <FAB 
+        style={styles.locationButton}
+        icon="crosshairs-gps"
+        onPress={animateCameraToLocation}
+        color={Colors.primary}
+      />
     </View>
   );
 };
@@ -125,8 +141,5 @@ const styles = StyleSheet.create({
     right: 10,
     bottom: 20,
     backgroundColor: Colors.background,
-    borderRadius: 100,
-    padding: 12,
-    elevation: 3
   }
 });
