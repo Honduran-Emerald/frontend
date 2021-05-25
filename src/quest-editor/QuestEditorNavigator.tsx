@@ -7,7 +7,7 @@ import { loadQuest, unloadQuest } from '../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { SvgDemo } from './graph/SvgAnimationDemo';
-import { CreateModuleScreen } from './CreateModuleScreen';
+import { CreateModuleScreen } from './createModule/CreateModuleScreen';
 import i18n from 'i18n-js';
 import './translations'
 

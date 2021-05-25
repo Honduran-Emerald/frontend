@@ -15,6 +15,12 @@ i18n.translations = {
         'chooseModuleType': 'Choose a Module Type',
         'moduleObjectiveLabel': 'Module Objective',
 
+        'createModuleButton': 'Create Module',
+
+        'addStoryText': 'Add text the User will read',
+        'addEndText': 'Add text the User will read on Quest completion',
+        'addEndSlider': 'Choose how successfull this ending is (Players will get Exp. accordingly)'
+
     }
 }
 
