@@ -7,6 +7,7 @@ import { TokenContext } from './context/TokenContext';
 import * as SecureStore from 'expo-secure-store';
 
 import { MapNavigator } from './map/MapNavigator';
+import {DiscoveryNavigator} from "./discovery/DiscoveryNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -47,7 +48,7 @@ export default function MainAppNavigator() {
         activeTintColor: "#1D79AC"
       }}
     >
-      <Tab.Screen name="Home" component={Dummy}/>
+      <Tab.Screen name="Home" component={DiscoveryNavigator}/>
       <Tab.Screen name="Questlog" component={Dummy} />
       <Tab.Screen name="Map" component={MapNavigator}/>
       <Tab.Screen name="Chat" component={Dummy}/>

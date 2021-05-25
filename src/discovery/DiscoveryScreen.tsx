@@ -1,14 +1,29 @@
 import React from 'react';
-import {View, Text} from "react-native";
+import {View, Text, StyleSheet, ScrollView} from "react-native";
 import {StatusBar} from "expo-status-bar";
+import {Colors} from "../styles";
+import {ScrollMenu} from "./ScrollMenu";
 
 export const DiscoveryScreen = () => {
     return (
-        <View style={{justifyContent: "center", flexGrow: 1, alignItems: "center", backgroundColor: "#FFF"}}>
-            <Text>
-                aaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-            </Text>
+        <View style={styles.screen}>
+            <View style={styles.discovery}>
+                <ScrollMenu header={"Nearby"} type={"nearby"}/>
+                <ScrollMenu header={"Check out!"} type={"checkout"}/>
+                <ScrollMenu header={"Recently Visited"} type={"recent"}/>
+            </View>
             <StatusBar style="auto"/>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    screen: {
+        justifyContent: "center",
+        flexGrow: 1,
+        backgroundColor: Colors.background,
+    },
+    discovery: {
+        margin: 10,
+    },
+});
