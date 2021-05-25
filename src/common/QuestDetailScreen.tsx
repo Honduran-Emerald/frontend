@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, Button, Image, SafeAreaView, ScrollView, Dimensions} from 'react-native';
+import { StyleSheet, Text, View, Button, Image, SafeAreaView, ScrollView, Dimensions, TouchableNativeFeedback } from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
 import { Avatar } from 'react-native-paper';
@@ -7,16 +7,18 @@ import { Avatar } from 'react-native-paper';
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
 
-export default function QuestDetailScreen() {
+export default function QuestDetailScreen({ route }: any) {
 
   i18n.translations = commonTranslations;
 
-  const quest = {
+  // TODO location, author, approx time missing, image fetch needed
+  const quest = route.params ?  route.params.quest : {
     id: "51243",
     ownerId: "8127549",
     title: "Rush B",
     description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n",
     image: "87132984761298",
+    approximateTime: "5 seconds",
     version: 7,
     creationTime: "2021-05-18T18:14:12.793Z",
     votes: 356,
@@ -31,7 +33,8 @@ export default function QuestDetailScreen() {
   const creationDate = new Date(Date.parse(quest.creationTime));
 
   const handleAccept = () => {
-
+    // TODO implement
+    alert('Add quest to quest log');
   };
 
   return (
@@ -50,7 +53,7 @@ export default function QuestDetailScreen() {
             </Text>
             <Entypo name='stopwatch' size={24} color='black'/>
             <Text style={styles.time}>
-              5 seconds
+              {quest.approximateTime}
             </Text>
           </View>
           <Text style={styles.description}>
@@ -86,17 +89,22 @@ export default function QuestDetailScreen() {
               </Text>
             </View>
           </View>
-          <View style={styles.authorView}>
-            <Avatar.Image style={styles.authorAvatar} source={{uri: 'https://pbs.twimg.com/profile_images/1214590755706150913/Jm78BGWD_400x400.jpg'}}/>
-            <View>
-              <Text style={styles.authorName}>
-                Trillugo
-              </Text>
-              <Text style={styles.smallText}>
-                {`${creationDate.getDate()}.${creationDate.getMonth() + 1}.${creationDate.getFullYear()}`}
-              </Text>
+          {
+            // TODO implement go to profile navigation
+          }
+          <TouchableNativeFeedback onPress={() => { alert('Go to profile') }}>
+            <View style={styles.authorView}>
+              <Avatar.Image style={styles.authorAvatar} source={{uri: 'https://pbs.twimg.com/profile_images/1214590755706150913/Jm78BGWD_400x400.jpg'}}/>
+              <View>
+                <Text style={styles.authorName}>
+                  Trillugo
+                </Text>
+                <Text style={styles.smallText}>
+                  {`${creationDate.getDate()}.${creationDate.getMonth() + 1}.${creationDate.getFullYear()}`}
+                </Text>
+              </View>
             </View>
-          </View>
+          </TouchableNativeFeedback>
           <View style={styles.spacer}/>
         </View>
       </ScrollView>
@@ -166,13 +174,14 @@ const styles = StyleSheet.create({
   stats: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    marginBottom: 25,
+    marginBottom: 20,
     width: '100%',
   },
   center: {
     alignItems: 'center',
   },
   authorView: {
+    padding: 5,
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
