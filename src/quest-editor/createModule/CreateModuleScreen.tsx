@@ -7,6 +7,8 @@ import '../translations';
 import { CreateStoryModule } from './CreateStoryModule';
 import { CreateEndModule } from './CreateEndModule';
 import { CreateChoiceModule } from './CreateChoiceModule';
+import { ComponentChoice } from './ComponentChoice';
+import { QuestComponent } from '../../types/quest';
 
 
 export interface ICreateModule {
@@ -18,6 +20,7 @@ export const CreateModuleScreen = () => {
     const [moduleName, setModuleName] = useState('')
     const [chosenModuleType, setChosenModuleType] = useState('')
     const [finalModule, setFinalModule] = useState();
+    const [components, setComponents] = useState<QuestComponent[]>([]);
 
     const saveModule = (finalModule: object) => {
         console.log({...finalModule, moduleName: moduleName})
@@ -53,6 +56,9 @@ export const CreateModuleScreen = () => {
             <ScrollView horizontal>
                 {modules.map(m => <ModuleCard moduleType={m} key={m} setChosenModule={setChosenModuleType}/>)}
             </ScrollView>
+
+            <ComponentChoice components={components} setComponents={setComponents}/>
+
             <Divider style={{marginVertical: 10}}/>
             {chosenModuleType in moduleMap && moduleMap[chosenModuleType]}
         </ScrollView>

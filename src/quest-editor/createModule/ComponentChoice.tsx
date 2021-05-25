@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { QuestComponent } from '../../types/quest';
 
 
@@ -11,7 +12,7 @@ export const ComponentChoice: React.FC<IComponentChoice> = ({ components, setCom
 
 
     return (
-        
+        <Text>Test</Text>
     )
 
 }
