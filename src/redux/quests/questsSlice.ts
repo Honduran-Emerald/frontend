@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { QuestMeta, QuestPath } from '../../types/quest';
+import { QuestHeader, QuestPath } from '../../types/quest';
 
 interface QuestsState {
-    localQuests: QuestMeta[],
-    acceptedQuests: (QuestMeta | QuestPath)[],
+    localQuests: QuestHeader[],
+    acceptedQuests: (QuestHeader | QuestPath)[],
     trackedQuest: QuestPath | undefined
 }
 
@@ -17,14 +17,14 @@ export const questsSlice = createSlice({
     name: 'quests',
     initialState,
     reducers: {
-        setLocalQuests: (state, action: PayloadAction<QuestMeta[]>) => {
+        setLocalQuests: (state, action: PayloadAction<QuestHeader[]>) => {
             state.localQuests = action.payload
         },
 
-        setAcceptedQuests: (state, action: PayloadAction<(QuestMeta | QuestPath)[]>) => {
+        setAcceptedQuests: (state, action: PayloadAction<(QuestHeader | QuestPath)[]>) => {
             state.acceptedQuests = action.payload
         },
-        acceptQuest: (state, action: PayloadAction<QuestMeta | QuestPath>) => {
+        acceptQuest: (state, action: PayloadAction<QuestHeader | QuestPath>) => {
             if (!state.acceptedQuests.find(quest => quest.id === action.payload.id)) {
                 state.acceptedQuests.push(action.payload)
             }
@@ -37,6 +37,7 @@ export const questsSlice = createSlice({
         trackQuest: (state, action: PayloadAction<QuestPath>) => {
             state.acceptedQuests = state.acceptedQuests.map(quest => quest.id === action.payload.id ? action.payload : quest)
             if (!state.acceptedQuests.find(quest => quest.id === action.payload.id)) {
+                console.log('Trying to track not yet accepted quest.')
                 state.acceptedQuests.push(action.payload)
             }
             state.trackedQuest = action.payload
