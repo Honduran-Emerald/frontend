@@ -6,7 +6,7 @@ export interface QuestBase {
     title: string,
     description: string,
     imageId: string,
-    creationTime: Date,
+    creationTime: string,
     location: Location,
     tags: string[]
     profileImageId: string,
