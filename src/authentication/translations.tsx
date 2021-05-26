@@ -1,6 +1,4 @@
-import i18n from 'i18n-js';
-
-i18n.translations = {
+export const authTranslations = {
   en: {
     appName: 'HONDURAN EMERALD',
     forgotPassword: 'Forgot Password?',

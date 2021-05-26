@@ -24,7 +24,6 @@ export interface QuestHeader extends QuestBase {
     ownerImageId: string,
     public: boolean,
     version: number,
-
     votes: number,
     plays: number,
     finishes: number,
