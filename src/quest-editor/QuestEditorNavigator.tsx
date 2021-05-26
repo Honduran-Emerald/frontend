@@ -9,12 +9,15 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import { SvgDemo } from './graph/SvgAnimationDemo';
 import { CreateModuleScreen } from './createModule/CreateModuleScreen';
 import i18n from 'i18n-js';
-import './translations'
+import { editorTranslations } from './translations'
 import { MyQuestList } from './MyQuestList';
 
 const Stack = createStackNavigator();
 
 export const QuestEditorNavigator = () => {
+
+  i18n.translations = editorTranslations
+  i18n.fallbacks = true
 
   const route = useRoute<RouteProp<{ params: {
       questId: string

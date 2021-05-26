@@ -1,6 +1,6 @@
 import i18n from 'i18n-js';
 
-i18n.translations = {
+export const editorTranslations = {
     en: {
         'createModuleTitle': 'Create Module',
         'positionModuleName': 'Position Module',
@@ -23,5 +23,3 @@ i18n.translations = {
 
     }
 }
-
-i18n.fallbacks = true;
