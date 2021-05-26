@@ -1,30 +1,51 @@
+import { Location } from './general';
 
+export interface QuestBase {
 
-export interface QuestMeta {
     id: string,
-    owner: string,
     title: string,
     description: string,
-    image: string,
-    createdAt: string,
+    imageId: string,
+    creationTime: string,
+    location: Location,
+    tags: string[]
+    profileImageId: string,
+    profileName: string,
+    locationName: string,
+
+}
+
+/**
+ * Class for public query
+ */
+export interface QuestHeader extends QuestBase {
+    ownerId: string,
+    ownerName: string,
+    ownerImageId: string,
+    public: boolean,
+    version: number,
     votes: number,
     plays: number,
     finishes: number,
-    location: Location
 }
 
-export interface QuestMetaUpdate {
+export interface QuestBaseUpdate {
     title?: string,
     description?: string,
-    image?: string,
-    location?: Location
+    imageId?: string,
+    location?: Location,
+    tags?: string[],
+    profileImageId?: string,
+    profileName?: string,
+    locationName?: string,
+
 }
 
-export interface QuestPath {
+export interface QuestPath extends QuestHeader {
 
     quest: QuestMeta
     modules: {
-        module: QuestModule,
+        module: PrototypeModule,
         memento: ModuleMememto
     }[]
 
@@ -32,23 +53,22 @@ export interface QuestPath {
 
 export type ModuleMememto = any
 
-export interface QuestDeep {
+export interface QuestPrototype extends QuestBase {
 
-    quest: QuestMeta,
-    modules: QuestModule[],
-    firstModuleId: number
+    approximateTime: string,
+    firstModuleId: number,
+    modules: PrototypeModule[]
 
 }
 
-export interface QuestModule {
-    moduleId: number,
+export interface PrototypeModule {
+    id: number,
     type: string,
     objective: string,
-    components: QuestComponent[],
-    links: number[]
+    components: PrototypeComponent[]
+    
 }
 
-export interface QuestComponent {
-    componentId: string,
-    componentType: string
+export interface PrototypeComponent {
+    type: string,
 }

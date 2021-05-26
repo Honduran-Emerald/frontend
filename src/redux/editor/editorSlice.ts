@@ -1,39 +1,39 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { QuestMeta, QuestModule, QuestDeep, QuestMetaUpdate } from '../../types/quest';
+import { QuestHeader, PrototypeModule, QuestPrototype, QuestBaseUpdate } from '../../types/quest';
 
 interface EditorState {
-    questDeep: QuestDeep | undefined
+    questPrototype: QuestPrototype | undefined
 }
 
 const initialState: EditorState = {
-    questDeep: undefined
+    questPrototype: undefined
 }
 
 export const questsSlice = createSlice({
     name: 'editor',
     initialState,
     reducers: {
-        loadQuest: (state, action: PayloadAction<QuestDeep>) => {
-            state.questDeep = action.payload
+        loadQuest: (state, action: PayloadAction<QuestPrototype>) => {
+            state.questPrototype = action.payload
         },
         unloadQuest: (state) => {
-            state.questDeep = undefined
+            state.questPrototype = undefined
         },
 
-        updateQuestMeta: (state, action: PayloadAction<QuestMetaUpdate>) => {
-            if (state.questDeep !== undefined)
-                state.questDeep.quest = {...state.questDeep.quest, ...action.payload}
+        updateQuestMeta: (state, action: PayloadAction<QuestBaseUpdate>) => {
+            if (state.questPrototype !== undefined)
+                state.questPrototype = {...state.questPrototype, ...action.payload}
         },
-        addOrUpdateQuestModule: (state, action: PayloadAction<QuestModule>) => {
-            if (state.questDeep !== undefined)
-                state.questDeep.modules = state.questDeep.modules
-                    .filter(m => m.moduleId !== action.payload.moduleId)
+        addOrUpdateQuestModule: (state, action: PayloadAction<PrototypeModule>) => {
+            if (state.questPrototype !== undefined)
+                state.questPrototype.modules = state.questPrototype.modules
+                    .filter(m => m.id !== action.payload.id)
                     .concat(action.payload)
         },
         deleteQuestModule: (state, action: PayloadAction<number>) => {
-            if (state.questDeep !== undefined)
-                state.questDeep.modules = state.questDeep.modules
-                    .filter(m => m.moduleId !== action.payload) 
+            if (state.questPrototype !== undefined)
+                state.questPrototype.modules = state.questPrototype.modules
+                    .filter(m => m.id !== action.payload) 
         }
 
     }
