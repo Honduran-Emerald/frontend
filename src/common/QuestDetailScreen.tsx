@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, SafeAreaView, ScrollView, Dimensions, TouchableNativeFeedback } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, SafeAreaView, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar} from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
 import { Avatar } from 'react-native-paper';
 
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
-import { QuestMeta } from '../types/quest';
+import { QuestHeader } from '../types/quest';
 
 export default function QuestDetailScreen({ route }: any) {
 
@@ -15,12 +15,19 @@ export default function QuestDetailScreen({ route }: any) {
   // TODO location, author, approx time missing, image fetch needed
   // route.params ?  route.params.quest :
   // approximateTime: "2 hours",
-  const quest: QuestMeta = {
+  const quest: QuestHeader = {
     id: "51243",
     ownerId: "8127549",
+    ownerImageId: "",
+    ownerName: "",
+    tags: [],
+    profileImageId: "",
+    profileName: "",
+    locationName: "",
+    public: true,
     title: "Find phisn's bird",
     description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n",
-    image: "87132984761298",
+    imageId: "87132984761298",
     version: 7,
     creationTime: "2021-05-18T18:14:12.793Z",
     votes: 356,
@@ -120,6 +127,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: StatusBar.currentHeight,
   },
   scrollContainer: {
     width: '100%',
