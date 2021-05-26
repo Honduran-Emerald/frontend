@@ -7,8 +7,8 @@ import '../translations';
 import { CreateStoryModule } from './CreateStoryModule';
 import { CreateEndModule } from './CreateEndModule';
 import { CreateChoiceModule } from './CreateChoiceModule';
-import { QuestComponent } from '../../types/quest';
 import { primary } from '../../styles/colors';
+import { PrototypeComponent } from '../../types/quest';
 
 
 export interface ICreateModule {
@@ -20,7 +20,7 @@ export const CreateModuleScreen = () => {
     const [moduleName, setModuleName] = useState('')
     const [chosenModuleType, setChosenModuleType] = useState('')
     const [finalModule, setFinalModule] = useState();
-    const [components, setComponents] = useState<QuestComponent[]>([]);
+    const [components, setComponents] = useState<PrototypeComponent[]>([]);
 
     const saveModule = (finalModule: object) => {
         console.log({...finalModule, moduleName: moduleName})

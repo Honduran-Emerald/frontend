@@ -20,11 +20,11 @@ export const QuestEditorNavigator = () => {
       questId: string
   }}, 'params'>>();
 
-  const questDeep = useAppSelector((state) => state.editor.questDeep)
+  const questDeep = useAppSelector((state) => state.editor.questPrototype)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-      if (!(questDeep && questDeep.quest.id === route.params.questId)) {
+      if (!(questDeep && questDeep.id === route.params.questId)) {
         dispatch(unloadQuest());
         createGetRequest(route.params.questId)
           .then(q => q.json())

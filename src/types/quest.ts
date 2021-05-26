@@ -43,7 +43,6 @@ export interface QuestBaseUpdate {
 
 export interface QuestPath extends QuestHeader {
 
-    quest: QuestMeta
     modules: {
         module: PrototypeModule,
         memento: ModuleMememto

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { QuestHeader, PrototypeModule, QuestPrototype, QuestBaseUpdate } from '../../types/quest';
+import { PrototypeModule, QuestPrototype, QuestBaseUpdate } from '../../types/quest';
 
 interface EditorState {
     questPrototype: QuestPrototype | undefined

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
-import { Button, Subheading, TextInput, Title } from 'react-native-paper';
+import { Button, Subheading, TextInput } from 'react-native-paper';
 import { ICreateModule } from './CreateModuleScreen';
 import i18n from 'i18n-js';
 

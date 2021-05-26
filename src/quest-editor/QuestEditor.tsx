@@ -1,14 +1,11 @@
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/core';
-import React, { useEffect } from 'react';
+import { useNavigation } from '@react-navigation/core';
+import React from 'react';
 import { Text, View, Button } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { loadQuest } from '../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { createQueryRequest } from '../utils/requestHandler';
 
 export const QuestEditor = () => {
 
-    const questDeep = useAppSelector((state) => state.editor.questDeep)
+    const questDeep = useAppSelector((state) => state.editor)
     const dispatch = useAppDispatch()
 
     const navigation = useNavigation()
