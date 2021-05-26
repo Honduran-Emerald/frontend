@@ -42,7 +42,9 @@ export const registerRequest = (username: string, email: string, hashed_password
 
 export const queryQuestsRequest = (offset: number = 0) => (request(`/quest/query/?offset=${offset}`))
 
-export const createQueryRequest = (questId: string) => (request(`/create/query?questId=${questId}`))
+export const createQueryRequest = (offset: number = 0) => (request(`/create/query?offset=${offset}`))
+
+export const createGetRequest = (questId: string) => (request(`/create/get/?queryId=${questId}`))
 
 export const createQuestRequest =  (longitude: number, latitude: number, title: string, description: string, imageName: string) => (
   request('/create/quest/', 'POST', {

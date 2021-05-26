@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { Caption, Card, Divider, Headline, Paragraph, Subheading, TextInput, Title } from 'react-native-paper';
+import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
+import { Card, Divider, Subheading, TextInput } from 'react-native-paper';
 import i18n from 'i18n-js';
 import '../translations';
 import { CreateStoryModule } from './CreateStoryModule';
 import { CreateEndModule } from './CreateEndModule';
 import { CreateChoiceModule } from './CreateChoiceModule';
-import { ComponentChoice } from './ComponentChoice';
 import { QuestComponent } from '../../types/quest';
+import { primary } from '../../styles/colors';
 
 
 export interface ICreateModule {
@@ -40,7 +40,7 @@ export const CreateModuleScreen = () => {
     }
 
     return (
-        <ScrollView>
+        <View>
             <TextInput
                 dense
                 style={{margin: 10, marginVertical: 20}}
@@ -54,26 +54,34 @@ export const CreateModuleScreen = () => {
             </Subheading>
 
             <ScrollView horizontal>
-                {modules.map(m => <ModuleCard moduleType={m} key={m} setChosenModule={setChosenModuleType}/>)}
+                {modules.map(m => <ModuleCard moduleType={m} key={m} setChosenModule={setChosenModuleType} chosen={m === chosenModuleType}/>)}
             </ScrollView>
 
-            <ComponentChoice components={components} setComponents={setComponents}/>
+            {/*<ComponentChoice components={components} setComponents={setComponents}/>*/}
 
             <Divider style={{marginVertical: 10}}/>
             {chosenModuleType in moduleMap && moduleMap[chosenModuleType]}
-        </ScrollView>
+        </View>
     )
 }
 
-const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) => void}> = ({ moduleType, setChosenModule }) => (
-    <Card 
-        style={{maxWidth: 200, margin: 10}}
+const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) => void, chosen: boolean}> = ({ moduleType, setChosenModule, chosen }) => (
+    <TouchableHighlight
+        style={{margin: 10, borderRadius: 5}}
         onPress={() => setChosenModule(moduleType)}>
-        <Card.Title 
-            title={i18n.t(moduleType + 'Name')} 
-            />
-        <Card.Content>
-            <Text>{i18n.t(moduleType + 'Description')} </Text>
-        </Card.Content>
-    </Card>
+        <Card 
+            style={{maxWidth: 200, padding: 0, backgroundColor: chosen ? primary : 'white', overflow: 'hidden'}}
+            >
+            <Card.Title 
+                titleStyle={{color: chosen ? 'white' : 'black'}}
+                title={i18n.t(moduleType + 'Name')} 
+                />
+            <Card.Content>
+                <Text 
+                    style={{color: chosen ? 'white' : 'black'}}
+                    >{i18n.t(moduleType + 'Description')} </Text>
+            </Card.Content>
+        </Card>
+    </TouchableHighlight>
+    
 )

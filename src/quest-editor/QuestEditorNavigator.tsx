@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ModuleGraphCaller } from './graph/ModuleGraphCaller';
 import { QuestEditor } from './QuestEditor';
-import { createQueryRequest } from '../utils/requestHandler';
+import { createGetRequest, createQueryRequest } from '../utils/requestHandler';
 import { loadQuest, unloadQuest } from '../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { RouteProp, useRoute } from '@react-navigation/core';
@@ -10,6 +10,7 @@ import { SvgDemo } from './graph/SvgAnimationDemo';
 import { CreateModuleScreen } from './createModule/CreateModuleScreen';
 import i18n from 'i18n-js';
 import './translations'
+import { MyQuestList } from './MyQuestList';
 
 const Stack = createStackNavigator();
 
@@ -25,7 +26,7 @@ export const QuestEditorNavigator = () => {
   useEffect(() => {
       if (!(questDeep && questDeep.quest.id === route.params.questId)) {
         dispatch(unloadQuest());
-        createQueryRequest(route.params.questId)
+        createGetRequest(route.params.questId)
           .then(q => q.json())
           .then(questDeep => dispatch(loadQuest(questDeep)))
           .catch(() => {console.log('Error parsing create/query endpoint (file QuestEditorNavigator.tsx)')});
@@ -44,6 +45,7 @@ export const QuestEditorNavigator = () => {
       <Stack.Screen name='ModuleGraph' component={ModuleGraphCaller}/>
       <Stack.Screen name='SvgDemo' component={SvgDemo}/>
       <Stack.Screen name='CreateModule' component={CreateModuleScreen} options={{headerTitle: i18n.t('createModuleTitle')}}/>
+      <Stack.Screen name='ModulesList' component={MyQuestList}/>
     </Stack.Navigator>
   );
 };
