@@ -101,15 +101,15 @@ export default function QuestlogScreen() {
           Questlog
         </Text>
         <Searchbar
-          placeholder={'Search for quest title or creator'}
+          placeholder={i18n.t('searchbarPlaceholder')}
           onChangeText={(input) => setSearch(input)}
           value={search}
-          style={{padding: 15}}
+          style={styles.searchbar}
           theme={{ colors: { primary: Colors.primary }}}
         />
         <List.Accordion
-          title={'Active quests'}
-          description={'Long press on a quest to pin it to the map'}
+          title={i18n.t('activeTitle')}
+          description={i18n.t('activeDescription')}
           expanded={activeExpanded}
           onPress={handleActiveExpanded}
           theme={{ colors: { primary: Colors.primary }}}
@@ -143,7 +143,7 @@ export default function QuestlogScreen() {
           }
         </List.Accordion>
         <List.Accordion
-          title={'Completed quests'}
+          title={i18n.t('completedTitle')}
           expanded={oldExpanded}
           onPress={handleOldExpanded}
           theme={{ colors: { primary: Colors.primary }}}
@@ -171,6 +171,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
     marginTop: StatusBar.currentHeight,
+  },
+  searchbar: {
+    padding: 15,
   },
   header: {
     textAlign: 'center',
