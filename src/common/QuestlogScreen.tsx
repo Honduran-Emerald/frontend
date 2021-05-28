@@ -100,13 +100,14 @@ export default function QuestlogScreen() {
         <Text style={styles.header}>
           Questlog
         </Text>
-        <Searchbar
-          placeholder={i18n.t('searchbarPlaceholder')}
-          onChangeText={(input) => setSearch(input)}
-          value={search}
-          style={styles.searchbar}
-          theme={{ colors: { primary: Colors.primary }}}
-        />
+        <View style={styles.searchbar}>
+          <Searchbar
+            placeholder={i18n.t('searchbarPlaceholder')}
+            onChangeText={(input) => setSearch(input)}
+            value={search}
+            theme={{ colors: { primary: Colors.primary }}}
+          />
+        </View>
         <List.Accordion
           title={i18n.t('activeTitle')}
           description={i18n.t('activeDescription')}
@@ -173,7 +174,9 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight,
   },
   searchbar: {
+    justifyContent: 'center',
     padding: 15,
+    backgroundColor: Colors.background,
   },
   header: {
     textAlign: 'center',
