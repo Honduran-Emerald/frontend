@@ -72,3 +72,14 @@ export interface PrototypeModule {
 export interface PrototypeComponent {
     type: string,
 }
+
+export interface QuestTracker {
+    trackerId: string,
+    newestQuestVersion: boolean,
+    finished: boolean,
+    vote: string,
+    creationTime: string,
+    questName: string,
+    objective: string,
+    author: string
+}
