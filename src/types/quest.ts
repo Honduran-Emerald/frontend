@@ -30,6 +30,7 @@ export interface QuestHeader extends QuestBase {
 }
 
 export interface QuestBaseUpdate {
+    approximateTime?: string,
     title?: string,
     description?: string,
     imageId?: string,
@@ -65,7 +66,7 @@ export interface PrototypeModule {
     type: string,
     objective: string,
     components: PrototypeComponent[]
-    
+
 }
 
 export interface PrototypeComponent {
