@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { queryQuestsRequest } from '../utils/requestHandler';
 import { setLocalQuests } from '../redux/quests/questsSlice';
 import { QuestMarker } from './QuestMarker';
+import { useNavigation } from '@react-navigation/core';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -24,6 +25,8 @@ export const MapScreen = () => {
 
   const localQuests = useAppSelector((state) => state.quests.localQuests);
   const dispatch = useDispatch();
+
+  const navigation = useNavigation();
 
   // TEMP, REMOVE LATER
   useEffect(() => {
@@ -106,6 +109,12 @@ export const MapScreen = () => {
       </MapView>
       )}
 
+      <FAB
+        style={styles.createQuestButton}
+        icon="plus"
+        onPress={() => navigation.navigate('QuestCreationScreen')}
+        color={Colors.primary}
+      />
       <FAB 
         style={styles.locationButton}
         icon="crosshairs-gps"
@@ -135,6 +144,12 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height
+  },
+  createQuestButton: {
+    position: 'absolute',
+    right: 10,
+    bottom: 90,
+    backgroundColor: Colors.background
   },
   locationButton: {
     position: 'absolute',
