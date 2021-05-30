@@ -104,7 +104,8 @@ export const MapScreen = () => {
       >
         <UserMarker rotation={heading} coordinate={location.coords}/>
         {localQuests && localQuests.map((quest, index) => (
-          <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
+          quest && quest.location && 
+            <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
         ))}
       </MapView>
       )}
