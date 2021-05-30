@@ -1,8 +1,8 @@
-import * as SecureStore from 'expo-secure-store';
+import { loadItemLocally } from './SecureStore';
 
 export class TokenManager {
   static async getToken() {
-    let result = await SecureStore.getItemAsync('UserToken');
+    let result = await loadItemLocally('UserToken')
     if (result) {
       return result;
     } else {
