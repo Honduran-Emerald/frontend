@@ -7,18 +7,18 @@ import { QuestPrototype } from "../types/quest";
 const request = (target: string, type: string = 'GET', body?: object) => {
 
   const token = store.getState().authentication.token;
-  
+
   return fetch(BACKENDIP + target, {
-      
+
     method: type,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
     body: JSON.stringify(body)
-      
+
   }).then((response) => {
-    if (response.status === 401) 
+    if (response.status === 401)
       store.dispatch(unsetToken())
     return response;
   })
@@ -63,7 +63,7 @@ export const createPutRequest = (questId: string, questPrototype: QuestPrototype
 // /create/publish/
 export const createPublishRequest = (questId: string) => (request('/create/publish/', 'POST', {questId: questId}))
 
-// /test/init/ 
+// /test/init/
 export const createQuestRequest =  (longitude: number, latitude: number, title: string, description: string, tags: string[], imageId: string) => (
   request('/test/init/', 'POST', {
     longitude: longitude,
@@ -77,3 +77,9 @@ export const createQuestRequest =  (longitude: number, latitude: number, title: 
 
 // /user/me
 export const getUserSelfRequest = () => (request('/user/me/'))
+
+// /play/query
+export const getAllTrackersRequest = () => (request('/play/query'))
+
+// /play/create
+export const createTrackerRequest = (questId: string) => (request('/play/create', 'POST', {questId: questId}))
