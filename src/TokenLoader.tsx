@@ -9,6 +9,8 @@ import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setToken } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
 import * as Localization from "expo-localization";
+import {getAllTrackersRequest} from "./utils/requestHandler";
+import {setAcceptedQuests} from "./redux/quests/questsSlice";
 
 i18n.fallbacks = true;
 i18n.locale = Localization.locale;
@@ -25,6 +27,19 @@ export const TokenLoader = () => {
       .then(() => setIsLoading(false));
   }, [])
 
+  useEffect(() => {
+    getAllTrackersRequest()
+        .then((res) => {
+            if(res.ok){
+              res.json()
+                .then((data) => {
+                  dispatch(setAcceptedQuests(data.trackers));
+                  setIsLoading(false);
+                })
+            } else setIsLoading(false);
+          }
+        );
+  }, [token])
 
   return (
 
