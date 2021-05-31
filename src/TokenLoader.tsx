@@ -23,22 +23,22 @@ export const TokenLoader = () => {
 
   useEffect(() => {
     TokenManager.getToken()
-      .then(token => dispatch(setToken(token)))
-      .then(() => setIsLoading(false));
+      .then(token => dispatch(setToken(token)));
   }, [])
 
   useEffect(() => {
-    getAllTrackersRequest()
+    if(token) {
+      getAllTrackersRequest()
         .then((res) => {
-            if(res.ok){
-              res.json()
-                .then((data) => {
-                  dispatch(setAcceptedQuests(data.trackers));
-                  setIsLoading(false);
-                })
-            } else setIsLoading(false);
-          }
-        );
+          if (res.ok) {
+            res.json()
+              .then((data) => {
+                dispatch(setAcceptedQuests(data.trackers));
+                setIsLoading(false);
+              })
+          } else setIsLoading(false);
+        });
+    }
   }, [token])
 
   return (
