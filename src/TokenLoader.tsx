@@ -23,7 +23,8 @@ export const TokenLoader = () => {
 
   useEffect(() => {
     TokenManager.getToken()
-      .then(token => dispatch(setToken(token)));
+      .then(token => dispatch(setToken(token)))
+      .then(() => setIsLoading(false));
   }, [])
 
   useEffect(() => {
@@ -34,9 +35,8 @@ export const TokenLoader = () => {
             res.json()
               .then((data) => {
                 dispatch(setAcceptedQuests(data.trackers));
-                setIsLoading(false);
               })
-          } else setIsLoading(false);
+          }
         });
     }
   }, [token])
