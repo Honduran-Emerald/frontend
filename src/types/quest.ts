@@ -12,6 +12,7 @@ export interface QuestBase {
     profileImageId: string,
     profileName: string,
     locationName: string,
+    approximateTime: string,
 
 }
 
@@ -74,6 +75,7 @@ export interface PrototypeComponent {
 }
 
 export interface QuestTracker {
+    questId: string,
     trackerId: string,
     newestQuestVersion: boolean,
     finished: boolean,
