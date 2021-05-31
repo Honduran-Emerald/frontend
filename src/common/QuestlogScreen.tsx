@@ -1,173 +1,286 @@
 import React from 'react';
-import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import {ActivityIndicator, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import i18n from 'i18n-js';
 import {List, Searchbar} from 'react-native-paper';
 
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
+import { getAllTrackersRequest } from '../utils/requestHandler';
+import { QuestTracker } from '../types/quest';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { pinQuest } from '../redux/quests/questsSlice';
 
 export default function QuestlogScreen() {
 
   i18n.translations = commonTranslations;
+  const dispatch = useAppDispatch();
 
+  // TODO remove
+  const activeQuestsPlaceholder = [
+    {
+      trackerId: '1',
+      newestQuestVersion: true,
+      finished: false,
+      vote: 'None',
+      creationTime: 'date',
+      questName: 'Find phisn\'s bird',
+      objective: 'Meet with Oscar',
+      author: 'Lenny',
+    },
+    {
+      trackerId: '2',
+      newestQuestVersion: true,
+      finished: false,
+      vote: 'None',
+      creationTime: 'date',
+      questName: '24 hours in a Burger King',
+      objective: 'Order 2 Long Chicken',
+      author: 'Leon Mag Schere',
+    },
+    {
+      trackerId: '3',
+      newestQuestVersion: true,
+      finished: false,
+      vote: 'None',
+      creationTime: 'date',
+      questName: 'Gotta catch em all',
+      objective: 'Go to the Luisenplatz Arena',
+      author: 'Ash Ketchup',
+    },
+  ]
+  const oldQuestsPlaceholder = [
+    {
+      trackerId: '1',
+      newestQuestVersion: true,
+      finished: true,
+      vote: 'None',
+      creationTime: 'date',
+      questName: 'The history of the B Rush',
+      objective: '',
+      author: 'Trillugo',
+    },
+    {
+      trackerId: '2',
+      newestQuestVersion: true,
+      finished: true,
+      vote: 'None',
+      creationTime: 'date',
+      questName: '24 hours in a McDonalds',
+      objective: '',
+      author: 'Ronald McDonald',
+    },
+    {
+      trackerId: '3',
+      newestQuestVersion: true,
+      finished: true,
+      vote: 'None',
+      creationTime: 'date',
+      questName: 'The history of the B Rush',
+      objective: '',
+      author: 'Trillugo',
+    },
+    {
+      trackerId: '4',
+      newestQuestVersion: true,
+      finished: true,
+      vote: 'None',
+      creationTime: 'date',
+      questName: '24 hours in a McDonalds',
+      objective: '',
+      author: 'Ronald McDonald',
+    },
+    {
+      trackerId: '5',
+      newestQuestVersion: true,
+      finished: true,
+      vote: 'None',
+      creationTime: 'date',
+      questName: 'The history of the B Rush',
+      objective: '',
+      author: 'Trillugo',
+    },
+    {
+      trackerId: '6',
+      newestQuestVersion: true,
+      finished: true,
+      vote: 'None',
+      creationTime: 'date',
+      questName: '24 hours in a McDonalds',
+      objective: '',
+      author: 'Ronald McDonald',
+    },
+  ]
+
+  const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
+  const acceptedQuests = useAppSelector((state) => state.quests.acceptedQuests);
+
+  const [loading, setLoading] = React.useState(true);
+  const [refreshing, setRefreshing] = React.useState(false);
   const [activeExpanded, setActiveExpanded] = React.useState(true);
   const [oldExpanded, setOldExpanded] = React.useState(false);
   const [search, setSearch] = React.useState('');
-  const [trackedQuestId, setTrackedQuestId] = React.useState(1);
+  const [activeQuests, setActiveQuests] = React.useState<QuestTracker[]>([]);
+  const [oldQuests, setOldQuests] = React.useState<QuestTracker[]>([]);
+
+  React.useEffect(() => {
+    sortTrackers(acceptedQuests);
+    setLoading(false);
+  }, [])
 
   const handleActiveExpanded = () => setActiveExpanded(!activeExpanded);
   const handleOldExpanded = () => setOldExpanded(!oldExpanded);
 
-  const getActiveSearch = () => {
-    let newActive: { id: number; title: string; nextObj: string; ownerName: string; }[] = [];
-    const normalizedSearch = search.toLowerCase().trim();
-    activeQuests.map((quest) => {
-      if(quest.title.toLowerCase().includes(normalizedSearch) || quest.ownerName.toLowerCase().includes(normalizedSearch)) {
-        newActive.push(quest);
-      }
-    })
-    return newActive;
+  const setPinnedQuest = (tracker: QuestTracker) => {
+    dispatch(pinQuest(tracker));
   }
 
-  const getOldSearch = () => {
-    let newOld: { id: number; title: string; ownerName: string; }[] = [];
-    const normalizedSearch = search.toLowerCase().trim();
-    oldQuests.map((quest) => {
-      if(quest.title.toLowerCase().includes(normalizedSearch) || quest.ownerName.toLowerCase().includes(normalizedSearch)) {
-        newOld.push(quest);
+  const sortTrackers = (trackers: QuestTracker[]) => {
+    // TODO probably remove, just here for testing so placeholder data stays if no quests are present
+    if(trackers.length === 0) {
+      if (!pinnedQuest && activeQuests.length > 0) {
+        setPinnedQuest(activeQuests[0]);
       }
-    })
-    return newOld;
+      return;
+    }
+    let newActive: QuestTracker[] = [];
+    let newOld: QuestTracker[] = [];
+    trackers.forEach((tracker) =>
+      tracker.finished ? newOld.push(tracker) : newActive.push(tracker));
+    setActiveQuests(newActive);
+    setOldQuests(newOld);
+    if(pinnedQuest && !newActive.some((tracker) => tracker.trackerId === pinnedQuest.trackerId)) {
+      setPinnedQuest(newActive[0]);
+    } else if (!pinnedQuest && newActive.length > 0) {
+      setPinnedQuest(newActive[0]);
+    }
   }
 
-  const activeQuests = [
-    {
-      id: 1,
-      title: 'Find phisn\'s bird',
-      nextObj: 'Meet with Oscar',
-      ownerName: 'Lenny',
-    },
-    {
-      id: 2,
-      title: '24 hours in a Burger King',
-      nextObj: 'Order 2 Long Chicken',
-      ownerName: 'Leon Mag Schere',
-    },
-    {
-      id: 3,
-      title: 'Gotta catch em all',
-      nextObj: 'Go to the Luisenplatz Arena',
-      ownerName: 'Ash Ketchup',
-    },
-  ]
+  const onRefresh = () => {
+    setRefreshing(true);
+    getAllTrackersRequest()
+      .then((res) => res.json()
+        .then((data) => {
+          setRefreshing(false);
+          sortTrackers(data.trackers);
+        }))
+  }
 
-  const oldQuests = [
-    {
-      id: 1,
-      title: 'The history of the B Rush',
-      ownerName: 'Trillugo',
-    },
-    {
-      id: 2,
-      title: '24 hours in a McDonalds',
-      ownerName: 'Ronald McDonald',
-    },
-    {
-      id: 3,
-      title: 'The history of the B Rush',
-      ownerName: 'Trillugo',
-    },
-    {
-      id: 4,
-      title: '24 hours in a McDonalds',
-      ownerName: 'Ronald McDonald',
-    },
-    {
-      id: 5,
-      title: 'The history of the B Rush',
-      ownerName: 'Trillugo',
-    },
-    {
-      id: 6,
-      title: '24 hours in a McDonalds',
-      ownerName: 'Ronald McDonald',
-    },
-  ]
+  const getQuestSearch = (active: boolean) => {
+    let newQuests: QuestTracker[] = [];
+    const normalizedSearch = search.toLowerCase().trim();
+    active ?
+      activeQuests.map((quest) => {
+        if(quest.questName.toLowerCase().includes(normalizedSearch) || quest.author.toLowerCase().includes(normalizedSearch)) {
+          newQuests.push(quest);
+        }
+      })
+      :
+      oldQuests.map((quest) => {
+        if(quest.questName.toLowerCase().includes(normalizedSearch) || quest.author.toLowerCase().includes(normalizedSearch)) {
+          newQuests.push(quest);
+        }
+      })
+    return newQuests;
+  }
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={{flexGrow: 1}} stickyHeaderIndices={[1]}>
-        <Text style={styles.header}>
-          Questlog
-        </Text>
-        <View style={styles.searchbar}>
-          <Searchbar
-            placeholder={i18n.t('searchbarPlaceholder')}
-            onChangeText={(input) => setSearch(input)}
-            value={search}
-            theme={{ colors: { primary: Colors.primary }}}
-          />
+      {
+        loading &&
+        <View style={styles.loadContainer}>
+          <ActivityIndicator size="large" color="#1D79AC"/>
         </View>
-        <List.Accordion
-          title={i18n.t('activeTitle')}
-          description={i18n.t('activeDescription')}
-          expanded={activeExpanded}
-          onPress={handleActiveExpanded}
-          theme={{ colors: { primary: Colors.primary }}}
-          titleStyle={styles.title}
-          descriptionStyle={styles.description}
-          left={props => <List.Icon {...props} icon='compass-rose'/>}
-        >
-          {
-            getActiveSearch().map((quest) =>
-              quest.id == trackedQuestId ?
-                <List.Item
-                  title={quest.title}
-                  description={quest.nextObj}
-                  key={quest.id}
-                  onPress={() => alert('Open Quest objective screen')}
-                  onLongPress={() => setTrackedQuestId(quest.id)}
-                  left={() => <List.Icon color={Colors.background} icon='pin'/>}
-                  titleStyle={styles.white}
-                  descriptionStyle={styles.white}
-                  style={styles.trackedActive}
-                />
-                :
-                <List.Item
-                  title={quest.title}
-                  description={quest.nextObj}
-                  key={quest.id}
-                  onPress={() => alert('Open Quest objective screen')}
-                  onLongPress={() => setTrackedQuestId(quest.id)}
-                />
-            )
+      }
+      {
+        !loading &&
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1}}
+          stickyHeaderIndices={[1]}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
           }
-        </List.Accordion>
-        <List.Accordion
-          title={i18n.t('completedTitle')}
-          expanded={oldExpanded}
-          onPress={handleOldExpanded}
-          theme={{ colors: { primary: Colors.primary }}}
-          titleStyle={styles.title}
-          left={props => <List.Icon {...props} icon='history'/>}
         >
-          {
-            getOldSearch().map((quest) =>
-              <List.Item
-                title={quest.title}
-                description={quest.ownerName}
-                key={quest.id}
-                onPress={() => alert('Open Quest objective screen')}
-              />
-            )
-          }
-        </List.Accordion>
-      </ScrollView>
+          <Text style={styles.header}>
+            Questlog
+          </Text>
+          <View style={styles.searchbar}>
+            <Searchbar
+              placeholder={i18n.t('searchbarPlaceholder')}
+              onChangeText={(input) => setSearch(input)}
+              value={search}
+              theme={{colors: {primary: Colors.primary}}}
+            />
+          </View>
+          <List.Accordion
+            title={i18n.t('activeTitle')}
+            description={i18n.t('activeDescription')}
+            expanded={activeExpanded}
+            onPress={handleActiveExpanded}
+            theme={{colors: {primary: Colors.primary}}}
+            titleStyle={styles.title}
+            descriptionStyle={styles.description}
+            left={props => <List.Icon {...props} icon='compass-rose'/>}
+          >
+            {
+              getQuestSearch(true).map((quest) =>
+                (pinnedQuest && quest.trackerId === pinnedQuest.trackerId) ?
+                  <List.Item
+                    title={quest.questName}
+                    description={quest.objective}
+                    key={quest.trackerId}
+                    onPress={() => alert('Open Quest objective screen')}
+                    onLongPress={() => setPinnedQuest(quest)}
+                    left={() => <List.Icon color={Colors.background} icon='pin'/>}
+                    titleStyle={styles.white}
+                    descriptionStyle={styles.white}
+                    style={styles.trackedActive}
+                  />
+                  :
+                  <List.Item
+                    title={quest.questName}
+                    description={quest.objective}
+                    key={quest.trackerId}
+                    onPress={() => alert('Open Quest objective screen')}
+                    onLongPress={() => setPinnedQuest(quest)}
+                  />
+              )
+            }
+          </List.Accordion>
+          <List.Accordion
+            title={i18n.t('completedTitle')}
+            expanded={oldExpanded}
+            onPress={handleOldExpanded}
+            theme={{colors: {primary: Colors.primary}}}
+            titleStyle={styles.title}
+            left={props => <List.Icon {...props} icon='history'/>}
+          >
+            {
+              getQuestSearch(false).map((quest) =>
+                <List.Item
+                  title={quest.questName}
+                  description={quest.author}
+                  key={quest.trackerId}
+                  onPress={() => alert('Open Quest objective screen')}
+                />
+              )
+            }
+          </List.Accordion>
+        </ScrollView>
+      }
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  loadContainer: {
+    flex: 1,
+    backgroundColor: Colors.background,
+    marginTop: StatusBar.currentHeight,
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.background,
