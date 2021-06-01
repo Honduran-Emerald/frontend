@@ -1,53 +1,47 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, SafeAreaView, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar} from 'react-native';
+import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar} from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
 import { Avatar } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
-import { QuestHeader } from '../types/quest';
+import { QuestHeader, QuestTracker } from '../types/quest';
+import { createTrackerRequest } from '../utils/requestHandler';
+import { store } from '../redux/store';
+import { useAppDispatch } from '../redux/hooks';
+import { acceptQuest } from '../redux/quests/questsSlice';
 
 export default function QuestDetailScreen({ route }: any) {
 
   i18n.translations = commonTranslations;
-
-  // TODO location, author, approx time missing, image fetch needed
-  // route.params ?  route.params.quest :
-  // approximateTime: "2 hours",
-  const quest: QuestHeader = {
-    id: "51243",
-    ownerId: "8127549",
-    ownerImageId: "",
-    ownerName: "",
-    tags: [],
-    profileImageId: "",
-    profileName: "",
-    locationName: "",
-    public: true,
-    title: "Find phisn's bird",
-    description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n",
-    imageId: "87132984761298",
-    version: 7,
-    creationTime: "2021-05-18T18:14:12.793Z",
-    votes: 356,
-    plays: 1425,
-    finishes: 780,
-    location: {
-      longitude: 49.873219,
-      latitude: 8.650930
-    }
-  };
-
+  const acceptedQuests: QuestTracker[] = store.getState().quests.acceptedQuests;
+  const acceptedIds: string[] = acceptedQuests.map(tracker => tracker.questId)
+  const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
+  const quest: QuestHeader = route.params.quest;
   const creationDate = new Date(Date.parse(quest.creationTime));
 
+  const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
+
+  // TODO image fetch needed
+
   const handleAccept = () => {
-    // TODO implement
-    alert('Add quest to quest log');
+    setIsButtonDisabled(true);
+    createTrackerRequest(quest.id)
+      .then((res) => res.json()
+        .then((data) => {
+          navigation.navigate('MapScreen');
+          setIsButtonDisabled(false);
+          dispatch(acceptQuest(data.trackerModel));
+        }))
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={{flexGrow: 1, alignItems: 'center', justifyContent: 'center'}}>
         <View style={styles.scrollView}>
           <View style={styles.spacer}/>
@@ -58,19 +52,29 @@ export default function QuestDetailScreen({ route }: any) {
           <View style={styles.info}>
             <Entypo name='location-pin' size={24} color='black'/>
             <Text style={styles.location}>
-              Darmstadt, Luisenplatz
+              {quest.locationName}
             </Text>
             <Entypo name='stopwatch' size={24} color='black'/>
             <Text style={styles.time}>
-              2 hours
+              {quest.approximateTime}
             </Text>
           </View>
           <Text style={styles.description}>
             {quest.description}
           </Text>
-          <View style={styles.button}>
-            <Button color={Colors.primary} title={i18n.t('acceptButton')} onPress={handleAccept}/>
-          </View>
+          {
+            !isAccepted &&
+            <View style={styles.button}>
+              <Button color={Colors.primary} disabled={isButtonDisabled} title={i18n.t('acceptButton')} onPress={handleAccept}/>
+            </View>
+          }
+          {
+            isAccepted &&
+            <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: 25}}>
+              <MaterialCommunityIcons name='check' size={24} color='green'/>
+              <Text style={{color: 'green'}}>{i18n.t('questAccepted')}</Text>
+            </View>
+          }
           <View style={styles.divider}/>
           <View style={styles.stats}>
             <View style={styles.center}>
@@ -91,7 +95,7 @@ export default function QuestDetailScreen({ route }: any) {
             </View>
             <View style={styles.center}>
               <Text style={styles.mediumText}>
-                {quest.finishes}
+                {((quest.finishes / quest.plays) * 100).toFixed()}%
               </Text>
               <Text style={styles.smallText}>
                 {i18n.t('finished')}
@@ -106,7 +110,7 @@ export default function QuestDetailScreen({ route }: any) {
               <Avatar.Image style={styles.authorAvatar} source={{uri: 'https://pbs.twimg.com/profile_images/1214590755706150913/Jm78BGWD_400x400.jpg'}}/>
               <View>
                 <Text style={styles.authorName}>
-                  Trillugo
+                  {quest.ownerName}
                 </Text>
                 <Text style={styles.smallText}>
                   {`${creationDate.getDate()}.${creationDate.getMonth() + 1}.${creationDate.getFullYear()}`}
@@ -117,7 +121,7 @@ export default function QuestDetailScreen({ route }: any) {
           <View style={styles.spacer}/>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -138,7 +142,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   spacer: {
-    height: 40,
+    height: 15,
   },
   header: {
     textAlign: 'center',
