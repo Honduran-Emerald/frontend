@@ -2,8 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
-import { MaterialCommunityIcons }from '@expo/vector-icons';
-import * as SecureStore from 'expo-secure-store';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { MapNavigator } from './map/MapNavigator';
@@ -14,6 +13,7 @@ import { setToken, unsetToken } from './redux/authentication/authenticationSlice
 import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
 import QuestlogScreen from './common/QuestlogScreen';
 import { clearQuestState } from './redux/quests/questsSlice';
+import {deleteItemLocally} from "./utils/SecureStore";
 
 const Tab = createBottomTabNavigator();
 
@@ -63,10 +63,6 @@ export default function MainAppNavigator() {
   );
 }
 
-async function deleteToken() {
-  await SecureStore.deleteItemAsync('UserToken');
-}
-
 const Dummy = () => {
 
   const token = useAppSelector((state) => state.authentication.token);
@@ -76,7 +72,8 @@ const Dummy = () => {
   const [u, su] = useState<any>(undefined);
 
   const handleLogout = () => {
-    deleteToken().then(() => {});
+    deleteItemLocally('UserToken').then(() => {}, () => {});
+    deleteItemLocally('PinnedQuestTracker').then(() => {}, () => {});
     dispatch(unsetToken())
     dispatch(clearQuestState())
   }

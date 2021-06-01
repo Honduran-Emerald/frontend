@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { QuestHeader, QuestTracker } from '../../types/quest';
+import {saveItemLocally} from "../../utils/SecureStore";
 
 interface QuestsState {
     localQuests: QuestHeader[],
@@ -40,7 +41,8 @@ export const questsSlice = createSlice({
                 console.log('Trying to track not yet accepted quest.')
                 state.acceptedQuests.push(action.payload)
             }
-            state.pinnedQuest = action.payload
+            state.pinnedQuest = action.payload;
+            saveItemLocally('PinnedQuestTracker', JSON.stringify(action.payload)).then(() => {}, () => {});
         },
         clearQuestState: (state) => {
             state.pinnedQuest = undefined

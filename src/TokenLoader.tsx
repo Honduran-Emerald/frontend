@@ -10,7 +10,8 @@ import { setToken } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
 import * as Localization from "expo-localization";
 import {getAllTrackersRequest} from "./utils/requestHandler";
-import {setAcceptedQuests} from "./redux/quests/questsSlice";
+import {pinQuest, setAcceptedQuests} from "./redux/quests/questsSlice";
+import {loadItemLocally} from "./utils/SecureStore";
 
 i18n.fallbacks = true;
 i18n.locale = Localization.locale;
@@ -33,9 +34,13 @@ export const TokenLoader = () => {
         .then((res) => {
           if (res.ok) {
             res.json()
-              .then((data) => {
-                dispatch(setAcceptedQuests(data.trackers));
-              })
+              .then((data) => dispatch(setAcceptedQuests(data.trackers)))
+              .then(() => loadItemLocally('PinnedQuestTracker')
+              .then((res) => {
+                if(res) {
+                  dispatch(pinQuest(JSON.parse(res)));
+                }
+              }))
           }
         });
     }
