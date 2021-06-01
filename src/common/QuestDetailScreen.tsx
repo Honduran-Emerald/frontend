@@ -27,6 +27,8 @@ export default function QuestDetailScreen({ route }: any) {
 
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
 
+  const finishRate: number = ((quest.finishes / quest.plays) * 100)
+
   // TODO image fetch needed
 
   const handleAccept = () => {
@@ -95,7 +97,7 @@ export default function QuestDetailScreen({ route }: any) {
             </View>
             <View style={styles.center}>
               <Text style={styles.mediumText}>
-                {((quest.finishes / quest.plays) * 100).toFixed()}%
+                {isNaN(finishRate) ? '0' : finishRate}%
               </Text>
               <Text style={styles.smallText}>
                 {i18n.t('finished')}
