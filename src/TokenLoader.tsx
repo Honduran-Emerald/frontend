@@ -12,6 +12,7 @@ import * as Localization from "expo-localization";
 import {getAllTrackersRequest} from "./utils/requestHandler";
 import {pinQuest, setAcceptedQuests} from "./redux/quests/questsSlice";
 import {loadItemLocally} from "./utils/SecureStore";
+import {QuestTracker} from "./types/quest";
 
 i18n.fallbacks = true;
 i18n.locale = Localization.locale;
@@ -29,16 +30,27 @@ export const TokenLoader = () => {
   }, [])
 
   useEffect(() => {
+    let acceptedQuests: QuestTracker[] = [];
     if(token) {
       getAllTrackersRequest()
         .then((res) => {
           if (res.ok) {
             res.json()
-              .then((data) => dispatch(setAcceptedQuests(data.trackers)))
+              .then((data) => {
+                dispatch(setAcceptedQuests(data.trackers));
+                acceptedQuests = data.trackers;
+              })
               .then(() => loadItemLocally('PinnedQuestTracker')
               .then((res) => {
                 if(res) {
                   dispatch(pinQuest(JSON.parse(res)));
+                } else {
+                  acceptedQuests.some((tracker) => {
+                    if(!tracker.finished) {
+                      dispatch(pinQuest(tracker));
+                      return true;
+                    }
+                  });
                 }
               }))
           }
