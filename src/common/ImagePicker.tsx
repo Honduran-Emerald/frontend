@@ -25,7 +25,7 @@ export const ImagePicker : React.FC<{image : string, setImage : Function, style?
     let result = await PickImage.launchImageLibraryAsync({
       mediaTypes: PickImage.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [8, 5],
+      aspect: [9, 5],
       quality: 1
     });
 
