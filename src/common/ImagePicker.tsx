@@ -5,8 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as PickImage from 'expo-image-picker';
 import { Colors, Containers } from '../styles';
 
-export const ImagePicker : React.FC<{style? : ViewStyle | ViewStyle[]}> = ({style}) => {
-  const [image, setImage] = useState<string>();
+export const ImagePicker : React.FC<{image : string, setImage : Function, style? : ViewStyle | ViewStyle[]}> = ({image, setImage, style}) => {
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false);
 
   const requestPermission = async () => {
@@ -26,7 +25,7 @@ export const ImagePicker : React.FC<{style? : ViewStyle | ViewStyle[]}> = ({styl
     let result = await PickImage.launchImageLibraryAsync({
       mediaTypes: PickImage.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [3, 3],
+      aspect: [8, 5],
       quality: 1
     });
 

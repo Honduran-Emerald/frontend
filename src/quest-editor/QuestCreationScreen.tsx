@@ -9,6 +9,7 @@ import { ImagePicker } from '../common/ImagePicker';
 export const QuestCreationScreen = () => {
   const [questTitle, setQuestTitle] = useState<string>("");
   const [questDescription, setQuestDescription] = useState<string>("");
+  const [image, setImage] = useState<string>('');
 
   return(
     <KeyboardAwareScrollView
@@ -23,9 +24,9 @@ export const QuestCreationScreen = () => {
         value={questTitle} 
         onChange={(text) => setQuestTitle(text.nativeEvent.text)} 
         theme={{colors: {primary: Colors.primary}}} 
-        style={[style.container, style.questTitleInput]} 
+        style={[style.container, style.questTitleInput]}
       />
-      <ImagePicker style={[style.container, style.imagePicker]}/>
+      <ImagePicker image={image} setImage={setImage} style={[style.container, style.imagePicker]}/>
       <View style={[style.container, style.smallInputsGroup]}>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='map-marker' size={16} color='darkgray'/>
@@ -37,7 +38,7 @@ export const QuestCreationScreen = () => {
         </View>
       </View>
       <MultiLineInput questDescription={questDescription} setQuestDescription={setQuestDescription}/>
-      <Button theme={{colors: {primary: Colors.primary}}} icon='map-marker-plus' mode='contained' onPress={() =>{}}>Pick Location</Button>
+      <Button theme={{colors: {primary: Colors.primary}}} icon='content-save' mode='contained' onPress={() =>{}}>Save</Button>
     </KeyboardAwareScrollView>
   );
 }
@@ -65,7 +66,8 @@ const style = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   questTitleInput: {
-    backgroundColor: Colors.background
+    backgroundColor: Colors.background,
+    fontSize: 23
   },
   imagePicker: {
     height: 180,
