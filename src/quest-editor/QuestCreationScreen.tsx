@@ -1,70 +1,96 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, TextInput as TextInputNative} from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { Colors, Containers } from '../styles';
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-import * as ImagePicker from 'expo-image-picker';
-import { background } from '../styles/colors';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ImagePicker } from '../common/ImagePicker';
 
 export const QuestCreationScreen = () => {
   const [questTitle, setQuestTitle] = useState<string>("");
-  const [image, setImage] = useState<string | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if(status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!')
-      }
-    })();
-  }, [])
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [16, 9],
-      quality: 1
-    });
-
-    console.log(result);
-    
-    if(!result.cancelled) {
-      setImage(result.uri)
-    }
-  }
+  const [questDescription, setQuestDescription] = useState<string>("");
 
   return(
-    <ScrollView contentContainerStyle={style.scrollViewContentContainer}>
-      <TextInput theme={{colors: {primary: Colors.primary}}} style={style.questTitleInput} value={questTitle} onChange={(text) => {setQuestTitle(text.nativeEvent.text)}} placeholder='Quest Title'/>
-      <TouchableOpacity onPress={pickImage} style={style.imagePicker}>
-        {image ? <Image source={{uri: image}} style={style.image}/> : <MaterialCommunityIcons name='image-plus' size={32}/>}
-      </TouchableOpacity>
-    </ScrollView>
+    <KeyboardAwareScrollView
+      contentContainerStyle={style.scrollViewContentContainer}
+      scrollEnabled
+      viewIsInsideTabBar
+      enableOnAndroid
+      extraHeight={100}
+    >
+      <TextInput 
+        placeholder='Quest Title'
+        value={questTitle} 
+        onChange={(text) => setQuestTitle(text.nativeEvent.text)} 
+        theme={{colors: {primary: Colors.primary}}} 
+        style={[style.container, style.questTitleInput]} 
+      />
+      <ImagePicker style={[style.container, style.imagePicker]}/>
+      <View style={[style.container, style.smallInputsGroup]}>
+        <View style={style.smallInputs}>
+          <MaterialCommunityIcons name='map-marker' size={16} color='darkgray'/>
+          <TextInputNative placeholder='location name' style={{marginLeft: 7}}/>
+        </View>
+        <View style={style.smallInputs}>
+          <MaterialCommunityIcons name='timer' size={16} color='darkgray'/>
+          <TextInputNative placeholder='est. time' style={{marginLeft: 7}}/>
+        </View>
+      </View>
+      <MultiLineInput questDescription={questDescription} setQuestDescription={setQuestDescription}/>
+      <Button theme={{colors: {primary: Colors.primary}}} icon='map-marker-plus' mode='contained' onPress={() =>{}}>Pick Location</Button>
+    </KeyboardAwareScrollView>
   );
 }
 
+const MultiLineInput : React.FC<{questDescription: string, setQuestDescription: Function}> = ({questDescription, setQuestDescription}) => (
+  <View style={[style.container, style.description]}>
+    <TextInputNative
+      multiline
+      numberOfLines={15}
+      style={style.descriptionInput}
+      value={questDescription} 
+      onChangeText={(text) => setQuestDescription(text)} 
+      placeholder='QuestDescription'
+    />
+  </View>
+)
+
 const style = StyleSheet.create({
+  container: {
+    width: '80%',
+    marginBottom: 20
+  },
   scrollViewContentContainer: {
-    flex: 1,
     alignItems: 'center',
-    backgroundColor: Colors.background
+    backgroundColor: Colors.background,
   },
   questTitleInput: {
-    width: '80%',
     backgroundColor: Colors.background
   },
   imagePicker: {
-    ...Containers.center,
-    ...Containers.rounded,
-    width: '80%',
-    height: 200,
-    overflow: 'hidden',
-    backgroundColor: '#F2F2F2',
-    marginTop: 20
+    height: 180,
   },
-  image: {
-    width: '100%',
-    height: '100%'
-  }
+  smallInputsGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  smallInputs: {
+    ...Containers.rounded,
+    flexDirection: 'row', 
+    alignItems: 'center',
+    width: '47%',
+    height: 50, 
+    fontSize: 15, 
+    paddingLeft: 15,
+    backgroundColor: Colors.lightGray, 
+  },
+  description: {
+    height: 200
+  },
+  descriptionInput: {
+    ...Containers.rounded,
+    backgroundColor: Colors.lightGray,
+    textAlignVertical: 'top',
+    padding: 15,
+  },
 })
