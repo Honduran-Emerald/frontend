@@ -5,11 +5,17 @@ import { Colors, Containers } from '../styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ImagePicker } from '../common/ImagePicker';
+import { createQuestRequest } from '../utils/requestHandler';
+import { useRoute } from '@react-navigation/core';
 
 export const QuestCreationScreen = () => {
   const [questTitle, setQuestTitle] = useState<string>("");
-  const [questDescription, setQuestDescription] = useState<string>("");
   const [image, setImage] = useState<string>('');
+  const [locationName, setLocationName] = useState<string>('');
+  const [estimatedTime, setEstimatedTime] = useState<string>('');
+  const [questDescription, setQuestDescription] = useState<string>("");
+
+  const route : {params: {latitude: number, longitude: number}} = useRoute<{params: {latitude: number, longitude: number}, key: string, name: string}>();
 
   return(
     <KeyboardAwareScrollView
@@ -30,15 +36,23 @@ export const QuestCreationScreen = () => {
       <View style={[style.container, style.smallInputsGroup]}>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='map-marker' size={16} color='darkgray'/>
-          <TextInputNative placeholder='location name' style={{marginLeft: 7}}/>
+          <TextInputNative placeholder='location name' value={locationName} onChangeText={setLocationName} style={{marginLeft: 7}}/>
         </View>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='timer' size={16} color='darkgray'/>
-          <TextInputNative placeholder='est. time' style={{marginLeft: 7}}/>
+          <TextInputNative placeholder='est. time' value={estimatedTime} onChangeText={setEstimatedTime} style={{marginLeft: 7}}/>
         </View>
       </View>
       <MultiLineInput questDescription={questDescription} setQuestDescription={setQuestDescription}/>
-      <Button theme={{colors: {primary: Colors.primary}}} icon='content-save' mode='contained' onPress={() =>{}}>Save</Button>
+      <Button 
+        disabled={(questTitle && locationName && estimatedTime && questDescription && route.params.latitude && route.params.longitude) ? false : true} 
+        theme={{colors: {primary: Colors.primary}}} 
+        icon='content-save' 
+        mode='contained' 
+        onPress={() => {createQuestRequest(questTitle, questDescription, image, route.params.latitude, route.params.longitude, locationName, [])}}
+      >
+        Save
+      </Button>
     </KeyboardAwareScrollView>
   );
 }
