@@ -4,7 +4,13 @@ import { MapScreen } from './MapScreen';
 import { QuestEditorNavigator } from '../quest-editor/QuestEditorNavigator';
 import QuestDetailScreen from '../common/QuestDetailScreen';
 
-const Stack = createStackNavigator();
+type StackParams = {
+  QuestCreationScreen: {latitude: number, longitude: number},
+  MapScreen: undefined,
+  QuestDetail: undefined,
+}
+
+const Stack = createStackNavigator<StackParams>();
 
 export const MapNavigator = () => {
   return (

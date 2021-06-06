@@ -4,7 +4,11 @@ import { ModuleGraph } from './ModuleGraph';
 import { ModuleGraphCaller } from './ModuleGraphCaller';
 import { QuestCreationScreen } from './QuestCreationScreen';
 
-const Stack = createStackNavigator();
+type StackParams = {
+  QuestCreation: {latitude: number, longitude: number},
+  ModuleGraph: undefined,
+}
+const Stack = createStackNavigator<StackParams>();
 
 export const QuestEditorNavigator = () => {
   return (
