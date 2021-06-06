@@ -19,18 +19,18 @@ export default function PinnedQuestCard() {
         <View style={styles.container}>
           <TouchableNativeFeedback useForeground={true} onPress={() => { setObjectiveComplete(!objectiveComplete) }}>
             <LinearGradient
-              colors={['#41A8DF', 'white']}
+              colors={[Colors.primaryLight, 'white']}
               start={{ x: 1, y: 1 }}
-              end={{ x: 0.2, y: 0.2 }}
+              end={{ x: objectiveComplete ? 0.2 : 0.6, y: objectiveComplete ? 0.2 : 0.6 }}
             >
               <View style={{flexDirection: 'row', alignItems: 'center',}}>
                 <Avatar.Image style={styles.questAvatar} source={{uri: 'https://static.wikia.nocookie.net/jamesbond/images/9/90/M_%28Judi_Dench%29_-_Profile.jpg/revision/latest?cb=20130506215045'}}/>
-                <Badge visible={objectiveComplete} size={18} style={styles.badge}/>
-                <View style={{flexDirection: 'column'}}>
-                  <Text style={styles.questName}>
+                <Badge visible={objectiveComplete} size={18} theme={{colors: {notification: Colors.primaryLight}}} style={styles.badge}/>
+                <View style={{flexDirection: 'column', width: '100%'}}>
+                  <Text style={styles.questName} numberOfLines={1}>
                     {pinnedQuest.questName}
                   </Text>
-                  <Text style={styles.objective}>
+                  <Text style={styles.objective} numberOfLines={1}>
                     {pinnedQuest.objective}
                   </Text>
                 </View>
@@ -60,9 +60,11 @@ const styles = StyleSheet.create({
   },
   questName: {
     fontSize: 18,
+    paddingRight: 85,
   },
   objective: {
     fontSize: 15,
+    paddingRight: 85,
   },
   questAvatar: {
     margin: 5,
