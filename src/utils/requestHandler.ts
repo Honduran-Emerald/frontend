@@ -64,14 +64,17 @@ export const createPutRequest = (questId: string, questPrototype: QuestPrototype
 export const createPublishRequest = (questId: string) => (request('/create/publish/', 'POST', {questId: questId}))
 
 // /test/init/
-export const createQuestRequest =  (longitude: number, latitude: number, title: string, description: string, tags: string[], imageId: string) => (
-  request('/test/init/', 'POST', {
-    longitude: longitude,
-    latitude: latitude,
+export const createQuestRequest =  (title: string, description: string, imageId: string, latitude: number, longitude: number, locationName: string, tags: string[]) => (
+  request('/create/create/', 'POST', {
     title: title,
     description: description,
-    tags: tags,
-    imageId: imageId
+    imageId: imageId,
+    location: {
+      latitude: latitude,
+      longitude: longitude,
+    },
+    locationName: locationName,
+    tags: tags
   })
 )
 
