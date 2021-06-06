@@ -111,9 +111,10 @@ export const MapScreen = () => {
       )}
 
       <FAB
+        disabled={location == null || location.coords == null}
         style={styles.createQuestButton}
         icon="plus"
-        onPress={() => navigation.navigate('QuestCreationScreen')}
+        onPress={() => navigation.navigate('QuestCreationScreen', {screen: 'QuestCreation', params: {latitude: location?.coords.latitude, longitude: location?.coords.longitude}})}
         color={Colors.primary}
       />
       <FAB 
