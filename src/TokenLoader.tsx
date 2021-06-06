@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setToken } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
 import * as Localization from "expo-localization";
-import {getAllTrackersRequest} from "./utils/requestHandler";
+import {getAllTrackersRequest, renewRequest} from "./utils/requestHandler";
 import {pinQuest, setAcceptedQuests} from "./redux/quests/questsSlice";
 import {loadItemLocally} from "./utils/SecureStore";
 import {QuestTracker} from "./types/quest";
@@ -26,6 +26,7 @@ export const TokenLoader = () => {
   useEffect(() => {
     TokenManager.getToken()
       .then(token => dispatch(setToken(token)))
+      .then(() => renewRequest())
       .then(() => setIsLoading(false));
   }, [])
 
