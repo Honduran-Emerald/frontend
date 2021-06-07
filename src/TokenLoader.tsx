@@ -35,7 +35,6 @@ export const TokenLoader = () => {
   useEffect(() => {
     let acceptedQuests: QuestTracker[] = [];
     if(token && hasRenewed) {
-      console.log('get Trackers')
       getAllTrackersRequest()
         .then((res) => {
           if (res.ok) {
