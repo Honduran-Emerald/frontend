@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { queryQuestsRequest } from '../utils/requestHandler';
 import { setLocalQuests } from '../redux/quests/questsSlice';
 import { QuestMarker } from './QuestMarker';
+import { useNavigation } from '@react-navigation/core';
 import PinnedQuestCard from './PinnedQuestCard';
 
 export const MapScreen = () => {
@@ -25,6 +26,8 @@ export const MapScreen = () => {
 
   const localQuests = useAppSelector((state) => state.quests.localQuests);
   const dispatch = useDispatch();
+
+  const navigation = useNavigation();
 
   // TEMP, REMOVE LATER
   useEffect(() => {
@@ -101,10 +104,20 @@ export const MapScreen = () => {
         initialRegion={{latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0461, longitudeDelta: 0.0210}}
       >
         <UserMarker rotation={heading} coordinate={location.coords}/>
-        {localQuests && localQuests.map((quest, index) => ( quest.location &&
-          <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
+        {localQuests && localQuests.map((quest, index) => (
+          quest && quest.location && 
+            <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
         ))}
       </MapView>
+      )}
+
+      {location && location.coords && (
+          <FAB
+            style={styles.createQuestButton}
+            icon="plus"
+            onPress={() => navigation.navigate('QuestCreationScreen', {screen: 'QuestCreation', params: {latitude: location?.coords.latitude, longitude: location?.coords.longitude}})}
+            color={Colors.primary}
+          />
       )}
       <View style={styles.pinnedCard}>
         <PinnedQuestCard/>
@@ -138,6 +151,12 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height
+  },
+  createQuestButton: {
+    position: 'absolute',
+    right: 10,
+    bottom: 90,
+    backgroundColor: Colors.background
   },
   locationButton: {
     position: 'absolute',
