@@ -64,7 +64,7 @@ export const createPutRequest = (questId: string, questPrototype: QuestPrototype
 export const createPublishRequest = (questId: string) => (request('/create/publish/', 'POST', {questId: questId}))
 
 // /test/init/
-export const createQuestRequest =  (title: string, description: string, imageId: string, latitude: number, longitude: number, locationName: string, tags: string[]) => (
+export const createQuestRequest =  (title: string, description: string, imageId: string, latitude: number, longitude: number, locationName: string, approximateTime: string, tags: string[]) => (
   request('/create/create/', 'POST', {
     title: title,
     description: description,
@@ -74,6 +74,7 @@ export const createQuestRequest =  (title: string, description: string, imageId:
       longitude: longitude,
     },
     locationName: locationName,
+    approximateTime: approximateTime,
     tags: tags
   })
 )

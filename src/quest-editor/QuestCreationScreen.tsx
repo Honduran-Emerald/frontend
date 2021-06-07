@@ -24,6 +24,7 @@ export const QuestCreationScreen = () => {
       viewIsInsideTabBar
       enableOnAndroid
       extraHeight={100}
+      style={{backgroundColor: Colors.background}}
     >
       <TextInput 
         placeholder='Quest Title'
@@ -49,7 +50,7 @@ export const QuestCreationScreen = () => {
         theme={{colors: {primary: Colors.primary}}} 
         icon='content-save' 
         mode='contained' 
-        onPress={() => {createQuestRequest(questTitle, questDescription, image, route.params.latitude, route.params.longitude, locationName, [])}}
+        onPress={() => {createQuestRequest(questTitle, questDescription, image, route.params.latitude, route.params.longitude, locationName, estimatedTime, [])}}
       >
         Save
       </Button>
