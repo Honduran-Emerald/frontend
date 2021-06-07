@@ -35,7 +35,7 @@ export default function MainAppNavigator() {
               return (
                 <View>
                   <MaterialCommunityIcons name={iconName} size={size} color={focused ? Colors.primary : "grey"}/>
-                  <Badge visible={true} style={styles.badge} size={13}/>
+                  <Badge visible={true} style={styles.badge} theme={{colors: {notification: Colors.primaryLight}}} size={13}/>
                 </View>
               );
             case "Map":
