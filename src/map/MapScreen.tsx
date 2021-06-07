@@ -110,13 +110,14 @@ export const MapScreen = () => {
       </MapView>
       )}
 
-      <FAB
-        disabled={location == null || location.coords == null}
-        style={styles.createQuestButton}
-        icon="plus"
-        onPress={() => navigation.navigate('QuestCreationScreen', {screen: 'QuestCreation', params: {latitude: location?.coords.latitude, longitude: location?.coords.longitude}})}
-        color={Colors.primary}
-      />
+      {location && location.coords && (
+          <FAB
+            style={styles.createQuestButton}
+            icon="plus"
+            onPress={() => navigation.navigate('QuestCreationScreen', {screen: 'QuestCreation', params: {latitude: location?.coords.latitude, longitude: location?.coords.longitude}})}
+            color={Colors.primary}
+          />
+      )}
       <FAB 
         style={styles.locationButton}
         icon="crosshairs-gps"
