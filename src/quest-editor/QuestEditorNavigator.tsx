@@ -1,24 +1,22 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import { ModuleGraph } from './ModuleGraph';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { ModuleGraphCaller } from './ModuleGraphCaller';
 import { QuestCreationScreen } from './QuestCreationScreen';
+import { Colors } from '../styles';
 
-type StackParams = {
+type TabParams = {
   QuestCreation: {latitude: number, longitude: number},
   ModuleGraph: undefined,
 }
-const Stack = createStackNavigator<StackParams>();
-
+const Tab = createMaterialTopTabNavigator<TabParams>();
 export const QuestEditorNavigator = () => {
   return (
-    <Stack.Navigator
-      screenOptions={(route) => ({
-        headerShown: true
-      })}
+    <Tab.Navigator
+      style={{backgroundColor: Colors.background}}
+      tabBarOptions={{indicatorStyle: {backgroundColor: Colors.primary}}}
     >
-      <Stack.Screen name='QuestCreation' component={QuestCreationScreen}/>
-      <Stack.Screen name='ModuleGraph' component={ModuleGraphCaller}/>
-    </Stack.Navigator>
+      <Tab.Screen name='QuestCreation' component={QuestCreationScreen} options={{tabBarLabel: 'Properties'}}/>
+      <Tab.Screen name='ModuleGraph' component={ModuleGraphCaller} options={{tabBarLabel: 'Modules'}}/>
+    </Tab.Navigator>
   );
 };
