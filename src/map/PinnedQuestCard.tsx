@@ -24,7 +24,7 @@ export default function PinnedQuestCard() {
               end={{ x: objectiveComplete ? 0.2 : 0.6, y: objectiveComplete ? 0.2 : 0.6 }}
             >
               <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                <Avatar.Image style={styles.questAvatar} size={50} source={{uri: 'https://static.wikia.nocookie.net/jamesbond/images/9/90/M_%28Judi_Dench%29_-_Profile.jpg/revision/latest?cb=20130506215045'}}/>
+                <Avatar.Image style={styles.questAvatar} theme={{colors: {primary: 'transparent'}}} size={50} source={{uri: 'https://static.wikia.nocookie.net/jamesbond/images/9/90/M_%28Judi_Dench%29_-_Profile.jpg/revision/latest?cb=20130506215045'}}/>
                 <Badge visible={objectiveComplete} size={18} theme={{colors: {notification: Colors.primaryLight}}} style={styles.badge}/>
                 <View style={{flexDirection: 'column', width: '100%'}}>
                   <Text style={styles.questName} numberOfLines={1}>
@@ -52,9 +52,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
     marginTop: StatusBar.currentHeight,
-    borderColor: Colors.black,
-    borderWidth: 1,
     borderRadius: 100,
+    elevation: 10,
     width: '95%',
     overflow: 'hidden',
   },
