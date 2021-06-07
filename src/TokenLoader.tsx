@@ -9,22 +9,57 @@ import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setToken } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
 import * as Localization from "expo-localization";
+import {getAllTrackersRequest, renewRequest} from "./utils/requestHandler";
+import {pinQuest, setAcceptedQuests} from "./redux/quests/questsSlice";
+import {loadItemLocally} from "./utils/SecureStore";
+import {QuestTracker} from "./types/quest";
 
 i18n.fallbacks = true;
 i18n.locale = Localization.locale;
 
 export const TokenLoader = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [hasRenewed, setHasRenewed] = React.useState<boolean>(false);
 
-  const token = useAppSelector((state) => state.authentication.token)
-  const dispatch = useAppDispatch()
+  const token = useAppSelector((state) => state.authentication.token);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     TokenManager.getToken()
       .then(token => dispatch(setToken(token)))
+      .then(() => renewRequest())
+      .then(() => setHasRenewed(true))
       .then(() => setIsLoading(false));
   }, [])
 
+  useEffect(() => {
+    let acceptedQuests: QuestTracker[] = [];
+    if(token && hasRenewed) {
+      getAllTrackersRequest()
+        .then((res) => {
+          if (res.ok) {
+            res.json()
+              .then((data) => {
+                dispatch(setAcceptedQuests(data.trackers));
+                acceptedQuests = data.trackers;
+              })
+              .then(() => loadItemLocally('PinnedQuestTracker')
+              .then((res) => {
+                if(res) {
+                  dispatch(pinQuest(JSON.parse(res)));
+                } else {
+                  acceptedQuests.some((tracker) => {
+                    if(!tracker.finished) {
+                      dispatch(pinQuest(tracker));
+                      return true;
+                    }
+                  });
+                }
+              }))
+          }
+        });
+    }
+  }, [token])
 
   return (
 

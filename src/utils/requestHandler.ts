@@ -41,8 +41,12 @@ export const registerRequest = (username: string, email: string, hashed_password
 // /auth/renew/
 export const renewRequest = () : void => {
   request('/auth/renew/', 'POST')
-  .then(r => r.json())
-  .then(r => {store.dispatch(setToken(r.token))})
+  .then(r => {
+    if(r.ok) {
+      r.json().then(r => {store.dispatch(setToken(r.token))})
+    }
+  })
+
 }
 
 // /quest/query/

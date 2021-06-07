@@ -12,6 +12,7 @@ export interface QuestBase {
     profileImageId: string,
     profileName: string,
     locationName: string,
+    approximateTime: string,
 
 }
 
@@ -30,6 +31,7 @@ export interface QuestHeader extends QuestBase {
 }
 
 export interface QuestBaseUpdate {
+    approximateTime?: string,
     title?: string,
     description?: string,
     imageId?: string,
@@ -65,9 +67,21 @@ export interface PrototypeModule {
     type: string,
     objective: string,
     components: PrototypeComponent[]
-    
+
 }
 
 export interface PrototypeComponent {
     type: string,
+}
+
+export interface QuestTracker {
+    questId: string,
+    trackerId: string,
+    newestQuestVersion: boolean,
+    finished: boolean,
+    vote: string,
+    creationTime: string,
+    questName: string,
+    objective: string,
+    author: string
 }
