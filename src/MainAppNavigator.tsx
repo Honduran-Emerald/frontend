@@ -1,9 +1,10 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Badge } from 'react-native-paper';
 
 import { MapNavigator } from './map/MapNavigator';
 import { ModuleGraph } from './quest-editor/ModuleGraph';
@@ -13,7 +14,8 @@ import { setToken, unsetToken } from './redux/authentication/authenticationSlice
 import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
 import QuestlogScreen from './common/QuestlogScreen';
 import { clearQuestState } from './redux/quests/questsSlice';
-import {deleteItemLocally} from "./utils/SecureStore";
+import { deleteItemLocally } from './utils/SecureStore';
+import { Colors } from './styles';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,7 +32,12 @@ export default function MainAppNavigator() {
               break;
             case "Questlog":
               iconName = "book-open-variant";
-              break;
+              return (
+                <View>
+                  <MaterialCommunityIcons name={iconName} size={size} color={focused ? Colors.primary : "grey"}/>
+                  <Badge visible={true} style={styles.badge} theme={{colors: {notification: Colors.primaryLight}}} size={13}/>
+                </View>
+              );
             case "Map":
               iconName = "map-marker-outline";
               return (
@@ -112,5 +119,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingTop: 40
+  },
+  badge: {
+    position: 'absolute',
+    top: 0,
+    right: -4,
+    borderWidth: 2,
+    borderColor: Colors.background,
   },
 });
