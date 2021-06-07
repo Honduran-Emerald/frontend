@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { queryQuestsRequest } from '../utils/requestHandler';
 import { setLocalQuests } from '../redux/quests/questsSlice';
 import { QuestMarker } from './QuestMarker';
+import PinnedQuestCard from './PinnedQuestCard';
 
 export const MapScreen = () => {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -40,7 +41,7 @@ export const MapScreen = () => {
       if (status !== 'granted') {
         return Promise.reject(new Error("Permission to access location was denied"))
       }
-  
+
       let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
       setLocation(location);
     })()
@@ -49,17 +50,17 @@ export const MapScreen = () => {
         accuracy: Location.Accuracy.Highest,
         distanceInterval: 0
       };
-      
+
       // subscribe to Location updates
       const unsubscribe = await Location.watchPositionAsync(LOCATION_SETTINGS, (location : Location.LocationObject) => {
         setLocation(location);
       })
       MagnetometerSubscription.subscribe(setMagnetometerSubscription, setHeading)
-      
+
       setLocationSubscription(unsubscribe);
     })
     .catch((err : Error) => {setErrorMsg(err.message)});
-    
+
     return () => {
       MagnetometerSubscription.unsubscribeAll();
     }
@@ -84,7 +85,7 @@ export const MapScreen = () => {
       <Text>{errorMsg}</Text>
     </View>)
   }
-  
+
   return(
     <View style={styles.container}>
       {(location != null && location.coords != null) &&
@@ -100,13 +101,15 @@ export const MapScreen = () => {
         initialRegion={{latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0461, longitudeDelta: 0.0210}}
       >
         <UserMarker rotation={heading} coordinate={location.coords}/>
-        {localQuests && localQuests.map((quest, index) => (
+        {localQuests && localQuests.map((quest, index) => ( quest.location &&
           <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
         ))}
       </MapView>
       )}
-
-      <FAB 
+      <View style={styles.pinnedCard}>
+        <PinnedQuestCard/>
+      </View>
+      <FAB
         style={styles.locationButton}
         icon="crosshairs-gps"
         onPress={animateCameraToLocation}
@@ -141,5 +144,12 @@ const styles = StyleSheet.create({
     right: 10,
     bottom: 20,
     backgroundColor: Colors.background,
-  }
+  },
+  pinnedCard: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: '100%',
+    alignItems: 'center',
+  },
 });
