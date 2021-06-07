@@ -19,20 +19,23 @@ i18n.locale = Localization.locale;
 
 export const TokenLoader = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [hasRenewed, setHasRenewed] = React.useState<boolean>(false);
 
-  const token = useAppSelector((state) => state.authentication.token)
-  const dispatch = useAppDispatch()
+  const token = useAppSelector((state) => state.authentication.token);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     TokenManager.getToken()
       .then(token => dispatch(setToken(token)))
       .then(() => renewRequest())
+      .then(() => setHasRenewed(true))
       .then(() => setIsLoading(false));
   }, [])
 
   useEffect(() => {
     let acceptedQuests: QuestTracker[] = [];
-    if(token) {
+    if(token && hasRenewed) {
+      console.log('get Trackers')
       getAllTrackersRequest()
         .then((res) => {
           if (res.ok) {
