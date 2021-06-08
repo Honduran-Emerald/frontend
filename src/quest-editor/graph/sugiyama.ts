@@ -159,11 +159,9 @@ export const fromLists = (nodes: IGraphModuleNode[], links: [string|number, stri
 
 // create sugiyama from graph
 export const dagLayout = (g: dagre.graphlib.Graph<{}>) => {
-    console.log('Run sugiyama')
     let sorted = getLayers(g);
     sorted = virtLayers(g, sorted);
     sorted = vertOrder(g, sorted);
-    console.log('Finish sugiyama')
     return {
         positions: sorted,
         graph: g
