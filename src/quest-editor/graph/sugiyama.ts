@@ -1,7 +1,15 @@
 import dagre from 'dagre';
 import { IGraphModuleNode } from './ModuleGraph';
 
+/**
+ * Implementation of the sugiyama algorithm
+ * 
+ * Source used: "Visualisation of state machines using the Sugiyama framework" by Viktor Mazetti and Hannes Sörensson
+ * https://publications.lib.chalmers.se/records/fulltext/161388.pdf
+ */
 
+
+// splits graph into layers by using a BFS
 const getLayers = (g: dagre.graphlib.Graph<{}>): string[][] => {
 
     let sorted: string[][] = [];
@@ -10,7 +18,6 @@ const getLayers = (g: dagre.graphlib.Graph<{}>): string[][] => {
     
     let start = nodes.filter(n => edges.filter(e => e.w === n).length === 0)
     while (start.length > 0) {
-        //console.log(start);
         sorted.push(start);
         edges = edges.filter(e => !(start.includes(e.v)));
         nodes = nodes.filter(n => !(start.includes(n)));
@@ -20,7 +27,7 @@ const getLayers = (g: dagre.graphlib.Graph<{}>): string[][] => {
 
 }
 
-
+// adds virtual nodes to enforce all links to only span one layer
 const virtLayers = (g: dagre.graphlib.Graph<{}>, sorted: string[][]) => {
 
     let virt = 0;
@@ -45,7 +52,7 @@ const virtLayers = (g: dagre.graphlib.Graph<{}>, sorted: string[][]) => {
     return sorted;
 }
 
-
+// reorder nodes to minimize edge crossings. this is only a heuristic!
 const vertOrder = (g: dagre.graphlib.Graph<{}>, sorted: string[][]) => {
 
     const max_iter = 5;
@@ -133,8 +140,8 @@ const vertOrder = (g: dagre.graphlib.Graph<{}>, sorted: string[][]) => {
 
 }
 
-
-export const fromLists = (nodes: IGraphModuleNode[], links: string[][]) => {
+// create sugiyama layout from lists of nodes and links (wraps function below)
+export const fromLists = (nodes: IGraphModuleNode[], links: [string|number, string|number][]) => {
     const g = new dagre.graphlib.Graph();
     g.setGraph({});
     g.setDefaultEdgeLabel(function() { return {}; });
@@ -143,16 +150,20 @@ export const fromLists = (nodes: IGraphModuleNode[], links: string[][]) => {
         g.setNode(n.id, {component: n.component})
     });
     links.forEach(l => {
+        //@ts-ignore
         g.setEdge(l[0], l[1])
     })
     return dagLayout(g);
     
 }
 
+// create sugiyama from graph
 export const dagLayout = (g: dagre.graphlib.Graph<{}>) => {
+    console.log('Run sugiyama')
     let sorted = getLayers(g);
     sorted = virtLayers(g, sorted);
     sorted = vertOrder(g, sorted);
+    console.log('Finish sugiyama')
     return {
         positions: sorted,
         graph: g
