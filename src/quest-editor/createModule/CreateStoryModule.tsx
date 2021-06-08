@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { Button, Subheading, TextInput, Title } from 'react-native-paper';
-import { QuestComponent } from '../../types/quest';
 import { ICreateModule } from './CreateModuleScreen';
 import i18n from 'i18n-js';
+import { PrototypeComponent } from '../../types/quest';
 
 export const CreateStoryModule: React.FC<ICreateModule> = ({ setFinalModule }) => {
 
     const [moduleData, setModuleData] = useState<any>({});
-    const [components, setComponents] = useState<QuestComponent[]>([])
+    const [components, setComponents] = useState<PrototypeComponent[]>([])
 
     return (
         <View style={{marginHorizontal: 10}}>

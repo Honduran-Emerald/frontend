@@ -1,103 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
+import { Provider } from 'react-native-paper';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { PrototypeModule, QuestPrototype } from '../../types/quest';
+import { AddModuleNode } from './AddModuleNode';
+import { graph_connections } from './linksParser';
 import { ModuleGraph } from './ModuleGraph';
+import { ModuleNode } from './ModuleNode';
 import { fromLists } from './sugiyama';
-
-const nodeSize = 60;
 
 export const ModuleGraphCaller = () => {
 
-    const [positions, setPositions] = useState<string[][]>([])
+    const [positions, setPositions] = useState<string[][]>([]); // arrangement of single Nodes
+    const [graph, setGraph] = useState<dagre.graphlib.Graph<{}>>(); // includes list of edges. might be removed later
 
-    const [graph, setGraph] = useState<dagre.graphlib.Graph<{}>>();
-    
+    // changes graph behavior if defined. Useful for linking where pressing a node should *not* open the module editor.
+    const linkOnChoice = useRef<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>(undefined) 
+
+    const questPrototype = useAppSelector((state) => state.editor.questPrototype); // redux selector
 
     useEffect(() => {
-        let nodes = ([
-            'n1',
-            'n2',
-            'n3',
-            'n4',
-            'n5',
-            'n6',
-            'p1',
-            'p2',
-            'p3',
-            'p4',
-            'p5',
-            'p6',
 
-            'p7',
-            'p8',
-            'p9',
+        if (!questPrototype) return () => {}; // if questPrototype isn't loaded yet, do nothing. 
 
-            'a1',
-            'a2'
-            
-        ]);
-
-        let links = ([
-            ['n1', 'n2'],
-            ['n2', 'n3'],
-            ['n2', 'n4'],
-            ['n3', 'n5'],
-            ['n3', 'n4'],
-            ['n4', 'n5'],
-            ['n4', 'n6'],
-            ['n6', 'p1'],
-        
-            ['p1', 'p2'],
-            ['p1', 'p3'],
-            ['p1', 'p4'],
-            ['p1', 'p5'],
-            ['p2', 'p6'],
-            ['p3', 'p6'],
-            ['p4', 'p6'],
-
-
-            ['p1', 'p7'],
-            ['p1', 'p8'],
-            ['p1', 'p9'],
-            ['p7', 'p6'],
-            ['p8', 'p6'],
-            ['p9', 'p6'],
-            
-            ['p5', 'p6'],
-
-            ['a1', 'a2'],
-            ['a2', 'n4']
-        ])
-
-        const { positions, graph } = fromLists(nodes.map(node => ({ 
-            id: node, component: 
-            <Text style={styles.textcomponent}>{node}</Text>
+        let { nodes, links } = graph_connections(questPrototype) // calculate nodes and links
+        const { positions, graph } = fromLists(nodes.map(node => ({ // calculate virtual nodes for sugiyama layout
+            id: node.id, component: 
+            node.type === 'normal' 
+            ? <ModuleNode node={node} linkOnChoice={linkOnChoice} /> // regular node. can be adjusted to return different types of nodes
+            : <AddModuleNode setSource={node.setSource} linkOnChoice={linkOnChoice}/> // empty node. clicking will allow to add a new or link to an existing module
         })), links);
 
         setPositions(positions);
         setGraph(graph)
 
+    }, [questPrototype, linkOnChoice])
 
-    }, [])
-
-    return (<ModuleGraph 
-        positions={positions}
-        graph={graph}
-    />)
+    return (
+    <Provider>
+        <ModuleGraph 
+            positions={positions}
+            graph={graph}/>
+    </Provider>)
 }
-
-export const IncComp = ({t} : {t: string}) => {
-    <Text style={styles.textcomponent} >{t}</Text>
-}
-
-const styles = StyleSheet.create({
-    textcomponent: {
-        width: 70,
-        height: 60,
-        textAlign: 'center',
-        textAlignVertical: 'center',
-        borderRadius: 20,
-        backgroundColor: 'white',
-        borderColor: 'black',
-        borderWidth: 1
-    }
-})
