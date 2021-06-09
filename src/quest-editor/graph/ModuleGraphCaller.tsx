@@ -4,6 +4,7 @@ import { Provider } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { PrototypeModule, QuestPrototype } from '../../types/quest';
 import { AddModuleNode } from './AddModuleNode';
+import { LinkModuleNode as LinkModuleNode } from './LinkModuleNode';
 import { graph_connections } from './linksParser';
 import { ModuleGraph } from './ModuleGraph';
 import { ModuleNode } from './ModuleNode';
@@ -24,16 +25,26 @@ export const ModuleGraphCaller = () => {
         if (!questPrototype) return () => {}; // if questPrototype isn't loaded yet, do nothing. 
 
         let { nodes, links } = graph_connections(questPrototype) // calculate nodes and links
-        const { positions, graph } = fromLists(nodes.map(node => ({ // calculate virtual nodes for sugiyama layout
+        let { positions, graph } = fromLists(nodes.map(node => ({ // calculate virtual nodes for sugiyama layout
             id: node.id, component: 
             node.type === 'normal' 
             ? <ModuleNode node={node} linkOnChoice={linkOnChoice} /> // regular node. can be adjusted to return different types of nodes
-            : <AddModuleNode setSource={node.setSource} linkOnChoice={linkOnChoice}/> // empty node. clicking will allow to add a new or link to an existing module
+            : <LinkModuleNode setSource={node.setSource} linkOnChoice={linkOnChoice}/> // empty node. clicking will allow to add a new or link to an existing module
         })), links);
 
-        setPositions(positions);
-        setGraph(graph)
+        if (positions.length > 0) {
+            setPositions(positions);
+            setGraph(graph);
+        } else {
+            let { positions, graph } = fromLists([{
+                id: 0,
+                component: <AddModuleNode setSource={(a,b) => a.modules[0]} linkOnChoice={linkOnChoice}/>
+            }], [])
+            setPositions(positions);
+            setGraph(graph);
+        }
 
+        
     }, [questPrototype, linkOnChoice])
 
     return (

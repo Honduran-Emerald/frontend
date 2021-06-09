@@ -3,11 +3,6 @@ export interface Location {
     longitude: number
 }
 
-export interface Location {
-    latitude: number,
-    longitude: number
-}
-
 export interface User {
     userId: string,
     userName: string,

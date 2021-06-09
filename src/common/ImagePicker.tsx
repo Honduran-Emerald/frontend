@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as PickImage from 'expo-image-picker';
 import { Colors, Containers } from '../styles';
 
-export const ImagePicker : React.FC<{image : string, setImage : Function, style? : ViewStyle | ViewStyle[]}> = ({image, setImage, style}) => {
+export const ImagePicker : React.FC<{image : string, setImage : (path: string) => void, style? : ViewStyle | ViewStyle[]}> = ({image, setImage, style}) => {
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false);
 
   const requestPermission = async () => {

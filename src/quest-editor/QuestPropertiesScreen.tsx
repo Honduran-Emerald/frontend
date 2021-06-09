@@ -1,21 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, TextInput as TextInputNative} from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { Colors, Containers } from '../styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ImagePicker } from '../common/ImagePicker';
-import { createQuestRequest } from '../utils/requestHandler';
-import { useRoute } from '@react-navigation/core';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { setEstimatedTime, setImage, setLocationName, setQuestDescription, setQuestTitle } from '../redux/editor/editorSlice';
+import I18n from 'i18n-js';
 
-export const QuestCreationScreen = () => {
-  const [questTitle, setQuestTitle] = useState<string>("");
-  const [image, setImage] = useState<string>('');
-  const [locationName, setLocationName] = useState<string>('');
-  const [estimatedTime, setEstimatedTime] = useState<string>('');
-  const [questDescription, setQuestDescription] = useState<string>("");
+export const QuestPropertiesScreen = () => {
 
-  const route : {params: {latitude: number, longitude: number}} = useRoute<{params: {latitude: number, longitude: number}, key: string, name: string}>();
+  const questPrototype = useAppSelector(state => state.editor.questPrototype)
+  const imagePath = useAppSelector(state => state.editor.imagePath)
+  const dispatch = useAppDispatch();
 
   return(
     <KeyboardAwareScrollView
@@ -27,38 +25,47 @@ export const QuestCreationScreen = () => {
       style={{backgroundColor: Colors.background}}
     >
       <TextInput 
-        placeholder='Quest Title'
-        value={questTitle} 
-        onChange={(text) => setQuestTitle(text.nativeEvent.text)} 
+        placeholder={I18n.t('propertiesQuestTitle')}
+        value={questPrototype!.title} 
+        onChange={(text) => dispatch(setQuestTitle(text.nativeEvent.text))}
         theme={{colors: {primary: Colors.primary}}} 
         style={[style.container, style.questTitleInput]}
       />
-      <ImagePicker image={image} setImage={setImage} style={[style.container, style.imagePicker]}/>
+      <ImagePicker image={imagePath} setImage={(path: any) => dispatch(setImage(path))} style={[style.container, style.imagePicker]}/>
       <View style={[style.container, style.smallInputsGroup]}>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='map-marker' size={16} color='darkgray'/>
-          <TextInputNative placeholder='location name' value={locationName} onChangeText={setLocationName} style={{marginLeft: 7}}/>
+          <TextInputNative placeholder={I18n.t('propertiesLocName')} value={questPrototype!.locationName} onChangeText={val => dispatch(setLocationName(val))} style={{marginHorizontal: 7, flex: 1}}/>
         </View>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='timer' size={16} color='darkgray'/>
-          <TextInputNative placeholder='est. time' value={estimatedTime} onChangeText={setEstimatedTime} style={{marginLeft: 7}}/>
+          <TextInputNative placeholder={I18n.t('propertiesEstTime')} value={questPrototype!.approximateTime} onChangeText={val => dispatch(setEstimatedTime(val))} style={{marginHorizontal: 7, flex: 1}}/>
         </View>
       </View>
-      <MultiLineInput questDescription={questDescription} setQuestDescription={setQuestDescription}/>
+      <MultiLineInput questDescription={questPrototype!.description} setQuestDescription={val => dispatch(setQuestDescription(val))}/>
       <Button 
-        disabled={(questTitle && locationName && estimatedTime && questDescription && route.params.latitude && route.params.longitude) ? false : true} 
+        disabled={
+          !(questPrototype!.title 
+            && questPrototype!.locationName 
+            && questPrototype!.approximateTime  
+            && questPrototype!.description
+          )
+        } 
         theme={{colors: {primary: Colors.primary}}} 
         icon='content-save' 
         mode='contained' 
-        onPress={() => {createQuestRequest(questTitle, questDescription, image, route.params.latitude, route.params.longitude, locationName, estimatedTime, [])}}
+        onPress={() => {
+          alert(JSON.stringify(questPrototype))
+          //createPutRequest(questPrototype!.id, questPrototype!)
+          }}
       >
-        Save
+        {I18n.t('saveButton')}
       </Button>
     </KeyboardAwareScrollView>
   );
 }
 
-const MultiLineInput : React.FC<{questDescription: string, setQuestDescription: Function}> = ({questDescription, setQuestDescription}) => (
+const MultiLineInput : React.FC<{questDescription: string, setQuestDescription: (val: string) => void}> = ({questDescription, setQuestDescription}) => (
   <View style={[style.container, style.description]}>
     <TextInputNative
       multiline
@@ -66,7 +73,7 @@ const MultiLineInput : React.FC<{questDescription: string, setQuestDescription: 
       style={style.descriptionInput}
       value={questDescription} 
       onChangeText={(text) => setQuestDescription(text)} 
-      placeholder='QuestDescription'
+      placeholder={I18n.t('propertiesDescription')}
     />
   </View>
 )

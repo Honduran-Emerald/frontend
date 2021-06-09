@@ -10,12 +10,12 @@ import { useNavigation } from '@react-navigation/core';
 import I18n from 'i18n-js';
 import { Colors } from '../../styles';
 
-interface IAddModuleNode {
+interface ILinkModuleNode {
     setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule,
     linkOnChoice: MutableRefObject<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>,
 }
 
-export const AddModuleNode: React.FC<IAddModuleNode> = ({ setSource, linkOnChoice }) => {
+export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, linkOnChoice }) => {
 
     const questPrototype = useAppSelector(state => state.editor.questPrototype);
     const dispatch = useAppDispatch();
@@ -40,12 +40,25 @@ export const AddModuleNode: React.FC<IAddModuleNode> = ({ setSource, linkOnChoic
                         navigation.navigate('CreateModule', {
                             moduleId: maxId,
                             // TODO: Probably refactor ALL of this because react native does not support serializable functions... ugh
-                            insertModuleId: () => {}
+                            insertModuleId: () => {
+                                dispatch(addOrUpdateQuestModule(setSource(questPrototype, maxId)))
+                            }
                         })
+                       
                         setModalOpen(false);
                     }}>
-                        
-                        {I18n.t('createModuleButton')}
+                        {I18n.t('createModuleChoice')}
+                    </Button>
+                    <Divider/>
+                    <Button mode='contained' theme={{colors: {primary: Colors.primary}}} onPress={() => {
+                        // setSource of this node will set its parents link variable (this is done in linksParser.ts)
+                        // by setting the linkOnChoice reference to setSource, all future pressed nodes can access this nodes parent link
+                        // if still in doubt, ask Lenny
+                        // if you are Lenny, tough luck
+                        linkOnChoice.current = setSource;
+                        setModalOpen(false);
+                    }}>
+                        {I18n.t('linkModuleChoice')}
                     </Button>
                     
                 </Modal>
@@ -53,7 +66,7 @@ export const AddModuleNode: React.FC<IAddModuleNode> = ({ setSource, linkOnChoic
             <TouchableHighlight style={{borderRadius: 20}} onPress={() => {
                 setModalOpen(true);
             }}>
-                <Text style={styles.component}>{I18n.t('addModule')}</Text>
+                <Text style={styles.component}>{I18n.t('addOrConnectModule')}</Text>
 
             </TouchableHighlight>
         </View>

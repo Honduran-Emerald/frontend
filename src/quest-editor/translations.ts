@@ -2,6 +2,23 @@ import i18n from 'i18n-js';
 
 export const editorTranslations = {
     en: {
+        'editQuest': 'Edit Quest',
+        'tabProperties': 'Properties',
+        'tabModules': 'Modules',
+
+        'propertiesQuestTitle': 'Quest Title',
+        'propertiesEstTime': 'est. time',
+        'propertiesLocName': 'location name',
+        'propertiesDescription': 'Quest Description',
+        'saveButton': 'SAVE',
+
+
+        'addOrConnectModule': 'Add or connect a Module',
+        'addModule': 'Add a Module',
+
+        'createModuleChoice': 'Create Module',
+        'linkModuleChoice': 'Link Module',
+        
         'createModuleTitle': 'Create Module',
         'positionModuleName': 'Position Module',
         'positionModuleDescription': 'Allows the user to advance by visiting a location.',

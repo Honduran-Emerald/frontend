@@ -7,7 +7,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Badge } from 'react-native-paper';
 
 import { MapNavigator } from './map/MapNavigator';
-import { QuestEditorNavigator } from './quest-editor/QuestEditorNavigator';
+import { QuestEditorTabNavigator } from './quest-editor/QuestEditorTabNavigator';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setToken, unsetToken } from './redux/authentication/authenticationSlice';
 import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
@@ -61,9 +61,9 @@ export default function MainAppNavigator() {
       }}
     >
       <Tab.Screen name="Home" component={Dummy}/>
-      <Tab.Screen name="Questlog" component={QuestlogScreen} />
+      <Tab.Screen name="Questlog" component={QuestlogScreen}/>
       <Tab.Screen name="Map" component={MapNavigator}/>
-      <Tab.Screen name="Chat" component={QuestEditorNavigator} initialParams={{questId: '60a403f4af6922a6f2aa21ec'}}/>
+      <Tab.Screen name="Chat" component={Dummy}/>
       <Tab.Screen name="Profile" component={Dummy} />
     </Tab.Navigator>
   );

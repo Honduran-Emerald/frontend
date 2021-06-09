@@ -120,10 +120,8 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
                             { 
                                 useNativeDriver: true // Internet said this will improve performance. Not sure whether it does
                             } 
-                        )
-                    }
+                        )}
                 >
-
                     <View 
                         style={{marginBottom: 50}}> 
                         {positions.map((posLine, rowId) => (

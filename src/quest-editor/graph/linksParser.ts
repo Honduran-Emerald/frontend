@@ -76,7 +76,7 @@ export const graph_connections = (questPrototype: QuestPrototype): {nodes: Inter
             default:
                 return [];
         }
-    }).reduce((acc, curVal) => acc.concat(curVal))
+    }).reduce((acc, curVal) => acc.concat(curVal), [])
 
     return {
         nodes: nodes,

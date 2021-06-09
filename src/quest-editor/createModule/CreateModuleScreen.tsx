@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import { Card, Divider, Subheading, TextInput } from 'react-native-paper';
 import i18n from 'i18n-js';

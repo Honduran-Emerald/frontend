@@ -53,7 +53,8 @@ export const CreateEndModule: React.FC<ICreateModule> = ({ setFinalModule }) => 
                 mode='contained'
                 style={{marginBottom: 20}}
                 onPress={() => {setFinalModule(parseToModule(moduleData)) /* TODO: Add Module Preprocessing here as soon as module structure is fully defined. Don't forget it */}}>
-                Create Module
+                
+                {i18n.t('createModuleButton')}
             </Button>
         </View>
     )
