@@ -6,6 +6,7 @@ import { addOrUpdateQuestModule } from '../../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { PrototypeModule, QuestPrototype } from '../../types/quest';
 import _ from 'lodash';
+import { useNavigation } from '@react-navigation/core';
 
 interface IAddModuleNode {
     setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule,
@@ -16,6 +17,8 @@ export const AddModuleNode: React.FC<IAddModuleNode> = ({ setSource, linkOnChoic
 
     const questPrototype = useAppSelector(state => state.editor.questPrototype);
     const dispatch = useAppDispatch();
+
+    const navigation = useNavigation();
 
     const [modalOpen, setModalOpen] = useState(false); // Modal for choosing whether to add a module or to link to an existing module
 
@@ -30,7 +33,16 @@ export const AddModuleNode: React.FC<IAddModuleNode> = ({ setSource, linkOnChoic
                             return;
                         }
                         // currently creates a single choice module. should route to create-module screen in future
-                        let maxId = (_.max(questPrototype.modules.map(m => m.id)) || 0) + 1
+                        const maxId = (_.max(questPrototype.modules.map(m => m.id)) || 0) + 1;
+
+                        navigation.navigate('CreateModule', {
+                            moduleId: maxId,
+                            // TODO: Probably refactor ALL of this because react native does not support serializable functions... ugh
+                            insertModuleId: () => {
+                                dispatch(addOrUpdateQuestModule(setSource(questPrototype, maxId)))
+                            }
+                        })
+/* 
                         dispatch(addOrUpdateQuestModule({
                             id: maxId,
                             type: 'Choice',
@@ -46,8 +58,7 @@ export const AddModuleNode: React.FC<IAddModuleNode> = ({ setSource, linkOnChoic
                                     nextModuleId: null
                                 }
                             ]
-                        }))
-                        dispatch(addOrUpdateQuestModule(setSource(questPrototype, maxId)))
+                        })) */
                         setModalOpen(false);
                     }}>
                         Create Module

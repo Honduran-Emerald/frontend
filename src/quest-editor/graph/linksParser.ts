@@ -9,12 +9,13 @@ interface StoryModule extends PrototypeModule {
     nextModuleId: number
 }
 
-interface InternalFullNode {
+export interface InternalFullNode {
     id: number,
     type: 'normal',
+    moduleObject: PrototypeModule
 }
 
-interface InternalEmptyNode {
+export interface InternalEmptyNode {
     id: string,
     type: 'empty',
     setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule
@@ -37,7 +38,7 @@ const virtualizeEmptyLink = (link: [string|number, string|number], nodes: Intern
 
 export const graph_connections = (questPrototype: QuestPrototype): {nodes: InternalNode[], links: [string|number, string|number][]} => {
 
-    let nodes: InternalNode[] = questPrototype.modules.map(module => ({id: module.id, type: 'normal'}));
+    let nodes: InternalNode[] = questPrototype.modules.map(module => ({id: module.id, type: 'normal', moduleObject: module}));
 
     let empty_idx = 0;
 

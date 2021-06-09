@@ -32,7 +32,8 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
     const [innerHorizontalScrollOffset, setInnerHorizontalScrollOffset] = useState<number[]>([]);
     const [indexPath, setIndexPath] = useState<{v: {rowIdx: number, columnIdx: number}, w: {rowIdx: number, columnIdx: number}}[]>([]);
 
-    const svgPath = useValue<string>('M 0 0')
+    const [svgPath, setSvgPath] = useState<string>('M 0 0')
+
     const scrollY = useValue<number>(0)
 
     useEffect(() => {
@@ -53,31 +54,35 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
         }) : []);
     }, [graph, positions])    
 
-    if (indexPath.find(edge => outerHorizontalScrollOffset[edge.v.rowIdx] === undefined
-                                || outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')] === undefined
-                                || outerHorizontalScrollOffset[edge.w.rowIdx] === undefined
-                                || outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')] === undefined)) {
-    }
 
-    const val = indexPath.map(edge => (`M ${
-        (outerHorizontalScrollOffset[edge.v.rowIdx]?.x || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.v.rowIdx] || 0)
-    } ${
-        (outerHorizontalScrollOffset[edge.v.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.y || NaN)
-    } C ${
-        (outerHorizontalScrollOffset[edge.v.rowIdx]?.x || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.v.rowIdx] || 0)
-    } ${
-        (outerHorizontalScrollOffset[edge.v.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.y || NaN) + bezierOffset
-    } ${
-        (outerHorizontalScrollOffset[edge.w.rowIdx]?.x || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.w.rowIdx] || 0)
-    } ${
-        (outerHorizontalScrollOffset[edge.w.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.y || NaN) - bezierOffset
-    } ${
-        (outerHorizontalScrollOffset[edge.w.rowIdx]?.x || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.w.rowIdx] || 0)
-    } ${
-        (outerHorizontalScrollOffset[edge.w.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.y || NaN)
-    }`)).join(' ')
+    useEffect(() => {
+        if (!indexPath.find(edge => (outerHorizontalScrollOffset[edge.v.rowIdx] === undefined
+                                    || outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')] === undefined
+                                    || outerHorizontalScrollOffset[edge.w.rowIdx] === undefined
+                                    || outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')] === undefined))) {
 
-    svgPath.setValue(val)
+            const val = indexPath.map(edge => (`M ${
+                (outerHorizontalScrollOffset[edge.v.rowIdx]?.x || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.v.rowIdx] || 0)
+            } ${
+                (outerHorizontalScrollOffset[edge.v.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.y || NaN)
+            } C ${
+                (outerHorizontalScrollOffset[edge.v.rowIdx]?.x || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.v.rowIdx] || 0)
+            } ${
+                (outerHorizontalScrollOffset[edge.v.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.y || NaN) + bezierOffset
+            } ${
+                (outerHorizontalScrollOffset[edge.w.rowIdx]?.x || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.w.rowIdx] || 0)
+            } ${
+                (outerHorizontalScrollOffset[edge.w.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.y || NaN) - bezierOffset
+            } ${
+                (outerHorizontalScrollOffset[edge.w.rowIdx]?.x || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.w.rowIdx] || 0)
+            } ${
+                (outerHorizontalScrollOffset[edge.w.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.y || NaN)
+            }`)).join(' ')
+
+            setSvgPath(val)
+
+        }
+    })
 
     return (
         <View>
@@ -95,9 +100,11 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
                                 {translateY: Animated.multiply(-1, scrollY)}
                             ]
                         }}>
-                        <AnimatedPath d={svgPath} 
-                        strokeWidth='1'
-                        stroke='black'
+                        <Path 
+                            d={svgPath} 
+                            strokeWidth='1'
+                            stroke='black'
+                            // TODO Adjust graph links here
                         />    
                     </AnimatedG>  
 
@@ -111,7 +118,6 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
                         Animated.event(
                             [{nativeEvent: {contentOffset: {y: scrollY}}}],
                             { 
-                                listener: (event: any) => {console.log('hello')},
                                 useNativeDriver: true // Internet said this will improve performance. Not sure whether it does
                             } 
                         )

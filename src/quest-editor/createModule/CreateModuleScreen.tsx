@@ -9,21 +9,50 @@ import { CreateEndModule } from './CreateEndModule';
 import { CreateChoiceModule } from './CreateChoiceModule';
 import { primary } from '../../styles/colors';
 import { PrototypeComponent } from '../../types/quest';
+import { useAppDispatch } from '../../redux/hooks';
+import { useNavigation, useRoute } from '@react-navigation/core';
+import { addOrUpdateQuestModule } from '../../redux/editor/editorSlice';
 
 
 export interface ICreateModule {
-    setFinalModule: (finalModule: object) => void
+    setFinalModule: (finalModule: IModuleBase) => void
+}
+
+export interface IModuleBase {
+    type: string,
+    components: PrototypeComponent[],
+    choices?: {
+        text: string,
+        nextModuleId: number | null,
+    }[],
+    endingFactor?: number,
 }
 
 export const CreateModuleScreen = () => {
-
-    const [moduleName, setModuleName] = useState('')
+ 
+    const [objective, setObjective] = useState('')
     const [chosenModuleType, setChosenModuleType] = useState('')
     const [finalModule, setFinalModule] = useState();
     const [components, setComponents] = useState<PrototypeComponent[]>([]);
 
-    const saveModule = (finalModule: object) => {
-        console.log({...finalModule, moduleName: moduleName})
+    const route = useRoute();
+    const navigation = useNavigation();
+
+    const dispatch = useAppDispatch();
+
+    const saveModule = (finalModule: IModuleBase) => {
+
+        const baseModule = {
+            //@ts-ignore
+            id: route.params?.moduleId,
+            objective: objective,
+            components: [],
+        }
+
+        dispatch(addOrUpdateQuestModule({...baseModule, ...finalModule})) 
+        //@ts-ignore
+        route.params?.insertModuleId()
+        navigation.navigate('ModuleGraph')
     }
 
     const modules = [
@@ -40,13 +69,14 @@ export const CreateModuleScreen = () => {
     }
 
     return (
-        <View>
+        <ScrollView>
             <TextInput
                 dense
                 style={{margin: 10, marginVertical: 20}}
                 label={i18n.t('moduleObjectiveLabel')}
-                value={moduleName}
-                onChangeText={setModuleName} />
+                value={objective}
+                onChangeText={setObjective}
+                theme={{colors: {primary: primary}}} />
             <Divider/>
             <Subheading 
                 style={{margin: 10, marginTop: 20, marginLeft: 20}}>
@@ -61,7 +91,7 @@ export const CreateModuleScreen = () => {
 
             <Divider style={{marginVertical: 10}}/>
             {chosenModuleType in moduleMap && moduleMap[chosenModuleType]}
-        </View>
+        </ScrollView>
     )
 }
 

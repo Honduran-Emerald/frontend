@@ -5,10 +5,10 @@ import { Text } from 'react-native-paper';
 import { addOrUpdateQuestModule } from '../../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { PrototypeModule, QuestPrototype } from '../../types/quest';
-import { InternalNode } from './linksParser';
+import { InternalFullNode, InternalNode } from './linksParser';
 
 export interface IModuleNode {
-    node: InternalNode
+    node: InternalFullNode
     linkOnChoice: MutableRefObject<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>
 }
 
@@ -19,14 +19,12 @@ export const ModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice }) => {
 
     return (
         <TouchableOpacity onPress={() => {
-            console.log('Press ModuleNode', linkOnChoice!==undefined, questPrototype!==undefined)
             if (linkOnChoice.current !== undefined && questPrototype !== undefined) {
-                console.log('Module Node', node.id)
                 dispatch(addOrUpdateQuestModule(linkOnChoice.current(questPrototype, node.id as number)))
                 linkOnChoice.current = undefined
             }
         }}>
-            <Text style={styles.textcomponent}>{node.id}</Text>
+            <Text style={styles.textcomponent}>{node.moduleObject.objective}</Text>
         </TouchableOpacity>
         
     )
@@ -34,8 +32,10 @@ export const ModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice }) => {
 
 const styles = StyleSheet.create({
     textcomponent: {
-        width: 70,
-        height: 60,
+        minWidth: 70,
+        maxWidth: 120,
+        padding: 15,
+        minHeight: 60,
         textAlign: 'center',
         textAlignVertical: 'center',
         borderRadius: 20,

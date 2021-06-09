@@ -1,13 +1,29 @@
 import React, { useState } from 'react';
-import { SliderComponent, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { Button, Subheading, TextInput, Title } from 'react-native-paper';
-import { QuestComponent } from '../../types/quest';
-import { ICreateModule } from './CreateModuleScreen';
+import { ICreateModule, IModuleBase } from './CreateModuleScreen';
 import i18n from 'i18n-js';
+import { primary } from '../../styles/colors';
+
+interface IEndingModuleData {
+    text?: string
+}
 
 export const CreateEndModule: React.FC<ICreateModule> = ({ setFinalModule }) => {
 
     const [moduleData, setModuleData] = useState<any>({});
+
+    const parseToModule = (moduleData: IEndingModuleData): IModuleBase => {
+        return ({
+            type: 'Ending',
+            endingFactor: 1, //TODO Make this dynamic
+            components: [{
+                type: 'text',
+                text: moduleData.text
+            }]
+        })
+    }
+
 
     return (
         <View style={{marginHorizontal: 10}}>
@@ -16,6 +32,7 @@ export const CreateEndModule: React.FC<ICreateModule> = ({ setFinalModule }) => 
                 {i18n.t('addEndText')}
             </Subheading>
             <TextInput 
+                theme={{colors: {primary: primary}}}
                 style={{marginVertical: 10}}
                 value={moduleData.text || ''}
                 onChange={(data) => setModuleData({...moduleData, text: data.nativeEvent.text})}
@@ -32,9 +49,10 @@ export const CreateEndModule: React.FC<ICreateModule> = ({ setFinalModule }) => 
 
 
             <Button 
+                theme={{colors: {primary: primary}}}
                 mode='contained'
                 style={{marginBottom: 20}}
-                onPress={() => {setFinalModule(moduleData) /* TODO: Add Module Preprocessing here as soon as module structure is fully defined. Don't forget it */}}>
+                onPress={() => {setFinalModule(parseToModule(moduleData)) /* TODO: Add Module Preprocessing here as soon as module structure is fully defined. Don't forget it */}}>
                 Create Module
             </Button>
         </View>
