@@ -11,9 +11,15 @@ import { CreateModuleScreen } from './createModule/CreateModuleScreen';
 import i18n from 'i18n-js';
 import { editorTranslations } from './translations'
 import { MyQuestList } from './MyQuestList';
+        
+import { QuestCreationScreen } from './QuestCreationScreen';
+import { Colors } from '../styles';
 
-const Stack = createStackNavigator();
-
+type TabParams = {
+  QuestCreation: {latitude: number, longitude: number},
+  ModuleGraph: undefined,
+}
+const Tab = createMaterialTopTabNavigator<TabParams>();
 export const QuestEditorNavigator = () => {
 
   i18n.translations = editorTranslations
@@ -123,18 +129,13 @@ export const QuestEditorNavigator = () => {
   }, [route.params.questId])
 
   return (
-    <Stack.Navigator
-      screenOptions={(route) => ({
-        headerShown: true
-      })}
+    <Tab.Navigator
+      style={{backgroundColor: Colors.background}}
+      tabBarOptions={{indicatorStyle: {backgroundColor: Colors.primary}}}
     >
-      <Stack.Screen name='QuestOverview' initialParams={{questId: '60b4ede42606263e2022e785'}}>
-        {(props) => <QuestEditor/>}
-      </Stack.Screen>
-      <Stack.Screen name='ModuleGraph' component={ModuleGraphCaller}/>
-      <Stack.Screen name='SvgDemo' component={SvgDemo}/>
-      <Stack.Screen name='CreateModule' component={CreateModuleScreen} options={{headerTitle: i18n.t('createModuleTitle')}}/>
-      <Stack.Screen name='ModulesList' component={MyQuestList}/>
-    </Stack.Navigator>
+      <Tab.Screen name='QuestCreation' component={QuestCreationScreen} options={{tabBarLabel: 'Properties'}}/>
+      <Tab.Screen name='ModuleGraph' component={ModuleGraphCaller} options={{tabBarLabel: 'Modules'}}/>
+      <Tab.Screen name='CreateModule' component={CreateModuleScreen} options={{headerTitle: i18n.t('createModuleTitle')}}/>
+    </Tab.Navigator>
   );
 };

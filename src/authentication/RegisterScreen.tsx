@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
 import { sha512 } from 'js-sha512';
 import i18n from 'i18n-js';
 
@@ -10,11 +9,9 @@ import { EMAILREGEX } from '../../GLOBALCONFIG';
 import { useAppDispatch } from '../redux/hooks';
 import { setToken } from '../redux/authentication/authenticationSlice';
 import { registerRequest } from '../utils/requestHandler';
+import { saveItemLocally } from '../utils/SecureStore';
 import { authTranslations } from './translations';
 
-async function save(key: string, value: string) {
-  await SecureStore.setItemAsync(key, value);
-}
 
 export default function RegisterScreen({ navigation }: any) {
 
@@ -89,7 +86,7 @@ export default function RegisterScreen({ navigation }: any) {
       .then((response) => {
         if(response.ok) {
           response.json().then((data) => {
-            save('UserToken', data.token).then((() => {}), (() => {}));
+            saveItemLocally('UserToken', data.token).then((() => {}), (() => {}));
             dispatch(setToken(data.token))
           })
         } else if(response.status === 400) {

@@ -1,9 +1,17 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MapScreen } from './MapScreen';
+import { QuestEditorNavigator } from '../quest-editor/QuestEditorNavigator';
 import QuestDetailScreen from '../common/QuestDetailScreen';
+import { Colors } from '../styles'
 
-const Stack = createStackNavigator();
+type StackParams = {
+  QuestCreationScreen: {latitude: number, longitude: number},
+  MapScreen: undefined,
+  QuestDetail: undefined,
+}
+
+const Stack = createStackNavigator<StackParams>();
 
 export const MapNavigator = () => {
   return (
@@ -11,8 +19,19 @@ export const MapNavigator = () => {
       screenOptions={(route) => ({
         headerShown: false
       })}
+
     >
       <Stack.Screen name='MapScreen' component={MapScreen}/>
+      <Stack.Screen 
+        name='QuestCreationScreen' 
+        component={QuestEditorNavigator} 
+        options={{
+          headerShown: true,
+          headerTintColor: 'white', 
+          headerTitle: "", 
+          headerStyle: {backgroundColor: Colors.primary}
+        }}
+      />
       <Stack.Screen name='QuestDetail' component={QuestDetailScreen}/>
     </Stack.Navigator>
   );
