@@ -57,7 +57,7 @@ export type ModuleMememto = any
 export interface QuestPrototype extends QuestBase {
 
     approximateTime: string,
-    firstModuleId: number,
+    firstModuleId: number | null,
     modules: PrototypeModule[]
 
 }
@@ -68,10 +68,18 @@ export interface PrototypeModule {
     objective: string,
     components: PrototypeComponent[]
 
+    choices?: {
+        text: string,
+        nextModuleId: number | null,
+    }[]
+    nextModuleId?: number | null,
+    endingFactor?: number,
+   
 }
 
 export interface PrototypeComponent {
     type: string,
+    text?: string,
 }
 
 export interface QuestTracker {
