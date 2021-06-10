@@ -8,12 +8,16 @@ import { ImagePicker } from '../common/ImagePicker';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setEstimatedTime, setImage, setLocationName, setQuestDescription, setQuestTitle } from '../redux/editor/editorSlice';
 import I18n from 'i18n-js';
+import { createPutRequest } from '../utils/requestHandler';
 
 export const QuestPropertiesScreen = () => {
 
   const questPrototype = useAppSelector(state => state.editor.questPrototype)
+  const questId = useAppSelector(state => state.editor.questId)
   const imagePath = useAppSelector(state => state.editor.imagePath)
   const dispatch = useAppDispatch();
+
+  console.log(questPrototype?.approximateTime)
 
   return(
     <KeyboardAwareScrollView
@@ -26,8 +30,10 @@ export const QuestPropertiesScreen = () => {
     >
       <TextInput 
         placeholder={I18n.t('propertiesQuestTitle')}
-        value={questPrototype!.title} 
-        onChange={(text) => dispatch(setQuestTitle(text.nativeEvent.text))}
+        defaultValue={questPrototype!.title} 
+        onEndEditing={(event) => {
+          dispatch(setQuestTitle(event.nativeEvent.text))
+        }}
         theme={{colors: {primary: Colors.primary}}} 
         style={[style.container, style.questTitleInput]}
       />
@@ -35,11 +41,11 @@ export const QuestPropertiesScreen = () => {
       <View style={[style.container, style.smallInputsGroup]}>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='map-marker' size={16} color='darkgray'/>
-          <TextInputNative placeholder={I18n.t('propertiesLocName')} value={questPrototype!.locationName} onChangeText={val => dispatch(setLocationName(val))} style={{marginHorizontal: 7, flex: 1}}/>
+          <TextInputNative placeholder={I18n.t('propertiesLocName')} defaultValue={questPrototype!.locationName} onEndEditing={event => dispatch(setLocationName(event.nativeEvent.text))} style={{marginHorizontal: 7, flex: 1}}/>
         </View>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='timer' size={16} color='darkgray'/>
-          <TextInputNative placeholder={I18n.t('propertiesEstTime')} value={questPrototype!.approximateTime} onChangeText={val => dispatch(setEstimatedTime(val))} style={{marginHorizontal: 7, flex: 1}}/>
+          <TextInputNative placeholder={I18n.t('propertiesEstTime')} defaultValue={questPrototype!.approximateTime} onEndEditing={event => dispatch(setEstimatedTime(event.nativeEvent.text))} style={{marginHorizontal: 7, flex: 1}}/>
         </View>
       </View>
       <MultiLineInput questDescription={questPrototype!.description} setQuestDescription={val => dispatch(setQuestDescription(val))}/>
@@ -55,8 +61,8 @@ export const QuestPropertiesScreen = () => {
         icon='content-save' 
         mode='contained' 
         onPress={() => {
-          alert(JSON.stringify(questPrototype))
-          //createPutRequest(questPrototype!.id, questPrototype!)
+          createPutRequest(questId!, questPrototype!)
+            .then(r => console.log(r.status))
           }}
       >
         {I18n.t('saveButton')}
@@ -71,8 +77,8 @@ const MultiLineInput : React.FC<{questDescription: string, setQuestDescription: 
       multiline
       numberOfLines={15}
       style={style.descriptionInput}
-      value={questDescription} 
-      onChangeText={(text) => setQuestDescription(text)} 
+      defaultValue={questDescription}
+      onEndEditing={event => setQuestDescription(event.nativeEvent.text)} 
       placeholder={I18n.t('propertiesDescription')}
     />
   </View>

@@ -17,11 +17,13 @@ export const questsSlice = createSlice({
     name: 'editor',
     initialState,
     reducers: {
-        loadQuest: (state, action: PayloadAction<QuestPrototype>) => {
-            state.questPrototype = action.payload
+        loadQuest: (state, action: PayloadAction<{questId: string, questPrototype: QuestPrototype}>) => {
+            state.questPrototype = action.payload.questPrototype
+            state.questId = action.payload.questId
         },
         unloadQuest: (state) => {
             state.questPrototype = undefined
+            state.questId = undefined
         },
 
         updateQuestMeta: (state, action: PayloadAction<QuestBaseUpdate>) => {
