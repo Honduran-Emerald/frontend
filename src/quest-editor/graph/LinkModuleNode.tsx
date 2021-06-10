@@ -9,13 +9,16 @@ import _ from 'lodash';
 import { useNavigation } from '@react-navigation/core';
 import I18n from 'i18n-js';
 import { Colors } from '../../styles';
+import BottomSheet from 'reanimated-bottom-sheet';
 
 interface ILinkModuleNode {
     setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule,
     linkOnChoice: MutableRefObject<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>,
+    sheetRef: React.RefObject<BottomSheet>,
+    setSheetOptions: React.Dispatch<React.SetStateAction<[string, string, () => void][]>>
 }
 
-export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, linkOnChoice }) => {
+export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, linkOnChoice, sheetRef, setSheetOptions }) => {
 
     const questPrototype = useAppSelector(state => state.editor.questPrototype);
     const dispatch = useAppDispatch();
@@ -64,7 +67,35 @@ export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, linkOnCho
                 </Modal>
             </Portal> 
             <TouchableHighlight style={{borderRadius: 20}} onPress={() => {
-                setModalOpen(true);
+                //setModalOpen(true);
+                setSheetOptions([[I18n.t('createModuleButton'), 'puzzle-plus-outline', (
+                    () => {
+                        if (!questPrototype) {
+                            console.log('What the fuck') // Actually no idea what this log represents but it's funny to keep it 
+                            return;
+                        }
+                        // currently creates a single choice module. should route to create-module screen in future
+                        const maxId = (_.max(questPrototype.modules.map(m => m.id)) || 0) + 1;
+
+                        navigation.navigate('CreateModule', {
+                            moduleId: maxId,
+                            // TODO: Probably refactor ALL of this because react native does not support serializable functions... ugh
+                            insertModuleId: () => {
+                                dispatch(addOrUpdateQuestModule(setSource(questPrototype, maxId)))
+                            }
+                        })
+                    }
+                )], [I18n.t('linkModuleChoice'), 'source-branch-plus',() => {
+                    // setSource of this node will set its parents link variable (this is done in linksParser.ts)
+                    // by setting the linkOnChoice reference to setSource, all future pressed nodes can access this nodes parent link
+                    // if still in doubt, ask Lenny
+                    // if you are Lenny, tough luck
+                    linkOnChoice.current = setSource;
+                    setModalOpen(false);
+                }
+
+                ]])
+                sheetRef.current?.snapTo(0)
             }}>
                 <Text style={styles.component}>{I18n.t('addOrConnectModule')}</Text>
 

@@ -9,27 +9,27 @@ import _ from 'lodash';
 import { useNavigation } from '@react-navigation/core';
 import I18n from 'i18n-js';
 import { Colors } from '../../styles';
+import BottomSheet from 'reanimated-bottom-sheet';
 
 interface IAddModuleNode {
     setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule,
     linkOnChoice: MutableRefObject<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>,
+    sheetRef: React.RefObject<BottomSheet>,
+    setSheetOptions: React.Dispatch<React.SetStateAction<[string, string, () => void][]>>
 }
 
-export const AddModuleNode: React.FC<IAddModuleNode> = ({ setSource, linkOnChoice }) => {
+export const AddModuleNode: React.FC<IAddModuleNode> = ({ sheetRef, setSheetOptions }) => {
 
     const questPrototype = useAppSelector(state => state.editor.questPrototype);
-    const dispatch = useAppDispatch();
 
     const navigation = useNavigation();
 
-    const [modalOpen, setModalOpen] = useState(false); // Modal for choosing whether to add a module or to link to an existing module
-
     return (
         <View>
-            <Portal>
-                {/* TODO: Change this interface. It looks like trash */}
-                <Modal visible={modalOpen} onDismiss={() => {setModalOpen(false)} }>
-                    <Button mode='contained' theme={{colors: {primary: Colors.primary}}} onPress={() => {
+            <TouchableHighlight style={{borderRadius: 20}} onPress={() => {
+                //setModalOpen(true);
+                setSheetOptions([[I18n.t('createModuleButton'), 'plus', (
+                    () => {
                         if (!questPrototype) {
                             console.log('What the fuck') // Actually no idea what this log represents but it's funny to keep it 
                             return;
@@ -42,16 +42,9 @@ export const AddModuleNode: React.FC<IAddModuleNode> = ({ setSource, linkOnChoic
                             // TODO: Probably refactor ALL of this because react native does not support serializable functions... ugh
                             insertModuleId: () => {}
                         })
-                        setModalOpen(false);
-                    }}>
-                        
-                        {I18n.t('createModuleButton')}
-                    </Button>
-                    
-                </Modal>
-            </Portal> 
-            <TouchableHighlight style={{borderRadius: 20}} onPress={() => {
-                setModalOpen(true);
+                    }
+                )]])
+                sheetRef.current?.snapTo(0)
             }}>
                 <Text style={styles.component}>{I18n.t('addModule')}</Text>
 
