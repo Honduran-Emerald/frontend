@@ -1,24 +1,27 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Marker } from 'react-native-maps';
-import { QuestMeta } from '../types/quest';
+import { QuestHeader } from '../types/quest';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors, Containers } from '../styles';
 import { Avatar } from 'react-native-paper';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 interface QuestMarkerProps {
-  quest: QuestMeta;
+  quest: QuestHeader;
   showPreview: Boolean;
   setShowPreview: () => void;
 }
 
 export const QuestMarker : React.FC<QuestMarkerProps> = ({quest, showPreview, setShowPreview}) => {
+  const navigation = useNavigation()
+
   return (
-    <Marker 
-      key={quest.id} 
-      coordinate={{latitude: quest.location.latitude, longitude: quest.location.longitude}} 
-      onPress={() => {!showPreview ? setShowPreview() : console.log(quest.id)}}
+    <Marker
+      key={quest.id}
+      coordinate={{latitude: quest.location.latitude, longitude: quest.location.longitude}}
+      onPress={() => {!showPreview ? setShowPreview() : navigation.navigate('QuestDetail', {quest: quest})}}
     >
       {
         (showPreview) ? (

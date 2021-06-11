@@ -1,25 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
 import { sha512 } from 'js-sha512';
 import i18n from 'i18n-js';
-import './translations';
 
 import { Colors } from '../styles';
-import { BACKENDIP, EMAILREGEX } from '../../GLOBALCONFIG';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { EMAILREGEX } from '../../GLOBALCONFIG';
+import { useAppDispatch } from '../redux/hooks';
 import { setToken } from '../redux/authentication/authenticationSlice';
 import { loginRequest } from '../utils/requestHandler';
-
-async function save(key: string, value: string) {
-  await SecureStore.setItemAsync(key, value);
-}
+import { saveItemLocally } from '../utils/SecureStore';
+import { authTranslations } from './translations';
 
 export default function LoginScreen({ navigation }: any) {
 
-  const token = useAppSelector((state) => state.authentication.token)
-  const dispatch = useAppDispatch()
+  i18n.translations = authTranslations;
+
+  const dispatch = useAppDispatch();
 
   // TODO remove default mail and pw
   const [email, setEmail] = React.useState('t3st@test.de');
@@ -67,22 +64,11 @@ export default function LoginScreen({ navigation }: any) {
       return;
     }
 
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email,
-        password: sha512(password),
-      }),
-    };
-
     loginRequest(email, sha512(password))
       .then((response) => {
         if(response.ok) {
           response.json().then((data) => {
-            save('UserToken', data.token).then((() => {}), (() => {}));
+            saveItemLocally('UserToken', data.token).then((() => {}), (() => {}));
             dispatch(setToken(data.token));
           })
         } else if(response.status === 400) {
