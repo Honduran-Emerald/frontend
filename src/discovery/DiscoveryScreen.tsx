@@ -7,11 +7,11 @@ import {ScrollMenu} from "./ScrollMenu";
 export const DiscoveryScreen = () => {
     return (
         <View style={styles.screen}>
-            <View style={styles.discovery}>
+            <ScrollView contentContainerStyle={styles.discovery}>
                 <ScrollMenu header={"Nearby"} type={"nearby"}/>
                 <ScrollMenu header={"Check out!"} type={"checkout"}/>
                 <ScrollMenu header={"Recently Visited"} type={"recent"}/>
-            </View>
+            </ScrollView>
             <StatusBar style="auto"/>
         </View>
     )
@@ -26,5 +26,6 @@ const styles = StyleSheet.create({
     },
     discovery: {
         margin: 10,
+        paddingBottom: 20,
     },
 });

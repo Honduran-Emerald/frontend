@@ -5,6 +5,7 @@ import {QuestHeader} from "../types/quest";
 import {queryQuestsRequest} from "../utils/requestHandler";
 import {Button, Card, Paragraph, Surface, Title} from "react-native-paper";
 import { useNavigation } from '@react-navigation/core';
+import * as Location from "expo-location";
 
 export default interface scrollProps {
     header: string
@@ -15,23 +16,76 @@ export interface questProps {
     quest: QuestHeader
 }
 
+function getDistanceFromLatLonInKm(lat1:number, lon1:number, lat2:number, lon2:number) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1);
+    var a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon/2) * Math.sin(dLon/2)
+    ;
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c; // Distance in km
+    if (d > 10) {
+        d = Math.round(d);
+    }
+    return d;
+}
+
+function deg2rad(deg:number) {
+    return deg * (Math.PI/180)
+}
+
 export const QuestPreview = (props:questProps) => {
+
+    const [location, setLocation] = useState<Location.LocationObject>();
+    const [distance, setDistance] = useState(-1);
+
+    // Get Location Permission and set initial Location
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                return Promise.reject(new Error("Permission to access location was denied"))
+            }
+
+            let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
+            setLocation(location);
+        })()
+    }, [])
+
+    async function getLocation() {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            return Promise.reject(new Error("Permission to access location was denied"))
+        }
+
+        let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
+        setLocation(location);
+    }
+
+    useEffect(() => {
+        location &&
+        setDistance(getDistanceFromLatLonInKm(props.quest.location.latitude, props.quest.location.longitude, location.coords.latitude, location.coords.longitude));
+    }, [location])
+
     const navigation = useNavigation();
     return(
         <Card style={styles.quest} >
             <Card.Cover style={styles.pic} source={require('../../assets/background.jpg')} resizeMode='stretch' />
-            <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={"Finde Phisns Vogel (pls)"} />
+            <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={props.quest.title} />
             <Card.Content style={styles.content}>
 
             </Card.Content>
             <Card.Actions style={styles.actions}>
                 <View>
-                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>1km</Button>
-                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>300 +</Button>
+                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>{distance}</Button>
+                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>{props.quest.votes}</Button>
                 </View>
                 <View>
-                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>3h</Button>
-                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>Phisn</Button>
+                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>{props.quest.approximateTime}</Button>
+                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>{props.quest.ownerName}</Button>
                 </View>
             </Card.Actions>
         </Card>
@@ -53,7 +107,7 @@ export const ScrollMenu = (props:scrollProps) => {
                     {props.header}
                 </Text>
                 <ScrollView horizontal>
-                    {quests && quests.concat(quests).map((q, index) => (
+                    {quests && quests.map((q, index) => (
                             <QuestPreview key={index} quest={q}/>
                         )
                     )}
@@ -74,7 +128,7 @@ const styles = StyleSheet.create({
     surface: {
         margin: 0,
         padding: 10,
-        paddingRight: 0,
+        paddingHorizontal: 0,
         height: 250,
         justifyContent: 'center',
         alignItems: 'center'
