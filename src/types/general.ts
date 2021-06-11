@@ -6,10 +6,10 @@ export interface Location {
 export interface User {
     userId: string,
     userName: string,
-    email?: string,
-    profileimage: string,
-    questIds: string[],
-    trackerIds: string[],
-    activeTrackerId?: string,
-    syncToken: string
+    image: string,
+    level: number,
+    experience: number,
+    glory: number,
+    questCount: number,
+    trackerCount: number
 }
