@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from "react-native";
+import {View, Text, StyleSheet, ScrollView, StatusBar} from "react-native";
 import {Colors} from "../styles";
-import {QuestMeta} from "../types/quest";
+import {QuestHeader} from "../types/quest";
 import {queryQuestsRequest} from "../utils/requestHandler";
 import {Button, Card, Paragraph, Surface, Title} from "react-native-paper";
+import { useNavigation } from '@react-navigation/core';
 
 export default interface scrollProps {
     header: string
@@ -11,14 +12,15 @@ export default interface scrollProps {
 }
 
 export interface questProps {
-    quest: QuestMeta
+    quest: QuestHeader
 }
 
 export const QuestPreview = (props:questProps) => {
+    const navigation = useNavigation();
     return(
-        <Card style={styles.quest}>
-            <Card.Cover style={styles.pic} source={{ uri: 'https://cdn.discordapp.com/attachments/832279716698259477/846820630150119434/1280px-Honduran_Emerald_Amazilia_luciae_2495402213.jpg' }} />
-            <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={"Finde Phisns Vogel (pls)"} subtitle={props.quest.createdAt} />
+        <Card style={styles.quest} >
+            <Card.Cover style={styles.pic} source={require('../../assets/background.jpg')} resizeMode='stretch' />
+            <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={"Finde Phisns Vogel (pls)"} />
             <Card.Content style={styles.content}>
 
             </Card.Content>
@@ -38,26 +40,23 @@ export const QuestPreview = (props:questProps) => {
 
 export const ScrollMenu = (props:scrollProps) => {
 
-    const [quests, setQuests] = useState<QuestMeta[]>([]);
+    const [quests, setQuests] = useState<QuestHeader[]>([]);
 
     useEffect(() => {
         queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests))
     },[])
 
     return (
-        <View>
-            <Surface style={styles.surface}>
+        <View style={styles.surface}>
+            <Surface>
                 <Text style={styles.header}>
                     {props.header}
                 </Text>
                 <ScrollView horizontal>
-                    {quests && quests.map(q => (
-                            <QuestPreview quest={q}/>
+                    {quests && quests.concat(quests).map((q, index) => (
+                            <QuestPreview key={index} quest={q}/>
                         )
                     )}
-                    <Text>
-                        fshfjsdkhfaad s dasd assd
-                    </Text>
                 </ScrollView>
             </Surface>
         </View>
@@ -68,17 +67,21 @@ export const ScrollMenu = (props:scrollProps) => {
 const styles = StyleSheet.create({
     header: {
         fontWeight: "bold",
+        fontSize: 18,
         marginBottom: 5,
+        marginLeft: 5,
     },
     surface: {
-        margin: 5,
+        margin: 0,
         padding: 10,
-        height: 200,
+        paddingRight: 0,
+        height: 250,
         justifyContent: 'center',
-        elevation: 4,
+        alignItems: 'center'
     },
     quest: {
         margin: 1,
+        marginHorizontal: 7,
         width: 150,
     },
     pic: {
@@ -97,9 +100,10 @@ const styles = StyleSheet.create({
         margin: -5,
     },
     bLabel: {
-        fontSize: 8,
+        fontSize: 10,
+        color: Colors.primary,
     },
     actions: {
-        marginTop: -12,
+        marginTop: 4,
     },
 });

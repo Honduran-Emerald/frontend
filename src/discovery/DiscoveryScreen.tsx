@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView} from "react-native";
+import {View, Text, StyleSheet, ScrollView, StatusBar as StatusBar2} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import {Colors} from "../styles";
 import {ScrollMenu} from "./ScrollMenu";
@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         flexGrow: 1,
         backgroundColor: Colors.background,
+        marginTop: StatusBar2.currentHeight,
     },
     discovery: {
         margin: 10,
