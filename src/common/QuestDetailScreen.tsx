@@ -11,10 +11,13 @@ import { commonTranslations } from './translations';
 import { QuestHeader, QuestTracker } from '../types/quest';
 import { createTrackerRequest } from '../utils/requestHandler';
 import { store } from '../redux/store';
-import { useAppDispatch } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
+import { User } from '../types/general';
 
 export default function QuestDetailScreen({ route }: any) {
+
+  const user: User | undefined = useAppSelector((state) => state.authentication.user);
 
   i18n.translations = commonTranslations;
   const acceptedQuests: QuestTracker[] = store.getState().quests.acceptedQuests;
@@ -23,6 +26,7 @@ export default function QuestDetailScreen({ route }: any) {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const quest: QuestHeader = route.params.quest;
+  const isQuestCreator = quest.ownerName === user?.userName;
   const creationDate = new Date(Date.parse(quest.creationTime));
 
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
@@ -72,9 +76,20 @@ export default function QuestDetailScreen({ route }: any) {
           }
           {
             isAccepted &&
-            <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: 25}}>
+            <View style={styles.acceptedText}>
               <MaterialCommunityIcons name='check' size={24} color='green'/>
               <Text style={{color: 'green'}}>{i18n.t('questAccepted')}</Text>
+            </View>
+          }
+          {
+            isQuestCreator &&
+            <View style={styles.creatorButtons}>
+              <View style={styles.creatorButton}>
+                <Button color={Colors.primary} disabled={isButtonDisabled} title={'Edit Quest'} onPress={() => alert('Go to edit screen')}/>
+              </View>
+              <View style={styles.creatorButton}>
+                <Button color={Colors.error} disabled={isButtonDisabled} title={'Delete Quest'} onPress={() => alert('Delete Quest')}/>
+              </View>
             </View>
           }
           <View style={styles.divider}/>
@@ -97,7 +112,7 @@ export default function QuestDetailScreen({ route }: any) {
             </View>
             <View style={styles.center}>
               <Text style={styles.mediumText}>
-                {isNaN(finishRate) ? '0' : finishRate}%
+                {isNaN(finishRate) ? '0' : finishRate.toFixed(0)}%
               </Text>
               <Text style={styles.smallText}>
                 {i18n.t('finished')}
@@ -179,6 +194,20 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '50%',
+    marginBottom: 25,
+  },
+  acceptedText: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 25,
+  },
+  creatorButtons: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  creatorButton: {
+    width: '40%',
     marginBottom: 25,
   },
   divider: {
