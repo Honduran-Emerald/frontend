@@ -6,13 +6,13 @@ import MainAppNavigator from './MainAppNavigator';
 import { LoadingScreen } from './common/LoadingScreen'
 import { TokenManager } from './utils/TokenManager';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
-import { setToken } from './redux/authentication/authenticationSlice';
+import { setToken, setUser } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
-import * as Localization from "expo-localization";
-import {getAllTrackersRequest, renewRequest} from "./utils/requestHandler";
-import {pinQuest, setAcceptedQuests} from "./redux/quests/questsSlice";
-import {loadItemLocally} from "./utils/SecureStore";
-import {QuestTracker} from "./types/quest";
+import * as Localization from 'expo-localization';
+import { getAllTrackersRequest, getUserSelfRequest, renewRequest } from './utils/requestHandler';
+import { pinQuest, setAcceptedQuests } from './redux/quests/questsSlice';
+import { loadItemLocally } from './utils/SecureStore';
+import { QuestTracker } from './types/quest';
 
 i18n.fallbacks = true;
 i18n.locale = Localization.locale;
@@ -21,7 +21,7 @@ export const TokenLoader = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [hasRenewed, setHasRenewed] = React.useState<boolean>(false);
 
-  const token = useAppSelector((state) => state.authentication.token);
+  const { token, user } = useAppSelector((state) => state.authentication);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -58,6 +58,16 @@ export const TokenLoader = () => {
               }))
           }
         });
+    }
+    if(token && hasRenewed && !user) {
+      getUserSelfRequest()
+        .then((res) => {
+          if (res.status === 200) {
+            res.json().then(data => {
+              dispatch(setUser(data.user))
+            })
+          }
+        })
     }
   }, [token])
 
