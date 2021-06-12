@@ -15,6 +15,7 @@ import QuestlogScreen from './common/QuestlogScreen';
 import { clearQuestState } from './redux/quests/questsSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { Colors } from './styles';
+import { ProfileNavigator } from './profile/ProfileNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -64,7 +65,7 @@ export default function MainAppNavigator() {
       <Tab.Screen name="Questlog" component={QuestlogScreen}/>
       <Tab.Screen name="Map" component={MapNavigator}/>
       <Tab.Screen name="Chat" component={Dummy}/>
-      <Tab.Screen name="Profile" component={Dummy} />
+      <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );
 }
