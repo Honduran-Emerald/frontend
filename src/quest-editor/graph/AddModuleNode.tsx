@@ -1,19 +1,17 @@
-import React, { MutableRefObject, useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
-import { Modal, Portal, Text, TouchableRipple, Provider, Button, Divider } from 'react-native-paper';
-import { addOrUpdateQuestModule } from '../../redux/editor/editorSlice';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { TouchableHighlight } from 'react-native-gesture-handler';
+import { Text } from 'react-native-paper';
+import { useAppSelector } from '../../redux/hooks';
 import { PrototypeModule, QuestPrototype } from '../../types/quest';
 import _ from 'lodash';
 import { useNavigation } from '@react-navigation/core';
 import I18n from 'i18n-js';
-import { Colors } from '../../styles';
 import BottomSheet from 'reanimated-bottom-sheet';
 
 interface IAddModuleNode {
     setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule,
-    linkOnChoice: MutableRefObject<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>,
+    linkOnChoice: ((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined,
     sheetRef: React.RefObject<BottomSheet>,
     setSheetOptions: React.Dispatch<React.SetStateAction<[string, string, () => void][]>>
 }
@@ -27,8 +25,8 @@ export const AddModuleNode: React.FC<IAddModuleNode> = ({ sheetRef, setSheetOpti
     return (
         <View>
             <TouchableHighlight style={{borderRadius: 20}} onPress={() => {
-                //setModalOpen(true);
-                setSheetOptions([[I18n.t('createModuleButton'), 'plus', (
+
+                setSheetOptions([[I18n.t('createModuleBottomSheet'), 'plus', (
                     () => {
                         if (!questPrototype) {
                             console.log('What the fuck') // Actually no idea what this log represents but it's funny to keep it 

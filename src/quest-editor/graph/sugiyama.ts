@@ -1,5 +1,6 @@
-import dagre from 'dagre';
 import { IGraphModuleNode } from './ModuleGraph';
+import { Graph } from 'graphlib';
+import { map } from 'lodash';
 
 /**
  * Implementation of the sugiyama algorithm
@@ -10,7 +11,7 @@ import { IGraphModuleNode } from './ModuleGraph';
 
 
 // splits graph into layers by using a BFS
-const getLayers = (g: dagre.graphlib.Graph<{}>): string[][] => {
+const getLayers = (g: Graph): string[][] => {
 
     let sorted: string[][] = [];
     let edges = g.edges();
@@ -28,7 +29,7 @@ const getLayers = (g: dagre.graphlib.Graph<{}>): string[][] => {
 }
 
 // adds virtual nodes to enforce all links to only span one layer
-const virtLayers = (g: dagre.graphlib.Graph<{}>, sorted: string[][]) => {
+const virtLayers = (g: Graph, sorted: string[][]) => {
 
     let virt = 0;
 
@@ -53,14 +54,14 @@ const virtLayers = (g: dagre.graphlib.Graph<{}>, sorted: string[][]) => {
 }
 
 // reorder nodes to minimize edge crossings. this is only a heuristic!
-const vertOrder = (g: dagre.graphlib.Graph<{}>, sorted: string[][]) => {
+const vertOrder = (g: Graph, sorted: string[][]) => {
 
     const max_iter = 5;
 
     let best = sorted.map(l => l.slice())
 
 
-    const crossings = (sorted: string[][], g: dagre.graphlib.Graph<{}>) => {
+    const crossings = (sorted: string[][], g: Graph) => {
         let sum=0;
         for (let layer=0; layer<sorted.length-1; layer++) {
             let edges = sorted[layer]
@@ -102,7 +103,7 @@ const vertOrder = (g: dagre.graphlib.Graph<{}>, sorted: string[][]) => {
         }
     }
 
-    const transpose = (sorted: string[][], g: dagre.graphlib.Graph<{}>) => {
+    const transpose = (sorted: string[][], g: Graph) => {
         let improved = true;
         let baseCrossings = crossings(sorted, g);
         while (improved) {
@@ -142,7 +143,7 @@ const vertOrder = (g: dagre.graphlib.Graph<{}>, sorted: string[][]) => {
 
 // create sugiyama layout from lists of nodes and links (wraps function below)
 export const fromLists = (nodes: IGraphModuleNode[], links: [string|number, string|number][]) => {
-    const g = new dagre.graphlib.Graph();
+    const g = new Graph();
     g.setGraph({});
     g.setDefaultEdgeLabel(function() { return {}; });
     nodes.forEach(n => {
@@ -151,19 +152,54 @@ export const fromLists = (nodes: IGraphModuleNode[], links: [string|number, stri
     });
     links.forEach(l => {
         //@ts-ignore
-        g.setEdge(l[0], l[1])
+        g.setEdge(l[0], l[1], (g.edge(l[0], l[1]) || 0) + 1)
+        //@ts-ignore
+        console.log(g.edge(l[0], l[1]));
     })
+    console.log('EDGE', JSON.stringify(g.edges().map(e => [e, g.edge(e)])))
     return dagLayout(g);
     
 }
 
 // create sugiyama from graph
-export const dagLayout = (g: dagre.graphlib.Graph<{}>) => {
-    let sorted = getLayers(g);
-    sorted = virtLayers(g, sorted);
-    sorted = vertOrder(g, sorted);
+export const dagLayout = (g: Graph) => {
+    let temporaryNodes = virtMultiGraph(g);
+    let sorted = getLayers(g); // Sort nodes topologically
+    sorted = virtLayers(g, sorted); // Virtualize layers (every link has length 1)
+    sorted = vertOrder(g, sorted); // reorder nodes within layer
+    //temporaryNodes.forEach(node => g.removeNode(node))
+
+    console.log('sorted', JSON.stringify(sorted))
+    console.log('edges', JSON.stringify(g.edges()))
+    console.log('nodes', JSON.stringify(g.nodes()))
+    console.log('example', g.node('mv_0'))
     return {
         positions: sorted,
         graph: g
     }
+}
+
+const virtMultiGraph = (g: Graph) => {
+    // Function not from sugiyama paper
+    // Specific addition to allow for simpler rendering of multiedges
+    let virt: number = 0;
+    let mv_nodes: string[] = [];
+
+    for (const edge of g.edges()) {
+        if (g.edge(edge) > 1) {
+            // Multiedge
+            for (let i = 0; i < g.edge(edge); i++) {
+                let multiedgeVirtualNodeId = `mv_${virt}`;
+                mv_nodes.push(multiedgeVirtualNodeId);
+                g.setNode(multiedgeVirtualNodeId);
+                g.setEdge(multiedgeVirtualNodeId, edge.w);
+                g.setEdge(edge.v, multiedgeVirtualNodeId);
+                virt += 1;
+            }
+            g.removeEdge(edge)
+        }
+    }
+
+
+    return mv_nodes
 }

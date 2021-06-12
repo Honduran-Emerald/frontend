@@ -32,9 +32,11 @@ export const editorTranslations = {
         'chooseModuleType': 'Choose a Module Type',
         'moduleObjectiveLabel': 'Module Objective',
 
-        'createModuleButton': 'Create Module',
+        'createModuleBottomSheet': 'Create Module',
+        'createModuleButton': 'Preview Module',
 
         'addStoryText': 'Add text the User will read',
+        'addChoiceModuleChoices': '',
         'addEndText': 'Add text the User will read on Quest completion',
         'addEndSlider': 'Choose how successfull this ending is (Players will get Exp. accordingly)'
 

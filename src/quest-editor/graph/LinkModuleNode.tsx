@@ -13,62 +13,26 @@ import BottomSheet from 'reanimated-bottom-sheet';
 
 interface ILinkModuleNode {
     setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule,
-    linkOnChoice: MutableRefObject<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>,
+    linkOnChoice: ((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined,
+    setLinkOnChoice: React.Dispatch<React.SetStateAction<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>>,
     sheetRef: React.RefObject<BottomSheet>,
-    setSheetOptions: React.Dispatch<React.SetStateAction<[string, string, () => void][]>>
+    setSheetOptions: React.Dispatch<React.SetStateAction<[string, string, () => void][]>>,
+    setLinkSourceId: React.Dispatch<React.SetStateAction<string | number | undefined>>,
+    parentId: number | string | undefined,
 }
 
-export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, linkOnChoice, sheetRef, setSheetOptions }) => {
+export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, sheetRef, setSheetOptions, setLinkOnChoice, setLinkSourceId, parentId }) => {
 
     const questPrototype = useAppSelector(state => state.editor.questPrototype);
     const dispatch = useAppDispatch();
 
     const navigation = useNavigation();
 
-    const [modalOpen, setModalOpen] = useState(false); // Modal for choosing whether to add a module or to link to an existing module
-
     return (
         <View>
-            <Portal>
-                {/* TODO: Change this interface. It looks like trash */}
-                <Modal visible={modalOpen} onDismiss={() => {setModalOpen(false)} }>
-                    <Button mode='contained' theme={{colors: {primary: Colors.primary}}} onPress={() => {
-                        if (!questPrototype) {
-                            console.log('What the fuck') // Actually no idea what this log represents but it's funny to keep it 
-                            return;
-                        }
-                        // currently creates a single choice module. should route to create-module screen in future
-                        const maxId = (_.max(questPrototype.modules.map(m => m.id)) || 0) + 1;
-
-                        navigation.navigate('CreateModule', {
-                            moduleId: maxId,
-                            // TODO: Probably refactor ALL of this because react native does not support serializable functions... ugh
-                            insertModuleId: () => {
-                                dispatch(addOrUpdateQuestModule(setSource(questPrototype, maxId)))
-                            }
-                        })
-                       
-                        setModalOpen(false);
-                    }}>
-                        {I18n.t('createModuleChoice')}
-                    </Button>
-                    <Divider/>
-                    <Button mode='contained' theme={{colors: {primary: Colors.primary}}} onPress={() => {
-                        // setSource of this node will set its parents link variable (this is done in linksParser.ts)
-                        // by setting the linkOnChoice reference to setSource, all future pressed nodes can access this nodes parent link
-                        // if still in doubt, ask Lenny
-                        // if you are Lenny, tough luck
-                        linkOnChoice.current = setSource;
-                        setModalOpen(false);
-                    }}>
-                        {I18n.t('linkModuleChoice')}
-                    </Button>
-                    
-                </Modal>
-            </Portal> 
             <TouchableHighlight style={{borderRadius: 20}} onPress={() => {
                 //setModalOpen(true);
-                setSheetOptions([[I18n.t('createModuleButton'), 'puzzle-plus-outline', (
+                setSheetOptions([[I18n.t('createModuleBottomSheet'), 'puzzle-plus-outline', (
                     () => {
                         if (!questPrototype) {
                             console.log('What the fuck') // Actually no idea what this log represents but it's funny to keep it 
@@ -90,11 +54,12 @@ export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, linkOnCho
                     // by setting the linkOnChoice reference to setSource, all future pressed nodes can access this nodes parent link
                     // if still in doubt, ask Lenny
                     // if you are Lenny, tough luck
-                    linkOnChoice.current = setSource;
-                    setModalOpen(false);
+                    setLinkSourceId(parentId)
+                    setLinkOnChoice(() => (setSource))
                 }
 
                 ]])
+
                 sheetRef.current?.snapTo(0)
             }}>
                 <Text style={styles.component}>{I18n.t('addOrConnectModule')}</Text>

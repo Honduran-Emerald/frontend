@@ -8,23 +8,30 @@ import { PrototypeModule, QuestPrototype } from '../../types/quest';
 import { InternalFullNode, InternalNode } from './linksParser';
 
 export interface IModuleNode {
-    node: InternalFullNode
-    linkOnChoice: MutableRefObject<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>
+    node: InternalFullNode,
+    linkOnChoice: ((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined,
+    setLinkOnChoice: React.Dispatch<React.SetStateAction<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>>,
+    linkable: boolean,
 }
 
-export const ModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice }) => {
+export const ModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, setLinkOnChoice, linkable }) => {
 
     const questPrototype = useAppSelector((state) => state.editor.questPrototype);
     const dispatch = useAppDispatch();
 
     return (
         <TouchableOpacity onPress={() => {
-            if (linkOnChoice.current !== undefined && questPrototype !== undefined) {
-                dispatch(addOrUpdateQuestModule(linkOnChoice.current(questPrototype, node.id as number)))
-                linkOnChoice.current = undefined
+            if (linkOnChoice !== undefined && questPrototype !== undefined && linkable) {
+                dispatch(addOrUpdateQuestModule(linkOnChoice(questPrototype, node.id as number)))
+                setLinkOnChoice(undefined)
             }
         }}>
-            <Text style={styles.textcomponent}>{node.moduleObject.objective}</Text>
+            <Text 
+                style={{...styles.textcomponent, backgroundColor: (linkOnChoice && linkable)?'green':'white'// TODO: do something fancy here. 
+                // If (linkOnChoice && linkable), then the user currently tries to link a node and this node is a valid candidate.
+            }}>
+                    {node.moduleObject.objective}
+            </Text>
         </TouchableOpacity>
         
     )

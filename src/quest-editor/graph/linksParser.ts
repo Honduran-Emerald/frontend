@@ -18,7 +18,8 @@ export interface InternalFullNode {
 export interface InternalEmptyNode {
     id: string,
     type: 'empty',
-    setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule
+    setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule,
+    parentId: string | number
 }
 
 export type InternalNode = InternalEmptyNode | InternalFullNode
@@ -29,7 +30,8 @@ const virtualizeEmptyLink = (link: [string|number, string|number], nodes: Intern
         nodes.push({
             id: emptyNodeString,
             type: 'empty',
-            setSource: setSource
+            setSource: setSource,
+            parentId: link[0]
         })
         return [link[0], emptyNodeString]
     } 
