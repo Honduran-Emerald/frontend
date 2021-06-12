@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text } from 'react-native';
+import { Dimensions, Text } from 'react-native';
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import { Button, Card, Divider, Subheading, TextInput } from 'react-native-paper';
 import i18n from 'i18n-js';
@@ -12,13 +12,14 @@ import { PrototypeComponent, PrototypeModule } from '../../types/quest';
 import { useAppDispatch } from '../../redux/hooks';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import { addOrUpdateQuestModule } from '../../redux/editor/editorSlice';
-import Swiper from 'react-native-swiper';
 import StepIndicator from 'react-native-step-indicator';
 import { View } from 'react-native';
 import { Colors } from '../../styles';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import { useLayoutEffect } from 'react';
+
+const displayWidth = Dimensions.get('screen').width
 
 
 export interface ICreateModule {
@@ -46,7 +47,7 @@ export const CreateModuleScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
 
-    const swiper = React.createRef<Swiper>();
+    const swiper = useRef<ScrollView | null>(null);
 
     const dispatch = useAppDispatch();
 
@@ -60,6 +61,10 @@ export const CreateModuleScreen = () => {
         }
 
         setFinalModule({...baseModule, ...finalModule})
+
+        swiper.current?.scrollTo({
+            x: 2 * displayWidth 
+        })
     }
 
     const modules = [
@@ -100,87 +105,90 @@ export const CreateModuleScreen = () => {
       }
 
     
-    useLayoutEffect(() => {
-        swiper.current?.scrollTo(1)
+    useEffect(() => {
+        console.log('WOOWODJOIW')
+        swiper.current?.scrollTo({
+            x: displayWidth,
+        });
     }, [chosenModuleType])
       
 
     return (
-        <View style={{margin: 0, borderColor: 'black', borderWidth: 1, flexGrow: 1}}>
+        <View style={{margin: 0, borderColor: 'black', flexGrow: 1}}>
             {/*<StepIndicator 
                 customStyles={customStyles} 
                 labels={['Choose\nModule Type', 'Choose Module Properties', 'Create\nModule']}
                 currentPosition={currentIndex}
             stepCount={3}/>*/}
-            <Swiper 
+            <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator
                 ref={swiper}
-                showsButtons={false}
-                
-                showsPagination={false}
-                
-                loop={false}
-                onIndexChanged={(i) => setTimeout(() => {console.log(i); setCurrentIndex(i)},0)}>
-                    <ScrollView style={{flex: 1, }} 
-                        contentContainerStyle={{justifyContent: 'center', alignContent: 'center'}}>
-                        <TextInput
-                            dense
-                            style={{margin: 10, marginVertical: 20}}
-                            label={i18n.t('moduleObjectiveLabel')}
-                            value={objective}
-                            onChangeText={setObjective}
-                            theme={{colors: {primary: primary}}} />
-                        <Divider/>
+            >
+                <ScrollView 
+                    style={{width: displayWidth}} 
+                    contentContainerStyle={{justifyContent: 'center', alignContent: 'center'}}>
 
-                        <View style={{flex: 1, flexDirection: 'row', justifyContent:'center', marginBottom: 50}}>
-                        
-                            <View>
-                                <Subheading 
-                                    style={{margin: 10, marginTop: 20, marginLeft: 20}}>
-                                    {i18n.t('chooseModuleType')}
-                                </Subheading>
-                                {modules.map(m => 
-                                    <ModuleCard 
-                                        moduleType={m} 
-                                        key={m} 
-                                        setChosenModule={setChosenModuleType} 
-                                        chosen={m === chosenModuleType}
-                                        swiperRef={swiper}/>
-                                    )
-                                }
-                            </View>
+                    <TextInput
+                        dense
+                        style={{margin: 10, marginVertical: 20}}
+                        label={i18n.t('moduleObjectiveLabel')}
+                        value={objective}
+                        onChangeText={setObjective}
+                        theme={{colors: {primary: primary}}} />
+                    <Divider/>
+
+                    <View style={{flex: 1, flexDirection: 'row', justifyContent:'center', marginBottom: 50}}>
+                    
+                        <View>
+                            <Subheading 
+                                style={{margin: 10, marginTop: 20, marginLeft: 20}}>
+                                {i18n.t('chooseModuleType')}
+                            </Subheading>
+                            {modules.map(m => 
+                                <ModuleCard 
+                                    moduleType={m} 
+                                    key={m} 
+                                    setChosenModule={setChosenModuleType} 
+                                    chosen={m === chosenModuleType}
+                                    swiperRef={swiper}/>
+                                )
+                            }
                         </View>
-                    </ScrollView>
-                    {chosenModuleType in moduleMap && 
-                        <ScrollView>{moduleMap[chosenModuleType]}</ScrollView>
-                    }
-                    {finalModule && <View style={{flex: 1, margin: 20}} >
-                        
-                        <ScrollView 
-                            style={{height: '100%'}}
-                            contentContainerStyle={{justifyContent: 'space-between', }}>
-                            <Text>
-                                {JSON.stringify(finalModule)}
-                            </Text>
+                    </View>
+                </ScrollView>
+                {chosenModuleType in moduleMap && 
+                    <ScrollView style={{width: displayWidth, margin: 0, padding: 0}}>{moduleMap[chosenModuleType]}</ScrollView>
+                }
+                {finalModule &&  <View style={{width: displayWidth}}><View style={{flex: 1, margin: 20}} >
+                    
+                    <ScrollView 
+                        style={{height: '100%'}}
+                        contentContainerStyle={{justifyContent: 'space-between', }}>
+                        <Text>
+                            {JSON.stringify(finalModule)}
+                        </Text>
 
-                            <Button 
-                                mode='contained' 
-                                onPress={() => {
-                                    dispatch(addOrUpdateQuestModule(finalModule)) 
-                                    //@ts-ignore
-                                    route.params?.insertModuleId()
-                                    navigation.navigate('ModuleGraph')
-                                }}
-                                theme={{colors: {primary: primary}}}>
-                                Save Module
-                            </Button>
-                        </ScrollView>
-                    </View>}
-                </Swiper>
+                        <Button 
+                            mode='contained' 
+                            onPress={() => {
+                                dispatch(addOrUpdateQuestModule(finalModule)) 
+                                //@ts-ignore
+                                route.params?.insertModuleId()
+                                navigation.navigate('ModuleGraph')
+                            }}
+                            theme={{colors: {primary: primary}}}>
+                            Save Module
+                        </Button>
+                    </ScrollView>
+                </View></View>}
+            </ScrollView>
         </View>
     )
 }
 
-const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) => void, chosen: boolean, swiperRef: React.RefObject<Swiper>}> = ({ moduleType, setChosenModule, chosen, swiperRef }) => (
+const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) => void, chosen: boolean, swiperRef: React.MutableRefObject<ScrollView | null>}> = ({ moduleType, setChosenModule, chosen, swiperRef }) => (
     <TouchableHighlight
         style={{maxWidth: 250, margin: 10, borderRadius: 5}}
         onPress={() => {
