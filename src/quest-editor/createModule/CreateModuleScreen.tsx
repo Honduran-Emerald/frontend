@@ -18,6 +18,7 @@ import { Colors } from '../../styles';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import { useLayoutEffect } from 'react';
+import { ModuleTypeChoice } from './ModuleTypeChoice';
 
 const displayWidth = Dimensions.get('screen').width
 
@@ -42,8 +43,6 @@ export const CreateModuleScreen = () => {
     const [chosenModuleType, setChosenModuleType] = useState('')
     const [finalModule, setFinalModule] = useState<PrototypeModule>();
 
-    const [currentIndex, setCurrentIndex] = useState(0);
-
     const route = useRoute();
     const navigation = useNavigation();
 
@@ -61,10 +60,6 @@ export const CreateModuleScreen = () => {
         }
 
         setFinalModule({...baseModule, ...finalModule})
-
-        swiper.current?.scrollTo({
-            x: 2 * displayWidth 
-        })
     }
 
     const modules = [
@@ -80,33 +75,13 @@ export const CreateModuleScreen = () => {
         'choiceModule': <CreateChoiceModule setFinalModule={saveModule}/>
     }
 
-    const customStyles = {
-        stepIndicatorSize: 25,
-        currentStepIndicatorSize:30,
-        separatorStrokeWidth: 2,
-        currentStepStrokeWidth: 3,
-        stepStrokeCurrentColor: Colors.primary,
-        stepStrokeWidth: 3,
-        stepStrokeFinishedColor: Colors.primary,
-        stepStrokeUnFinishedColor: '#aaaaaa',
-        separatorFinishedColor: Colors.primary,
-        separatorUnFinishedColor: '#aaaaaa',
-        stepIndicatorFinishedColor: Colors.primary,
-        stepIndicatorUnFinishedColor: '#ffffff',
-        stepIndicatorCurrentColor: '#ffffff',
-        stepIndicatorLabelFontSize: 13,
-        currentStepIndicatorLabelFontSize: 13,
-        stepIndicatorLabelCurrentColor: Colors.primary,
-        stepIndicatorLabelFinishedColor: '#ffffff',
-        stepIndicatorLabelUnFinishedColor: '#aaaaaa',
-        labelColor: '#999999',
-        labelSize: 13,
-        currentStepLabelColor: Colors.primary,
-      }
-
-    
     useEffect(() => {
-        console.log('WOOWODJOIW')
+        swiper.current?.scrollTo({
+            x: 2 * displayWidth,
+        });
+    }, [finalModule])
+
+    useEffect(() => {
         swiper.current?.scrollTo({
             x: displayWidth,
         });
@@ -126,38 +101,7 @@ export const CreateModuleScreen = () => {
                 showsHorizontalScrollIndicator
                 ref={swiper}
             >
-                <ScrollView 
-                    style={{width: displayWidth}} 
-                    contentContainerStyle={{justifyContent: 'center', alignContent: 'center'}}>
-
-                    <TextInput
-                        dense
-                        style={{margin: 10, marginVertical: 20}}
-                        label={i18n.t('moduleObjectiveLabel')}
-                        value={objective}
-                        onChangeText={setObjective}
-                        theme={{colors: {primary: primary}}} />
-                    <Divider/>
-
-                    <View style={{flex: 1, flexDirection: 'row', justifyContent:'center', marginBottom: 50}}>
-                    
-                        <View>
-                            <Subheading 
-                                style={{margin: 10, marginTop: 20, marginLeft: 20}}>
-                                {i18n.t('chooseModuleType')}
-                            </Subheading>
-                            {modules.map(m => 
-                                <ModuleCard 
-                                    moduleType={m} 
-                                    key={m} 
-                                    setChosenModule={setChosenModuleType} 
-                                    chosen={m === chosenModuleType}
-                                    swiperRef={swiper}/>
-                                )
-                            }
-                        </View>
-                    </View>
-                </ScrollView>
+                <ModuleTypeChoice chosenModuleType={chosenModuleType} modules={modules} objective={objective} setChosenModuleType={setChosenModuleType} setObjective={setObjective} swiper={swiper}/>
                 {chosenModuleType in moduleMap && 
                     <ScrollView style={{width: displayWidth, margin: 0, padding: 0}}>{moduleMap[chosenModuleType]}</ScrollView>
                 }
