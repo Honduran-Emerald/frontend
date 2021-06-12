@@ -9,7 +9,7 @@ import { Badge } from 'react-native-paper';
 import { MapNavigator } from './map/MapNavigator';
 import { QuestEditorTabNavigator } from './quest-editor/QuestEditorTabNavigator';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
-import { setToken, unsetToken } from './redux/authentication/authenticationSlice';
+import { logout, setToken } from './redux/authentication/authenticationSlice';
 import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
 import QuestlogScreen from './common/QuestlogScreen';
 import { clearQuestState } from './redux/quests/questsSlice';
@@ -80,7 +80,7 @@ const Dummy = () => {
   const handleLogout = () => {
     deleteItemLocally('UserToken').then(() => {}, () => {});
     deleteItemLocally('PinnedQuestTracker').then(() => {}, () => {});
-    dispatch(unsetToken())
+    dispatch(logout())
     dispatch(clearQuestState())
   }
 
