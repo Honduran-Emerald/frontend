@@ -10,7 +10,6 @@ import { Colors } from '../styles';
 import { commonTranslations } from './translations';
 import { QuestHeader, QuestTracker } from '../types/quest';
 import { createTrackerRequest } from '../utils/requestHandler';
-import { store } from '../redux/store';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
@@ -20,7 +19,7 @@ export default function QuestDetailScreen({ route }: any) {
   const user: User | undefined = useAppSelector((state) => state.authentication.user);
 
   i18n.translations = commonTranslations;
-  const acceptedQuests: QuestTracker[] = store.getState().quests.acceptedQuests;
+  const acceptedQuests: QuestTracker[] = useAppSelector((state) => state.quests.acceptedQuests);
   const acceptedIds: string[] = acceptedQuests.map(tracker => tracker.questId)
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
   const dispatch = useAppDispatch();

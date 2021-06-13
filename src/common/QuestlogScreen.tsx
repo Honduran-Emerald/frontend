@@ -8,7 +8,7 @@ import { commonTranslations } from './translations';
 import { getAllTrackersRequest } from '../utils/requestHandler';
 import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { pinQuest } from '../redux/quests/questsSlice';
+import {pinQuest, setAcceptedQuests} from '../redux/quests/questsSlice';
 
 export default function QuestlogScreen() {
 
@@ -62,6 +62,7 @@ export default function QuestlogScreen() {
         .then((data) => {
           setRefreshing(false);
           sortTrackers(data.trackers);
+          dispatch(setAcceptedQuests(data.trackers));
         }))
   }
 
