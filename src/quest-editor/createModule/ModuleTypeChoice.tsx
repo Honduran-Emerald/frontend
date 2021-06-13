@@ -8,8 +8,6 @@ import { Colors } from '../../styles';
 const displayWidth = Dimensions.get('screen').width;
 
 interface IModuleTypeChoice {
-  objective: string,
-  setObjective: React.Dispatch<React.SetStateAction<string>>,
   modules: string[],
   setChosenModuleType: React.Dispatch<React.SetStateAction<string>>,
   chosenModuleType: string,
@@ -51,7 +49,8 @@ export const ModuleTypeChoice: React.FC<IModuleTypeChoice> = ({ modules, setChos
   </ScrollView>
 )
 
-const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) => void, chosen: boolean, swiperRef: React.MutableRefObject<ScrollView | null>}> = ({ moduleType, setChosenModule, chosen, swiperRef }) => (
+
+const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) => void, chosen: boolean, swiperRef: React.MutableRefObject<ScrollView | null>}> = ({ moduleType, setChosenModule, chosen }) => (
   <TouchableHighlight
       style={{maxWidth: 250, margin: 10, borderRadius: 5}}
       onPress={() => {
@@ -62,14 +61,13 @@ const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) 
           >
           <Card.Title 
               titleStyle={{color: chosen ? 'white' : 'black'}}
-              title={I18n.t(moduleType + 'Name')} 
+              title={I18n.t(moduleType + '_ModuleName')} 
               />
           <Card.Content>
               <Text 
                   style={{color: chosen ? 'white' : 'black'}}
-                  >{I18n.t(moduleType + 'Description')} </Text>
+                  >{I18n.t(moduleType + '_ModuleDescription')} </Text>
           </Card.Content>
       </Card>
   </TouchableHighlight>
-  
 )

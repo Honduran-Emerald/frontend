@@ -7,6 +7,8 @@ import { lightGray, primary } from '../../styles/colors';
 import _ from 'lodash';
 import { Colors } from '../../styles';
 import I18n from 'i18n-js';
+import { useEffect } from 'react';
+import { PrototypeChoiceModule } from '../../types/quest';
 
 interface IChoiceModuleData {
     text: string,
@@ -16,21 +18,32 @@ interface IChoiceModuleData {
 
 const maxChoices = 5;
 
-export const CreateChoiceModule: React.FC<ICreateModule> = ({ setFinalModule }) => {
+export const CreateChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ setFinalModule, edit, defaultValues }) => {
 
-    const [moduleData, setModuleData] = useState<IChoiceModuleData>({text: '', choiceTexts: ['', ''], objective: ''});
-    const [objective, setObjective] = useState<string>('');
+    const [moduleData, setModuleData] = useState<IChoiceModuleData>(
+        edit 
+        ? { // edit module
+            text: defaultValues!.components[0].text!, // TODO: Change this once multiple modules can be used
+            choiceTexts: defaultValues!.choices!.map(c => c.text),
+            objective: defaultValues!.objective
+        }
+        : { // new module
+            text: '', 
+            choiceTexts: ['', ''], 
+            objective: ''}
+        );
 
-    const parseToModule = (moduleData: IChoiceModuleData): IModuleBase => {
+    const parseToModule = (moduleData: IChoiceModuleData): PrototypeChoiceModule => {
         return ({
+            id: -1,
             type: 'Choice',
             components: [{
                 type: 'text',
                 text: moduleData.text
             }],
-            choices: moduleData.choiceTexts.map(text => ({
+            choices: moduleData.choiceTexts.map((text, idx) => ({
                 text: text,
-                nextModuleId: null,
+                nextModuleId: (edit && defaultValues && idx in defaultValues.choices) ? defaultValues.choices[idx].nextModuleId : null,
             })),
             objective: moduleData.objective
         })
@@ -96,7 +109,7 @@ export const CreateChoiceModule: React.FC<ICreateModule> = ({ setFinalModule }) 
                                     let c = _.cloneDeep(moduleData.choiceTexts)
                                     c[idx] = text
                                     setModuleData({
-                                        text: moduleData.text,
+                                        ...moduleData,
                                         choiceTexts: c
                                     })
                                 }}/>
@@ -106,7 +119,7 @@ export const CreateChoiceModule: React.FC<ICreateModule> = ({ setFinalModule }) 
                             theme={{colors: {primary: primary}}}     
                             style={{marginHorizontal: 15}}
                             disabled={moduleData.choiceTexts.length <= 2}
-                            onPress={() => setModuleData({...moduleData, choiceTexts: moduleData.choiceTexts.filter((_, idx_i) => idx_i!==idx)})}
+                            onPress={() => setModuleData({...moduleData, choiceTexts: moduleData.choiceTexts.filter((_, idx_i) => idx_i !== idx)})}
                             icon='delete'/>
                     </View>)}
                     <View 

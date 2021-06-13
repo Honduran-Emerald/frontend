@@ -62,20 +62,30 @@ export interface QuestPrototype extends QuestBase {
 
 }
 
-export interface PrototypeModule {
+export interface PrototypeModuleBase {
     id: number,
     type: string,
     objective: string,
     components: PrototypeComponent[]
+  
+}
 
-    choices?: {
+export interface PrototypeChoiceModule extends PrototypeModuleBase{
+    choices: {
         text: string,
         nextModuleId: number | null,
     }[]
-    nextModuleId?: number | null,
-    endingFactor?: number,
-   
 }
+
+export interface PrototypeStoryModule extends PrototypeModuleBase{  
+    nextModuleId: number | null,
+}
+
+export interface PrototypeEndingModule extends PrototypeModuleBase{
+    endingFactor: number,
+}
+
+export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
 
 export interface PrototypeComponent {
     type: string,

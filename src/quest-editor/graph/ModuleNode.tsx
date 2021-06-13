@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { PrototypeModule, QuestPrototype } from '../../types/quest';
 import { InternalFullNode } from './linksParser';
 import BottomSheet from 'reanimated-bottom-sheet';
+import { useNavigation } from '@react-navigation/native';
 export interface IModuleNode {
     node: InternalFullNode,
     linkOnChoice: ((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined,
@@ -21,6 +22,7 @@ export const ModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, setLinkO
 
     const questPrototype = useAppSelector((state) => state.editor.questPrototype);
     const dispatch = useAppDispatch();
+    const navigation = useNavigation()
 
     return (
         <TouchableOpacity onPress={() => {
@@ -29,7 +31,9 @@ export const ModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, setLinkO
                 setLinkOnChoice(undefined)
             } else {
                 setSheetOptions([['Edit Module', 'puzzle-edit-outline', () => {
-                    // TODO
+                    navigation.navigate('EditModule', {
+                        node: node
+                    })
                 }], ['Seperate Module', 'box-cutter', () => {
                     cutModule();
                 }]])

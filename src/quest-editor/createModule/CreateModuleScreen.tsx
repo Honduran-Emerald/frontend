@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import { Dimensions, Text } from 'react-native';
 import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
-import { Button, Card, Divider, Subheading, TextInput } from 'react-native-paper';
-import i18n from 'i18n-js';
-import '../translations';
 import { CreateStoryModule } from './CreateStoryModule';
 import { CreateEndModule } from './CreateEndModule';
 import { CreateChoiceModule } from './CreateChoiceModule';
-import { primary } from '../../styles/colors';
-import { PrototypeComponent, PrototypeModule } from '../../types/quest';
+import { PrototypeComponent, PrototypeModule, PrototypeModuleBase } from '../../types/quest';
 import { useAppDispatch } from '../../redux/hooks';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import { addOrUpdateQuestModule } from '../../redux/editor/editorSlice';
@@ -17,14 +13,16 @@ import { View } from 'react-native';
 import { Colors } from '../../styles';
 import { useRef } from 'react';
 import { useEffect } from 'react';
-import { useLayoutEffect } from 'react';
 import { ModuleTypeChoice } from './ModuleTypeChoice';
+import { PreviewModuleScreen } from './PreviewModuleScreen';
 
 const displayWidth = Dimensions.get('screen').width
 
 
-export interface ICreateModule {
-    setFinalModule: (finalModule: IModuleBase) => void
+export interface ICreateModule<ModuleType extends PrototypeModuleBase> {
+    setFinalModule: (finalModule: PrototypeModule) => void,
+    edit?: boolean,
+    defaultValues?: ModuleType
 }
 
 export interface IModuleBase {
@@ -50,28 +48,27 @@ export const CreateModuleScreen = () => {
 
     const dispatch = useAppDispatch();
 
-    const saveModule = (finalModule: IModuleBase) => {
+    const saveModule = (finalModule: PrototypeModule) => {
 
         const baseModule = {
             //@ts-ignore
             id: route.params?.moduleId,
-            components: [],
         }
 
-        setFinalModule({...baseModule, ...finalModule})
+        setFinalModule({...finalModule, ...baseModule})
     }
 
     const modules = [
-        'positionModule',
-        'choiceModule',
-        'storyModule',
-        'endModule'
+        'Location',
+        'Choice',
+        'Story',
+        'Ending'
     ]
 
     const moduleMap: {[moduleName: string]: JSX.Element} = {
-        'storyModule': <CreateStoryModule setFinalModule={saveModule}/>,
-        'endModule': <CreateEndModule setFinalModule={saveModule}/>,
-        'choiceModule': <CreateChoiceModule setFinalModule={saveModule}/>
+        'Story': <CreateStoryModule setFinalModule={saveModule}/>,
+        'Ending': <CreateEndModule setFinalModule={saveModule}/>,
+        'Choice': <CreateChoiceModule setFinalModule={saveModule}/>
     }
 
     useEffect(() => {
@@ -104,52 +101,14 @@ export const CreateModuleScreen = () => {
                 {chosenModuleType in moduleMap && 
                     <ScrollView style={{width: displayWidth, margin: 0, padding: 0}}>{moduleMap[chosenModuleType]}</ScrollView>
                 }
-                {finalModule &&  <View style={{width: displayWidth}}><View style={{flex: 1, margin: 20}} >
-                    
-                    <ScrollView 
-                        style={{height: '100%'}}
-                        contentContainerStyle={{justifyContent: 'space-between', }}>
-                        <Text>
-                            {JSON.stringify(finalModule)}
-                        </Text>
+                {finalModule && <PreviewModuleScreen prototypeModule={finalModule} saveModule={() => {
 
-                        <Button 
-                            mode='contained' 
-                            onPress={() => {
-                                dispatch(addOrUpdateQuestModule(finalModule)) 
-                                //@ts-ignore
-                                route.params?.insertModuleId()
-                                navigation.navigate('ModuleGraph')
-                            }}
-                            theme={{colors: {primary: primary}}}>
-                            Save Module
-                        </Button>
-                    </ScrollView>
-                </View></View>}
+                    dispatch(addOrUpdateQuestModule(finalModule)) 
+                    //@ts-ignore
+                    route.params?.insertModuleId()
+                    navigation.navigate('ModuleGraph')
+                }}/>}
             </ScrollView>
         </View>
     )
 }
-
-const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) => void, chosen: boolean, swiperRef: React.MutableRefObject<ScrollView | null>}> = ({ moduleType, setChosenModule, chosen, swiperRef }) => (
-    <TouchableHighlight
-        style={{maxWidth: 250, margin: 10, borderRadius: 5}}
-        onPress={() => {
-            setChosenModule(moduleType);
-        }}>
-        <Card 
-            style={{padding: 0, backgroundColor: chosen ? primary : 'white', overflow: 'hidden'}}
-            >
-            <Card.Title 
-                titleStyle={{color: chosen ? 'white' : 'black'}}
-                title={i18n.t(moduleType + 'Name')} 
-                />
-            <Card.Content>
-                <Text 
-                    style={{color: chosen ? 'white' : 'black'}}
-                    >{i18n.t(moduleType + 'Description')} </Text>
-            </Card.Content>
-        </Card>
-    </TouchableHighlight>
-    
-)
