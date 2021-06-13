@@ -112,6 +112,7 @@ export const ModuleGraphCaller = () => {
                     borderTopRightRadius: 40,
                     height: '100%',
                     padding: 20,
+                    width: Dimensions.get('screen').width,
                     elevation: 10000, //tf does this even do??
                 }}>
                 {sheetOptions.map(
@@ -121,7 +122,9 @@ export const ModuleGraphCaller = () => {
                             <Menu.Item 
                                 title={option[0]} 
                                 icon={option[1]} 
-                                onPress={() => {sheet.current?.snapTo(1); option[2]()}}/>
+                                onPress={() => {sheet.current?.snapTo(1); option[2]()}}
+                                style={{maxWidth: '90%', marginRight: 10}} // TODO: Make this responsive on all screens
+                                />
                             <Divider/>
                         </View>
                 )}
