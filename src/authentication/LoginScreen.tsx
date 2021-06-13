@@ -6,7 +6,7 @@ import i18n from 'i18n-js';
 
 import { Colors } from '../styles';
 import { EMAILREGEX } from '../../GLOBALCONFIG';
-import { useAppDispatch } from '../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../redux/hooks';
 import { setToken } from '../redux/authentication/authenticationSlice';
 import { loginRequest } from '../utils/requestHandler';
 import { saveItemLocally } from '../utils/SecureStore';
@@ -17,6 +17,7 @@ export default function LoginScreen({ navigation }: any) {
   i18n.translations = authTranslations;
 
   const dispatch = useAppDispatch();
+  const tokenInvalid = useAppSelector((state) => state.authentication.tokenInvalid);
 
   // TODO remove default mail and pw
   const [email, setEmail] = React.useState('t3st@test.de');
@@ -94,6 +95,12 @@ export default function LoginScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{i18n.t('appName')}</Text>
+      <View>
+        {
+          tokenInvalid &&
+          <Text style={styles.errorText}>{i18n.t('invalidSession')}</Text>
+        }
+      </View>
       <TextInput
         style={{...styles.input, borderColor: errorEmail ? Colors.error : Colors.black}}
         onChangeText={(input) => updateEmail(input)}

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar} from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
-import { Avatar } from 'react-native-paper';
+import { Avatar, Modal, Portal, Button as PaperButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -10,24 +10,30 @@ import { Colors } from '../styles';
 import { commonTranslations } from './translations';
 import { QuestHeader, QuestTracker } from '../types/quest';
 import { createTrackerRequest } from '../utils/requestHandler';
-import { store } from '../redux/store';
-import { useAppDispatch } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
+import { User } from '../types/general';
 
 export default function QuestDetailScreen({ route }: any) {
 
+  const user: User | undefined = useAppSelector((state) => state.authentication.user);
+
   i18n.translations = commonTranslations;
-  const acceptedQuests: QuestTracker[] = store.getState().quests.acceptedQuests;
+  const acceptedQuests: QuestTracker[] = useAppSelector((state) => state.quests.acceptedQuests);
   const acceptedIds: string[] = acceptedQuests.map(tracker => tracker.questId)
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const quest: QuestHeader = route.params.quest;
+  const isQuestCreator = quest.ownerName === user?.userName;
   const creationDate = new Date(Date.parse(quest.creationTime));
+  const finishRate: number = ((quest.finishes / quest.plays) * 100)
 
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
+  const [modalVisible, setModalVisible] = React.useState(false);
 
-  const finishRate: number = ((quest.finishes / quest.plays) * 100)
+  const showModal = () => setModalVisible(true);
+  const hideModal = () => setModalVisible(false);
 
   // TODO image fetch needed
 
@@ -72,9 +78,20 @@ export default function QuestDetailScreen({ route }: any) {
           }
           {
             isAccepted &&
-            <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: 25}}>
+            <View style={styles.acceptedText}>
               <MaterialCommunityIcons name='check' size={24} color='green'/>
               <Text style={{color: 'green'}}>{i18n.t('questAccepted')}</Text>
+            </View>
+          }
+          {
+            isQuestCreator &&
+            <View style={styles.creatorButtons}>
+              <View style={styles.creatorButton}>
+                <Button color={Colors.primary} disabled={isButtonDisabled} title={i18n.t('editButton')} onPress={() => alert('Go to edit screen')}/>
+              </View>
+              <View style={styles.creatorButton}>
+                <Button color={Colors.error} disabled={isButtonDisabled} title={i18n.t('deleteButton')} onPress={showModal}/>
+              </View>
             </View>
           }
           <View style={styles.divider}/>
@@ -97,7 +114,7 @@ export default function QuestDetailScreen({ route }: any) {
             </View>
             <View style={styles.center}>
               <Text style={styles.mediumText}>
-                {isNaN(finishRate) ? '0' : finishRate}%
+                {isNaN(finishRate) ? '0' : finishRate.toFixed(0)}%
               </Text>
               <Text style={styles.smallText}>
                 {i18n.t('finished')}
@@ -123,6 +140,27 @@ export default function QuestDetailScreen({ route }: any) {
           <View style={styles.spacer}/>
         </View>
       </ScrollView>
+      <Portal>
+        <Modal visible={modalVisible} dismissable onDismiss={hideModal} contentContainerStyle={styles.modal}>
+          <Text style={styles.modalTitle}>
+            {i18n.t('modalDeleteTitle')}
+          </Text>
+          <Text style={styles.modalText}>
+            {i18n.t('modalDeleteText')}
+          </Text>
+          <View style={styles.modalButtons}>
+            <View style={styles.modalButton}>
+              <PaperButton color={Colors.primaryLight} compact mode={'outlined'} onPress={() => alert('Implement set to private')}>{i18n.t('modalSetPrivateButton')}</PaperButton>
+            </View>
+            <View style={styles.modalButton}>
+              <PaperButton color={Colors.error} compact mode={'outlined'} onPress={() => alert('Implement delete')}>{i18n.t('deleteButton')}</PaperButton>
+            </View>
+          </View>
+          <View style={styles.modalBackButton}>
+            <PaperButton color={Colors.primary} compact onPress={hideModal}>{i18n.t('modalBackButton')}</PaperButton>
+          </View>
+        </Modal>
+      </Portal>
     </View>
   );
 }
@@ -181,6 +219,20 @@ const styles = StyleSheet.create({
     width: '50%',
     marginBottom: 25,
   },
+  acceptedText: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 25,
+  },
+  creatorButtons: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  creatorButton: {
+    width: '40%',
+    marginBottom: 25,
+  },
   divider: {
     borderBottomColor: Colors.black,
     borderBottomWidth: 2,
@@ -215,5 +267,32 @@ const styles = StyleSheet.create({
   },
   smallText: {
     fontSize: 10,
+  },
+  modal: {
+    backgroundColor: Colors.background,
+    padding: 20,
+    margin: 20,
+  },
+  modalTitle: {
+    fontSize: 24,
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  modalText: {
+    fontSize: 16,
+  },
+  modalButtons: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  modalButton: {
+    width: '48%',
+  },
+  modalBackButton: {
+    alignItems: 'flex-start',
   },
 });
