@@ -10,8 +10,6 @@ import I18n from 'i18n-js';
 import BottomSheet from 'reanimated-bottom-sheet';
 
 interface IAddModuleNode {
-    setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule,
-    linkOnChoice: ((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined,
     sheetRef: React.RefObject<BottomSheet>,
     setSheetOptions: React.Dispatch<React.SetStateAction<[string, string, () => void][]>>
 }
@@ -42,7 +40,7 @@ export const AddModuleNode: React.FC<IAddModuleNode> = ({ sheetRef, setSheetOpti
                         })
                     }
                 )]])
-                sheetRef.current?.snapTo(0)
+                sheetRef.current?.snapTo(1)
             }}>
                 <Text style={styles.component}>{I18n.t('addModule')}</Text>
 

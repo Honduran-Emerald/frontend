@@ -4,14 +4,14 @@ import _ from 'lodash';
 export interface InternalFullNode {
     id: number,
     type: 'normal',
-    setSources: ((questPrototype: QuestPrototype, moduleId: number | null) => PrototypeModule)[]
+    setSources: ((questPrototype: QuestPrototype, moduleId: number | null) => QuestPrototype)[]
     moduleObject: PrototypeModule
 }
 
 export interface InternalEmptyNode {
     id: string,
     type: 'empty',
-    setSource: (questPrototype: QuestPrototype, moduleId: number | null) => PrototypeModule,
+    setSource: (questPrototype: QuestPrototype, moduleId: number | null) => QuestPrototype,
     parentId: string | number
 }
 
@@ -25,7 +25,7 @@ export type InternalNode = InternalEmptyNode | InternalFullNode
  * @param setSource function to allow the parents link to be changed from the child component
  * @returns virtualized link
  */
-const virtualizeEmptyLink = (link: [string|number, string|number], nodes: InternalNode[], idx: number, setSource: (questPrototype: QuestPrototype, moduleId: number | null) => PrototypeModule): [string|number, string|number] => {
+const virtualizeEmptyLink = (link: [string|number, string|number], nodes: InternalNode[], idx: number, setSource: (questPrototype: QuestPrototype, moduleId: number | null) => QuestPrototype): [string|number, string|number] => {
     if (link[1] == null) {
         const emptyNodeString = `empty${idx}`
         nodes.push({
@@ -37,6 +37,8 @@ const virtualizeEmptyLink = (link: [string|number, string|number], nodes: Intern
         return [link[0], emptyNodeString]
     } else {
         (nodes.find(node => node.id === link[1]) as InternalFullNode).setSources.push(setSource)
+
+        console.log('Called on', link[1], '-- length sour sources array', (nodes.find(node => node.id === link[1]) as InternalFullNode).setSources);
     }
     return link
 }
@@ -48,6 +50,7 @@ const virtualizeEmptyLink = (link: [string|number, string|number], nodes: Intern
  */
 export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNode[], links: [string|number, string|number][]} => {
 
+
     let nodes: InternalNode[] = questPrototype.modules.map(module => ({id: module.id, type: 'normal', moduleObject: module, setSources: []}));
 
     let empty_idx = 0;
@@ -56,15 +59,17 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
         switch (module.type) {
             case 'Choice':
                 let getSetChoiceSource = (choiceIndex: number) => {
+                    console.log('generated with idx', choiceIndex)
                     return (questPrototype: QuestPrototype, moduleId: number) => {
-                        
+                        console.log('Setting sourece:', module.id, '| Index:', choiceIndex, 'to', moduleId)
                         let newQuestPrototype = _.cloneDeep(questPrototype)
                         let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | PrototypeChoiceModule )
                         if (!newModule) {
                             console.log('Fuck, source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser scheiß code macht depressiv')
                         }
                         (newModule as PrototypeChoiceModule).choices[choiceIndex] = {...(newModule as PrototypeChoiceModule).choices[choiceIndex], nextModuleId: moduleId}
-                        return newModule as PrototypeChoiceModule
+                        //return newModule as PrototypeChoiceModule
+                        return newQuestPrototype 
 
                     }
                 }
@@ -81,7 +86,8 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
                         console.log('Fuck, source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser scheiß code macht depressiv')
                     }
                     (newModule as PrototypeStoryModule).nextModuleId = moduleId
-                    return newModule as PrototypeStoryModule
+                    //return newModule as PrototypeStoryModule
+                    return newQuestPrototype
                 }
 
                 //@ts-ignore TODO: Create some better type annotations for this
@@ -92,6 +98,9 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
                 return [];
         }
     }).reduce((acc, curVal) => acc.concat(curVal), [])
+
+
+    console.log('links', links);
 
     return {
         nodes: nodes,

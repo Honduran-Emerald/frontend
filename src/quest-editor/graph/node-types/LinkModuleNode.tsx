@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { Text } from 'react-native-paper';
-import { addOrUpdateQuestModule } from '../../../redux/editor/editorSlice';
+import { addOrUpdateQuestModule, setModules } from '../../../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { PrototypeModule, QuestPrototype } from '../../../types/quest';
 import _ from 'lodash';
@@ -11,9 +11,8 @@ import I18n from 'i18n-js';
 import BottomSheet from 'reanimated-bottom-sheet';
 
 interface ILinkModuleNode {
-    setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule,
-    linkOnChoice: ((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined,
-    setLinkOnChoice: React.Dispatch<React.SetStateAction<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>>,
+    setSource: (questPrototype: QuestPrototype, moduleId: number) => QuestPrototype,
+    setLinkOnChoice: React.Dispatch<React.SetStateAction<((questPrototype: QuestPrototype, module_id: number) => QuestPrototype) | undefined>>,
     sheetRef: React.RefObject<BottomSheet>,
     setSheetOptions: React.Dispatch<React.SetStateAction<[string, string, () => void][]>>,
     setLinkSourceId: React.Dispatch<React.SetStateAction<string | number | undefined>>,
@@ -43,7 +42,7 @@ export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, sheetRef,
                             moduleId: maxId,
                             // TODO: Probably refactor ALL of this because react native does not support serializable functions... ugh
                             insertModuleId: () => {
-                                dispatch(addOrUpdateQuestModule(setSource(questPrototype, maxId)))
+                                dispatch(setModules(setSource(questPrototype, maxId).modules))
                             }
                         })
                     }
@@ -58,7 +57,7 @@ export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, sheetRef,
 
                 ]])
 
-                sheetRef.current?.snapTo(0)
+                sheetRef.current?.snapTo(1)
             }}>
                 <Text style={styles.component}>{I18n.t('addOrConnectModule')}</Text>
 

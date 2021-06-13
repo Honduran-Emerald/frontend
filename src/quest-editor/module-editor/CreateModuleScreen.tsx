@@ -109,8 +109,10 @@ export const CreateModuleScreen = () => {
           <PreviewModuleScreen
             prototypeModule={finalModule}
             saveModule={() => {
-              dispatch(addOrUpdateQuestModule(finalModule));
+              console.log('Preinsert CMS')
               route.params?.insertModuleId();
+              dispatch(addOrUpdateQuestModule(finalModule));
+              console.log('Postinsert CMS')
               navigation.navigate("ModuleGraph");
             }}
           />

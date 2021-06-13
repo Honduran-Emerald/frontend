@@ -30,10 +30,21 @@ export const questsSlice = createSlice({
             if (state.questPrototype !== undefined)
                 state.questPrototype = {...state.questPrototype, ...action.payload}
         },
+        setModules: (state, action: PayloadAction<PrototypeModule[]>) => {
+            console.log('Updating modules to', action.payload)
+            if (state.questPrototype !== undefined)
+                state.questPrototype.modules = action.payload
+        },
         addOrUpdateQuestModule: (state, action: PayloadAction<PrototypeModule>) => {
             if (state.questPrototype !== undefined)
                 state.questPrototype.modules = state.questPrototype.modules
                     .filter(m => m.id !== action.payload.id)
+                    .concat(action.payload)
+        },
+        addOrUpdateMultipleQuestModules: (state, action: PayloadAction<PrototypeModule[]>) => {
+            if (state.questPrototype !== undefined)
+                state.questPrototype.modules = state.questPrototype.modules
+                    .filter(m => !action.payload.find(module => module.id===m.id))
                     .concat(action.payload)
         },
         deleteQuestModule: (state, action: PayloadAction<number>) => {
@@ -68,7 +79,7 @@ export const questsSlice = createSlice({
     }
 })
 
-export const { loadQuest, unloadQuest, updateQuestMeta, addOrUpdateQuestModule, deleteQuestModule, 
-        setQuestTitle, setQuestDescription, setLocationName, setImage, setEstimatedTime } = questsSlice.actions
+export const { loadQuest, unloadQuest, updateQuestMeta, addOrUpdateQuestModule, deleteQuestModule, setModules,
+        setQuestTitle, setQuestDescription, setLocationName, setImage, setEstimatedTime, addOrUpdateMultipleQuestModules } = questsSlice.actions
 
 export default questsSlice.reducer
