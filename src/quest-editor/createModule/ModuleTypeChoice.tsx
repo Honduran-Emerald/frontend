@@ -16,19 +16,19 @@ interface IModuleTypeChoice {
   swiper: React.MutableRefObject<ScrollView | null>
 }
 
-export const ModuleTypeChoice: React.FC<IModuleTypeChoice> = ({ objective, setObjective, modules, setChosenModuleType, swiper, chosenModuleType }) => (
+export const ModuleTypeChoice: React.FC<IModuleTypeChoice> = ({ modules, setChosenModuleType, swiper, chosenModuleType }) => (
   <ScrollView 
     style={{width: displayWidth}} 
-    contentContainerStyle={{justifyContent: 'center', alignContent: 'center'}}>
+    contentContainerStyle={{justifyContent: 'center', alignContent: 'center', marginVertical: 40}}>
 
-    <TextInput
+    {/* <TextInput
       dense
       style={{margin: 10, marginVertical: 20}}
       label={I18n.t('moduleObjectiveLabel')}
       value={objective}
       onChangeText={setObjective}
       theme={{colors: {primary: Colors.primary}}} />
-    <Divider/>
+    <Divider/> */}
 
     <View style={{flex: 1, flexDirection: 'row', justifyContent:'center', marginBottom: 50}}>
   

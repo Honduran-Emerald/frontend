@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
-import { Button, Subheading, TextInput, Title } from 'react-native-paper';
+import { Button, Subheading, TextInput, Divider } from 'react-native-paper';
 import { ICreateModule, IModuleBase } from './CreateModuleScreen';
 import i18n from 'i18n-js';
 import { PrototypeComponent, PrototypeModule } from '../../types/quest';
 import { primary } from '../../styles/colors';
+import { Colors } from '../../styles';
+import I18n from 'i18n-js';
 
 
 interface IStoryModuleData {
-    text?: string
+    text: string,
+    objective: string,
 }
 
 export const CreateStoryModule: React.FC<ICreateModule> = ({ setFinalModule }) => {
 
-    const [moduleData, setModuleData] = useState<IStoryModuleData>({});
+    const [moduleData, setModuleData] = useState<IStoryModuleData>({text: '', objective: ''});
 
     const parseToModule = (moduleData: IStoryModuleData): IModuleBase => {
         return ({
+            objective: moduleData.objective,
             type: 'Story',
             components: [{
                 type: 'text',
@@ -27,6 +31,14 @@ export const CreateStoryModule: React.FC<ICreateModule> = ({ setFinalModule }) =
 
     return (
         <View style={{marginHorizontal: 10}}>
+            <TextInput
+                dense
+                style={{marginVertical: 20}}
+                label={I18n.t('moduleObjectiveLabel')}
+                value={moduleData.objective}
+                onChangeText={(data) => setModuleData({...moduleData, objective: data})}
+                theme={{colors: {primary: Colors.primary}}} />
+            <Divider/>
             <Subheading 
                 style={{margin: 10, marginTop: 20}}>
                 {i18n.t('addStoryText')}

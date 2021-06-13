@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
-import { Button, IconButton, List, Subheading, TextInput } from 'react-native-paper';
+import { Button, IconButton, List, Subheading, TextInput, Divider } from 'react-native-paper';
 import { ICreateModule, IModuleBase } from './CreateModuleScreen';
 import i18n from 'i18n-js';
 import { lightGray, primary } from '../../styles/colors';
 import _ from 'lodash';
+import { Colors } from '../../styles';
+import I18n from 'i18n-js';
 
 interface IChoiceModuleData {
     text: string,
     choiceTexts: string[],
+    objective: string,
 }
 
 const maxChoices = 5;
 
 export const CreateChoiceModule: React.FC<ICreateModule> = ({ setFinalModule }) => {
 
-    const [moduleData, setModuleData] = useState<IChoiceModuleData>({text: '', choiceTexts: ['Hello there', 'Max is nen kek']});
+    const [moduleData, setModuleData] = useState<IChoiceModuleData>({text: '', choiceTexts: ['', ''], objective: ''});
+    const [objective, setObjective] = useState<string>('');
 
     const parseToModule = (moduleData: IChoiceModuleData): IModuleBase => {
         return ({
@@ -27,12 +31,21 @@ export const CreateChoiceModule: React.FC<ICreateModule> = ({ setFinalModule }) 
             choices: moduleData.choiceTexts.map(text => ({
                 text: text,
                 nextModuleId: null,
-            }))
+            })),
+            objective: moduleData.objective
         })
     }
 
     return (
         <View style={{marginHorizontal: 10}}>
+            <TextInput
+                dense
+                style={{marginVertical: 20}}
+                label={I18n.t('moduleObjectiveLabel')}
+                value={moduleData.objective}
+                onChangeText={(data) => setModuleData({...moduleData, objective: data})}
+                theme={{colors: {primary: Colors.primary}}} />
+            <Divider/>
             <Subheading 
                 style={{margin: 10, marginTop: 20}}>
                 {i18n.t('addEndText')}
@@ -40,7 +53,7 @@ export const CreateChoiceModule: React.FC<ICreateModule> = ({ setFinalModule }) 
             <TextInput 
                 theme={{colors: {primary: primary}}}
                 style={{marginVertical: 10}}
-                value={moduleData.text || ''}
+                value={moduleData.text}
                 onChange={(data) => setModuleData({...moduleData, text: data.nativeEvent.text})}
                 multiline/>
 

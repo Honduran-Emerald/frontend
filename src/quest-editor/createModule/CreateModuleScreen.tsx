@@ -28,6 +28,7 @@ export interface ICreateModule {
 }
 
 export interface IModuleBase {
+    objective: string,
     type: string,
     components: PrototypeComponent[],
     choices?: {
@@ -39,7 +40,6 @@ export interface IModuleBase {
 
 export const CreateModuleScreen = () => {
  
-    const [objective, setObjective] = useState('')
     const [chosenModuleType, setChosenModuleType] = useState('')
     const [finalModule, setFinalModule] = useState<PrototypeModule>();
 
@@ -55,7 +55,6 @@ export const CreateModuleScreen = () => {
         const baseModule = {
             //@ts-ignore
             id: route.params?.moduleId,
-            objective: objective,
             components: [],
         }
 
@@ -101,7 +100,7 @@ export const CreateModuleScreen = () => {
                 showsHorizontalScrollIndicator
                 ref={swiper}
             >
-                <ModuleTypeChoice chosenModuleType={chosenModuleType} modules={modules} objective={objective} setChosenModuleType={setChosenModuleType} setObjective={setObjective} swiper={swiper}/>
+                <ModuleTypeChoice chosenModuleType={chosenModuleType} modules={modules} setChosenModuleType={setChosenModuleType} swiper={swiper}/>
                 {chosenModuleType in moduleMap && 
                     <ScrollView style={{width: displayWidth, margin: 0, padding: 0}}>{moduleMap[chosenModuleType]}</ScrollView>
                 }

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
-import { Button, Subheading, TextInput, Title } from 'react-native-paper';
+import { Button, Subheading, TextInput, Divider } from 'react-native-paper';
 import { ICreateModule, IModuleBase } from './CreateModuleScreen';
 import i18n from 'i18n-js';
 import { primary } from '../../styles/colors';
+import I18n from 'i18n-js';
+import { Colors } from '../../styles';
 
 interface IEndingModuleData {
-    text?: string
+    text?: string,
+    objective: string,
 }
 
 export const CreateEndModule: React.FC<ICreateModule> = ({ setFinalModule }) => {
@@ -20,13 +23,22 @@ export const CreateEndModule: React.FC<ICreateModule> = ({ setFinalModule }) => 
             components: [{
                 type: 'text',
                 text: moduleData.text
-            }]
+            }],
+            objective: moduleData.objective
         })
     }
 
 
     return (
         <View style={{marginHorizontal: 10}}>
+            <TextInput
+                dense
+                style={{marginVertical: 20}}
+                label={I18n.t('moduleObjectiveLabel')}
+                value={moduleData.objective}
+                onChangeText={(data) => setModuleData({...moduleData, objective: data})}
+                theme={{colors: {primary: Colors.primary}}} />
+            <Divider/>
             <Subheading 
                 style={{margin: 10, marginTop: 20}}>
                 {i18n.t('addEndText')}
