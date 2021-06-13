@@ -74,7 +74,7 @@ export interface PrototypeModule {
     }[]
     nextModuleId?: number | null,
     endingFactor?: number,
-   
+
 }
 
 export interface PrototypeComponent {
@@ -90,6 +90,8 @@ export interface QuestTracker {
     vote: string,
     creationTime: string,
     questName: string,
+    agentProfileImageId: string,
+    agentProfileName: string,
     objective: string,
     author: string
 }
