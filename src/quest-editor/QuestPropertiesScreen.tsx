@@ -17,8 +17,6 @@ export const QuestPropertiesScreen = () => {
   const imagePath = useAppSelector(state => state.editor.imagePath)
   const dispatch = useAppDispatch();
 
-  console.log(questPrototype?.approximateTime)
-
   return(
     <KeyboardAwareScrollView
       contentContainerStyle={style.scrollViewContentContainer}

@@ -55,10 +55,6 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
         }) : []);
     }, [graph, positions])    
 
-
-    console.log('posmap', JSON.stringify(posMap))
-    console.log('outernode', JSON.stringify(outerNodeOffset))
-
     useEffect(() => {
         if (!indexPath.find(edge => (outerHorizontalScrollOffset[edge.v.rowIdx] === undefined
                                     || outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')] === undefined

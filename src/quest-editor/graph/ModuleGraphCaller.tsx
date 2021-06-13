@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { Divider, Menu } from 'react-native-paper';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { PrototypeModule, QuestPrototype } from '../../types/quest';
 import { AddModuleNode } from './AddModuleNode';
 import { LinkModuleNode as LinkModuleNode } from './LinkModuleNode';
@@ -12,6 +12,7 @@ import { fromLists } from './sugiyama';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Graph } from 'graphlib';
+import { addOrUpdateQuestModule } from '../../redux/editor/editorSlice';
 
 export const ModuleGraphCaller = () => {
 
@@ -22,12 +23,12 @@ export const ModuleGraphCaller = () => {
     const [linkOnChoice, setLinkOnChoice] = useState<((questPrototype: QuestPrototype, module_id: number) => PrototypeModule) | undefined>(undefined);
     const [linkSourceId, setLinkSourceId] = useState<string | number | undefined>(undefined);
 
-    console.log(linkSourceId)
-
     const questPrototype = useAppSelector((state) => state.editor.questPrototype); // redux selector
 
     const [sheetOptions, setSheetOptions] = useState<[string, string, (() => void)][]>([['hi', 'plus', (() => console.log(5))], ['hi there', 'plus', (() => console.log(6))]])
     const sheet = useRef<BottomSheet>(null);
+
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
 
@@ -36,8 +37,6 @@ export const ModuleGraphCaller = () => {
         if (!questPrototype) return () => {}; // if questPrototype isn't loaded yet, do nothing. 
 
         let { nodes, links } = graph_connections(questPrototype) // calculate nodes and links
-        // console.log('LINKS', JSON.stringify(links))
-        console.log('----------------------------------')
         let parentNodes: (string | number)[] = []
         if (linkSourceId !== undefined) {
             parentNodes = [linkSourceId]
@@ -55,7 +54,9 @@ export const ModuleGraphCaller = () => {
         let { positions, graph } = fromLists(nodes.map(node => ({ // calculate virtual nodes for sugiyama layout
             id: node.id, component: 
             node.type === 'normal' 
-            ? <ModuleNode node={node} linkOnChoice={linkOnChoice} setLinkOnChoice={setLinkOnChoice} linkable={!parentNodes.includes(node.id)}/> // regular node. can be adjusted to return different types of nodes
+            ? <ModuleNode node={node} linkOnChoice={linkOnChoice} setLinkOnChoice={setLinkOnChoice} linkable={!parentNodes.includes(node.id)} 
+            setSheetOptions={setSheetOptions} sheetRef={sheet} 
+            cutModule={() => node.setSources.forEach(setSource => dispatch(addOrUpdateQuestModule(setSource(questPrototype, null))))}/> // regular node. can be adjusted to return different types of nodes
             : <LinkModuleNode setSource={node.setSource} linkOnChoice={linkOnChoice} setLinkOnChoice={setLinkOnChoice} sheetRef={sheet} setSheetOptions={setSheetOptions} setLinkSourceId={setLinkSourceId} parentId={node.parentId}/> // empty node. clicking will allow to add a new or link to an existing module
         })), links);
 

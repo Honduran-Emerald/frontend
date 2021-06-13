@@ -153,10 +153,7 @@ export const fromLists = (nodes: IGraphModuleNode[], links: [string|number, stri
     links.forEach(l => {
         //@ts-ignore
         g.setEdge(l[0], l[1], (g.edge(l[0], l[1]) || 0) + 1)
-        //@ts-ignore
-        console.log(g.edge(l[0], l[1]));
     })
-    console.log('EDGE', JSON.stringify(g.edges().map(e => [e, g.edge(e)])))
     return dagLayout(g);
     
 }
@@ -167,12 +164,7 @@ export const dagLayout = (g: Graph) => {
     let sorted = getLayers(g); // Sort nodes topologically
     sorted = virtLayers(g, sorted); // Virtualize layers (every link has length 1)
     sorted = vertOrder(g, sorted); // reorder nodes within layer
-    //temporaryNodes.forEach(node => g.removeNode(node))
 
-    console.log('sorted', JSON.stringify(sorted))
-    console.log('edges', JSON.stringify(g.edges()))
-    console.log('nodes', JSON.stringify(g.nodes()))
-    console.log('example', g.node('mv_0'))
     return {
         positions: sorted,
         graph: g

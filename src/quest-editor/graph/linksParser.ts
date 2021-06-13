@@ -12,19 +12,20 @@ interface StoryModule extends PrototypeModule {
 export interface InternalFullNode {
     id: number,
     type: 'normal',
+    setSources: ((questPrototype: QuestPrototype, moduleId: number | null) => PrototypeModule)[]
     moduleObject: PrototypeModule
 }
 
 export interface InternalEmptyNode {
     id: string,
     type: 'empty',
-    setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule,
+    setSource: (questPrototype: QuestPrototype, moduleId: number | null) => PrototypeModule,
     parentId: string | number
 }
 
 export type InternalNode = InternalEmptyNode | InternalFullNode
 
-const virtualizeEmptyLink = (link: [string|number, string|number], nodes: InternalNode[], idx: number, setSource: (questPrototype: QuestPrototype, moduleId: number) => PrototypeModule): [string|number, string|number] => {
+const virtualizeEmptyLink = (link: [string|number, string|number], nodes: InternalNode[], idx: number, setSource: (questPrototype: QuestPrototype, moduleId: number | null) => PrototypeModule): [string|number, string|number] => {
     if (link[1] == null) {
         const emptyNodeString = `empty${idx}`
         nodes.push({
@@ -34,13 +35,15 @@ const virtualizeEmptyLink = (link: [string|number, string|number], nodes: Intern
             parentId: link[0]
         })
         return [link[0], emptyNodeString]
-    } 
+    } else {
+        (nodes.find(node => node.id === link[1]) as InternalFullNode).setSources.push(setSource)
+    }
     return link
 }
 
 export const graph_connections = (questPrototype: QuestPrototype): {nodes: InternalNode[], links: [string|number, string|number][]} => {
 
-    let nodes: InternalNode[] = questPrototype.modules.map(module => ({id: module.id, type: 'normal', moduleObject: module}));
+    let nodes: InternalNode[] = questPrototype.modules.map(module => ({id: module.id, type: 'normal', moduleObject: module, setSources: []}));
 
     let empty_idx = 0;
 
