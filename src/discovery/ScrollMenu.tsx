@@ -6,27 +6,31 @@ import {queryQuestsRequest} from "../utils/requestHandler";
 import {Button, Card, Paragraph, Surface, Title} from "react-native-paper";
 import { useNavigation } from '@react-navigation/core';
 import * as Location from "expo-location";
+import {LocationObject} from "expo-location";
+import {LatLng} from "react-native-maps";
 
 export default interface scrollProps {
     header: string
     type: string
+    location: LocationObject
 }
 
 export interface questProps {
     quest: QuestHeader
+    location: LocationObject
 }
 
 function getDistanceFromLatLonInKm(lat1:number, lon1:number, lat2:number, lon2:number) {
-    var R = 6371; // Radius of the earth in km
-    var dLat = deg2rad(lat2-lat1);  // deg2rad below
-    var dLon = deg2rad(lon2-lon1);
-    var a =
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);  // deg2rad below
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon/2) * Math.sin(dLon/2)
+        Math.sin(dLon / 2) * Math.sin(dLon / 2)
     ;
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    var d = R * c; // Distance in km
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    let d = R * c; // Distance in km
     if (d > 10) {
         d = Math.round(d);
     }
@@ -42,33 +46,10 @@ export const QuestPreview = (props:questProps) => {
     const [location, setLocation] = useState<Location.LocationObject>();
     const [distance, setDistance] = useState(-1);
 
-    // Get Location Permission and set initial Location
     useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                return Promise.reject(new Error("Permission to access location was denied"))
-            }
-
-            let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
-            setLocation(location);
-        })()
-    }, [])
-
-    async function getLocation() {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            return Promise.reject(new Error("Permission to access location was denied"))
-        }
-
-        let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
-        setLocation(location);
-    }
-
-    useEffect(() => {
-        location &&
-        setDistance(getDistanceFromLatLonInKm(props.quest.location.latitude, props.quest.location.longitude, location.coords.latitude, location.coords.longitude));
-    }, [location])
+        props.location &&
+        setDistance(getDistanceFromLatLonInKm(props.quest.location.latitude, props.quest.location.longitude, props.location.coords.latitude, props.location.coords.longitude));
+    }, [props.location])
 
     const navigation = useNavigation();
     return(
@@ -108,7 +89,7 @@ export const ScrollMenu = (props:scrollProps) => {
                 </Text>
                 <ScrollView horizontal>
                     {quests && quests.map((q, index) => (
-                            <QuestPreview key={index} quest={q}/>
+                            <QuestPreview key={index} quest={q} location={props.location} />
                         )
                     )}
                 </ScrollView>
