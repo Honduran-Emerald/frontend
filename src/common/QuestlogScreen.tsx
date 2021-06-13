@@ -15,102 +15,6 @@ export default function QuestlogScreen() {
   i18n.translations = commonTranslations;
   const dispatch = useAppDispatch();
 
-  // TODO remove
-  const activeQuestsPlaceholder = [
-    {
-      trackerId: '1',
-      newestQuestVersion: true,
-      finished: false,
-      vote: 'None',
-      creationTime: 'date',
-      questName: 'Find phisn\'s bird',
-      objective: 'Meet with Oscar',
-      author: 'Lenny',
-    },
-    {
-      trackerId: '2',
-      newestQuestVersion: true,
-      finished: false,
-      vote: 'None',
-      creationTime: 'date',
-      questName: '24 hours in a Burger King',
-      objective: 'Order 2 Long Chicken',
-      author: 'Leon Mag Schere',
-    },
-    {
-      trackerId: '3',
-      newestQuestVersion: true,
-      finished: false,
-      vote: 'None',
-      creationTime: 'date',
-      questName: 'Gotta catch em all',
-      objective: 'Go to the Luisenplatz Arena',
-      author: 'Ash Ketchup',
-    },
-  ]
-  const oldQuestsPlaceholder = [
-    {
-      trackerId: '1',
-      newestQuestVersion: true,
-      finished: true,
-      vote: 'None',
-      creationTime: 'date',
-      questName: 'The history of the B Rush',
-      objective: '',
-      author: 'Trillugo',
-    },
-    {
-      trackerId: '2',
-      newestQuestVersion: true,
-      finished: true,
-      vote: 'None',
-      creationTime: 'date',
-      questName: '24 hours in a McDonalds',
-      objective: '',
-      author: 'Ronald McDonald',
-    },
-    {
-      trackerId: '3',
-      newestQuestVersion: true,
-      finished: true,
-      vote: 'None',
-      creationTime: 'date',
-      questName: 'The history of the B Rush',
-      objective: '',
-      author: 'Trillugo',
-    },
-    {
-      trackerId: '4',
-      newestQuestVersion: true,
-      finished: true,
-      vote: 'None',
-      creationTime: 'date',
-      questName: '24 hours in a McDonalds',
-      objective: '',
-      author: 'Ronald McDonald',
-    },
-    {
-      trackerId: '5',
-      newestQuestVersion: true,
-      finished: true,
-      vote: 'None',
-      creationTime: 'date',
-      questName: 'The history of the B Rush',
-      objective: '',
-      author: 'Trillugo',
-    },
-    {
-      trackerId: '6',
-      newestQuestVersion: true,
-      finished: true,
-      vote: 'None',
-      creationTime: 'date',
-      questName: '24 hours in a McDonalds',
-      objective: '',
-      author: 'Ronald McDonald',
-    },
-  ]
-
   const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
   const acceptedQuests = useAppSelector((state) => state.quests.acceptedQuests);
 
@@ -135,11 +39,7 @@ export default function QuestlogScreen() {
   }
 
   const sortTrackers = (trackers: QuestTracker[]) => {
-    // TODO probably remove, just here for testing so placeholder data stays if no quests are present
     if(trackers.length === 0) {
-      if (!pinnedQuest && activeQuests.length > 0) {
-        setPinnedQuest(activeQuests[0]);
-      }
       return;
     }
     let newActive: QuestTracker[] = [];
