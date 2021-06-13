@@ -13,14 +13,14 @@ export const QuestEditorWrapper = () => {
 
   const route = useRoute<RouteProp<{ params: {
     questId: string
-}}, 'params'>>();
+  }}, 'params'>>();
 
   useEffect(() => {
     if (!questPrototype || questPrototype.id !== route.params.questId) {
       dispatch(unloadQuest());
       createGetRequest(route.params.questId)
         .then(q => q.json())
-        .then(questDeep => dispatch(loadQuest(questDeep.questPrototype)))
+        .then(questDeep => dispatch(loadQuest({questId: route.params.questId, questPrototype: questDeep.questPrototype})))
       
     }
   }, [route.params.questId])  
