@@ -67,7 +67,7 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
                         if (!newModule) {
                             console.log('Fuck, source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser scheiß code macht depressiv')
                         }
-                        (newModule as PrototypeChoiceModule).choices[choiceIndex] = {...(newModule as PrototypeChoiceModule).choices[choiceIndex], nextModuleId: moduleId}
+                        (newModule as PrototypeChoiceModule).choices[choiceIndex] = {...(newModule as PrototypeChoiceModule).choices[choiceIndex], nextModuleReference: moduleId}
                         //return newModule as PrototypeChoiceModule
                         return newQuestPrototype 
 
@@ -75,7 +75,7 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
                 }
     
                 //@ts-ignore TODO: Create some better type annotations for this
-                return (module as PrototypeChoiceModule).choices.map((choice, choiceIdx) => virtualizeEmptyLink([module.id, choice.nextModuleId], nodes, empty_idx++, getSetChoiceSource(choiceIdx)));
+                return (module as PrototypeChoiceModule).choices.map((choice, choiceIdx) => virtualizeEmptyLink([module.id, choice.nextModuleReference], nodes, empty_idx++, getSetChoiceSource(choiceIdx)));
             
             
             case 'Story':
@@ -85,13 +85,13 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
                     if (!newModule) {
                         console.log('Fuck, source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser scheiß code macht depressiv')
                     }
-                    (newModule as PrototypeStoryModule).nextModuleId = moduleId
+                    (newModule as PrototypeStoryModule).nextModuleReference = moduleId
                     //return newModule as PrototypeStoryModule
                     return newQuestPrototype
                 }
 
                 //@ts-ignore TODO: Create some better type annotations for this
-                return [virtualizeEmptyLink([module.id, (module as PrototypeStoryModule).nextModuleId], nodes, empty_idx++, setStorySource)];
+                return [virtualizeEmptyLink([module.id, (module as PrototypeStoryModule).nextModuleReference], nodes, empty_idx++, setStorySource)];
             case 'Ending':
                 return [];
             default:

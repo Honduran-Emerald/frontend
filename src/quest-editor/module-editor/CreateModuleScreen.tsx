@@ -32,7 +32,7 @@ export interface IModuleBase {
   components: PrototypeComponent[];
   choices?: {
     text: string;
-    nextModuleId: number | null;
+    nextModuleReference: number | null;
   }[];
   endingFactor?: number;
 }

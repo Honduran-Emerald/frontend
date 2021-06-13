@@ -11,14 +11,15 @@ export const QuestCreatorWrapper : React.FC<Location> = ({ latitude, longitude }
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    createQuestRequest('THIS', 'IS', 'ONLY ', latitude, longitude, 'TEMPORARY', 'FUCK', [])
+    // latitude, longitude
+    createQuestRequest()
       .then(r => r.json())
       .then(r => dispatch(loadQuest({questId: r.questId, questPrototype: {
         id: r.questPrototype.id,
         approximateTime: '',
         creationTime: '',
         description: '',
-        firstModuleId: 0,
+        firstModuleReference: 1,
         imageId: '',
         location: {
           latitude: latitude,
@@ -26,8 +27,8 @@ export const QuestCreatorWrapper : React.FC<Location> = ({ latitude, longitude }
         },
         locationName: '',
         modules: [],
-        profileImageId: '',
-        profileName: '',
+        agentProfileImageId: '',
+        agentProfileName: '',
         tags: [],
         title: ''
       }})))
