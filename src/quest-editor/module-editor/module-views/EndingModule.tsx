@@ -1,32 +1,52 @@
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
-import { Button, Subheading, TextInput, Title } from 'react-native-paper';
-import { ICreateModule, IModuleBase } from './CreateModuleScreen';
+import { Button, Subheading, TextInput, Divider } from 'react-native-paper';
+import { ICreateModule } from '../CreateModuleScreen';
 import i18n from 'i18n-js';
-import { primary } from '../../styles/colors';
+import { primary } from '../../../styles/colors';
+import I18n from 'i18n-js';
+import { Colors } from '../../../styles';
+import { PrototypeEndingModule } from '../../../types/quest';
 
 interface IEndingModuleData {
-    text?: string
+    text: string,
+    objective: string,
 }
 
-export const CreateEndModule: React.FC<ICreateModule> = ({ setFinalModule }) => {
+export const EndingModule: React.FC<ICreateModule<PrototypeEndingModule>> = ({ setFinalModule, edit, defaultValues }) => {
 
-    const [moduleData, setModuleData] = useState<any>({});
+    const [moduleData, setModuleData] = useState<IEndingModuleData>(edit ? {
+        text: defaultValues?.components[0]?.text || '',
+        objective: defaultValues?.objective || ''
+    } : {
+        text: '',
+        objective: '',
+    });
 
-    const parseToModule = (moduleData: IEndingModuleData): IModuleBase => {
+    const parseToModule = (moduleData: IEndingModuleData): PrototypeEndingModule => {
         return ({
+            id: -1,
             type: 'Ending',
-            endingFactor: 1, //TODO Make this dynamic
+            endingFactor: (edit && defaultValues) ? defaultValues.endingFactor : 1, //TODO Make this dynamic
             components: [{
                 type: 'text',
                 text: moduleData.text
-            }]
+            }],
+            objective: moduleData.objective
         })
     }
 
 
     return (
         <View style={{marginHorizontal: 10}}>
+            <TextInput
+                dense
+                style={{marginVertical: 20}}
+                label={I18n.t('moduleObjectiveLabel')}
+                value={moduleData.objective}
+                onChangeText={(data) => setModuleData({...moduleData, objective: data})}
+                theme={{colors: {primary: Colors.primary}}} />
+            <Divider/>
             <Subheading 
                 style={{margin: 10, marginTop: 20}}>
                 {i18n.t('addEndText')}

@@ -8,9 +8,9 @@ export interface QuestBase {
     imageId: string,
     creationTime: string,
     location: Location,
-    tags: string[]
-    profileImageId: string,
-    profileName: string,
+    tags: string[],
+    agentProfileImageId: string,
+    agentProfileName: string,
     locationName: string,
     approximateTime: string,
 
@@ -37,8 +37,8 @@ export interface QuestBaseUpdate {
     imageId?: string,
     location?: Location,
     tags?: string[],
-    profileImageId?: string,
-    profileName?: string,
+    agentProfileImageId?: string,
+    agentProfileName?: string,
     locationName?: string,
 
 }
@@ -57,30 +57,47 @@ export type ModuleMememto = any
 export interface QuestPrototype extends QuestBase {
 
     approximateTime: string,
-    firstModuleId: number | null,
+    firstModuleReference: number | null,
     modules: PrototypeModule[]
 
 }
 
-export interface PrototypeModule {
+export interface PrototypeModuleBase {
     id: number,
     type: string,
     objective: string,
     components: PrototypeComponent[]
+  
+}
 
-    choices?: {
+export interface PrototypeChoiceModule extends PrototypeModuleBase{
+    choices: {
         text: string,
-        nextModuleId: number | null,
+        nextModuleReference: number | null,
     }[]
-    nextModuleId?: number | null,
-    endingFactor?: number,
-
 }
 
-export interface PrototypeComponent {
-    type: string,
-    text?: string,
+export interface PrototypeStoryModule extends PrototypeModuleBase{  
+    nextModuleReference: number | null,
 }
+
+export interface PrototypeEndingModule extends PrototypeModuleBase{
+    endingFactor: number,
+}
+
+export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
+
+export interface TextComponent {
+    type: 'text',
+    text: string,
+}
+
+export interface ImageComponent {
+    type: 'image',
+    imageReference: string,
+}
+
+export type PrototypeComponent = TextComponent | ImageComponent
 
 export interface QuestTracker {
     questId: string,
