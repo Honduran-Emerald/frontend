@@ -13,7 +13,7 @@ export const QuestEditorWrapper = () => {
 
   const route = useRoute<RouteProp<{ params: {
     questId: string
-}}, 'params'>>();
+  }}, 'params'>>();
 
   useEffect(() => {
     if (!questPrototype || questPrototype.id !== route.params.questId) {

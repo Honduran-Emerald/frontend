@@ -1,13 +1,5 @@
-import { PrototypeModule, QuestPrototype } from "../../types/quest";
+import { PrototypeChoiceModule, PrototypeModule, PrototypeStoryModule, QuestPrototype } from "../../../types/quest";
 import _ from 'lodash';
-
-interface ChoiceModule extends PrototypeModule {
-    choices: {text: string, nextModuleId: number}[]
-}
-
-interface StoryModule extends PrototypeModule {
-    nextModuleId: number
-}
 
 export interface InternalFullNode {
     id: number,
@@ -25,6 +17,14 @@ export interface InternalEmptyNode {
 
 export type InternalNode = InternalEmptyNode | InternalFullNode
 
+/**
+ * 
+ * @param link a link between two nodes
+ * @param nodes all nodes
+ * @param idx id of the link to generate unique virtual nodes
+ * @param setSource function to allow the parents link to be changed from the child component
+ * @returns virtualized link
+ */
 const virtualizeEmptyLink = (link: [string|number, string|number], nodes: InternalNode[], idx: number, setSource: (questPrototype: QuestPrototype, moduleId: number | null) => PrototypeModule): [string|number, string|number] => {
     if (link[1] == null) {
         const emptyNodeString = `empty${idx}`
@@ -41,7 +41,12 @@ const virtualizeEmptyLink = (link: [string|number, string|number], nodes: Intern
     return link
 }
 
-export const graph_connections = (questPrototype: QuestPrototype): {nodes: InternalNode[], links: [string|number, string|number][]} => {
+/**
+ * Virtualises empty references and generated graph representation
+ * @param questPrototype 
+ * @returns graph nodes and link. nodes are annotated with additional information such as linking functions
+ */
+export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNode[], links: [string|number, string|number][]} => {
 
     let nodes: InternalNode[] = questPrototype.modules.map(module => ({id: module.id, type: 'normal', moduleObject: module, setSources: []}));
 
@@ -54,28 +59,33 @@ export const graph_connections = (questPrototype: QuestPrototype): {nodes: Inter
                     return (questPrototype: QuestPrototype, moduleId: number) => {
                         
                         let newQuestPrototype = _.cloneDeep(questPrototype)
-                        let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | ChoiceModule )
+                        let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | PrototypeChoiceModule )
                         if (!newModule) {
                             console.log('Fuck, source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser scheiß code macht depressiv')
                         }
-                        (newModule as ChoiceModule).choices[choiceIndex] = {...(newModule as ChoiceModule).choices[choiceIndex], nextModuleId: moduleId}
-                        return newModule as ChoiceModule
+                        (newModule as PrototypeChoiceModule).choices[choiceIndex] = {...(newModule as PrototypeChoiceModule).choices[choiceIndex], nextModuleId: moduleId}
+                        return newModule as PrototypeChoiceModule
 
                     }
                 }
-                
-                return (module as ChoiceModule).choices.map((choice, choiceIdx) => virtualizeEmptyLink([module.id, choice.nextModuleId], nodes, empty_idx++, getSetChoiceSource(choiceIdx)));
+    
+                //@ts-ignore TODO: Create some better type annotations for this
+                return (module as PrototypeChoiceModule).choices.map((choice, choiceIdx) => virtualizeEmptyLink([module.id, choice.nextModuleId], nodes, empty_idx++, getSetChoiceSource(choiceIdx)));
+            
+            
             case 'Story':
                 let setStorySource = (questPrototype: QuestPrototype, moduleId: number) => {
                     let newQuestPrototype = _.cloneDeep(questPrototype)
-                    let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | StoryModule )
+                    let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | PrototypeStoryModule )
                     if (!newModule) {
                         console.log('Fuck, source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser scheiß code macht depressiv')
                     }
-                    (newModule as StoryModule).nextModuleId = moduleId
-                    return newModule as StoryModule
+                    (newModule as PrototypeStoryModule).nextModuleId = moduleId
+                    return newModule as PrototypeStoryModule
                 }
-                return [virtualizeEmptyLink([module.id, (module as StoryModule).nextModuleId], nodes, empty_idx++, setStorySource)];
+
+                //@ts-ignore TODO: Create some better type annotations for this
+                return [virtualizeEmptyLink([module.id, (module as PrototypeStoryModule).nextModuleId], nodes, empty_idx++, setStorySource)];
             case 'Ending':
                 return [];
             default:

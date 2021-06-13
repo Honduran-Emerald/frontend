@@ -2,11 +2,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import I18n from 'i18n-js';
 import React from 'react';
 import { LogBox } from 'react-native';
-import { CreateModuleScreen } from './createModule/CreateModuleScreen';
+import { CreateModuleScreen } from './module-editor/CreateModuleScreen';
 import { QuestEditorTabNavigator } from './QuestEditorTabNavigator';
 import { editorTranslations } from './translations';
 import { Colors } from '../styles';
-import { EditModuleScreen } from './createModule/EditModuleScreen';
+import { EditModuleScreen } from './module-editor/EditModuleScreen';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',

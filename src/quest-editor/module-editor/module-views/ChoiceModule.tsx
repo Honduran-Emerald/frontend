@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { Dimensions, Text, View } from 'react-native';
-import { Button, IconButton, List, Subheading, TextInput, Divider } from 'react-native-paper';
-import { ICreateModule, IModuleBase } from './CreateModuleScreen';
-import i18n from 'i18n-js';
-import { lightGray, primary } from '../../styles/colors';
-import _ from 'lodash';
-import { Colors } from '../../styles';
+import { View } from 'react-native';
+import { Button, IconButton, Subheading, TextInput, Divider } from 'react-native-paper';
+import { ICreateModule } from '../CreateModuleScreen';
 import I18n from 'i18n-js';
-import { useEffect } from 'react';
-import { PrototypeChoiceModule } from '../../types/quest';
+import { lightGray, primary } from '../../../styles/colors';
+import _ from 'lodash';
+import { Colors } from '../../../styles';
+import { PrototypeChoiceModule } from '../../../types/quest';
 
 interface IChoiceModuleData {
     text: string,
@@ -18,7 +16,7 @@ interface IChoiceModuleData {
 
 const maxChoices = 5;
 
-export const CreateChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ setFinalModule, edit, defaultValues }) => {
+export const ChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ setFinalModule, edit, defaultValues }) => {
 
     const [moduleData, setModuleData] = useState<IChoiceModuleData>(
         edit 
@@ -61,7 +59,7 @@ export const CreateChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> 
             <Divider/>
             <Subheading 
                 style={{margin: 10, marginTop: 20}}>
-                {i18n.t('addEndText')}
+                {I18n.t('addEndText')}
             </Subheading>
             <TextInput 
                 theme={{colors: {primary: primary}}}
@@ -146,7 +144,7 @@ export const CreateChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> 
                 style={{marginBottom: 20}}
                 onPress={() => {setFinalModule(parseToModule(moduleData)) /* TODO: Add Module Preprocessing here as soon as module structure is fully defined. Don't forget it */}}>
                 
-                {i18n.t('createModuleButton')}
+                {I18n.t('createModuleButton')}
             </Button>
         </View>
     )

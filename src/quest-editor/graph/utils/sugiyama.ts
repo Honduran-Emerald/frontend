@@ -1,4 +1,4 @@
-import { IGraphModuleNode } from './ModuleGraph';
+import { IGraphModuleNode } from '../ModuleGraph';
 import { Graph } from 'graphlib';
 import { map } from 'lodash';
 
@@ -174,6 +174,7 @@ export const dagLayout = (g: Graph) => {
 const virtMultiGraph = (g: Graph) => {
     // Function not from sugiyama paper
     // Specific addition to allow for simpler rendering of multiedges
+    // Virtualises multiedges to single edges
     let virt: number = 0;
     let mv_nodes: string[] = [];
 

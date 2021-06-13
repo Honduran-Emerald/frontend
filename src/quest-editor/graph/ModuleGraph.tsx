@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
-import dagre from 'dagre';
 import { ScrollView } from 'react-native-gesture-handler';
 import Svg, { G, Path } from 'react-native-svg';
 import _ from 'lodash';
-import Animated, {  useAnimatedStyle, useValue } from 'react-native-reanimated';
-import { Button } from 'react-native-paper';
+import Animated, {  useValue } from 'react-native-reanimated';
 import { Graph } from 'graphlib';
 
 const bezierOffset = 80;
@@ -14,7 +12,6 @@ const contentHorizontalMargin = 10;
 const virtualHorizontalMargin = 10;
 
 const AnimatedG = Animated.createAnimatedComponent(G)
-const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 export interface IGraphModuleNode {
     id: number | string,

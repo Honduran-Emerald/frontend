@@ -3,12 +3,12 @@ import { Dimensions, View } from 'react-native';
 import { Divider, Menu } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { PrototypeModule, QuestPrototype } from '../../types/quest';
-import { AddModuleNode } from './AddModuleNode';
-import { LinkModuleNode as LinkModuleNode } from './LinkModuleNode';
-import { graph_connections } from './linksParser';
+import { AddModuleNode } from './node-types/AddModuleNode';
+import { LinkModuleNode as LinkModuleNode } from './node-types/LinkModuleNode';
+import { parseModule } from './utils/linksParser';
 import { ModuleGraph } from './ModuleGraph';
-import { ModuleNode } from './ModuleNode';
-import { fromLists } from './sugiyama';
+import { RegularModuleNode } from './node-types/RegularModuleNode';
+import { fromLists } from './utils/sugiyama';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Graph } from 'graphlib';
@@ -32,11 +32,9 @@ export const ModuleGraphCaller = () => {
 
     useEffect(() => {
 
-        // sheet.current?.snapTo(1)
-
         if (!questPrototype) return () => {}; // if questPrototype isn't loaded yet, do nothing. 
 
-        let { nodes, links } = graph_connections(questPrototype) // calculate nodes and links
+        let { nodes, links } = parseModule(questPrototype) // calculate nodes and links
         let parentNodes: (string | number)[] = []
         if (linkSourceId !== undefined) {
             parentNodes = [linkSourceId]
@@ -54,7 +52,7 @@ export const ModuleGraphCaller = () => {
         let { positions, graph } = fromLists(nodes.map(node => ({ // calculate virtual nodes for sugiyama layout
             id: node.id, component: 
             node.type === 'normal' 
-            ? <ModuleNode node={node} linkOnChoice={linkOnChoice} setLinkOnChoice={setLinkOnChoice} linkable={!parentNodes.includes(node.id)} 
+            ? <RegularModuleNode node={node} linkOnChoice={linkOnChoice} setLinkOnChoice={setLinkOnChoice} linkable={!parentNodes.includes(node.id)} 
             setSheetOptions={setSheetOptions} sheetRef={sheet} 
             cutModule={() => node.setSources.forEach(setSource => dispatch(addOrUpdateQuestModule(setSource(questPrototype, null))))}/> // regular node. can be adjusted to return different types of nodes
             : <LinkModuleNode setSource={node.setSource} linkOnChoice={linkOnChoice} setLinkOnChoice={setLinkOnChoice} sheetRef={sheet} setSheetOptions={setSheetOptions} setLinkSourceId={setLinkSourceId} parentId={node.parentId}/> // empty node. clicking will allow to add a new or link to an existing module
@@ -81,7 +79,6 @@ export const ModuleGraphCaller = () => {
 
     return (
     <>
-
         <TouchableWithoutFeedback 
             onPressIn={() => {
                 sheet.current?.snapTo(1);
@@ -129,6 +126,6 @@ export const ModuleGraphCaller = () => {
                         </View>
                 )}
             </View>}/>
-
-        </>)
+        </>
+    )
 }

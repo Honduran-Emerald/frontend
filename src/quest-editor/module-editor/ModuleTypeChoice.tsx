@@ -49,25 +49,25 @@ export const ModuleTypeChoice: React.FC<IModuleTypeChoice> = ({ modules, setChos
   </ScrollView>
 )
 
-
 const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) => void, chosen: boolean, swiperRef: React.MutableRefObject<ScrollView | null>}> = ({ moduleType, setChosenModule, chosen }) => (
   <TouchableHighlight
-      style={{maxWidth: 250, margin: 10, borderRadius: 5}}
-      onPress={() => {
-          setChosenModule(moduleType);
-      }}>
-      <Card 
-          style={{padding: 0, backgroundColor: chosen ? Colors.primary : 'white', overflow: 'hidden'}}
-          >
-          <Card.Title 
-              titleStyle={{color: chosen ? 'white' : 'black'}}
-              title={I18n.t(moduleType + '_ModuleName')} 
-              />
-          <Card.Content>
-              <Text 
-                  style={{color: chosen ? 'white' : 'black'}}
-                  >{I18n.t(moduleType + '_ModuleDescription')} </Text>
-          </Card.Content>
-      </Card>
+    style={{maxWidth: 250, margin: 10, borderRadius: 5}}
+    onPress={() => {
+      setChosenModule(moduleType);
+    }}>
+    <Card 
+      style={{padding: 0, backgroundColor: chosen ? Colors.primary : 'white', overflow: 'hidden'}}
+      >
+      <Card.Title 
+        titleStyle={{color: chosen ? 'white' : 'black'}}
+        title={I18n.t(moduleType + '_ModuleName')} 
+        />
+      <Card.Content>
+        <Text 
+          style={{color: chosen ? 'white' : 'black'}}
+          >{I18n.t(moduleType + '_ModuleDescription')} 
+        </Text>
+      </Card.Content>
+    </Card>
   </TouchableHighlight>
 )

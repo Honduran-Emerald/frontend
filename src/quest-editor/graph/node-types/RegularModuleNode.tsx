@@ -2,10 +2,10 @@ import React, { MutableRefObject } from 'react';
 import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Text } from 'react-native-paper';
-import { addOrUpdateQuestModule } from '../../redux/editor/editorSlice';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { PrototypeModule, QuestPrototype } from '../../types/quest';
-import { InternalFullNode } from './linksParser';
+import { addOrUpdateQuestModule } from '../../../redux/editor/editorSlice';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { PrototypeModule, QuestPrototype } from '../../../types/quest';
+import { InternalFullNode } from '../utils/linksParser';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
 export interface IModuleNode {
@@ -18,7 +18,7 @@ export interface IModuleNode {
     cutModule: () => void;
 }
 
-export const ModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, setLinkOnChoice, linkable , setSheetOptions, sheetRef, cutModule}) => {
+export const RegularModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, setLinkOnChoice, linkable , setSheetOptions, sheetRef, cutModule}) => {
 
     const questPrototype = useAppSelector((state) => state.editor.questPrototype);
     const dispatch = useAppDispatch();

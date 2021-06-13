@@ -1,19 +1,14 @@
+import React, { useState, useEffect, useRef } from 'react';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import React from 'react';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { useRef } from 'react';
 import { Dimensions } from 'react-native';
-import { Text } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { addOrUpdateQuestModule } from '../../redux/editor/editorSlice';
 import { useAppDispatch } from '../../redux/hooks';
 import { PrototypeChoiceModule, PrototypeEndingModule, PrototypeModule, PrototypeStoryModule } from '../../types/quest';
-import { InternalFullNode, InternalNode } from '../graph/linksParser';
-import { CreateChoiceModule } from './CreateChoiceModule';
-import { CreateEndModule } from './CreateEndModule';
-import { IModuleBase } from './CreateModuleScreen';
-import { CreateStoryModule } from './CreateStoryModule';
+import { InternalFullNode } from '../graph/utils/linksParser';
+import { ChoiceModule } from './module-views/ChoiceModule';
+import { EndingModule } from './module-views/EndingModule';
+import { StoryModule } from './module-views/StoryModule';
 import { PreviewModuleScreen } from './PreviewModuleScreen';
 
 const displayWidth = Dimensions.get('screen').width
@@ -34,43 +29,36 @@ export const EditModuleScreen = () => {
   const [previewModule, setPreviewModule] = useState<PrototypeModule | undefined>(undefined)
   const swiper = useRef<ScrollView | null>(null);
 
-  const [defaultValues, setDefaultValues] = useState<PrototypeModule>();
-
   const saveModule = (finalModule: PrototypeModule) => {
     const baseModule = {
-
-      //@ts-ignore
       id: route.params?.node.id,
     }
-    setPreviewModule({...baseModule, ...finalModule})
+    setPreviewModule({...finalModule, ...baseModule})
   }
 
   const moduleMap: {[moduleName: string]: JSX.Element} = {
-    'Story': <CreateStoryModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeStoryModule}/>,
-    'Ending': <CreateEndModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeEndingModule}/>,
-    'Choice': <CreateChoiceModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeChoiceModule}/>
+    'Story': <StoryModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeStoryModule}/>,
+    'Ending': <EndingModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeEndingModule}/>,
+    'Choice': <ChoiceModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeChoiceModule}/>
   }
 
-  
   useEffect(() => {
     swiper.current?.scrollTo({
         x: displayWidth,
     });
-}, [previewModule])
+  }, [previewModule])
 
   return (
     <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator
-                ref={swiper}
-            >
+      horizontal
+      pagingEnabled
+      showsHorizontalScrollIndicator
+      ref={swiper} >
       <ScrollView style={{width: displayWidth, margin: 0, padding: 0}}>
         {(route.params.node.moduleObject.type in moduleMap && moduleMap[route.params.node.moduleObject.type])}
       </ScrollView>
       {previewModule && <PreviewModuleScreen prototypeModule={previewModule} saveModule={() => {
         dispatch(addOrUpdateQuestModule(previewModule))
-        //@ts-ignore
         navigation.navigate('ModuleGraph')
       }} />}
     </ScrollView>
