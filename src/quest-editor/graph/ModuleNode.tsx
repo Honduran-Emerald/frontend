@@ -28,15 +28,11 @@ export const ModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, setLinkO
                 dispatch(addOrUpdateQuestModule(linkOnChoice(questPrototype, node.id as number)))
                 setLinkOnChoice(undefined)
             } else {
-                setSheetOptions([['Seperate Node', 'box-cutter', () => {
-                    // setSource of this node will set its parents link variable (this is done in linksParser.ts)
-                    // by setting the linkOnChoice reference to setSource, all future pressed nodes can access this nodes parent link
-                    // if still in doubt, ask Lenny
-                    // if you are Lenny, tough luck
+                setSheetOptions([['Edit Module', 'puzzle-edit-outline', () => {
+                    // TODO
+                }], ['Seperate Module', 'box-cutter', () => {
                     cutModule();
-                }
-
-                ]])
+                }]])
 
                 sheetRef.current?.snapTo(0)
             }
