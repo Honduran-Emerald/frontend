@@ -49,7 +49,7 @@ export const TokenLoader = () => {
                   const oldPinTracker = JSON.parse(res);
                   acceptedQuests.some((tracker) => {
                     if(tracker.trackerId === oldPinTracker.trackerId) {
-                      dispatch(pinQuest(oldPinTracker));
+                      dispatch(pinQuest(tracker));
                     }
                   })
                 } else {
