@@ -46,7 +46,12 @@ export const TokenLoader = () => {
               .then(() => loadItemLocally('PinnedQuestTracker')
               .then((res) => {
                 if(res) {
-                  dispatch(pinQuest(JSON.parse(res)));
+                  const oldPinTracker = JSON.parse(res);
+                  acceptedQuests.some((tracker) => {
+                    if(tracker.trackerId === oldPinTracker.trackerId) {
+                      dispatch(pinQuest(oldPinTracker));
+                    }
+                  })
                 } else {
                   acceptedQuests.some((tracker) => {
                     if(!tracker.finished) {
