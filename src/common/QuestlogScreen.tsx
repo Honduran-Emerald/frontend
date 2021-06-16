@@ -10,6 +10,25 @@ import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {pinQuest, setAcceptedQuests} from '../redux/quests/questsSlice';
 
+export function removeSpecialChars (input: string) {
+  if(input) {
+    const text = input.toLowerCase().trim()
+    const lower = text.toLowerCase();
+    const upper = text.toUpperCase();
+    const REGEX_NUMBER = new RegExp('[0-9]+$');
+    const REGEX_JAPANESE = /[\u3000-\u303f]|[\u3040-\u309f]|[\u30a0-\u30ff]|[\uff00-\uff9f]|[\u4e00-\u9faf]|[\u3400-\u4dbf]/;
+    const REGEX_CHINESE = /[\u4e00-\u9fff]|[\u3400-\u4dbf]|[\u{20000}-\u{2a6df}]|[\u{2a700}-\u{2b73f}]|[\u{2b740}-\u{2b81f}]|[\u{2b820}-\u{2ceaf}]|[\u3300-\u33ff]|[\ufe30-\ufe4f]|[\uf900-\ufaff]|[\u{2f800}-\u{2fa1f}]/u;
+    let result = "";
+    for(let i=0; i<lower.length; ++i) {
+      if(REGEX_NUMBER.test(text[i]) || (lower[i] != upper[i]) || (lower[i].trim() === '' || REGEX_CHINESE.test(text[i]) || REGEX_JAPANESE.test(text[i]))) {
+        result += text[i];
+      }
+    }
+    return result;
+  }
+  return '';
+}
+
 export default function QuestlogScreen() {
 
   i18n.translations = commonTranslations;
@@ -68,16 +87,20 @@ export default function QuestlogScreen() {
 
   const getQuestSearch = (active: boolean) => {
     let newQuests: QuestTracker[] = [];
-    const normalizedSearch = search.toLowerCase().trim();
+    const normalizedSearch = removeSpecialChars(search);
     active ?
       activeQuests.map((quest) => {
-        if(quest.questName.toLowerCase().includes(normalizedSearch) || quest.author.toLowerCase().includes(normalizedSearch)) {
+        const normalizedQuestName = removeSpecialChars(quest.questName);
+        const normalizedAuthor = removeSpecialChars(quest.author);
+        if(normalizedQuestName.includes(normalizedSearch) || normalizedAuthor.includes(normalizedSearch)) {
           newQuests.push(quest);
         }
       })
       :
       oldQuests.map((quest) => {
-        if(quest.questName.toLowerCase().includes(normalizedSearch) || quest.author.toLowerCase().includes(normalizedSearch)) {
+        const normalizedQuestName = removeSpecialChars(quest.questName);
+        const normalizedAuthor = removeSpecialChars(quest.author);
+        if(normalizedQuestName.includes(normalizedSearch) || normalizedAuthor.includes(normalizedSearch)) {
           newQuests.push(quest);
         }
       })
