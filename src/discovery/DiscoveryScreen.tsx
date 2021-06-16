@@ -4,10 +4,20 @@ import {StatusBar} from "expo-status-bar";
 import {Colors} from "../styles";
 import {ScrollMenu} from "./ScrollMenu";
 import * as Location from "expo-location";
+import {QuestHeader} from "../types/quest";
+import {queryQuestsRequest} from "../utils/requestHandler";
+import {Searchbar} from "react-native-paper";
+import {removeSpecialChars} from "../common/QuestlogScreen";
 
 export const DiscoveryScreen = () => {
 
     const [location, setLocation] = useState<Location.LocationObject>();
+    const [quests, setQuests] = useState<QuestHeader[]>([]);
+    const [search, setSearch] = React.useState('');
+
+    useEffect(() => {
+        queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests))
+    },[])
 
     // Get Location Permission and set initial Location
     useEffect(() => {
@@ -24,14 +34,38 @@ export const DiscoveryScreen = () => {
         setLocation(location);
     }
 
+    const getQuestSearch = () => {
+        if(search) {
+            let newQuests: QuestHeader[] = [];
+            const normalizedSearch = removeSpecialChars(search);
+            quests.map((quest) => {
+                const normalizedQuestName = removeSpecialChars(quest.title);
+                const normalizedAuthor = removeSpecialChars(quest.ownerName);
+                if (normalizedQuestName.includes(normalizedSearch) || normalizedAuthor.includes(normalizedSearch)) {
+                    newQuests.push(quest);
+                }
+            })
+            return newQuests;
+        }
+        return quests;
+    }
+
     return (
         <View style={styles.screen}>
-            <ScrollView contentContainerStyle={styles.discovery}>
+            <ScrollView contentContainerStyle={styles.discovery} stickyHeaderIndices={[0]}>
+                <View style={styles.searchbar}>
+                    <Searchbar
+                      placeholder={"Search for quest title or creator"}
+                      onChangeText={(input) => setSearch(input)}
+                      value={search}
+                      theme={{colors: {primary: Colors.primary}}}
+                    />
+                </View>
                 {location && (
                     <>
-                    <ScrollMenu header={"Nearby"} type={"nearby"} location={location}/>
-                    <ScrollMenu header={"Check out!"} type={"checkout"} location={location}/>
-                    <ScrollMenu header={"Recently Visited"} type={"recent"} location={location}/>
+                    <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={getQuestSearch()}/>
+                    <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={getQuestSearch()}/>
+                    <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={getQuestSearch()}/>
                     </>)
                 }
             </ScrollView>
@@ -46,6 +80,11 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         backgroundColor: Colors.background,
         marginTop: StatusBar2.currentHeight,
+    },
+    searchbar: {
+        justifyContent: 'center',
+        padding: 15,
+        backgroundColor: Colors.background,
     },
     discovery: {
         margin: 10,
