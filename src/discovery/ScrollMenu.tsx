@@ -31,10 +31,21 @@ function getDistanceFromLatLonInKm(lat1:number, lon1:number, lat2:number, lon2:n
     ;
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     let d = R * c; // Distance in km
+    let unit = " km";
     if (d > 10) {
         d = Math.round(d);
     }
-    return d;
+    else if (d > 1) {
+        d = d * 10;
+        d = Math.round(d);
+        d = d / 10;
+    }
+    else {
+        d = d * 1000;
+        d = Math.round(d);
+        unit = " m";
+    }
+    return d + unit;
 }
 
 function deg2rad(deg:number) {
@@ -44,7 +55,7 @@ function deg2rad(deg:number) {
 export const QuestPreview = (props:questProps) => {
 
     const [location, setLocation] = useState<Location.LocationObject>();
-    const [distance, setDistance] = useState(-1);
+    const [distance, setDistance] = useState("");
 
     useEffect(() => {
         props.location &&
