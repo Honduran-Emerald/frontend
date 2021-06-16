@@ -43,7 +43,7 @@ export default function QuestDetailScreen({ route }: any) {
     createTrackerRequest(quest.id)
       .then((res) => res.json()
         .then((data) => {
-          navigation.navigate('MapScreen');
+          navigation.goBack();
           setIsButtonDisabled(false);
           dispatch(acceptQuest(data.trackerModel));
         }))
