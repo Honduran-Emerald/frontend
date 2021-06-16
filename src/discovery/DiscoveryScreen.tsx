@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, StatusBar as StatusBar2} from "react-native";
+import {View, StyleSheet, ScrollView, StatusBar as StatusBar2} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import {Colors} from "../styles";
-import {QuestPreview, ScrollMenu} from "./ScrollMenu";
+import {ScrollMenu} from "./ScrollMenu";
 import * as Location from "expo-location";
 import {QuestHeader} from "../types/quest";
 import {queryQuestsRequest} from "../utils/requestHandler";
@@ -53,15 +53,15 @@ export const DiscoveryScreen = () => {
 
     return (
         <View style={styles.screen}>
+            <View style={styles.searchbar}>
+                <Searchbar
+                  placeholder={"Search for quest title or creator"}
+                  onChangeText={(input) => setSearch(input)}
+                  value={search}
+                  theme={{colors: {primary: Colors.primary}}}
+                />
+            </View>
             <ScrollView contentContainerStyle={styles.discovery}>
-                <View style={styles.searchbar}>
-                    <Searchbar
-                      placeholder={"Search for quest title or creator"}
-                      onChangeText={(input) => setSearch(input)}
-                      value={search}
-                      theme={{colors: {primary: Colors.primary}}}
-                    />
-                </View>
                 {location && search === '' && (
                     <>
                     <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={quests}/>
@@ -92,11 +92,12 @@ const styles = StyleSheet.create({
     },
     searchbar: {
         justifyContent: 'center',
-        padding: 5,
+        padding: 15,
         backgroundColor: Colors.background,
     },
     discovery: {
         margin: 10,
-        paddingBottom: 20,
+        marginTop: 0,
+        paddingBottom: 50,
     },
 });
