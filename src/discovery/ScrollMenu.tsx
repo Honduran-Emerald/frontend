@@ -123,7 +123,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 0,
         height: 250,
         justifyContent: 'center',
-        alignItems: 'center'
     },
     quest: {
         margin: 1,
