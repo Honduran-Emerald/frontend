@@ -4,25 +4,17 @@ import {StatusBar} from "expo-status-bar";
 import {Colors} from "../styles";
 import {ScrollMenu} from "./ScrollMenu";
 import * as Location from "expo-location";
+import {useAppSelector} from "../redux/hooks";
+import {getLocation} from "../utils/locationHandler";
 
 export const DiscoveryScreen = () => {
 
-    const [location, setLocation] = useState<Location.LocationObject>();
+    const location = useAppSelector(state => state.location.location)
 
     // Get Location Permission and set initial Location
     useEffect(() => {
         getLocation().catch((err: Error) => {});
     }, [])
-
-    async function getLocation() {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            return Promise.reject(new Error("Permission to access location was denied"))
-        }
-
-        let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Balanced});
-        setLocation(location);
-    }
 
     return (
         <View style={styles.screen}>
