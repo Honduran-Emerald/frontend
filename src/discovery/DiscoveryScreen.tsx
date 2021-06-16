@@ -2,12 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, ScrollView, StatusBar as StatusBar2} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import {Colors} from "../styles";
-import {ScrollMenu} from "./ScrollMenu";
+import {QuestPreview, ScrollMenu} from "./ScrollMenu";
 import * as Location from "expo-location";
 import {QuestHeader} from "../types/quest";
 import {queryQuestsRequest} from "../utils/requestHandler";
 import {Searchbar} from "react-native-paper";
 import {removeSpecialChars} from "../common/QuestlogScreen";
+import {WideQuestPreview} from "./WideQuestPreview";
 
 export const DiscoveryScreen = () => {
 
@@ -52,7 +53,7 @@ export const DiscoveryScreen = () => {
 
     return (
         <View style={styles.screen}>
-            <ScrollView contentContainerStyle={styles.discovery} stickyHeaderIndices={[0]}>
+            <ScrollView contentContainerStyle={styles.discovery}>
                 <View style={styles.searchbar}>
                     <Searchbar
                       placeholder={"Search for quest title or creator"}
@@ -61,12 +62,20 @@ export const DiscoveryScreen = () => {
                       theme={{colors: {primary: Colors.primary}}}
                     />
                 </View>
-                {location && (
+                {location && search === '' && (
                     <>
-                    <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={getQuestSearch()}/>
-                    <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={getQuestSearch()}/>
-                    <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={getQuestSearch()}/>
+                    <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={quests}/>
+                    <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={quests}/>
+                    <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={quests}/>
                     </>)
+                }
+                {quests && search !== '' && location && (
+                  <View style={{alignItems: 'center'}}>
+                      {getQuestSearch().map((q, index) => (
+                          <WideQuestPreview key={index} quest={q} location={location}/>
+                        )
+                      )}
+                  </View>)
                 }
             </ScrollView>
             <StatusBar style="auto"/>
@@ -83,7 +92,7 @@ const styles = StyleSheet.create({
     },
     searchbar: {
         justifyContent: 'center',
-        padding: 15,
+        padding: 5,
         backgroundColor: Colors.background,
     },
     discovery: {

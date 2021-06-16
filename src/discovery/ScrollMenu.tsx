@@ -21,7 +21,7 @@ export interface questProps {
     location: LocationObject
 }
 
-function getDistanceFromLatLonInKm(lat1:number, lon1:number, lat2:number, lon2:number) {
+export function getDistanceFromLatLonInKm(lat1:number, lon1:number, lat2:number, lon2:number) {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1);  // deg2rad below
     const dLon = deg2rad(lon2 - lon1);
