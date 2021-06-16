@@ -13,6 +13,7 @@ export default interface scrollProps {
     header: string
     type: string
     location: LocationObject
+    quests: QuestHeader[]
 }
 
 export interface questProps {
@@ -75,12 +76,6 @@ export const QuestPreview = (props:questProps) => {
 
 export const ScrollMenu = (props:scrollProps) => {
 
-    const [quests, setQuests] = useState<QuestHeader[]>([]);
-
-    useEffect(() => {
-        queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests))
-    },[])
-
     return (
         <View style={styles.surface}>
             <Surface>
@@ -88,7 +83,7 @@ export const ScrollMenu = (props:scrollProps) => {
                     {props.header}
                 </Text>
                 <ScrollView horizontal>
-                    {quests && quests.map((q, index) => (
+                    {props.quests && props.quests.map((q, index) => (
                             <QuestPreview key={index} quest={q} location={props.location} />
                         )
                     )}
