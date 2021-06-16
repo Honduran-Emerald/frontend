@@ -23,8 +23,8 @@ export const WideQuestPreview = (props:questProps) => {
       <View style={{flexDirection: 'row'}}>
         <Card.Cover style={styles.pic} source={require('../../assets/background.jpg')}/>
         <Card.Content>
-          <Title style={styles.title} numberOfLines={2}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</Title>
-          <Text style={styles.description} numberOfLines={4}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</Text>
+          <Title style={styles.title} numberOfLines={2}>{props.quest.title}</Title>
+          <Text style={styles.description} numberOfLines={4}>{props.quest.description}</Text>
         </Card.Content>
       </View>
       <View style={{flexDirection: 'row'}}>
