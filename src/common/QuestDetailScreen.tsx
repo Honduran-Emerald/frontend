@@ -126,7 +126,7 @@ export default function QuestDetailScreen({ route }: any) {
           }
           <TouchableNativeFeedback onPress={() => { alert('Go to profile') }}>
             <View style={styles.authorView}>
-              <Avatar.Image style={styles.authorAvatar} source={{uri: 'https://pbs.twimg.com/profile_images/1214590755706150913/Jm78BGWD_400x400.jpg'}}/>
+              <Avatar.Image style={styles.authorAvatar} source={{uri: 'https://wildlife.org/wp-content/uploads/2015/08/Honduran-Emerald-Hummingbird-Image-Credit-Dominic-Sherony.jpg'}}/>
               <View>
                 <Text style={styles.authorName}>
                   {quest.ownerName}
