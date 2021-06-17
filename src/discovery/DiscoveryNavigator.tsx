@@ -12,7 +12,8 @@ export const DiscoveryNavigator = () => {
                 headerShown: false
             })}
         >
-            <Stack.Screen name="DiscoveryScreen" component={DiscoveryScreen}/>
+          <Stack.Screen name="DiscoveryScreen" component={DiscoveryScreen}/>
+          <Stack.Screen name='QuestDetail' component={QuestDetailScreen}/>
         </Stack.Navigator>
     )
 }

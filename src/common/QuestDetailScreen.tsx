@@ -13,6 +13,7 @@ import { createTrackerRequest } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
+import { BACKENDIP } from '../../GLOBALCONFIG';
 
 export default function QuestDetailScreen({ route }: any) {
 
@@ -35,14 +36,12 @@ export default function QuestDetailScreen({ route }: any) {
   const showModal = () => setModalVisible(true);
   const hideModal = () => setModalVisible(false);
 
-  // TODO image fetch needed
-
   const handleAccept = () => {
     setIsButtonDisabled(true);
     createTrackerRequest(quest.id)
       .then((res) => res.json()
         .then((data) => {
-          navigation.navigate('MapScreen');
+          navigation.goBack();
           setIsButtonDisabled(false);
           dispatch(acceptQuest(data.trackerModel));
         }))
@@ -56,7 +55,14 @@ export default function QuestDetailScreen({ route }: any) {
           <Text style={styles.header}>
             {quest.title}
           </Text>
-          <Image style={styles.image} source={{uri: 'https://wildlife.org/wp-content/uploads/2015/08/Honduran-Emerald-Hummingbird-Image-Credit-Dominic-Sherony.jpg'}}/>
+          {
+            quest.imageId &&
+            <Image style={styles.image} source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}/>
+          }
+          {
+            !quest.imageId &&
+            <Image style={styles.image} source={require('../../assets/background.jpg')}/>
+          }
           <View style={styles.info}>
             <Entypo name='location-pin' size={24} color='black'/>
             <Text style={styles.location}>
@@ -126,7 +132,22 @@ export default function QuestDetailScreen({ route }: any) {
           }
           <TouchableNativeFeedback onPress={() => { alert('Go to profile') }}>
             <View style={styles.authorView}>
-              <Avatar.Image style={styles.authorAvatar} source={{uri: 'https://pbs.twimg.com/profile_images/1214590755706150913/Jm78BGWD_400x400.jpg'}}/>
+              {
+                quest.ownerImageId &&
+                <Avatar.Image
+                  style={styles.authorAvatar}
+                  theme={{colors: {primary: Colors.primary}}}
+                  source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}
+                />
+              }
+              {
+                !quest.ownerImageId &&
+                <Avatar.Image
+                  style={styles.authorAvatar}
+                  theme={{colors: {primary: Colors.primary}}}
+                  source={require('../../assets/background.jpg')}
+                />
+              }
               <View>
                 <Text style={styles.authorName}>
                   {quest.ownerName}

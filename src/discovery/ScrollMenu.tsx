@@ -13,6 +13,7 @@ export default interface scrollProps {
     header: string
     type: string
     location: LocationObject
+    quests: QuestHeader[]
 }
 
 export interface questProps {
@@ -20,7 +21,7 @@ export interface questProps {
     location: LocationObject
 }
 
-function getDistanceFromLatLonInKm(lat1:number, lon1:number, lat2:number, lon2:number) {
+export function getDistanceFromLatLonInKm(lat1:number, lon1:number, lat2:number, lon2:number) {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1);  // deg2rad below
     const dLon = deg2rad(lon2 - lon1);
@@ -53,7 +54,7 @@ export const QuestPreview = (props:questProps) => {
 
     const navigation = useNavigation();
     return(
-        <Card style={styles.quest} >
+        <Card style={styles.quest} onPress={() => navigation.navigate('QuestDetail', {quest: props.quest})}>
             <Card.Cover style={styles.pic} source={require('../../assets/background.jpg')} resizeMode='stretch' />
             <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={props.quest.title} />
             <Card.Content style={styles.content}>
@@ -75,12 +76,6 @@ export const QuestPreview = (props:questProps) => {
 
 export const ScrollMenu = (props:scrollProps) => {
 
-    const [quests, setQuests] = useState<QuestHeader[]>([]);
-
-    useEffect(() => {
-        queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests))
-    },[])
-
     return (
         <View style={styles.surface}>
             <Surface>
@@ -88,7 +83,7 @@ export const ScrollMenu = (props:scrollProps) => {
                     {props.header}
                 </Text>
                 <ScrollView horizontal>
-                    {quests && quests.map((q, index) => (
+                    {props.quests && props.quests.map((q, index) => (
                             <QuestPreview key={index} quest={q} location={props.location} />
                         )
                     )}
