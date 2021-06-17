@@ -1,11 +1,11 @@
 import React from 'react';
-import {StatusBar, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
-import {Avatar, Badge} from 'react-native-paper';
+import { StatusBar, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { Avatar, Badge } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { Colors } from '../styles';
 import { useAppSelector } from '../redux/hooks';
-import {BACKENDIP} from "../../GLOBALCONFIG";
+import { BACKENDIP } from '../../GLOBALCONFIG';
 
 export default function PinnedQuestCard() {
 
