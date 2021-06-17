@@ -54,7 +54,7 @@ export const QuestPreview = (props:questProps) => {
 
     const navigation = useNavigation();
     return(
-        <Card style={styles.quest} >
+        <Card style={styles.quest} onPress={() => navigation.navigate('QuestDetail', {quest: props.quest})}>
             <Card.Cover style={styles.pic} source={require('../../assets/background.jpg')} resizeMode='stretch' />
             <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={props.quest.title} />
             <Card.Content style={styles.content}>
