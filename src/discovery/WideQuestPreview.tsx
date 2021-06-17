@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { getDistanceFromLatLonInKm, questProps } from './ScrollMenu';
 import { Colors } from '../styles';
+import { BACKENDIP } from '../../GLOBALCONFIG';
 
 
 export const WideQuestPreview = (props:questProps) => {
@@ -21,7 +22,14 @@ export const WideQuestPreview = (props:questProps) => {
   return(
     <Card style={styles.quest} onPress={() => navigation.navigate('QuestDetail', {quest: props.quest})}>
       <View style={{flexDirection: 'row'}}>
-        <Card.Cover style={styles.pic} source={require('../../assets/background.jpg')}/>
+        {
+          props.quest.imageId &&
+          <Card.Cover style={styles.pic} source={{uri: `${BACKENDIP}/image/get/${props.quest.imageId}`}}/>
+        }
+        {
+          !props.quest.imageId &&
+          <Card.Cover style={styles.pic} source={require('../../assets/background.jpg')}/>
+        }
         <Card.Content>
           <Title style={styles.title} numberOfLines={2}>{props.quest.title}</Title>
           <Text style={styles.description} numberOfLines={4}>{props.quest.description}</Text>

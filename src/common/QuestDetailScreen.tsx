@@ -36,8 +36,6 @@ export default function QuestDetailScreen({ route }: any) {
   const showModal = () => setModalVisible(true);
   const hideModal = () => setModalVisible(false);
 
-  // TODO image fetch needed
-
   const handleAccept = () => {
     setIsButtonDisabled(true);
     createTrackerRequest(quest.id)
@@ -63,7 +61,7 @@ export default function QuestDetailScreen({ route }: any) {
           }
           {
             !quest.imageId &&
-            <Image style={styles.image} source={{uri: 'https://wildlife.org/wp-content/uploads/2015/08/Honduran-Emerald-Hummingbird-Image-Credit-Dominic-Sherony.jpg'}}/>
+            <Image style={styles.image} source={require('../../assets/background.jpg')}/>
           }
           <View style={styles.info}>
             <Entypo name='location-pin' size={24} color='black'/>
@@ -147,7 +145,7 @@ export default function QuestDetailScreen({ route }: any) {
                 <Avatar.Image
                   style={styles.authorAvatar}
                   theme={{colors: {primary: Colors.primary}}}
-                  source={{uri: 'https://wildlife.org/wp-content/uploads/2015/08/Honduran-Emerald-Hummingbird-Image-Credit-Dominic-Sherony.jpg'}}
+                  source={require('../../assets/background.jpg')}
                 />
               }
               <View>

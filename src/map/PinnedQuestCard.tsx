@@ -40,7 +40,7 @@ export default function PinnedQuestCard() {
                     style={styles.questAvatar}
                     theme={{colors: {primary: 'transparent'}}}
                     size={50}
-                    source={{uri: 'https://static.wikia.nocookie.net/jamesbond/images/9/90/M_%28Judi_Dench%29_-_Profile.jpg/revision/latest?cb=20130506215045'}}
+                    source={require('../../assets/background.jpg')}
                   />
                 }
                 <Badge visible={objectiveComplete} size={18} theme={{colors: {notification: Colors.primaryLight}}} style={styles.badge}/>
