@@ -48,7 +48,7 @@ export default function QuestlogScreen() {
   React.useEffect(() => {
     sortTrackers(acceptedQuests);
     setLoading(false);
-  }, [])
+  }, [acceptedQuests])
 
   const handleActiveExpanded = () => setActiveExpanded(!activeExpanded);
   const handleOldExpanded = () => setOldExpanded(!oldExpanded);

@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   authorAvatar: {
-    marginRight: 5,
+    marginRight: 10,
   },
   authorName: {
     fontSize: 20,
