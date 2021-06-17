@@ -46,8 +46,25 @@ export const renewRequest = () : void => {
       r.json().then(r => {store.dispatch(setToken(r.token))})
     }
   })
-
 }
+
+// /chat/get/
+export const chatGetRequest = (userId: string, offset: number) => (request(`/chat/get?userId=${userId}&offset=${offset}`))
+
+// /chat/query/
+export const chatQueryRequest = () => (request('/chat/query'))
+
+// /chat/send/text
+export const chatSendTextRequest = (userId: string, text: string) => {request('/chat/send/text', 'POST', {
+  userId: userId,
+  text: text
+})}
+
+// /chat/send/image
+export const chatSendImamgeRequest = (userId: string, binaryImage: string) => {request('/chat/send/image', 'POST', {
+  userId: userId,
+  binaryImage: binaryImage
+})}
 
 // /quest/query/
 export const queryQuestsRequest = (offset: number = 0) => (request(`/quest/query/?offset=${offset}`))
