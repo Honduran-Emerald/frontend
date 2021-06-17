@@ -6,8 +6,11 @@ import {ScrollMenu} from "./ScrollMenu";
 import * as Location from "expo-location";
 import {useAppSelector} from "../redux/hooks";
 import {getLocation} from "../utils/locationHandler";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 export const DiscoveryScreen = () => {
+
+    const insets = useSafeAreaInsets();
 
     const location = useAppSelector(state => state.location.location)
 
@@ -17,7 +20,7 @@ export const DiscoveryScreen = () => {
     }, [])
 
     return (
-        <View style={styles.screen}>
+        <View style={[styles.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
             <ScrollView contentContainerStyle={styles.discovery}>
                 {location && (
                     <>
@@ -34,7 +37,6 @@ export const DiscoveryScreen = () => {
 
 const styles = StyleSheet.create({
     screen: {
-        justifyContent: "center",
         flexGrow: 1,
         backgroundColor: Colors.background,
         marginTop: StatusBar2.currentHeight,
