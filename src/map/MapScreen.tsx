@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Ref } from 'react';
+import React, {useState, useEffect, useRef, Ref, useCallback} from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -15,6 +15,7 @@ import { QuestMarker } from './QuestMarker';
 import { useNavigation } from '@react-navigation/core';
 import PinnedQuestCard from './PinnedQuestCard';
 import {setLocation} from "../redux/location/locationSlice";
+import {useFocusEffect} from "@react-navigation/native";
 
 export const MapScreen = () => {
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -39,45 +40,49 @@ export const MapScreen = () => {
   }, [])
 
   // Get Location Permission and set initial Location
-  useEffect(() => {
-    (async () => {
-      if(!location){
-        let {status} = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          return Promise.reject(new Error("Permission to access location was denied"))
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        if(!location){
+          let {status} = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') {
+            return Promise.reject(new Error("Permission to access location was denied"))
+          }
+
+          let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
+          dispatch(setLocation(location));
         }
+      })()
+        .then(async () => {
+          const LOCATION_SETTINGS = {
+            accuracy: Location.Accuracy.Highest,
+            distanceInterval: 0
+          };
 
-        let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
-        dispatch(setLocation(location));
+          // subscribe to Location updates
+          const unsubscribe = await Location.watchPositionAsync(LOCATION_SETTINGS, (location : Location.LocationObject) => {
+            dispatch(setLocation(location));
+          })
+          MagnetometerSubscription.subscribe(setMagnetometerSubscription, setHeading)
+
+          setLocationSubscription(unsubscribe);
+        })
+        .catch((err : Error) => {setErrorMsg(err.message)});
+
+      return () => {
+        MagnetometerSubscription.unsubscribeAll();
       }
-    })()
-    .then(async () => {
-      const LOCATION_SETTINGS = {
-        accuracy: Location.Accuracy.Highest,
-        distanceInterval: 0
-      };
-
-      // subscribe to Location updates
-      const unsubscribe = await Location.watchPositionAsync(LOCATION_SETTINGS, (location : Location.LocationObject) => {
-        dispatch(setLocation(location));
-      })
-      MagnetometerSubscription.subscribe(setMagnetometerSubscription, setHeading)
-
-      setLocationSubscription(unsubscribe);
-    })
-    .catch((err : Error) => {setErrorMsg(err.message)});
-
-    return () => {
-      MagnetometerSubscription.unsubscribeAll();
-    }
-  }, [])
+    }, [])
+  )
 
   // Hook to remove locationSubscription, I don't know how and why this works, pls don't touch
-  useEffect(() => {
-    return () => {
-      locationSubscription?.remove();
-    }
-  }, [locationSubscription])
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        locationSubscription?.remove();
+      }
+    }, [locationSubscription])
+  )
 
   // Animate the camera to the current position set in location-state
   const animateCameraToLocation = () => {
