@@ -50,6 +50,7 @@ export const TokenLoader = () => {
                   acceptedQuests.some((tracker) => {
                     if(tracker.trackerId === oldPinTracker.trackerId) {
                       dispatch(pinQuest(tracker));
+                      return true;
                     }
                   })
                 } else {
