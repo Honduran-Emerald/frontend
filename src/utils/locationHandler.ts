@@ -13,6 +13,10 @@ export async function getLocation() {
             return Promise.reject(new Error("Permission to access location was denied"))
         }
 
+        let lastLocation = await Location.getLastKnownPositionAsync();
+        if (lastLocation) {
+            store.dispatch(setLocation((lastLocation)));
+        }
         let newLocation = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Balanced});
         store.dispatch(setLocation(newLocation));
     }

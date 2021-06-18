@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, View } from 'react-native';
+import {StatusBar as StatusBar2, StyleSheet, View} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../styles';
 import {ScrollMenu} from "../discovery/ScrollMenu";
 import * as Location from "expo-location";
 import {LocationObject} from "expo-location";
+import {StatusBar} from "expo-status-bar";
 
 export default interface profileProps {
     //location: LocationObject
@@ -34,7 +35,7 @@ export const ProfileScreen = (props: profileProps) => {
 
   return(
     <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
-      <ScrollView style={style.profile}>
+      <ScrollView contentContainerStyle={style.profile}>
           {location && (
               <>
                   <ScrollMenu header={"Published Quests"} type={"published"} location={location}/>
@@ -44,14 +45,16 @@ export const ProfileScreen = (props: profileProps) => {
               </>)
           }
       </ScrollView>
+      <StatusBar style="auto"/>
     </View>
   );
 }
 
 const style = StyleSheet.create({
     screen: {
-        flex: 1,
+        flexGrow: 1,
         backgroundColor: Colors.background,
+        marginTop: StatusBar2.currentHeight,
     },
     profile: {
         margin: 10,
