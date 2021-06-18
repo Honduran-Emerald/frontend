@@ -7,41 +7,36 @@ import {ScrollMenu} from "../discovery/ScrollMenu";
 import * as Location from "expo-location";
 import {LocationObject} from "expo-location";
 import {StatusBar} from "expo-status-bar";
+import {getLocation} from "../utils/locationHandler";
+import {useAppSelector} from "../redux/hooks";
+import {QuestHeader} from "../types/quest";
+import {queryQuestsRequest} from "../utils/requestHandler";
 
 export default interface profileProps {
-    //location: LocationObject
     ownProfile: boolean
 }
 
 export const ProfileScreen = (props: profileProps) => {
   const insets = useSafeAreaInsets();
 
-    const [location, setLocation] = useState<Location.LocationObject>();
+    const location = useAppSelector(state => state.location.location)
+    const [quests, setQuests] = useState<QuestHeader[]>([]);
 
-    // Get Location Permission and set initial Location
     useEffect(() => {
+        queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
+        // Get Location Permission and set initial Location
         getLocation().catch((err: Error) => {});
-    }, [])
-
-    async function getLocation() {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            return Promise.reject(new Error("Permission to access location was denied"))
-        }
-
-        let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Balanced});
-        setLocation(location);
-    }
+    },[])
 
   return(
     <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
       <ScrollView contentContainerStyle={style.profile}>
           {location && (
               <>
-                  <ScrollMenu header={"Published Quests"} type={"published"} location={location}/>
-                  <ScrollMenu header={"Completed Quests"} type={"completed"} location={location}/>
-                  <ScrollMenu header={"Drafts"} type={"drafts"} location={location}/>
-                  <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location}/>
+                  <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={quests}/>
+                  <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={quests}/>
+                  <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={quests}/>
+                  <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={quests}/>
               </>)
           }
       </ScrollView>
@@ -52,6 +47,7 @@ export const ProfileScreen = (props: profileProps) => {
 
 const style = StyleSheet.create({
     screen: {
+        justifyContent: "center",
         flexGrow: 1,
         backgroundColor: Colors.background,
         marginTop: StatusBar2.currentHeight,

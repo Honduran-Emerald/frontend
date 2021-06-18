@@ -22,13 +22,10 @@ export const DiscoveryScreen = () => {
     const [search, setSearch] = React.useState('');
 
     useEffect(() => {
-        queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests))
-    },[])
-
-    // Get Location Permission and set initial Location
-    useEffect(() => {
+        queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
+        // Get Location Permission and set initial Location
         getLocation().catch((err: Error) => {});
-    }, [])
+    },[])
 
     const getQuestSearch = () => {
         if(search) {
@@ -80,6 +77,7 @@ export const DiscoveryScreen = () => {
 
 const styles = StyleSheet.create({
     screen: {
+        justifyContent: "center",
         flexGrow: 1,
         backgroundColor: Colors.background,
         marginTop: StatusBar2.currentHeight,
