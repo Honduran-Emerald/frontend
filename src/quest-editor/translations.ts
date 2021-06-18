@@ -1,5 +1,3 @@
-import i18n from 'i18n-js';
-
 export const editorTranslations = {
     en: {
         'editQuest': 'Edit Quest',
@@ -18,7 +16,7 @@ export const editorTranslations = {
 
         'createModuleChoice': 'Create Module',
         'linkModuleChoice': 'Link Module',
-        
+
         'createModuleTitle': 'Create Module',
         'Location_ModuleName': 'Position Module',
         'Location_ModuleDescription': 'Allows the user to advance by visiting a location.',
@@ -38,7 +36,12 @@ export const editorTranslations = {
         'addStoryText': 'Add text the User will read',
         'addChoiceModuleChoices': '',
         'addEndText': 'Add text the User will read on Quest completion',
-        'addEndSlider': 'Choose how successfull this ending is (Players will get Exp. accordingly)'
+        'addEndSlider': 'Choose how successfull this ending is (Players will get Exp. accordingly)',
 
+        'chooseLocation': 'Choose location',
+    },
+    de: {
+
+        'chooseLocation': 'Position wählen',
     }
 }
