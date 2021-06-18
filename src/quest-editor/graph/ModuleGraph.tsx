@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
-import dagre from 'dagre';
 import { ScrollView } from 'react-native-gesture-handler';
 import Svg, { G, Path } from 'react-native-svg';
 import _ from 'lodash';
-import Animated, {  useAnimatedStyle, useValue } from 'react-native-reanimated';
-import { Button } from 'react-native-paper';
+import Animated, {  useValue } from 'react-native-reanimated';
+import { Graph } from 'graphlib';
 
 const bezierOffset = 80;
 const rowMargin = 40;
@@ -13,14 +12,13 @@ const contentHorizontalMargin = 10;
 const virtualHorizontalMargin = 10;
 
 const AnimatedG = Animated.createAnimatedComponent(G)
-const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 export interface IGraphModuleNode {
     id: number | string,
     component: React.ReactElement,
 }
 export interface IModuleGraph {
-    graph: dagre.graphlib.Graph<{}> | undefined,
+    graph: Graph | undefined,
     positions: string[][]
 }
 
@@ -54,7 +52,6 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
         }) : []);
     }, [graph, positions])    
 
-
     useEffect(() => {
         if (!indexPath.find(edge => (outerHorizontalScrollOffset[edge.v.rowIdx] === undefined
                                     || outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')] === undefined
@@ -64,19 +61,19 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
             const val = indexPath.map(edge => (`M ${
                 (outerHorizontalScrollOffset[edge.v.rowIdx]?.x || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.v.rowIdx] || 0)
             } ${
-                (outerHorizontalScrollOffset[edge.v.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.y || NaN)
+                (outerHorizontalScrollOffset[edge.v.rowIdx]?.y || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.y || 0)
             } C ${
                 (outerHorizontalScrollOffset[edge.v.rowIdx]?.x || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.v.rowIdx] || 0)
             } ${
-                (outerHorizontalScrollOffset[edge.v.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.y || NaN) + bezierOffset
+                (outerHorizontalScrollOffset[edge.v.rowIdx]?.y || 0) + (outerNodeOffset[[edge.v.rowIdx, edge.v.columnIdx].join('|')]?.y || 0) + bezierOffset
             } ${
                 (outerHorizontalScrollOffset[edge.w.rowIdx]?.x || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.w.rowIdx] || 0)
             } ${
-                (outerHorizontalScrollOffset[edge.w.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.y || NaN) - bezierOffset
+                (outerHorizontalScrollOffset[edge.w.rowIdx]?.y || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.y || 0) - bezierOffset
             } ${
                 (outerHorizontalScrollOffset[edge.w.rowIdx]?.x || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.x || 0) - (innerHorizontalScrollOffset[edge.w.rowIdx] || 0)
             } ${
-                (outerHorizontalScrollOffset[edge.w.rowIdx]?.y || NaN) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.y || NaN)
+                (outerHorizontalScrollOffset[edge.w.rowIdx]?.y || 0) + (outerNodeOffset[[edge.w.rowIdx, edge.w.columnIdx].join('|')]?.y || 0)
             }`)).join(' ')
 
             setSvgPath(val)
@@ -128,8 +125,17 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
                             <ScrollView 
                                 key={rowId} 
                                 horizontal={true} 
-                                style={{marginTop: rowMargin, alignSelf: 'center'}}
-                                contentContainerStyle={{justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}
+                                style={{
+                                    marginTop: rowMargin, 
+                                    alignSelf: 'center',
+                                    
+                                }}
+                                contentContainerStyle={{
+                                    justifyContent: 'center', 
+                                    alignContent: 'center', 
+                                    alignItems: 'center',
+                                    minHeight: 60,
+                                }}
                                 onLayout={(event) => {
                                     const c = outerHorizontalScrollOffset.slice()
                                     c[rowId] = {
@@ -157,7 +163,7 @@ export const ModuleGraph: React.FC<IModuleGraph> = ({ graph, positions}) => {
                                             key={element} 
                                             onLayout={(event) => {
                                                 var {x, y, width, height} = event.nativeEvent.layout;
-                                                setPosMap({...posMap, [element]: {x: x+width/2, y: y+height/2}})
+                                                setPosMap({...posMap, [element]: {x: x+width/2, y: y+height/2}}) // Maybe delete width/2, height/2 here
                                                 setOuterNodeOffset({...outerNodeOffset, [[rowId, columnId].join('|')]: {x: x+width/2, y: y+height/2} })
                                             }}
                                             style={{marginHorizontal: virtualHorizontalMargin}}>

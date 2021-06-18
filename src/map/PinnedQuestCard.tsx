@@ -1,10 +1,11 @@
 import React from 'react';
-import {StatusBar, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
-import {Avatar, Badge} from 'react-native-paper';
+import { StatusBar, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { Avatar, Badge } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { Colors } from '../styles';
 import { useAppSelector } from '../redux/hooks';
+import { BACKENDIP } from '../../GLOBALCONFIG';
 
 export default function PinnedQuestCard() {
 
@@ -24,7 +25,24 @@ export default function PinnedQuestCard() {
               end={{ x: objectiveComplete ? 0.2 : 0.6, y: objectiveComplete ? 0.2 : 0.6 }}
             >
               <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                <Avatar.Image style={styles.questAvatar} theme={{colors: {primary: 'transparent'}}} size={50} source={{uri: 'https://static.wikia.nocookie.net/jamesbond/images/9/90/M_%28Judi_Dench%29_-_Profile.jpg/revision/latest?cb=20130506215045'}}/>
+                {
+                  pinnedQuest.agentProfileImageId &&
+                  <Avatar.Image
+                    style={styles.questAvatar}
+                    theme={{colors: {primary: 'transparent'}}}
+                    size={50}
+                    source={{uri: `${BACKENDIP}/image/get/${pinnedQuest.agentProfileImageId}`}}
+                  />
+                }
+                {
+                  !pinnedQuest.agentProfileImageId &&
+                  <Avatar.Image
+                    style={styles.questAvatar}
+                    theme={{colors: {primary: 'transparent'}}}
+                    size={50}
+                    source={require('../../assets/background.jpg')}
+                  />
+                }
                 <Badge visible={objectiveComplete} size={18} theme={{colors: {notification: Colors.primaryLight}}} style={styles.badge}/>
                 <View style={{flexDirection: 'column', width: '100%'}}>
                   <Text style={styles.questName} numberOfLines={1}>

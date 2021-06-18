@@ -52,6 +52,9 @@ export const renewRequest = () : void => {
 // /quest/query/
 export const queryQuestsRequest = (offset: number = 0) => (request(`/quest/query/?offset=${offset}`))
 
+// /create/create/
+export const createQuestRequest = () => (request('/create/create/', 'POST', {}))
+
 // /create/query/
 export const createQueryRequest = (offset: number = 0) => (request(`/create/query?offset=${offset}`))
 
@@ -61,27 +64,12 @@ export const createGetRequest = (questId: string) => (request(`/create/get/?ques
 // /create/put/
 export const createPutRequest = (questId: string, questPrototype: QuestPrototype) => (request('/create/put/', 'POST', {
   questId: questId,
-  questPrototype: questPrototype
+  questPrototype: questPrototype,
+  newImages: []
 }))
 
-// /create/publish/
-export const createPublishRequest = (questId: string) => (request('/create/publish/', 'POST', {questId: questId}))
-
-// /test/init/
-export const createQuestRequest =  (title: string, description: string, imageId: string, latitude: number, longitude: number, locationName: string, approximateTime: string, tags: string[]) => (
-  request('/create/create/', 'POST', {
-    title: title,
-    description: description,
-    imageId: imageId,
-    location: {
-      latitude: latitude,
-      longitude: longitude,
-    },
-    locationName: locationName,
-    approximateTime: approximateTime,
-    tags: tags
-  })
-)
+// /create/release/
+export const createPublishRequest = (questId: string) => (request('/create/release/', 'POST', {questId: questId}))
 
 // /user/me
 export const getUserSelfRequest = () => (request('/user/me/'))

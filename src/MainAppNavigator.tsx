@@ -8,18 +8,17 @@ import { Badge } from 'react-native-paper';
 
 import { MapNavigator } from './map/MapNavigator';
 import { DiscoveryNavigator } from "./discovery/DiscoveryNavigator";
-import { ModuleGraph } from './quest-editor/ModuleGraph';
-import { QuestEditorNavigator } from './quest-editor/QuestEditorNavigator';
-import { QuestEditorTabNavigator } from './quest-editor/QuestEditorTabNavigator';
 
 import { useAppDispatch, useAppSelector } from './redux/hooks';
-import { setToken, unsetToken } from './redux/authentication/authenticationSlice';
+import { logout, setToken } from './redux/authentication/authenticationSlice';
 import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
 import QuestlogScreen from './common/QuestlogScreen';
 import { clearQuestState } from './redux/quests/questsSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { Colors } from './styles';
 import { ProfileNavigator } from './profile/ProfileNavigator';
+import LocationPicker from "./quest-editor/LocationPicker";
+import {Location as LocationType} from "./types/general";
 
 const Tab = createBottomTabNavigator();
 
@@ -68,7 +67,7 @@ export default function MainAppNavigator() {
       <Tab.Screen name="Home" component={DiscoveryNavigator}/>
       <Tab.Screen name="Questlog" component={QuestlogScreen}/>
       <Tab.Screen name="Map" component={MapNavigator}/>
-      <Tab.Screen name="Chat" component={Dummy}/>
+      <Tab.Screen name="Chat" component={LocationPicker} initialParams={{returnLocation: (location: LocationType) => alert(location.latitude + ', ' + location.longitude)}}/>
       <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );
@@ -85,7 +84,7 @@ const Dummy = () => {
   const handleLogout = () => {
     deleteItemLocally('UserToken').then(() => {}, () => {});
     deleteItemLocally('PinnedQuestTracker').then(() => {}, () => {});
-    dispatch(unsetToken())
+    dispatch(logout())
     dispatch(clearQuestState())
   }
 

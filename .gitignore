@@ -79,3 +79,6 @@ typings/
 
 # jetBrains idea directory
 .idea/
+
+# vscode config
+.vscode/

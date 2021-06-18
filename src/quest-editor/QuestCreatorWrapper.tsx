@@ -11,9 +11,27 @@ export const QuestCreatorWrapper : React.FC<Location> = ({ latitude, longitude }
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    createQuestRequest('Phisn erlaube endlich null values', 'Phisn plssssss', 'amkphisnmachdoch', latitude, longitude, 'phisn pls fix', 'fix phisn', ['phisn', 'fix'])
+    // latitude, longitude
+    createQuestRequest()
       .then(r => r.json())
-      .then(r => dispatch(loadQuest(r.questPrototype)))
+      .then(r => dispatch(loadQuest({questId: r.questId, questPrototype: {
+        id: r.questPrototype.id,
+        approximateTime: '',
+        creationTime: '',
+        description: '',
+        firstModuleReference: 1,
+        imageId: '',
+        location: {
+          latitude: latitude,
+          longitude: longitude
+        },
+        locationName: '',
+        modules: [],
+        agentProfileImageId: '',
+        agentProfileName: '',
+        tags: [],
+        title: ''
+      }})))
       .then(() => setQuestCreated(true))
   }, [])
 
