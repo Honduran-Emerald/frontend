@@ -14,9 +14,9 @@ import { setLocalQuests } from '../redux/quests/questsSlice';
 import { QuestMarker } from './QuestMarker';
 import { useNavigation } from '@react-navigation/core';
 import PinnedQuestCard from './PinnedQuestCard';
+import {setLocation} from "../redux/location/locationSlice";
 
 export const MapScreen = () => {
-  const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [heading, setHeading] = useState<number>();
   const [magnetometerSubscription, setMagnetometerSubscription] = useState<Subscription | null>(null);
@@ -25,6 +25,7 @@ export const MapScreen = () => {
   const _map : Ref<MapView> = useRef(null);
 
   const localQuests = useAppSelector((state) => state.quests.localQuests);
+  const location = useAppSelector((state) => state.location.location);
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
@@ -40,13 +41,15 @@ export const MapScreen = () => {
   // Get Location Permission and set initial Location
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        return Promise.reject(new Error("Permission to access location was denied"))
-      }
+      if(!location){
+        let {status} = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          return Promise.reject(new Error("Permission to access location was denied"))
+        }
 
-      let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
-      setLocation(location);
+        let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
+        dispatch(setLocation(location));
+      }
     })()
     .then(async () => {
       const LOCATION_SETTINGS = {
@@ -56,7 +59,7 @@ export const MapScreen = () => {
 
       // subscribe to Location updates
       const unsubscribe = await Location.watchPositionAsync(LOCATION_SETTINGS, (location : Location.LocationObject) => {
-        setLocation(location);
+        dispatch(setLocation(location));
       })
       MagnetometerSubscription.subscribe(setMagnetometerSubscription, setHeading)
 
@@ -105,7 +108,7 @@ export const MapScreen = () => {
       >
         <UserMarker rotation={heading} coordinate={location.coords}/>
         {localQuests && localQuests.map((quest, index) => (
-          quest && quest.location && 
+          quest && quest.location &&
             <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
         ))}
       </MapView>

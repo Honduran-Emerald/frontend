@@ -8,29 +8,19 @@ import { useNavigation } from '@react-navigation/core';
 import { Colors } from '../styles';
 import i18n from "i18n-js";
 import { editorTranslations } from './translations';
+import { useAppSelector } from '../redux/hooks';
+import { getLocation } from '../utils/locationHandler';
 
 export default function LocationPicker({ route }: any) {
 
-  //TODO
-  // adjust to location redux state when that's merged
-
   i18n.translations = editorTranslations;
   const navigation = useNavigation();
+  const location = useAppSelector((state) => state.location.location);
 
   const [centerPosition, setCenterPosition] = React.useState<Region | undefined>(undefined);
 
   // Get Location Permission and set initial Location
   useEffect(() => {
-    getLocation().catch(() => {});
-  }, [])
-
-  async function getLocation() {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      return Promise.reject(new Error("Permission to access location was denied"))
-    }
-
-    let location = await Location.getLastKnownPositionAsync();
     if(location) {
       setCenterPosition({
         latitude: location.coords.latitude,
@@ -38,15 +28,10 @@ export default function LocationPicker({ route }: any) {
         latitudeDelta: 0.025,
         longitudeDelta: 0.025
       });
+    } else {
+      getLocation().catch(() => {});
     }
-    location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Balanced});
-    setCenterPosition({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.025,
-      longitudeDelta: 0.025
-    });
-  }
+  }, [])
 
   const handleRegionChange = (region: Region) => {
     setCenterPosition(region)
