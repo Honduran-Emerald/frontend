@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AuthNavigator from './authentication/AuthNavigator';
 import MainAppNavigator from './MainAppNavigator';
@@ -13,6 +13,8 @@ import { getAllTrackersRequest, getUserSelfRequest, renewRequest } from './utils
 import { pinQuest, setAcceptedQuests } from './redux/quests/questsSlice';
 import { loadItemLocally } from './utils/SecureStore';
 import { QuestTracker } from './types/quest';
+import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
+
 
 i18n.fallbacks = true;
 i18n.locale = Localization.locale;
@@ -20,6 +22,7 @@ i18n.locale = Localization.locale;
 export const TokenLoader = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [hasRenewed, setHasRenewed] = React.useState<boolean>(false);
+
 
   const { token, user } = useAppSelector((state) => state.authentication);
   const dispatch = useAppDispatch();
@@ -81,7 +84,7 @@ export const TokenLoader = () => {
     (isLoading) ? (<LoadingScreen/>) : (
         <NavigationContainer>
         {token ? (
-            <MainAppNavigator/>
+            <ExpoNotificationWrapper />
         ) : (
             <AuthNavigator/>
         )}
