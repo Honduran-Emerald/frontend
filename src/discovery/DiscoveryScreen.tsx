@@ -9,31 +9,23 @@ import {queryQuestsRequest} from "../utils/requestHandler";
 import {Searchbar} from "react-native-paper";
 import {removeSpecialChars} from "../common/QuestlogScreen";
 import {WideQuestPreview} from "./WideQuestPreview";
+import {useAppSelector} from "../redux/hooks";
+import {getLocation} from "../utils/locationHandler";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 export const DiscoveryScreen = () => {
+  
+    const insets = useSafeAreaInsets();
 
-    const [location, setLocation] = useState<Location.LocationObject>();
+    const location = useAppSelector(state => state.location.location)
     const [quests, setQuests] = useState<QuestHeader[]>([]);
     const [search, setSearch] = React.useState('');
 
     useEffect(() => {
-        queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests))
-    },[])
-
-    // Get Location Permission and set initial Location
-    useEffect(() => {
+        queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
+        // Get Location Permission and set initial Location
         getLocation().catch((err: Error) => {});
-    }, [])
-
-    async function getLocation() {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            return Promise.reject(new Error("Permission to access location was denied"))
-        }
-
-        let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Balanced});
-        setLocation(location);
-    }
+    },[])
 
     const getQuestSearch = () => {
         if(search) {
@@ -52,7 +44,7 @@ export const DiscoveryScreen = () => {
     }
 
     return (
-        <View style={styles.screen}>
+        <View style={[styles.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
             <View style={styles.searchbar}>
                 <Searchbar
                   placeholder={"Search for quest title or creator"}
