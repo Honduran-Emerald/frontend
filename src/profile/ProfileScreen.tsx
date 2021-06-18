@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {StatusBar as StatusBar2, StyleSheet, View} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ProfileTop } from './ProfileTop';
 import { Colors } from '../styles';
 import {ScrollMenu} from "../discovery/ScrollMenu";
 import * as Location from "expo-location";
@@ -31,13 +32,14 @@ export const ProfileScreen = (props: profileProps) => {
   return(
     <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
       <ScrollView contentContainerStyle={style.profile}>
+        <ProfileTop />
           {location && (
-              <>
-                  <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={quests}/>
-                  <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={quests}/>
-                  <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={quests}/>
-                  <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={quests}/>
-              </>)
+            <>
+              <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={quests}/>
+              <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={quests}/>
+              <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={quests}/>
+              <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={quests}/>
+            </>)
           }
       </ScrollView>
       <StatusBar style="auto"/>
