@@ -30,23 +30,35 @@ export const ProfileTop = () => {
       <View style={style.chips}>
         <Chip value='200' caption='Followers' />
         <Divider/>
-        <Chip value='2020' caption='Created' />
+        <Chip value='1020' caption='Created' />
         <Divider/>
-        <Chip value='200' caption='Played' />
+        <Chip value='100' caption='Played' />
+      </View>
+      <View style={style.level}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '98.5%', alignSelf: 'center'}}>
+          <Text style={{fontWeight: 'bold'}}>Lvl 12</Text>
+          <Text style={{fontWeight: 'bold'}}>51/100</Text>
+        </View>
+        <View style={style.levelBar}>
+          <LinearGradient
+            colors={['#1D79AC', '#40A9B8']}
+            style={[style.levelProgress, {maxWidth: '50%'}]}
+          />
+        </View>
       </View>
     </View>
   );
 }
 
 const Chip = ({value, caption} : {value: string, caption: string}) => (
-  <View style={Containers.center}>
+  <View style={[Containers.center, {width: '80%'}]}>
     <Text style={{fontSize: 25, fontWeight: 'bold'}}>{value}</Text>
     <Text style={{lineHeight: 15}}>{caption}</Text>
   </View>
 )
 
 const Divider = () => (
-  <View style={style.divider}/>
+  <View style={style.divider} />
 )
 
 const style = StyleSheet.create({
@@ -112,5 +124,21 @@ const style = StyleSheet.create({
   buttonGroup: {
     justifyContent: 'center',
     minWidth: '40%',
+  },
+  level: {
+    flex: 1,
+    width: '80%',
+    marginTop: 20,
+    alignSelf: 'center',
+  },
+  levelBar: {
+    width: '100%',
+    height: 18,
+    backgroundColor: Colors.gray,
+    ...Containers.rounded
+  },
+  levelProgress: {
+    flex: 1,
+    ...Containers.rounded
   }
 })
