@@ -10,7 +10,7 @@ import { BACKENDIP } from '../../GLOBALCONFIG';
 
 export const WideQuestPreview = (props:questProps) => {
 
-  const [distance, setDistance] = useState(-1);
+  const [distance, setDistance] = useState("");
 
   useEffect(() => {
     props.location &&
@@ -37,7 +37,7 @@ export const WideQuestPreview = (props:questProps) => {
       </View>
       <View style={{flexDirection: 'row'}}>
         <Card.Actions style={styles.actions}>
-            <Button compact labelStyle={styles.bLabel} style={styles.button}>{distance} km</Button>
+            <Button compact labelStyle={styles.bLabel} style={styles.button}>{distance}</Button>
             <Button compact labelStyle={styles.bLabel} style={styles.button}>{props.quest.votes} Votes</Button>
             <Button compact labelStyle={styles.bLabel} style={styles.button}><Entypo name='stopwatch' size={10} color={Colors.primary}/> {props.quest.approximateTime}</Button>
             <Button compact labelStyle={styles.bLabel} style={styles.button}>{props.quest.ownerName}</Button>
