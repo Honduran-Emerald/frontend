@@ -24,6 +24,8 @@ const request = (target: string, type: string = 'GET', body?: object) => {
   })
 }
 
+export const getImageAddress = (imageId: string | null) => (`${BACKENDIP}/image/get/${imageId}`)
+
 // /auth/login/
 export const loginRequest = (email: string, hashed_password: string) => (request('/auth/login/', 'POST', {
   email: email,
