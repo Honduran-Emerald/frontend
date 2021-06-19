@@ -9,11 +9,12 @@ import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setToken, setUser } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
 import * as Localization from 'expo-localization';
-import { getAllTrackersRequest, getUserSelfRequest, renewRequest } from './utils/requestHandler';
+import { chatQueryRequest, getAllTrackersRequest, getUserSelfRequest, renewRequest } from './utils/requestHandler';
 import { pinQuest, setAcceptedQuests } from './redux/quests/questsSlice';
 import { loadItemLocally } from './utils/SecureStore';
 import { QuestTracker } from './types/quest';
 import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
+import { loadChatPreview } from './redux/chat/chatSlice';
 
 
 i18n.fallbacks = true;
@@ -21,10 +22,11 @@ i18n.locale = Localization.locale;
 
 export const TokenLoader = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [checkingToken, setCheckingToken] = React.useState<boolean>(true);
   const [hasRenewed, setHasRenewed] = React.useState<boolean>(false);
 
 
-  const { token, user } = useAppSelector((state) => state.authentication);
+  const { token } = useAppSelector((state) => state.authentication);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -32,42 +34,52 @@ export const TokenLoader = () => {
       .then(token => dispatch(setToken(token)))
       .then(() => renewRequest())
       .then(() => setHasRenewed(true))
-      .then(() => setIsLoading(false));
+      .then(() => setCheckingToken(false));
   }, [])
 
   useEffect(() => {
-    let acceptedQuests: QuestTracker[] = [];
-    if(token && hasRenewed) {
-      getAllTrackersRequest()
-        .then((res) => {
-          if (res.ok) {
-            res.json()
-              .then((data) => {
-                dispatch(setAcceptedQuests(data.trackers));
-                acceptedQuests = data.trackers;
-              })
-              .then(() => loadItemLocally('PinnedQuestTracker')
-              .then((res) => {
-                if(res) {
-                  const oldPinTracker = JSON.parse(res);
-                  acceptedQuests.some((tracker) => {
-                    if(tracker.trackerId === oldPinTracker.trackerId) {
-                      dispatch(pinQuest(tracker));
-                    }
-                  })
-                } else {
-                  acceptedQuests.some((tracker) => {
-                    if(!tracker.finished) {
-                      dispatch(pinQuest(tracker));
-                      return true;
-                    }
-                  });
-                }
-              }))
-          }
-        });
+    if (token && !hasRenewed) return;
+    if (!token) {
+      setIsLoading(false);
+      return;
     }
-    if(token && hasRenewed && !user) {
+    setIsLoading(true);
+
+    const promises: Promise<any>[] = []
+
+    let acceptedQuests: QuestTracker[] = [];
+    promises.push(
+      getAllTrackersRequest()
+      .then((res) => {
+        if (res.ok) {
+          res.json()
+            .then((data) => {
+              dispatch(setAcceptedQuests(data.trackers));
+              acceptedQuests = data.trackers;
+            })
+            .then(() => loadItemLocally('PinnedQuestTracker')
+            .then((res) => {
+              if(res) {
+                const oldPinTracker = JSON.parse(res);
+                acceptedQuests.some((tracker) => {
+                  if(tracker.trackerId === oldPinTracker.trackerId) {
+                    dispatch(pinQuest(tracker));
+                  }
+                })
+              } else {
+                acceptedQuests.some((tracker) => {
+                  if(!tracker.finished) {
+                    dispatch(pinQuest(tracker));
+                    return true;
+                  }
+                });
+              }
+            }))
+        }
+      })
+    )
+    
+    promises.push(
       getUserSelfRequest()
         .then((res) => {
           if (res.status === 200) {
@@ -76,12 +88,23 @@ export const TokenLoader = () => {
             })
           }
         })
-    }
-  }, [token])
+    )
+
+
+    promises.push(
+      chatQueryRequest()
+        .then(res => res.json())
+        .then(res => dispatch(loadChatPreview(res.chats)))
+    )
+    
+
+    Promise.all(promises)
+      .then(() => setIsLoading(false))
+  }, [token, hasRenewed, checkingToken])
 
   return (
 
-    (isLoading) ? (<LoadingScreen/>) : (
+    (isLoading || checkingToken) ? (<LoadingScreen/>) : (
         <NavigationContainer>
         {token ? (
             <ExpoNotificationWrapper />

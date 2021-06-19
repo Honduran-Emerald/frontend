@@ -4,7 +4,8 @@ import { Dimensions, Image, ImageSourcePropType, StyleSheet, Text, View } from '
 
 interface ChatSingleElementInterface {
   userName: string,
-  userImgSource: ImageSourcePropType,
+  userImgSource: string,
+  //userImgSource: ImageSourcePropType,
   lastMessage: string,
 }
 
@@ -12,7 +13,9 @@ export const ChatSingleElement: React.FC<ChatSingleElementInterface> = ({ userNa
   return (
     <View style={styles.singleChatContainer}>
       <Image 
-        source={userImgSource}
+        source={{
+          uri: userImgSource
+        }}
         style={styles.pbImage} />
       <View style={styles.singleChatTextContainer}>
         <Text style={styles.bold}>

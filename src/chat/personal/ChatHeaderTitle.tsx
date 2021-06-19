@@ -2,9 +2,10 @@ import React from 'react';
 import { Image, ImageSourcePropType, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/core';
+import { getImageAddress } from '../../utils/requestHandler';
 
 interface ChatHeaderTitleProps {
-    userImgSource: ImageSourcePropType,
+    userImgSource: string,
     userName: string
 }
 
@@ -14,7 +15,9 @@ export const ChatHeaderTitle: React.FC<ChatHeaderTitleProps> = ({ userImgSource,
 
     return (
         <View style={styles.header}>
-            <Image source={userImgSource} style={styles.image}/>
+            <Image source={{
+                uri: getImageAddress(userImgSource)
+            }} style={styles.image}/>
             <Text>{userName}</Text>
         </View>
     )

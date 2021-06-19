@@ -18,7 +18,7 @@ export const ChatNavigator: React.FC = () => {
                     title: 'Chat',
                     headerTitle: 'Chat'
                 }}/>
-            <Stack.Screen 
+            {/* <Stack.Screen 
                 name='ChatPersonal' 
                 component={ChatPersonal}
                 options={({ route }: {route: any}) => 
@@ -26,7 +26,7 @@ export const ChatNavigator: React.FC = () => {
                     title: route.params?.userName || 'Personal Chat',
                     headerTitle: props => <ChatHeaderTitle {...props} userName={route.params.userName} userImgSource={route.params.userImgSource}/>,
                     headerTitleContainerStyle: {left: 50}
-                })}/>
+                })}/> */}
         </Stack.Navigator>
     )
 }

@@ -7,6 +7,7 @@ import { Platform, Text, View } from 'react-native';
 import { useState } from 'react';
 import { Subscription } from 'expo-sensors/build/Pedometer';
 import { useAppSelector } from './redux/hooks';
+import { ChatWrapperNavigator } from './ChatWrapperNavigator';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -27,31 +28,26 @@ export const ExpoNotificationWrapper: React.FC = () => {
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
 
-    /* notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log('Hello there')
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       setNotification(notification)
     })
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log('wolooolo',response)
+      console.log('wolooolo', response)
     })
 
     return () => {
-      console.log('STOP')
       if (notificationListener.current) {
-        console.log('"Od')
         Notifications.removeNotificationSubscription(notificationListener.current);
       }
       if (responseListener.current) {
-        console.log('DWAIUB')
         Notifications.removeNotificationSubscription(responseListener.current);
-
       }
-    } */
+    }
   }, [])
 
   return (
-      <MainAppNavigator />
+      <ChatWrapperNavigator />
   );
 }
 

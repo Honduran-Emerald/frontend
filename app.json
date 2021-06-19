@@ -29,8 +29,7 @@
           "apiKey": "AIzaSyA5hcQYAQCq2gsMM6_LhYRpt6-eA9WaKaM"
         }
       },
-      "package": "emerald.honduran",
-      "softwareKeyboardLayoutMode": "pan"
+      "package": "emerald.honduran"
     },
     "web": {
       "favicon": "./assets/favicon.png"

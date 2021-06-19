@@ -1,57 +1,37 @@
 import React from 'react';
 import { Text, View, StyleSheet, Dimensions, Image, ImageSourcePropType, StatusBar } from 'react-native';
-import image from '../pb.png';
-import chrom from '../chrom.png';
-import phisn from '../phi.jpg';
 import { ChatSingleElement } from './ChatSingleElement';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { NavigationState } from '@react-navigation/routers';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-
-
-const messages = [
-  {
-    name: 'Nico Kunz',
-    message: "Hey, you. You're finally awake. You were trying to cross the border, right? Walked right into that Imperial ambush, same as us, and that thief over there. Lokir: Damn you Stormcloaks. Skyrim was fine until you came along",
-    pb: image,
-    messages: []
-  },
-  {
-    name: 'HK',
-    message: "Change your default web browser?",
-    pb: chrom,
-    messages: []
-  },
-  {
-    name: 'Phisns Vogel',
-    message: "Hilfe ich wurde gestohlen!",
-    pb: phisn,
-    messages: []
-  },
-]
-
-const messagesLong = messages.concat(messages, messages, messages, messages, messages, messages, messages, messages)
+import { useAppSelector } from '../../redux/hooks';
+import { getImageAddress } from '../../utils/requestHandler';
 
 export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
+
+  const chatsPreviewList = useAppSelector(state => state.chat.chatsPreviewList)
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollable}>
-       
+      {/* userName: string,
+        userImgSource: string,
+        userTargetId: string, */}
         <View style={styles.chats}>
-          {messagesLong.map((val, idx) => 
-            <TouchableOpacity onPress={() => navigation.navigate('Chat', {
+          {chatsPreviewList && chatsPreviewList.map((val, idx) => 
+            <TouchableOpacity onPress={() => navigation.navigate('ChatPersonal', {
                                                                     screen: 'ChatPersonal',
                                                                     params: {
-                                                                      userName: val.name,
-                                                                      userImgSource: val.pb,
-                                                                      messages: val.messages
+                                                                      userName: val.username,
+                                                                      userImgSource: getImageAddress(val.userImageId),
+                                                                      userTargetId: val.userId
                                                                     }})}
                               key={idx}>
 
               <ChatSingleElement 
-                userName={val.name} 
-                lastMessage={val.message} 
-                userImgSource={val.pb} 
+                userName={val.username} 
+                lastMessage={val.lastMessageText} 
+                userImgSource={getImageAddress(val.userImageId)} 
                 />
 
             </TouchableOpacity>
