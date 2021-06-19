@@ -5,3 +5,4 @@ export const secondary = '#40A9B8';
 export const background = "#FFF";
 export const black = '#000';
 export const lightGray = '#EEEEEE'
+export const gray = '#DCDADA'
