@@ -4,6 +4,7 @@ import { ChatHeaderTitle } from './chat/personal/ChatHeaderTitle';
 import { ChatPersonal } from './chat/personal/ChatPersonal';
 import MainAppNavigator from './MainAppNavigator';
 import { QuestCreatorWrapper } from './quest-editor/QuestCreatorWrapper';
+import { QuestEditorWrapper } from './quest-editor/QuestEditorWrapper';
 
 
 export const ChatWrapperNavigator: React.FC = () => {
@@ -29,6 +30,11 @@ export const ChatWrapperNavigator: React.FC = () => {
         options={{
           headerShown: false
         }}/>
-    </Stack.Navigator>
+
+      <Stack.Screen name='QuestEditorScreen' component={QuestEditorWrapper} 
+        options={{
+          headerShown: false
+        }}/>
+      </Stack.Navigator>
   )
 }

@@ -93,7 +93,13 @@ export default function QuestDetailScreen({ route }: any) {
             isQuestCreator &&
             <View style={styles.creatorButtons}>
               <View style={styles.creatorButton}>
-                <Button color={Colors.primary} disabled={isButtonDisabled} title={i18n.t('editButton')} onPress={() => alert('Go to edit screen')}/>
+                <Button 
+                  color={Colors.primary} 
+                  disabled={isButtonDisabled} 
+                  title={i18n.t('editButton')} 
+                  onPress={() => navigation.navigate('QuestEditorScreen', {
+                    questId: quest.id
+                  })}/>
               </View>
               <View style={styles.creatorButton}>
                 <Button color={Colors.error} disabled={isButtonDisabled} title={i18n.t('deleteButton')} onPress={showModal}/>

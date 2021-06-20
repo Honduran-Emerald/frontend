@@ -7,7 +7,8 @@ import { QuestEditorNavigator } from './QuestEditorNavigator';
 
 export const QuestEditorWrapper = () => {
 
-  const questPrototype = useAppSelector(store => store.editor.questPrototype)
+  //const questPrototype = useAppSelector(store => store.editor.questPrototype)
+  const quest = useAppSelector(state => state.editor)
 
   const dispatch = useAppDispatch();
 
@@ -16,16 +17,17 @@ export const QuestEditorWrapper = () => {
   }}, 'params'>>();
 
   useEffect(() => {
-    if (!questPrototype || questPrototype.id !== route.params.questId) {
+    if (!quest.questPrototype || quest.questId !== route.params.questId) {
       dispatch(unloadQuest());
       createGetRequest(route.params.questId)
         .then(q => q.json())
         .then(questDeep => dispatch(loadQuest({questId: route.params.questId, questPrototype: questDeep.questPrototype})))
+        .then(() => console.log('Done Loading...'))
       
     }
   }, [route.params.questId])  
 
   return (
-    <>{(questPrototype && questPrototype.id === route.params.questId) && <QuestEditorNavigator />}</>
+    <>{(quest.questPrototype && quest.questId === route.params.questId) && <QuestEditorNavigator />}</>
   )
 }
