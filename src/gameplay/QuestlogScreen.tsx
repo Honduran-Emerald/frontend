@@ -4,7 +4,7 @@ import i18n from 'i18n-js';
 import {List, Searchbar} from 'react-native-paper';
 
 import { Colors } from '../styles';
-import { commonTranslations } from './translations';
+import { commonTranslations } from '../common/translations';
 import { getAllTrackersRequest } from '../utils/requestHandler';
 import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
