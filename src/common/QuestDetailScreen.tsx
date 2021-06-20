@@ -137,7 +137,7 @@ export default function QuestDetailScreen({ route }: any) {
                 <Avatar.Image
                   style={styles.authorAvatar}
                   theme={{colors: {primary: Colors.primary}}}
-                  source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}
+                  source={{uri: `${BACKENDIP}/image/get/${quest.ownerImageId}`}}
                 />
               }
               {

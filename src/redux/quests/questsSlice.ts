@@ -21,7 +21,6 @@ export const questsSlice = createSlice({
         setLocalQuests: (state, action: PayloadAction<QuestHeader[]>) => {
             state.localQuests = action.payload
         },
-
         setAcceptedQuests: (state, action: PayloadAction<QuestTracker[]>) => {
             state.acceptedQuests = action.payload
         },
@@ -30,19 +29,14 @@ export const questsSlice = createSlice({
                 state.acceptedQuests.push(action.payload)
             }
         },
-        //loadPath: (state, action: PayloadAction<QuestPath>) => {
-        //    state.acceptedQuests = state.acceptedQuests.map(quest => quest.id === action.payload.id ? action.payload : quest)
-        //},
-
-
         pinQuest: (state, action: PayloadAction<QuestTracker>) => {
             state.acceptedQuests = state.acceptedQuests.map(quest => quest.trackerId === action.payload.trackerId ? action.payload : quest)
             if (!state.acceptedQuests.find(quest => quest.trackerId === action.payload.trackerId)) {
                 console.log('Trying to track not yet accepted quest.')
-                state.acceptedQuests.push(action.payload)
+            } else {
+                state.pinnedQuest = action.payload;
+                saveItemLocally('PinnedQuestTracker', JSON.stringify(action.payload)).then(() => {}, () => {});
             }
-            state.pinnedQuest = action.payload;
-            saveItemLocally('PinnedQuestTracker', JSON.stringify(action.payload)).then(() => {}, () => {});
         },
         clearQuestState: (state) => {
             state.pinnedQuest = undefined
