@@ -5,9 +5,10 @@ import { ButtonOutline } from '../common/ButtonOutline';
 import { StatChips } from './StatChips';
 import { LevelBar } from './LevelBar';
 import { Image } from 'react-native';
-import { getImageAddress } from '../utils/requestHandler';
+import { getImageAddress, userUpdateImage } from '../utils/requestHandler';
 import { ImagePicker } from '../common/ImagePicker';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 interface ProfileTopProps {
   ownProfile?: boolean,
@@ -24,14 +25,19 @@ interface ProfileTopProps {
   }
 }
 export const ProfileTop = ({following, ownProfile, friends, profileData} : ProfileTopProps) => {
-  const [image, setImage] = useState<string>("");
+  const [image, setImage] = useState<string>(ownProfile ? getImageAddress(profileData.profileImageId, profileData.username): "");
+  const [base64, setBase64] = useState<string>();
+
+  useEffect(() => {
+    base64 && userUpdateImage(base64)
+  }, [base64])
   return(
-    <View>
+    <View style={{marginBottom: 35}}>
       <View style={style.outerWrapper}>
         <View style={style.profileImage}>
           {
             ownProfile ? 
-              <ImagePicker aspect={[4, 4]} image={image} setImage={setImage} style={style.profileImage} />
+              <ImagePicker setBase64={setBase64} aspect={[4, 4]} image={image} setImage={setImage} style={style.profileImage} />
               : <Image source={{uri: getImageAddress(profileData.profileImageId, profileData.username)}} style={style.profileImage} />
               
           }
