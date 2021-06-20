@@ -4,6 +4,7 @@ import { StyleSheet, Text, StatusBar, Image, ImageSourcePropType, SafeAreaView, 
 import { Bubble, GiftedChat, IMessage, Send } from 'react-native-gifted-chat';
 import { appendPersonalChat, loadFromApi, loadPersonalChat } from '../../redux/chat/chatSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { Colors } from '../../styles';
 import { primary, primaryLight, secondary } from '../../styles/colors';
 import { chatGetRequest, chatSendTextRequest, getImageAddress } from '../../utils/requestHandler';
 
@@ -23,7 +24,6 @@ export const ChatPersonal: React.FC = () => {
         userTargetId: string,
     }}, 'params'>>();
 
-    const navigation = useNavigation();
     const dispatch = useAppDispatch();
     const chats = useAppSelector(state => state.chat.loadedChats)
     const user = useAppSelector(state => state.authentication.user)
@@ -41,8 +41,9 @@ export const ChatPersonal: React.FC = () => {
                     name: route.params.userName
                 },
                 self: {
-                    avatar: user ? getImageAddress(user.image) : '',
-                    name: user?.userName || ''
+                    avatar: !user ? 'None' :
+                            getImageAddress(user.image, route.params.userName),
+                    name: user?.userName || 'None'
                 },                
                 messages: res.messages
             })));
@@ -50,7 +51,7 @@ export const ChatPersonal: React.FC = () => {
     }, [])
 
     useEffect(() => {
-        setMessages(chats.find(chat => chat[0] === route.params.userTargetId)?.[1] || [])
+        setMessages(chats.find(chat => chat.targetId === route.params.userTargetId)?.messages || [])
     }, [chats])
 
     const onSend = useCallback((newMessages: IMessage[] = []) => {
@@ -60,10 +61,7 @@ export const ChatPersonal: React.FC = () => {
         
         //@ts-ignore
         dispatch(appendPersonalChat([route.params.userTargetId, newMessages.map(m => ({...m, createdAt: m.createdAt.toString()}))]))
-        /* dispatch(loadPersonalChat({
-            otherId: route.params.params.userTargetId,
-            messages: GiftedChat.append(messages, newMessages)
-        })) */
+
     }, [])
 
     return (
@@ -71,41 +69,12 @@ export const ChatPersonal: React.FC = () => {
 
             
             <GiftedChat 
-                //bottomOffset={-200}
                 messages={messages}
                 onSend={messages => onSend(messages)}
                 user={{
                     _id: selfUserId,
                 }}
-                /* minInputToolbarHeight={100} */
-                /* renderInputToolbar={props => (
-                
-                    <KeyboardAvoidingView
-                        contentContainerStyle={{
-                            backgroundColor: '#0f0'
-                        }}
-                        behavior='padding'
-                    >
 
-                    
-                    <View style={{
-                        margin: 20,
-                        height: 50
-                    }}>
-                        <TextInput style={{
-                            height: '100%',
-                        borderRadius: 100,
-                        backgroundColor: '#f00'
-                        
-                    }}/>
-                    </View>
-                    <View style={{
-                        margin: 20,
-                        height: 200
-                    }}>
-                    </View>
-                    </KeyboardAvoidingView>
-                )} */
                 renderBubble={props => (<Bubble
                     {...props/* DO NOT EDIT THIS
                     // line below literally does not work otherwise and

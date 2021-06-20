@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     borderRadius: 100000, //This is a large number
     width: imageSize,
     height: imageSize,
-    resizeMode: 'contain'
+    resizeMode: 'cover'
   },
   singleChatContainer: {
     borderBottomWidth: 1,

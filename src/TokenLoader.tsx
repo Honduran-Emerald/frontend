@@ -15,6 +15,7 @@ import { loadItemLocally } from './utils/SecureStore';
 import { QuestTracker } from './types/quest';
 import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';
+import { Text } from 'react-native'
 
 
 i18n.fallbacks = true;
@@ -106,7 +107,7 @@ export const TokenLoader = () => {
 
   return (
 
-    (isLoading || checkingToken) ? (<LoadingScreen/>) : (
+    (isLoading || checkingToken) ? (<><Text>{JSON.stringify(isLoading)}{JSON.stringify(checkingToken)}</Text><LoadingScreen/></>) : (
         <NavigationContainer ref={navigationRef}>
         {token ? (
             <ExpoNotificationWrapper navigationRef={navigationRef} />

@@ -48,8 +48,11 @@ export const chatSlice = createSlice({
     },
 
     loadPersonalChat: (state, action: PayloadAction<{otherId: string, messages: IMessage[]}>) => {
-      state.loadedChats = state.loadedChats.filter(chat => chat[0] !== action.payload.otherId)
-      state.loadedChats.push([action.payload.otherId, action.payload.messages])
+      state.loadedChats = state.loadedChats.filter(chat => chat.targetId !== action.payload.otherId)
+      state.loadedChats.push({
+        targetId: action.payload.otherId,
+        messages: action.payload.messages
+      })
       const previewObject = state.chatsPreviewList?.find(cp => cp.userId === action.payload.otherId)
       if (previewObject) {
         previewObject.lastMessageText = action.payload.messages[0].text
@@ -69,23 +72,26 @@ export const chatSlice = createSlice({
       },
       messages: ChatMessage[]
     }>) => {
-      state.loadedChats = state.loadedChats.filter(chat => chat[0] !== action.payload.other.id)
-      state.loadedChats.push([action.payload.other.id, action.payload.messages.map(
-        (message, idx) => ({
-            _id: idx,
-            text: message.text,
-            //image: 'https://live.staticflickr.com/398/19809452730_bb17f07d2c_b.jpg', // Do this to add images
-            createdAt: message.creationTime,
-            user: (message.sender !== action.payload.other.id) ? {
-                _id: 1,
-                avatar: action.payload.self.avatar,
-                name: action.payload.self.name
-            } : {
-                _id: 2,
-                avatar: action.payload.other.avatar,
-                name: action.payload.other.name
-            }
-        })) || []])
+      state.loadedChats = state.loadedChats.filter(chat => chat.targetId !== action.payload.other.id)
+      state.loadedChats.push({
+        targetId: action.payload.other.id,
+        messages: action.payload.messages.map(
+          (message, idx) => ({
+              _id: idx,
+              text: message.text,
+              //image: 'https://live.staticflickr.com/398/19809452730_bb17f07d2c_b.jpg', // Do this to add images
+              createdAt: message.creationTime,
+              user: (message.sender !== action.payload.other.id) ? {
+                  _id: 1,
+                  avatar: action.payload.self.avatar,
+                  name: action.payload.self.name
+              } : {
+                  _id: 2,
+                  avatar: action.payload.other.avatar,
+                  name: action.payload.other.name
+              }
+          })) || []
+      })
         const previewObject = state.chatsPreviewList?.find(cp => cp.userId === action.payload.other.id)
         if (previewObject) {
           previewObject.lastMessageText = action.payload.messages[0].text
@@ -94,8 +100,8 @@ export const chatSlice = createSlice({
         }
     },
     appendPersonalChat: (state, action: PayloadAction<[string, IMessage[]]>) => {
-      //@ts-ignore
-      state.loadedChats.find(chat => chat[0] === action.payload[0])?.[1].unshift(...action.payload[1])
+      
+      state.loadedChats.find(chat => chat.targetId === action.payload[0])?.messages.unshift(...action.payload[1])
       const previewObject = state.chatsPreviewList?.find(cp => cp.userId === action.payload[0])
       if (previewObject) {
         previewObject.lastMessageText = action.payload[1][0].text
@@ -124,10 +130,10 @@ export const chatSlice = createSlice({
         state.chatsPreviewList?.unshift(preview)
       }
 
-      let dm = state.loadedChats.find(chat => chat[0] === action.payload.Sender)
+      let dm = state.loadedChats.find(chat => chat.targetId === action.payload.Sender)
       if (dm) {
-        dm[1].unshift({
-          _id: dm[1].length,
+        dm.messages.unshift({
+          _id: dm.messages.length,
           createdAt: action.payload.CreationTime,
           text: action.payload.Text,
           user: {

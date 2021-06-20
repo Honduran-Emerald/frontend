@@ -6,6 +6,7 @@ import { NavigationState } from '@react-navigation/routers';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { useAppSelector } from '../../redux/hooks';
 import { getImageAddress } from '../../utils/requestHandler';
+import { Colors } from '../../styles';
 
 export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
 
@@ -21,7 +22,7 @@ export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
           {chatsPreviewList && chatsPreviewList.map((val, idx) => 
             <TouchableOpacity onPress={() => navigation.navigate('ChatPersonal', {
                                                                       userName: val.username,
-                                                                      userImgSource: getImageAddress(val.userImageId),
+                                                                      userImgSource: getImageAddress(val.userImageId, val.username),
                                                                       userTargetId: val.userId
                                                                     })}
                               key={idx}>
@@ -29,7 +30,7 @@ export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
               <ChatSingleElement 
                 userName={val.username} 
                 lastMessage={val.lastMessageText} 
-                userImgSource={getImageAddress(val.userImageId)} 
+                userImgSource={getImageAddress(val.userImageId, val.username)} 
                 />
 
             </TouchableOpacity>

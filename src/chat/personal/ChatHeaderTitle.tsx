@@ -16,7 +16,7 @@ export const ChatHeaderTitle: React.FC<ChatHeaderTitleProps> = ({ userImgSource,
     return (
         <View style={styles.header}>
             <Image source={{
-                uri: getImageAddress(userImgSource)
+                uri: getImageAddress(userImgSource, userName)
             }} style={styles.image}/>
             <Text>{userName}</Text>
         </View>

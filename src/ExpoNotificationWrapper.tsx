@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { Subscription } from 'expo-sensors/build/Pedometer';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { ChatWrapperNavigator } from './ChatWrapperNavigator';
-import { invalidatemessagingtokenRequest, userUpdatemessagingtoken } from './utils/requestHandler';
+import { getImageAddress, invalidatemessagingtokenRequest, userUpdatemessagingtoken } from './utils/requestHandler';
 import { getMessage } from './redux/chat/chatSlice';
 import { ChatTextMessage } from './types/general';
 import { useNavigation } from '@react-navigation/native';
@@ -51,8 +51,8 @@ export const ExpoNotificationWrapper: React.FC<{navigationRef: any}> = ({ naviga
 
       dispatch(getMessage(response.notification.request.content.data as unknown as ChatTextMessage))
       navigationRef?.current.navigate('ChatPersonal', {
-        userName: response.notification.request.content.data.Sender,
-        userImgSource: '',//response.notification.request.content.data.ImageID,
+        userName: 'TODO: Username', //response.notification.request.content.data.Sender,
+        userImgSource: getImageAddress(null, 'Username'),//response.notification.request.content.data.ImageID,
         userTargetId: response.notification.request.content.data.Sender, 
       })
     })
