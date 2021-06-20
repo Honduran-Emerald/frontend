@@ -67,7 +67,7 @@ export const chatSendTextRequest = (userId: string, text: string) => (request('/
 }))
 
 // /chat/send/image
-export const chatSendImamgeRequest = (userId: string, binaryImage: string) => (request('/chat/send/image', 'POST', {
+export const chatSendImageRequest = (userId: string, binaryImage: string) => (request('/chat/send/image', 'POST', {
   userId: userId,
   binaryImage: binaryImage
 }))
