@@ -4,39 +4,54 @@ import { ButtonGradient } from '../common/ButtonGradient';
 import { ButtonOutline } from '../common/ButtonOutline';
 import { StatChips } from './StatChips';
 import { LevelBar } from './LevelBar';
+import { Image } from 'react-native';
+import { getImageAddress } from '../utils/requestHandler';
+import { ImagePicker } from '../common/ImagePicker';
+import { useState } from 'react';
 
 interface ProfileTopProps {
-  following?: boolean,
   ownProfile?: boolean,
+  following?: boolean,
   friends? : boolean,
-  followers: number,
-  username: string,
-  questsCreated: number,
-  questsPlayed: number,
-  level: number,
-  xp: number,
+  profileData: {
+    username: string,
+    profileImageId: string,
+    followers: number,
+    questsCreated: number,
+    questsPlayed: number,
+    level: number,
+    xp: number,
+  }
 }
-export const ProfileTop = ({following, ownProfile, friends, followers, username, questsCreated, questsPlayed, level, xp} : ProfileTopProps) => {
+export const ProfileTop = ({following, ownProfile, friends, profileData} : ProfileTopProps) => {
+  const [image, setImage] = useState<string>("");
   return(
     <View>
       <View style={style.outerWrapper}>
-        <View style={style.profileImage} />
+        <View style={style.profileImage}>
+          {
+            ownProfile ? 
+              <ImagePicker aspect={[4, 4]} image={image} setImage={setImage} style={style.profileImage} />
+              : <Image source={{uri: getImageAddress(profileData.profileImageId, profileData.username)}} style={style.profileImage} />
+              
+          }
+        </View>
         <View style={style.buttonGroup}>
-          <Text style={style.username}>{username}</Text>
+          <Text style={style.username}>{profileData.username}</Text>
           {
             ownProfile ? 
               <ButtonOutline label='Edit Profile' onPress={() => {}} /> : 
               (
                 <>
-                  {following && <ButtonOutline label='Unfollow' onPress={() => {}} />}
+                  {following ? <ButtonOutline label='Unfollow' onPress={() => {}} /> : <ButtonGradient label='Follow' onPress={() => {}}/>}
                   {friends && <ButtonGradient label='Message' onPress={() => {}} />}
                 </>
               )
           }
         </View>
       </View>
-      <StatChips followers={followers} questsCreated={questsCreated} questsPlayed={questsPlayed}/>
-      <LevelBar level={level} xp={xp} />
+      <StatChips followers={profileData.followers} questsCreated={profileData.questsCreated} questsPlayed={profileData.questsPlayed}/>
+      <LevelBar level={profileData.level} xp={profileData.xp} />
     </View>
   );
 }
@@ -52,7 +67,7 @@ const style = StyleSheet.create({
     height: 120,
     width: 120,
     borderRadius: 60,
-    backgroundColor: 'darkgreen'
+    zIndex: 20
   },
   username: {
     textAlign: 'center',
