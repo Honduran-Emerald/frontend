@@ -70,18 +70,21 @@ export interface PrototypeModuleBase {
   
 }
 
-export interface PrototypeChoiceModule extends PrototypeModuleBase{
+export interface PrototypeChoiceModule extends PrototypeModuleBase {
+    type: 'Choice'
     choices: {
         text: string,
         nextModuleReference: number | null,
     }[]
 }
 
-export interface PrototypeStoryModule extends PrototypeModuleBase{  
+export interface PrototypeStoryModule extends PrototypeModuleBase {  
+    type: 'Story'
     nextModuleReference: number | null,
 }
 
-export interface PrototypeEndingModule extends PrototypeModuleBase{
+export interface PrototypeEndingModule extends PrototypeModuleBase {
+    type: 'Ending',
     endingFactor: number,
 }
 
