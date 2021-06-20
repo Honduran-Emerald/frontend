@@ -9,7 +9,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
 import { QuestHeader, QuestTracker } from '../types/quest';
-import { createTrackerRequest } from '../utils/requestHandler';
+import { createTrackerRequest, getImageAddress } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
@@ -132,22 +132,11 @@ export default function QuestDetailScreen({ route }: any) {
           }
           <TouchableNativeFeedback onPress={() => { alert('Go to profile') }}>
             <View style={styles.authorView}>
-              {
-                quest.ownerImageId &&
-                <Avatar.Image
-                  style={styles.authorAvatar}
-                  theme={{colors: {primary: Colors.primary}}}
-                  source={{uri: `${BACKENDIP}/image/get/${quest.ownerImageId}`}}
-                />
-              }
-              {
-                !quest.ownerImageId &&
-                <Avatar.Image
-                  style={styles.authorAvatar}
-                  theme={{colors: {primary: Colors.primary}}}
-                  source={require('../../assets/background.jpg')}
-                />
-              }
+              <Avatar.Image
+                style={styles.authorAvatar}
+                theme={{colors: {primary: Colors.primary}}}
+                source={{uri: getImageAddress(quest.ownerImageId, quest.ownerName)}}
+              />
               <View>
                 <Text style={styles.authorName}>
                   {quest.ownerName}
