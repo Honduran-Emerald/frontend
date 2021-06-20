@@ -103,5 +103,8 @@ export const createTrackerRequest = (questId: string) => (request('/play/create'
 // /user/updatemessagingtoken
 export const userUpdatemessagingtoken = (token: string) => (request('/user/updatemessagingtoken', 'POST', token))
 
+// /user/updateImage
+export const userUpdateImage = (base64: string) => (request('/user/updateimage', 'POST', base64))
+
 // /user/me
 export const getUserSelfRequest = () => (request('/user/me/'))

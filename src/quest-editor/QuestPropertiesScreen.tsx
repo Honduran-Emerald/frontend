@@ -11,7 +11,6 @@ import I18n from 'i18n-js';
 import { createPutRequest } from '../utils/requestHandler';
 
 export const QuestPropertiesScreen = () => {
-
   const questPrototype = useAppSelector(state => state.editor.questPrototype)
   const questId = useAppSelector(state => state.editor.questId)
   const imagePath = useAppSelector(state => state.editor.imagePath)
@@ -35,7 +34,7 @@ export const QuestPropertiesScreen = () => {
         theme={{colors: {primary: Colors.primary}}} 
         style={[style.container, style.questTitleInput]}
       />
-      <ImagePicker image={imagePath} setImage={(path: any) => dispatch(setImage(path))} style={[style.container, style.imagePicker]}/>
+      <ImagePicker setBase64={(test) => {}} image={imagePath} setImage={(path: any) => dispatch(setImage(path))} style={[style.container, style.imagePicker]}/>
       <View style={[style.container, style.smallInputsGroup]}>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='map-marker' size={16} color='darkgray'/>
