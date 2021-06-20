@@ -1,7 +1,6 @@
 import { Location } from './general';
 
 export interface QuestBase {
-
     id: string,
     title: string,
     description: string,
@@ -13,7 +12,6 @@ export interface QuestBase {
     agentProfileName: string,
     locationName: string,
     approximateTime: string,
-
 }
 
 /**
@@ -40,26 +38,21 @@ export interface QuestBaseUpdate {
     agentProfileImageId?: string,
     agentProfileName?: string,
     locationName?: string,
-
 }
 
 export interface QuestPath extends QuestHeader {
-
-    modules: {
+    trackerNodes: {
         module: PrototypeModule,
         memento: ModuleMememto
     }[]
-
 }
 
 export type ModuleMememto = any
 
 export interface QuestPrototype extends QuestBase {
-
     approximateTime: string,
     firstModuleReference: number | null,
     modules: PrototypeModule[]
-
 }
 
 export interface PrototypeModuleBase {
@@ -67,7 +60,6 @@ export interface PrototypeModuleBase {
     type: string,
     objective: string,
     components: PrototypeComponent[]
-  
 }
 
 export interface PrototypeChoiceModule extends PrototypeModuleBase {
@@ -91,16 +83,16 @@ export interface PrototypeEndingModule extends PrototypeModuleBase {
 export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
 
 export interface TextComponent {
-    type: 'text',
+    componentType: 'Text',
     text: string,
 }
 
 export interface ImageComponent {
-    type: 'image',
+    componentType: 'Image',
     imageReference: string,
 }
 
-export type PrototypeComponent = TextComponent | ImageComponent
+export type PrototypeComponent = (TextComponent | ImageComponent) & {componentId: string}
 
 export interface QuestTracker {
     questId: string,

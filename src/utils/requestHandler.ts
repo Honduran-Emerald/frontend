@@ -75,11 +75,11 @@ export const chatSendImageRequest = (userId: string, binaryImage: string) => (re
 // /quest/query/
 export const queryQuestsRequest = (offset: number = 0) => (request(`/quest/query/?offset=${offset}`))
 
-// /create/create/
-export const createQuestRequest = () => (request('/create/create/', 'POST', {}))
-
 // /create/query/
 export const createQueryRequest = (offset: number = 0) => (request(`/create/query?offset=${offset}`))
+
+// /create/create/
+export const createQuestRequest = () => (request('/create/create/', 'POST', {}))
 
 // /create/get/
 export const createGetRequest = (questId: string) => (request(`/create/get/?questId=${questId}`))
@@ -100,6 +100,23 @@ export const getAllTrackersRequest = () => (request('/play/query'))
 // /play/create
 export const createTrackerRequest = (questId: string) => (request('/play/create', 'POST', {questId: questId}))
 
+// /play/vote
+export const playVoteRequest = (trackerId: string, vote: 'None' | 'Up' | 'Down') => (request('play/vote', 'POST', {trackerId: trackerId, vote: vote}))
+
+// /play/reset
+export const playResetRequest = (trackerId: string) => (request('/play/reset', 'POST', {trackerId: trackerId}))
+
+// /play/querytrackernodes
+export const queryTrackerNodesRequest = (trackerId: string) => (request(`/play/querytrackernodes?trackerId=${trackerId}`))
+
+// /play/event/position
+
+// /play/event/choice
+export const playEventChoiceRequest = (trackerId: string, choice: number) => (request('/play/event/choice', 'POST', {
+  trackerId: trackerId,
+  choice: choice
+}))
+
 // /user/updatemessagingtoken
 export const userUpdatemessagingtoken = (token: string) => (request('/user/updatemessagingtoken', 'POST', token))
 
@@ -108,3 +125,6 @@ export const userUpdateImage = (base64: string) => (request('/user/updateimage',
 
 // /user/me
 export const getUserSelfRequest = () => (request('/user/me/'))
+
+// /user/get
+export const getUserRequest = (userId: string) => (request(`/user/get?userId=${userId}`))

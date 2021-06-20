@@ -5,11 +5,13 @@ import {List, Searchbar} from 'react-native-paper';
 
 import { Colors } from '../styles';
 import { commonTranslations } from '../common/translations';
-import { getAllTrackersRequest } from '../utils/requestHandler';
+import { getAllTrackersRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
 import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import {pinQuest, setAcceptedQuests} from '../redux/quests/questsSlice';
+import {loadPinnedQuestPath, pinQuest, setAcceptedQuests} from '../redux/quests/questsSlice';
 import {saveItemLocally} from "../utils/SecureStore";
+import { useCallback } from 'react';
+import { useNavigation } from '@react-navigation/core';
 
 export function removeSpecialChars (input: string) {
   if(input) {
@@ -34,6 +36,7 @@ export default function QuestlogScreen() {
 
   i18n.translations = commonTranslations;
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
 
   const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
   const acceptedQuests = useAppSelector((state) => state.quests.acceptedQuests);
@@ -46,6 +49,7 @@ export default function QuestlogScreen() {
   const [activeQuests, setActiveQuests] = React.useState<QuestTracker[]>([]);
   const [oldQuests, setOldQuests] = React.useState<QuestTracker[]>([]);
 
+
   React.useEffect(() => {
     sortTrackers(acceptedQuests);
     setLoading(false);
@@ -56,8 +60,17 @@ export default function QuestlogScreen() {
 
   const setPinnedQuest = (tracker: QuestTracker) => {
     dispatch(pinQuest(tracker));
+    queryTrackerNodesRequest(tracker.trackerId)
+      .then(res => res.json())
+      .then(res => dispatch(loadPinnedQuestPath(res)))
     saveItemLocally('PinnedQuestTracker', JSON.stringify(tracker)).then(() => {}, () => {});
   }
+
+  const loadQuestObjectiveScreen = useCallback((trackerId: string) => {
+    navigation.navigate('GameplayScreen', {
+      trackerId: trackerId
+    })
+  }, [])
 
   const sortTrackers = (trackers: QuestTracker[]) => {
     if(trackers.length === 0) {
@@ -157,7 +170,7 @@ export default function QuestlogScreen() {
                     title={quest.questName}
                     description={quest.objective}
                     key={quest.trackerId}
-                    onPress={() => alert('Open Quest objective screen')}
+                    onPress={() => loadQuestObjectiveScreen(quest.questId)}
                     onLongPress={() => setPinnedQuest(quest)}
                     left={() => <List.Icon color={Colors.background} icon='pin'/>}
                     titleStyle={styles.white}
@@ -169,7 +182,7 @@ export default function QuestlogScreen() {
                     title={quest.questName}
                     description={quest.objective}
                     key={quest.trackerId}
-                    onPress={() => alert('Open Quest objective screen')}
+                    onPress={() => loadQuestObjectiveScreen(quest.questId)}
                     onLongPress={() => setPinnedQuest(quest)}
                   />
               )
@@ -189,7 +202,7 @@ export default function QuestlogScreen() {
                   title={quest.questName}
                   description={quest.author}
                   key={quest.trackerId}
-                  onPress={() => alert('Open Quest objective screen')}
+                  onPress={() => loadQuestObjectiveScreen(quest.questId)}
                 />
               )
             }
