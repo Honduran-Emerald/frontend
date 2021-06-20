@@ -7,7 +7,7 @@ import { Colors, Containers } from '../styles';
 import { Avatar } from 'react-native-paper';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { BACKENDIP } from '../../GLOBALCONFIG';
+import { getImageAddress } from '../utils/requestHandler';
 
 interface QuestMarkerProps {
   quest: QuestHeader;
@@ -36,22 +36,11 @@ export const QuestMarker : React.FC<QuestMarkerProps> = ({quest, showPreview, se
                 <Text>Votes: {quest.votes}</Text>
                 <View style={[styles.creator]}>
                   <Text style={styles.votes} numberOfLines={1}>{quest.ownerName.length > 15 ? quest.ownerName.substr(0, 15) + '...' : quest.ownerName}</Text>
-                  {
-                    quest.ownerImageId &&
-                    <Avatar.Image
-                      size={30}
-                      theme={{colors: {primary: Colors.primary}}}
-                      source={{uri: `${BACKENDIP}/image/get/${quest.ownerImageId}`}}
-                    />
-                  }
-                  {
-                    !quest.ownerImageId &&
-                    <Avatar.Image
-                      size={30}
-                      theme={{colors: {primary: Colors.primary}}}
-                      source={require('../../assets/background.jpg')}
-                    />
-                  }
+                  <Avatar.Image
+                    size={30}
+                    theme={{colors: {primary: Colors.primary}}}
+                    source={{uri: getImageAddress(quest.ownerImageId, quest.ownerName)}}
+                  />
                 </View>
               </View>
             </View>
