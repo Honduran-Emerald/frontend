@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { PrototypeComponent } from '../types/quest';
 import { ImageComponent } from './components/ImageComponent';
 import { TextComponent } from './components/TextComponent';
@@ -18,11 +19,11 @@ export const ComponentRenderer: React.FC<ComponentRendererProps> = ({ components
   return (
     <> 
       {components.map(component => {
-        switch (component.type) {
-          case 'text':
-            return <TextComponent data={component}/>;
-          case 'image':
-            return <ImageComponent data={component}/>;
+        switch (component.componentType) {
+          case 'Text':
+            return <TextComponent key={component.componentId} data={component}/>;
+          case 'Image':
+            return <ImageComponent key={component.componentId} data={component}/>;
         }
       })}
     </>

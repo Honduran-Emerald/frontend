@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { View } from 'react-native';
 import { Text } from 'react-native';
 import { FlatList } from 'react-native';
@@ -9,16 +10,34 @@ export const GameplayScreen : React.FC = () => {
 
   const pinnedQuestPath = useAppSelector(state => state.quests.pinnedQuestPath)
 
+  useEffect(() => {
+    console.log(pinnedQuestPath)
+  })
+
   return (
     <View>
       {/* avatar image + name, button to quest settings(vote, remove quest) */}
       <FlatList 
-        data={pinnedQuestPath?.modules} 
+        data={pinnedQuestPath?.trackerNodes.reverse()} 
         renderItem={
           ({ item }) => 
             <ModuleRenderer module={item} />
         }
-        inverted/>
+        style={{
+          width: '100%',
+        }}
+        contentContainerStyle={{
+          alignItems: 'center',
+          minHeight: '100%',
+          width: '100%',
+          paddingTop: 50
+        }}
+        
+        //@ts-ignore
+        keyExtractor={item => item.module.moduleId.toString()}
+        inverted
+        />
+        
     </View>
   )
 }
