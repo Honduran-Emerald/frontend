@@ -63,7 +63,8 @@ export default function MainAppNavigator() {
       })}
       tabBarOptions={{
         showLabel: false,
-        activeTintColor: "#1D79AC"
+        activeTintColor: "#1D79AC",
+        keyboardHidesTabBar: true
       }}
     >
       <Tab.Screen name="Home" component={DiscoveryNavigator}/>
