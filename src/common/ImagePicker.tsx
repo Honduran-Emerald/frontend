@@ -5,7 +5,14 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as PickImage from 'expo-image-picker';
 import { Colors, Containers } from '../styles';
 
-export const ImagePicker : React.FC<{aspect? : [number, number], image : string, setImage : (path: string) => void, style? : ViewStyle | ViewStyle[]}> = ({aspect, image, setImage, style}) => {
+interface ImagePickerProps {
+  aspect? : [number, number], 
+  setBase64: (base64: string) => void, 
+  image : string, 
+  setImage : (path: string) => void, 
+  style? : ViewStyle | ViewStyle[]
+}
+export const ImagePicker : React.FC<ImagePickerProps> = ({aspect, image, setImage, setBase64, style}) => {
   const [permissionGranted, setPermissionGranted] = useState<boolean>(false);
 
   const requestPermission = async () => {
@@ -26,13 +33,13 @@ export const ImagePicker : React.FC<{aspect? : [number, number], image : string,
       mediaTypes: PickImage.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: aspect ? aspect : [9, 5],
-      quality: 1
+      quality: 1,
+      base64: true
     });
-
-    console.log(result);
     
     if(!result.cancelled) {
       setImage(result.uri)
+      result.base64 && setBase64(result.base64)
     }
   }
 
