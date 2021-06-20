@@ -6,43 +6,70 @@ import Constants from 'expo-constants';
 import { Platform, Text, View } from 'react-native';
 import { useState } from 'react';
 import { Subscription } from 'expo-sensors/build/Pedometer';
-import { useAppSelector } from './redux/hooks';
+import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { ChatWrapperNavigator } from './ChatWrapperNavigator';
+import { invalidatemessagingtokenRequest, userUpdatemessagingtoken } from './utils/requestHandler';
+import { getMessage } from './redux/chat/chatSlice';
+import { ChatTextMessage } from './types/general';
+import { useNavigation } from '@react-navigation/native';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowAlert: false,
     shouldPlaySound: true,
-    shouldSetBadge: true
+    shouldSetBadge: false
   })
 })
 
-export const ExpoNotificationWrapper: React.FC = () => {
+export const ExpoNotificationWrapper: React.FC<{navigationRef: any}> = ({ navigationRef }) => {
 
-
-  const [expoPushToken, setExpoPushToken] = useState<string | undefined>('');
-  const [notification, setNotification] = useState<any>(false);
   const notificationListener = useRef<Subscription>();
   const responseListener = useRef<Subscription>();
+  const tokenListener = useRef<Subscription>();
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
+    registerForPushNotificationsAsync().then(token => {
+      if (token) userUpdatemessagingtoken(token).then(
+        () => console.log('Set token to', token)
+      )
+    })
+    tokenListener.current = Notifications.addPushTokenListener((token) => {
+      userUpdatemessagingtoken(token.data).then(
+        () => console.log('Updated token to', token)
+      )
+    })
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification)
+      console.log(notification)
+      dispatch(getMessage(notification.request.content.data as unknown as ChatTextMessage))
     })
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log('wolooolo', response)
+      console.log(response)
+
+      dispatch(getMessage(response.notification.request.content.data as unknown as ChatTextMessage))
+      navigationRef?.current.navigate('ChatPersonal', {
+        userName: response.notification.request.content.data.Sender,
+        userImgSource: '',//response.notification.request.content.data.ImageID,
+        userTargetId: response.notification.request.content.data.Sender, 
+      })
     })
 
     return () => {
+      if (tokenListener.current) {
+        Notifications.removePushTokenSubscription(tokenListener.current)
+      }
       if (notificationListener.current) {
         Notifications.removeNotificationSubscription(notificationListener.current);
       }
       if (responseListener.current) {
         Notifications.removeNotificationSubscription(responseListener.current);
       }
+      Notifications.getExpoPushTokenAsync().then(
+        (token) => invalidatemessagingtokenRequest(token.data)
+      )
     }
   }, [])
 

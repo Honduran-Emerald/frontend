@@ -20,12 +20,10 @@ export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
         <View style={styles.chats}>
           {chatsPreviewList && chatsPreviewList.map((val, idx) => 
             <TouchableOpacity onPress={() => navigation.navigate('ChatPersonal', {
-                                                                    screen: 'ChatPersonal',
-                                                                    params: {
                                                                       userName: val.username,
                                                                       userImgSource: getImageAddress(val.userImageId),
                                                                       userTargetId: val.userId
-                                                                    }})}
+                                                                    })}
                               key={idx}>
 
               <ChatSingleElement 

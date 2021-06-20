@@ -25,6 +25,8 @@ export const TokenLoader = () => {
   const [checkingToken, setCheckingToken] = React.useState<boolean>(true);
   const [hasRenewed, setHasRenewed] = React.useState<boolean>(false);
 
+  const navigationRef = React.useRef(null);
+
 
   const { token } = useAppSelector((state) => state.authentication);
   const dispatch = useAppDispatch();
@@ -105,9 +107,9 @@ export const TokenLoader = () => {
   return (
 
     (isLoading || checkingToken) ? (<LoadingScreen/>) : (
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
         {token ? (
-            <ExpoNotificationWrapper />
+            <ExpoNotificationWrapper navigationRef={navigationRef} />
         ) : (
             <AuthNavigator/>
         )}

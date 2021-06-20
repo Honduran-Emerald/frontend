@@ -2,10 +2,10 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, StatusBar, Image, ImageSourcePropType, SafeAreaView, KeyboardAvoidingView, View, TextInput } from 'react-native';
 import { Bubble, GiftedChat, IMessage, Send } from 'react-native-gifted-chat';
-import { loadPersonalChat } from '../../redux/chat/chatSlice';
+import { appendPersonalChat, loadFromApi, loadPersonalChat } from '../../redux/chat/chatSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { primary, primaryLight, secondary } from '../../styles/colors';
-import { chatGetRequest, getImageAddress } from '../../utils/requestHandler';
+import { chatGetRequest, chatSendTextRequest, getImageAddress } from '../../utils/requestHandler';
 
 interface ChatPersonalInterface {
     route: any,
@@ -17,13 +17,11 @@ const otherUserId = 2;
 
 export const ChatPersonal: React.FC = () => {
 
-    const route = useRoute<RouteProp<{ params: {params: {
+    const route = useRoute<RouteProp<{ params: {
         userName: string,
         userImgSource: string,
         userTargetId: string,
-    }}}, 'params'>>();
-
-    console.log('route', route.params.params)
+    }}, 'params'>>();
 
     const navigation = useNavigation();
     const dispatch = useAppDispatch();
@@ -34,34 +32,38 @@ export const ChatPersonal: React.FC = () => {
 
     useEffect(() => {
 
-        chatGetRequest(route.params.params.userTargetId, 0)
+        chatGetRequest(route.params.userTargetId, 0)
             .then(res => res.json())
-            .then(res => dispatch(loadPersonalChat([route.params.params.userTargetId, res.messages])));
+            .then(res => dispatch(loadFromApi({
+                other: {
+                    id: route.params.userTargetId,
+                    avatar: route.params.userImgSource,
+                    name: route.params.userName
+                },
+                self: {
+                    avatar: user ? getImageAddress(user.image) : '',
+                    name: user?.userName || ''
+                },                
+                messages: res.messages
+            })));
 
     }, [])
 
     useEffect(() => {
-        console.log(user?.image, route.params.params.userImgSource)
-        setMessages(chats.find(chat => chat[0] === route.params.params.userTargetId)?.[1].map(
-                (message, idx) => ({
-                    _id: idx,
-                    text: message.text,
-                    //image: 'https://live.staticflickr.com/398/19809452730_bb17f07d2c_b.jpg', // Do this to add images
-                    createdAt: message.creationTime,
-                    user: (message.sender === user?.userId) ? {
-                        _id: selfUserId,
-                        avatar: getImageAddress(user.image),
-                        name: user.userName
-                    } : {
-                        _id: otherUserId,
-                        avatar: route.params.params.userImgSource,
-                        name: route.params.params.userName
-                    }
-                })) || [])
-    }, [chats, user])
+        setMessages(chats.find(chat => chat[0] === route.params.userTargetId)?.[1] || [])
+    }, [chats])
 
-    const onSend = useCallback((messages = []) => {
-        setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+    const onSend = useCallback((newMessages: IMessage[] = []) => {
+        setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
+
+        newMessages.forEach(message => chatSendTextRequest(route.params.userTargetId, message.text))
+        
+        //@ts-ignore
+        dispatch(appendPersonalChat([route.params.userTargetId, newMessages.map(m => ({...m, createdAt: m.createdAt.toString()}))]))
+        /* dispatch(loadPersonalChat({
+            otherId: route.params.params.userTargetId,
+            messages: GiftedChat.append(messages, newMessages)
+        })) */
     }, [])
 
     return (

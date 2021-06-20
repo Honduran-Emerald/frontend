@@ -4,7 +4,7 @@ import { setToken, unsetToken } from "../redux/authentication/authenticationSlic
 import { QuestPrototype } from "../types/quest";
 
 
-const request = (target: string, type: string = 'GET', body?: object) => {
+const request = (target: string, type: string = 'GET', body?: any) => {
 
   const token = store.getState().authentication.token;
 
@@ -32,7 +32,6 @@ export const loginRequest = (email: string, hashed_password: string) => (request
   password: hashed_password
 }))
 
-
 // /auth/create/
 export const registerRequest = (username: string, email: string, hashed_password: string) => (request('/auth/create/', 'POST', {
   username: username,
@@ -50,6 +49,8 @@ export const renewRequest = () : void => {
   })
 }
 
+export const invalidatemessagingtokenRequest = (FMToken: string) => (request('/auth/invalidatemessagingtoken', 'POST', FMToken))
+
 // /chat/get/
 export const chatGetRequest = (userId: string, offset: number) => (request(`/chat/get?userId=${userId}&offset=${offset}`))
 
@@ -57,16 +58,16 @@ export const chatGetRequest = (userId: string, offset: number) => (request(`/cha
 export const chatQueryRequest = () => (request('/chat/query'))
 
 // /chat/send/text
-export const chatSendTextRequest = (userId: string, text: string) => {request('/chat/send/text', 'POST', {
+export const chatSendTextRequest = (userId: string, text: string) => (request('/chat/send/text', 'POST', {
   userId: userId,
   text: text
-})}
+}))
 
 // /chat/send/image
-export const chatSendImamgeRequest = (userId: string, binaryImage: string) => {request('/chat/send/image', 'POST', {
+export const chatSendImamgeRequest = (userId: string, binaryImage: string) => (request('/chat/send/image', 'POST', {
   userId: userId,
   binaryImage: binaryImage
-})}
+}))
 
 // /quest/query/
 export const queryQuestsRequest = (offset: number = 0) => (request(`/quest/query/?offset=${offset}`))
@@ -90,11 +91,14 @@ export const createPutRequest = (questId: string, questPrototype: QuestPrototype
 // /create/release/
 export const createPublishRequest = (questId: string) => (request('/create/release/', 'POST', {questId: questId}))
 
-// /user/me
-export const getUserSelfRequest = () => (request('/user/me/'))
-
 // /play/query
 export const getAllTrackersRequest = () => (request('/play/query'))
 
 // /play/create
 export const createTrackerRequest = (questId: string) => (request('/play/create', 'POST', {questId: questId}))
+
+// /user/updatemessagingtoken
+export const userUpdatemessagingtoken = (token: string) => (request('/user/updatemessagingtoken', 'POST', token))
+
+// /user/me
+export const getUserSelfRequest = () => (request('/user/me/'))
