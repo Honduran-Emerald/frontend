@@ -5,19 +5,38 @@ import { ButtonOutline } from '../common/ButtonOutline';
 import { StatChips } from './StatChips';
 import { LevelBar } from './LevelBar';
 
-export const ProfileTop = () => {
+interface ProfileTopProps {
+  following?: boolean,
+  ownProfile?: boolean,
+  friends? : boolean,
+  followers: number,
+  username: string,
+  questsCreated: number,
+  questsPlayed: number,
+  level: number,
+  xp: number,
+}
+export const ProfileTop = ({following, ownProfile, friends, followers, username, questsCreated, questsPlayed, level, xp} : ProfileTopProps) => {
   return(
     <View>
       <View style={style.outerWrapper}>
         <View style={style.profileImage} />
         <View style={style.buttonGroup}>
-          <Text style={style.username}>Username</Text>
-          <ButtonOutline label='Unfollow' onPress={() => {}} />
-          <ButtonGradient label='Message' onPress={() => {}} />
+          <Text style={style.username}>{username}</Text>
+          {
+            ownProfile ? 
+              <ButtonOutline label='Edit Profile' onPress={() => {}} /> : 
+              (
+                <>
+                  {following && <ButtonOutline label='Unfollow' onPress={() => {}} />}
+                  {friends && <ButtonGradient label='Message' onPress={() => {}} />}
+                </>
+              )
+          }
         </View>
       </View>
-      <StatChips followers={200} questsCreated={2000} questsPlayed={100}/>
-      <LevelBar level={2} xp={8000} />
+      <StatChips followers={followers} questsCreated={questsCreated} questsPlayed={questsPlayed}/>
+      <LevelBar level={level} xp={xp} />
     </View>
   );
 }

@@ -32,7 +32,7 @@ export const ProfileScreen = (props: profileProps) => {
   return(
     <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
       <ScrollView contentContainerStyle={style.profile}>
-        <ProfileTop />
+        <ProfileTop following friends followers={200} questsCreated={100} questsPlayed={300} level={2} username={'testusername'} xp={4000} />
           {location && (
             <>
               <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={quests}/>
