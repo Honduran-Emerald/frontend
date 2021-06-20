@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import {StatusBar as StatusBar2, StyleSheet, View} from 'react-native';
+import { StatusBar as StatusBar2, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProfileTop } from './ProfileTop';
 import { Colors } from '../styles';
 import { ScrollMenu } from "../discovery/ScrollMenu";
-import * as Location from "expo-location";
-import { LocationObject } from "expo-location";
 import { StatusBar } from "expo-status-bar";
 import { getLocation } from "../utils/locationHandler";
 import { QuestHeader } from "../types/quest";
 import { queryQuestsRequest } from "../utils/requestHandler";
 import { useAppSelector } from '../redux/hooks';
-import { useDispatch } from 'react-redux';
 
 export default interface profileProps {
     ownProfile: boolean
@@ -29,7 +26,6 @@ export const ProfileScreen = (props: profileProps) => {
       queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
       // Get Location Permission and set initial Location
       getLocation().catch((err: Error) => {});
-      console.log(user?.image)
   },[])
 
   return(
