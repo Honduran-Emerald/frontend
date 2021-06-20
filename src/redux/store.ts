@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import authenticationReducer from './authentication/authenticationSlice';
 import questsReducer from './quests/questsSlice';
 import editorReducer from './editor/editorSlice';
+import chatReducer from './chat/chatSlice';
 import locationReducer from './location/locationSlice';
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
         authentication: authenticationReducer,
         quests: questsReducer,
         editor: editorReducer,
+        chat: chatReducer,
         location: locationReducer,
     },
 })

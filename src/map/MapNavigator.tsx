@@ -22,7 +22,6 @@ export const MapNavigator = () => {
       })}
     >
       <Stack.Screen name='MapScreen' component={MapScreen}/>
-      <Stack.Screen name='QuestCreationScreen' component={QuestCreatorWrapper}/>
       <Stack.Screen name='QuestDetail' component={QuestDetailScreen}/>
     </Stack.Navigator>
   );

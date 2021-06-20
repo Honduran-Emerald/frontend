@@ -11,11 +11,12 @@ import { DiscoveryNavigator } from "./discovery/DiscoveryNavigator";
 
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { logout, setToken } from './redux/authentication/authenticationSlice';
-import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
+import { getUserSelfRequest, invalidatemessagingtokenRequest, queryQuestsRequest } from './utils/requestHandler';
 import QuestlogScreen from './common/QuestlogScreen';
 import { clearQuestState } from './redux/quests/questsSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { Colors } from './styles';
+import { ChatNavigator } from './chat/ChatNavigator';
 import { ProfileNavigator } from './profile/ProfileNavigator';
 import LocationPicker from "./quest-editor/LocationPicker";
 import {Location as LocationType} from "./types/general";
@@ -67,7 +68,7 @@ export default function MainAppNavigator() {
       <Tab.Screen name="Home" component={DiscoveryNavigator}/>
       <Tab.Screen name="Questlog" component={QuestlogScreen}/>
       <Tab.Screen name="Map" component={MapNavigator}/>
-      <Tab.Screen name="Chat" component={LocationPicker} initialParams={{returnLocation: (location: LocationType) => alert(location.latitude + ', ' + location.longitude)}}/>
+      <Tab.Screen name="Chat" component={ChatNavigator}/>
       <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );

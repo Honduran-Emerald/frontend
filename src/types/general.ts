@@ -13,3 +13,15 @@ export interface User {
     questCount: number,
     trackerCount: number
 }
+
+export interface ChatBaseMessage {
+    sender: string,
+    received: boolean,
+    creationTime: Date,
+}
+export interface ChatTextMessage extends ChatBaseMessage {
+    type: 'Text',
+    text: string
+}
+
+export type ChatMessage = ChatTextMessage
