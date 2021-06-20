@@ -7,7 +7,7 @@ import * as Location from "expo-location";
 import {QuestHeader} from "../types/quest";
 import {queryQuestsRequest} from "../utils/requestHandler";
 import {Searchbar} from "react-native-paper";
-import {removeSpecialChars} from "../common/QuestlogScreen";
+import {removeSpecialChars} from "../gameplay/QuestlogScreen";
 import {WideQuestPreview} from "./WideQuestPreview";
 import {useAppSelector} from "../redux/hooks";
 import {getLocation} from "../utils/locationHandler";
