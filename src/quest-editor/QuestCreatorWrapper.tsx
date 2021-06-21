@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { loadQuest } from '../redux/editor/editorSlice';
 import { useAppDispatch } from '../redux/hooks';
-import { Location } from '../types/general';
 import { createQuestRequest } from '../utils/requestHandler';
 import { QuestEditorNavigator } from './QuestEditorNavigator';
 
-export const QuestCreatorWrapper : React.FC<Location> = ({ latitude, longitude }) => {
+interface QuestCreatorWrapperProps {
+  route: {
+    key: string,
+    name: string,
+    params: {
+      screen: string,
+      params: {
+        latitude: number,
+        longitude: number,
+      },
+    },
+  },
+}
+
+export const QuestCreatorWrapper : React.FC<QuestCreatorWrapperProps> = ({ route }) => {
 
   const [questCreated, setQuestCreated] = useState(false);
   const dispatch = useAppDispatch();
@@ -22,8 +35,8 @@ export const QuestCreatorWrapper : React.FC<Location> = ({ latitude, longitude }
         firstModuleReference: 1,
         imageId: '',
         location: {
-          latitude: latitude,
-          longitude: longitude
+          latitude: route.params.params.latitude,
+          longitude: route.params.params.longitude
         },
         locationName: '',
         modules: [],
