@@ -2,26 +2,31 @@ import React from 'react';
 import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 
 import { ModuleRendererProps } from '../ModuleRenderer';
-import { styleGameplay } from '../styleGameplay';
 import { Colors } from '../../styles';
 import { PrototypeChoiceModule } from '../../types/quest';
+import { styleGameplay } from '../styleGameplay';
 
-export const ChoiceModule: React.FC<ModuleRendererProps<PrototypeChoiceModule>> = (props) => {
+interface ChoiceType {
+  text: string
+}
 
-  const [hasChosen, setHasChosen] = React.useState(undefined);
+export const ChoiceModule: React.FC<ModuleRendererProps<PrototypeChoiceModule>> = ({ module}) => {
 
-  const handleClick = (choice: any, index: number) => {
+  const choices: ChoiceType[] = module.module.choices
+
+  const [hasChosen, setHasChosen] = React.useState(module.memento ? module.memento.choice : -1);
+
+  const handleClick = (index: number) => {
     console.log('Pressed ' + (index));
-    setHasChosen(choice);
+    setHasChosen(index);
   }
 
   return (
     <View>
-      <Text style={styleGameplay.bubble}>{props.module.module.objective}</Text>
       {
-        !hasChosen &&
-        props.module.module.choices.map((choice: any, index: number) =>
-          <TouchableNativeFeedback key={index+1} onPress={() => handleClick(choice, index)}>
+        hasChosen === -1 &&
+        module.module.choices.map((choice: any, index: number) =>
+          <TouchableNativeFeedback key={index+1} onPress={() => handleClick(index)}>
             <View style={styles.choice}>
               <Text style={styles.text}>{choice.text}</Text>
             </View>
@@ -29,11 +34,10 @@ export const ChoiceModule: React.FC<ModuleRendererProps<PrototypeChoiceModule>> 
         )
       }
       {
-        hasChosen &&
-        <View style={styles.chosen}>
+        hasChosen !== -1 &&
+        <View style={[styles.chosen, styleGameplay.right]}>
           {
-            // @ts-ignore
-            <Text style={styles.text}>{hasChosen.text}</Text>
+            <Text style={styles.text}>{choices[hasChosen].text}</Text>
           }
         </View>
       }
@@ -42,6 +46,14 @@ export const ChoiceModule: React.FC<ModuleRendererProps<PrototypeChoiceModule>> 
 }
 
 const styles = StyleSheet.create({
+  objective: {
+    backgroundColor: Colors.primary,
+    color: '#FFF',
+    alignItems: 'center',
+    borderRadius: 20,
+    padding: 20,
+    margin: 5,
+  },
   choice: {
     backgroundColor: Colors.primaryLight,
     alignItems: 'center',
@@ -50,10 +62,11 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   chosen: {
+    maxWidth: '70%',
     backgroundColor: Colors.secondary,
     alignItems: 'center',
     borderRadius: 50,
-    padding: 10,
+    padding: 15,
     margin: 5,
   },
   text: {

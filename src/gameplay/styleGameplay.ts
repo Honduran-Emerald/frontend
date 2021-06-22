@@ -1,9 +1,9 @@
-import { StyleSheet } from "react-native";
-import { Colors, Containers } from "../styles";
+import { StyleSheet } from 'react-native';
+import { Colors, Containers } from '../styles';
 
 export const styleGameplay = StyleSheet.create({
   bubble: {
-    width: '70%',
+    maxWidth: '70%',
     backgroundColor: Colors.primary,
     ...Containers.rounded,
     padding: 20,

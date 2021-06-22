@@ -3,12 +3,10 @@ import React, { useState } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import { Dimensions, View } from 'react-native';
-import { Text } from 'react-native';
 import { FlatList } from 'react-native';
 import { FAB } from 'react-native-paper';
-import { Transition } from 'react-native-reanimated';
 import { useAppSelector } from '../redux/hooks';
-import { PrototypeModule, QuestPath, QuestTracker, QuestTrackerNode } from '../types/quest';
+import { QuestPath } from '../types/quest';
 import { queryTrackerNodesRequest } from '../utils/requestHandler';
 import { ModuleRenderer } from './ModuleRenderer';
 import { QuestStatsScreen } from './QuestStatsScreen';
@@ -44,7 +42,7 @@ export const GameplayScreen : React.FC = () => {
       <FlatList 
         data={loadedTrackerNodes?.trackerNodes || []} 
         renderItem={
-          ({ item }) => <ModuleRenderer module={item as QuestTrackerNode} />
+          ({ item, index }) => <ModuleRenderer module={item} index={index} />
         }
         ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref}/>}
         onLayout={(event) => {
@@ -59,7 +57,7 @@ export const GameplayScreen : React.FC = () => {
           width: '100%',
           paddingTop: 50
         }}
-        
+
         keyExtractor={item => item.module.id.toString()}
         inverted
         />
