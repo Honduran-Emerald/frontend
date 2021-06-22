@@ -2,8 +2,8 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { View } from 'react-native';
-import { Text } from 'react-native';
 import { FlatList } from 'react-native';
+
 import { useAppSelector } from '../redux/hooks';
 import { PrototypeModule } from '../types/quest';
 import { queryTrackerNodesRequest } from '../utils/requestHandler';
@@ -31,11 +31,11 @@ export const GameplayScreen : React.FC = () => {
   return (
     <View>
       {/* avatar image + name, button to quest settings(vote, remove quest) */}
-      <FlatList 
-        data={pinnedQuest?.trackerId === route.params.trackerId ? pinnedQuestPath?.trackerNodes.reverse() : loadedTrackerNodes} 
+      <FlatList
+        data={pinnedQuest?.trackerId === route.params.trackerId ? pinnedQuestPath?.trackerNodes.reverse() : loadedTrackerNodes.reverse()}
         renderItem={
-          ({ item }) => 
-            <ModuleRenderer module={item} />
+          ({ item, index }) =>
+            <ModuleRenderer module={item} index={index} />
         }
         style={{
           width: '100%',
@@ -46,11 +46,11 @@ export const GameplayScreen : React.FC = () => {
           paddingHorizontal: 10,
           paddingTop: 50
         }}
-        
+
         keyExtractor={item => item.module.id.toString()}
         inverted
         />
-        
+
     </View>
   )
 }
