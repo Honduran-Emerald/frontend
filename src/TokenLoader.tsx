@@ -9,8 +9,8 @@ import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setToken, setUser } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
 import * as Localization from 'expo-localization';
-import { chatQueryRequest, getAllTrackersRequest, getUserSelfRequest, renewRequest } from './utils/requestHandler';
-import { pinQuest, setAcceptedQuests } from './redux/quests/questsSlice';
+import { chatQueryRequest, getAllTrackersRequest, getUserSelfRequest, queryTrackerNodesRequest, renewRequest } from './utils/requestHandler';
+import { loadPinnedQuestPath, pinQuest, setAcceptedQuests } from './redux/quests/questsSlice';
 import { loadItemLocally } from './utils/SecureStore';
 import { QuestTracker } from './types/quest';
 import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
@@ -67,12 +67,19 @@ export const TokenLoader = () => {
                 acceptedQuests.some((tracker) => {
                   if(tracker.trackerId === oldPinTracker.trackerId) {
                     dispatch(pinQuest(tracker));
+                    queryTrackerNodesRequest(tracker.trackerId)
+                    .then(res => res.json())
+                    .then(res => dispatch(loadPinnedQuestPath(res)));
+                    return true;
                   }
                 })
               } else {
                 acceptedQuests.some((tracker) => {
                   if(!tracker.finished) {
                     dispatch(pinQuest(tracker));
+                    queryTrackerNodesRequest(tracker.trackerId)
+                    .then(res => res.json())
+                    .then(res => dispatch(loadPinnedQuestPath(res)));
                     return true;
                   }
                 });
