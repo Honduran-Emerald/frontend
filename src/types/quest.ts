@@ -70,7 +70,7 @@ export interface PrototypeChoiceModule extends PrototypeModuleBase {
     }[]
 }
 
-export interface PrototypeStoryModule extends PrototypeModuleBase {  
+export interface PrototypeStoryModule extends PrototypeModuleBase {
     type: 'Story'
     nextModuleReference: number | null,
 }
@@ -96,7 +96,14 @@ export interface ImageComponent extends ComponentBase {
     imageReference: string,
 }
 
+export interface ImageComponentResponse extends ComponentBase {
+    componentType: 'Image',
+    imageId: string,
+}
+
 export type PrototypeComponent = TextComponent | ImageComponent
+
+export type PrototypeComponentResponse = TextComponent | ImageComponentResponse
 
 export interface QuestTracker {
     questId: string,

@@ -1,15 +1,15 @@
 import React from 'react';
-import { Text } from 'react-native';
-import { PrototypeComponent } from '../types/quest';
+
+import { PrototypeComponentResponse } from '../types/quest';
 import { ImageComponent } from './components/ImageComponent';
 import { TextComponent } from './components/TextComponent';
 
 
 export interface ComponentRendererProps {
-  components: PrototypeComponent[]
+  components: PrototypeComponentResponse[]
 }
 
-export interface SingleComponentProps<ComponentType extends PrototypeComponent> {
+export interface SingleComponentProps<ComponentType extends PrototypeComponentResponse> {
   data: ComponentType
 }
 
@@ -17,7 +17,8 @@ export const ComponentRenderer: React.FC<ComponentRendererProps> = ({ components
 
 
   return (
-    <> 
+    <>
+      <ImageComponent key={'abseie434'} data={{componentId: 'abseie434', componentType: 'Image', imageId: 'RABN90uqFCUHW8CH'}}/>
       {components.map(component => {
         switch (component.componentType) {
           case 'Text':
