@@ -47,19 +47,6 @@ export interface QuestHeader extends QuestBase {
     finishes: number,
 }
 
-export interface QuestBaseUpdate {
-    approximateTime?: string,
-    title?: string,
-    description?: string,
-    imageId?: string,
-    location?: Location,
-    tags?: string[],
-    agentProfileImageId?: string,
-    agentProfileName?: string,
-    locationName?: string,
-
-}
-
 export interface QuestPath extends QuestHeader {
 
     modules: {
