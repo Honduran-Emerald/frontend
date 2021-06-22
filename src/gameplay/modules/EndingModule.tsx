@@ -1,12 +1,13 @@
 import React from 'react';
 import { Text } from 'react-native';
+import { PrototypeEndingModule } from '../../types/quest';
 import { SingleComponentProps } from '../ComponentRenderer';
 import { ModuleRendererProps } from '../ModuleRenderer';
 import { styleGameplay } from '../styleGameplay';
 
-export const EndingModule: React.FC<ModuleRendererProps> = () => {
+export const EndingModule: React.FC<ModuleRendererProps<PrototypeEndingModule>> = ({ module }) => {
 
   return (
-    <Text style={[styleGameplay.bubble, {alignSelf: 'flex-end', width: '50%', textAlign: 'right'}]}>EndingModule</Text>
+    <Text style={[styleGameplay.bubble, {alignSelf: 'flex-end', width: '50%', textAlign: 'right'}]}>EndingModule: {module.module.id}</Text>
   )
 }
