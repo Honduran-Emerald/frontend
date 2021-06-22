@@ -47,8 +47,7 @@ export const GameplayScreen : React.FC = () => {
           paddingTop: 50
         }}
         
-        //@ts-ignore
-        keyExtractor={item => item.module.moduleId.toString()}
+        keyExtractor={item => item.module.id.toString()}
         inverted
         />
         
