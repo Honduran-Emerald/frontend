@@ -9,7 +9,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
 import { QuestHeader, QuestTracker } from '../types/quest';
-import { createTrackerRequest, getImageAddress } from '../utils/requestHandler';
+import {createPublishRequest, createTrackerRequest, getImageAddress} from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
@@ -91,18 +91,34 @@ export default function QuestDetailScreen({ route }: any) {
           }
           {
             isQuestCreator &&
-            <View style={styles.creatorButtons}>
-              <View style={styles.creatorButton}>
-                <Button 
-                  color={Colors.primary} 
-                  disabled={isButtonDisabled} 
-                  title={i18n.t('editButton')} 
-                  onPress={() => navigation.navigate('QuestEditorScreen', {
-                    questId: quest.id
-                  })}/>
+            <View>
+              <View style={styles.creatorButtons}>
+                <View style={styles.creatorButton}>
+                  <Button
+                    color={Colors.primary}
+                    disabled={isButtonDisabled}
+                    title={i18n.t('editButton')}
+                    onPress={() => navigation.navigate('QuestEditorScreen', {
+                      questId: quest.id
+                    })}
+                  />
+                </View>
+                <View style={styles.creatorButton}>
+                  <Button
+                    color={Colors.primary}
+                    disabled={isButtonDisabled}
+                    title={'Publish Quest'}
+                    onPress={
+                      () => createPublishRequest(quest.id)
+                        .then(res => res.status === 200 ? alert('Quest published') : alert('Server Error'))
+                    }
+                  />
+                </View>
               </View>
-              <View style={styles.creatorButton}>
-                <Button color={Colors.error} disabled={isButtonDisabled} title={i18n.t('deleteButton')} onPress={showModal}/>
+              <View style={styles.creatorButtons}>
+                <View style={styles.creatorButton}>
+                  <Button color={Colors.error} disabled={isButtonDisabled} title={i18n.t('deleteButton')} onPress={showModal}/>
+                </View>
               </View>
             </View>
           }
