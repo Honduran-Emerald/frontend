@@ -1,13 +1,21 @@
 import { StyleSheet } from "react-native";
-import { Colors } from "../styles";
+import { Colors, Containers } from "../styles";
 
 export const styleGameplay = StyleSheet.create({
   bubble: {
-    minWidth: '80%',
+    width: '70%',
     backgroundColor: Colors.primary,
-    borderRadius: 10,
+    ...Containers.rounded,
     padding: 20,
     marginVertical: 10,
     color: '#fff',
+  },
+  right: {
+    alignSelf: 'flex-end',
+    borderTopRightRadius: 3
+  },
+  left: {
+    alignSelf: 'flex-start',
+    borderTopLeftRadius: 3
   }
 })

@@ -27,9 +27,9 @@ export const GameplayScreen : React.FC = () => {
           width: '100%',
         }}
         contentContainerStyle={{
-          alignItems: 'center',
           minHeight: '100%',
           width: '100%',
+          paddingHorizontal: 10,
           paddingTop: 50
         }}
         
