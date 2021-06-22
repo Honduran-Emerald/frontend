@@ -16,7 +16,7 @@ export interface ModuleRendererProps<ModuleType extends PrototypeModule> {
 export const ModuleRenderer: React.FC<ModuleRendererProps<PrototypeModule>> = ({ module }) => {
   
   return (
-    <View>
+    <View style={{paddingHorizontal: 10}}>
       <ComponentRenderer components={module.module.components}/>
       {
         (() => {
