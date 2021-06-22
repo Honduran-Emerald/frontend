@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash'
 import { IMessage } from 'react-native-gifted-chat';
-import { ChatMessage } from '../../types/general';
+import { ChatMessage, ChatMessageNotif } from '../../types/general';
 import { getImageAddress } from '../../utils/requestHandler';
 
 interface ChatPreview {
@@ -109,37 +109,37 @@ export const chatSlice = createSlice({
         state.chatsPreviewList = _.orderBy(state.chatsPreviewList, 'newestMessage', 'desc')
       }
     },
-    getMessage: (state, action: PayloadAction<any>) => {
-      let preview: ChatPreview | undefined = state.chatsPreviewList?.find(chat => chat.userId === action.payload.Sender)
+    getMessage: (state, action: PayloadAction<ChatMessageNotif>) => {
+      let preview: ChatPreview | undefined = state.chatsPreviewList?.find(chat => chat.userId === action.payload.Message.Sender)
       if (!preview) {
         preview = {
-          lastMessageText: action.payload.Text,
-          lastReceived: action.payload.CreationTime.toString(),
-          newestMessage: action.payload.CreationTime.toString(),
-          userId: action.payload.Sender,
-          userImageId: null, // TODO: Add user image id here
-          username: 'None' // TODO: Add username here
+          lastMessageText: action.payload.Message.Text,
+          lastReceived: action.payload.Message.CreationTime.toString(),
+          newestMessage: action.payload.Message.CreationTime.toString(),
+          userId: action.payload.Message.Sender,
+          userImageId: action.payload.UserImageId,
+          username: action.payload.Username
         }
         
         state.chatsPreviewList?.unshift(preview)
       } else {
-        preview.lastMessageText = action.payload.Text;
-        preview.lastReceived = action.payload.CreationTime.toString();
-        preview.newestMessage = action.payload.CreationTime.toString();
-        state.chatsPreviewList = state.chatsPreviewList?.filter(chat => chat.userId !== action.payload.Sender)
+        preview.lastMessageText = action.payload.Message.Text;
+        preview.lastReceived = action.payload.Message.CreationTime.toString();
+        preview.newestMessage = action.payload.Message.CreationTime.toString();
+        state.chatsPreviewList = state.chatsPreviewList?.filter(chat => chat.userId !== action.payload.Message.Sender)
         state.chatsPreviewList?.unshift(preview)
       }
 
-      let dm = state.loadedChats.find(chat => chat.targetId === action.payload.Sender)
+      let dm = state.loadedChats.find(chat => chat.targetId === action.payload.Message.Sender)
       if (dm) {
         dm.messages.unshift({
           _id: dm.messages.length,
-          createdAt: action.payload.CreationTime,
-          text: action.payload.Text,
+          createdAt: action.payload.Message.CreationTime,
+          text: action.payload.Message.Text,
           user: {
             _id: 2,
-            avatar: undefined,
-            name: 'None'
+            avatar: getImageAddress(action.payload.UserImageId, action.payload.Username),
+            name: action.payload.Username
           }
         })
       }
