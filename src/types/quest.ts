@@ -16,6 +16,23 @@ export interface QuestBase {
 
 }
 
+export interface CreateQuestBase {
+    id: string,
+    title: string,
+    description: string,
+    tags: string[],
+    locationName: string,
+    location: Location,
+    imageReference: string,
+    approximateTime: string,
+    agentProfileReference: string,
+    agentProfileName: string,
+    firstModuleReference: number,
+    modules: PrototypeModule[],
+
+
+}
+
 /**
  * Class for public query
  */
@@ -64,9 +81,9 @@ export interface QuestPrototype extends QuestBase {
 
 export interface PrototypeModuleBase {
     id: number,
-    type: string,
+    components: PrototypeComponent[],
     objective: string,
-    components: PrototypeComponent[]
+    type: string,
   
 }
 
@@ -77,15 +94,20 @@ export interface PrototypeChoiceModule extends PrototypeModuleBase{
     }[]
 }
 
-export interface PrototypeStoryModule extends PrototypeModuleBase{  
+export interface PrototypeStoryModule extends PrototypeModuleBase {  
     nextModuleReference: number | null,
 }
 
-export interface PrototypeEndingModule extends PrototypeModuleBase{
+export interface PrototypeEndingModule extends PrototypeModuleBase {
     endingFactor: number,
 }
 
-export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
+export interface PrototypeLocationModule extends PrototypeModuleBase {
+    location: Location,
+    nextModuleReference: number | null
+}
+
+export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule | PrototypeLocationModule
 
 export interface TextComponent {
     type: 'text',
