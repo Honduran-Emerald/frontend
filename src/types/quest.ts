@@ -40,7 +40,7 @@ export interface QuestBaseUpdate {
     locationName?: string,
 }
 
-export interface QuestPath extends QuestHeader {
+export interface QuestPath {
     trackerNodes: {
         module: PrototypeModule,
         memento: ModuleMememto
