@@ -40,11 +40,12 @@ export interface QuestBaseUpdate {
     locationName?: string,
 }
 
-export interface QuestPath {
+export interface QuestPath  {
     trackerNodes: {
         module: PrototypeModule,
         memento: ModuleMememto
-    }[]
+    }[],
+    quest: QuestHeader
 }
 
 export type ModuleMememto = any
@@ -117,4 +118,9 @@ export interface QuestTracker {
     agentProfileName: string,
     objective: string,
     author: string
+}
+
+export interface QuestTrackerNode {
+    module: PrototypeModule,
+    memento: any
 }

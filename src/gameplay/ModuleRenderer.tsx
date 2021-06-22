@@ -19,7 +19,7 @@ export interface ModuleRendererProps<ModuleType extends PrototypeModule> {
 export const ModuleRenderer: React.FC<ModuleRendererProps<PrototypeModule>> = ({ module, index }) => {
 
   return (
-    <View>
+    <View style={{paddingHorizontal: 10}}>
       {
         index === 0 &&
         <View style={{backgroundColor: Colors.gray, borderRadius: 10, width: '70%', alignSelf: 'center', marginTop: 35, padding: 10}}>
