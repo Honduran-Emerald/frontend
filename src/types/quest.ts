@@ -40,7 +40,7 @@ export interface QuestBaseUpdate {
     locationName?: string,
 }
 
-export interface QuestPath extends QuestHeader {
+export interface QuestPath {
     trackerNodes: {
         module: PrototypeModule,
         memento: ModuleMememto
@@ -82,17 +82,21 @@ export interface PrototypeEndingModule extends PrototypeModuleBase {
 
 export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
 
-export interface TextComponent {
+export interface ComponentBase {
+    componentId: string
+}
+
+export interface TextComponent extends ComponentBase {
     componentType: 'Text',
     text: string,
 }
 
-export interface ImageComponent {
+export interface ImageComponent extends ComponentBase {
     componentType: 'Image',
     imageReference: string,
 }
 
-export type PrototypeComponent = (TextComponent | ImageComponent) & {componentId: string}
+export type PrototypeComponent = TextComponent | ImageComponent
 
 export interface QuestTracker {
     questId: string,
