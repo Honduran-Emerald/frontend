@@ -7,6 +7,6 @@ import { styleGameplay } from '../styleGameplay';
 export const TextComponent: React.FC<SingleComponentProps<TextComponentType>> = ({ data }) => {
 
   return (
-    <Text style={styleGameplay.bubble}>{data.text}</Text>
+    <Text style={[styleGameplay.bubble, styleGameplay.left]}>{data.text}</Text>
   )
 }
