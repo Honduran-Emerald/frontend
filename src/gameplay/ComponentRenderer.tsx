@@ -9,8 +9,8 @@ export interface ComponentRendererProps {
   components: PrototypeComponent[]
 }
 
-export interface SingleComponentProps {
-  data: PrototypeComponent
+export interface SingleComponentProps<ComponentType extends PrototypeComponent> {
+  data: ComponentType
 }
 
 export const ComponentRenderer: React.FC<ComponentRendererProps> = ({ components }) => {
