@@ -170,7 +170,7 @@ export default function QuestlogScreen() {
                     title={quest.questName}
                     description={quest.objective}
                     key={quest.trackerId}
-                    onPress={() => loadQuestObjectiveScreen(quest.questId)}
+                    onPress={() => loadQuestObjectiveScreen(quest.trackerId)}
                     onLongPress={() => setPinnedQuest(quest)}
                     left={() => <List.Icon color={Colors.background} icon='pin'/>}
                     titleStyle={styles.white}
@@ -182,7 +182,7 @@ export default function QuestlogScreen() {
                     title={quest.questName}
                     description={quest.objective}
                     key={quest.trackerId}
-                    onPress={() => loadQuestObjectiveScreen(quest.questId)}
+                    onPress={() => loadQuestObjectiveScreen(quest.trackerId)}
                     onLongPress={() => setPinnedQuest(quest)}
                   />
               )
@@ -202,7 +202,7 @@ export default function QuestlogScreen() {
                   title={quest.questName}
                   description={quest.author}
                   key={quest.trackerId}
-                  onPress={() => loadQuestObjectiveScreen(quest.questId)}
+                  onPress={() => loadQuestObjectiveScreen(quest.trackerId)}
                 />
               )
             }
