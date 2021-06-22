@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 
 import { ModuleRendererProps } from '../ModuleRenderer';
 import { Colors } from '../../styles';
-import { PrototypeChoiceModule} from '../../types/quest';
+import { PrototypeChoiceModule } from '../../types/quest';
 import { styleGameplay } from '../styleGameplay';
 
 interface ChoiceType {
