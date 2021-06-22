@@ -14,6 +14,22 @@ export interface User {
     trackerCount: number
 }
 
+export interface ChatBaseMessageNotif {
+    Sender: string,
+    Received: boolean,
+    CreationTime: Date,
+}
+export interface ChatTextMessageNotif extends ChatBaseMessageNotif {
+    Type: 'Text',
+    Text: string
+}
+
+export interface ChatMessageNotif {
+    Message: ChatTextMessageNotif,
+    UserImageId: string,
+    Username: string
+} 
+
 export interface ChatBaseMessage {
     sender: string,
     received: boolean,
