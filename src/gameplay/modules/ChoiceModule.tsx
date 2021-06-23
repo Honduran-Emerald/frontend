@@ -15,10 +15,12 @@ export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> =
   const choices: ChoiceType[] = module.module.choices
 
   const [hasChosen, setHasChosen] = React.useState(module.memento ? module.memento.choice : -1);
+  const [inputDisabled, setInputDisabled] = React.useState(false);
 
   const handleClick = (index: number) => {
+    setInputDisabled(true);
     setHasChosen(index);
-    onChoice(index);
+    onChoice(index).then(() => setInputDisabled(false));
   }
 
   return (
@@ -26,7 +28,7 @@ export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> =
       {
         hasChosen === -1 &&
         module.module.choices.map((choice: any, index: number) =>
-          <TouchableNativeFeedback key={index+1} onPress={() => handleClick(index)}>
+          <TouchableNativeFeedback key={index+1} onPress={() => inputDisabled ? {} : handleClick(index)}>
             <View style={styles.choice}>
               <Text style={styles.text}>{choice.text}</Text>
             </View>
