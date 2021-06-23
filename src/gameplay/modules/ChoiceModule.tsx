@@ -23,7 +23,7 @@ export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> =
   }
 
   return (
-    <View>
+    <View style={styles.container}>
       {
         hasChosen === -1 &&
         module.module.choices.map((choice: any, index: number) =>
@@ -47,6 +47,9 @@ export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> =
 }
 
 const styles = StyleSheet.create({
+  container: {
+    marginTop: 5,
+  },
   objective: {
     backgroundColor: Colors.primary,
     color: '#FFF',
