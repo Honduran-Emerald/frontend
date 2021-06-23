@@ -1,7 +1,7 @@
 import { store } from "../redux/store"
 import { BACKENDIP } from '../../GLOBALCONFIG'
 import { setToken, unsetToken } from "../redux/authentication/authenticationSlice";
-import { QuestPrototype } from "../types/quest";
+import { CreateQuestBase, NewImage, QuestPrototype } from "../types/quest";
 import { Colors } from "../styles";
 
 
@@ -85,10 +85,10 @@ export const createQueryRequest = (offset: number = 0) => (request(`/create/quer
 export const createGetRequest = (questId: string) => (request(`/create/get/?questId=${questId}`))
 
 // /create/put/
-export const createPutRequest = (questId: string, questPrototype: QuestPrototype) => (request('/create/put/', 'POST', {
+export const createPutRequest = (questId: string, questPrototype: CreateQuestBase, newImages: NewImage[]) => (request('/create/put/', 'POST', {
   questId: questId,
   questPrototype: questPrototype,
-  newImages: []
+  newImages: newImages
 }))
 
 // /create/release/

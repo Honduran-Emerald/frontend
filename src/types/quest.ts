@@ -23,14 +23,29 @@ export interface CreateQuestBase {
     tags: string[],
     locationName: string,
     location: Location,
-    imageReference: string,
+    imageReference: number | null,
     approximateTime: string,
     agentProfileReference: string,
     agentProfileName: string,
     firstModuleReference: number,
     modules: PrototypeModule[],
+    images: Image[],
+}
 
+export interface PutQuest {
+    questId: string,
+    questProtoype: CreateQuestBase,
+    newImages: NewImage[]
+}
 
+export interface Image {
+    reference: number,
+    imageId: string
+}
+
+export interface NewImage {
+    reference: number,
+    image: string
 }
 
 /**
