@@ -16,6 +16,7 @@ import { QuestTracker } from './types/quest';
 import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';
 import { Text } from 'react-native'
+import { deleteItemLocally } from './utils/SecureStore';
 
 
 i18n.fallbacks = true;
@@ -24,29 +25,48 @@ i18n.locale = Localization.locale;
 export const TokenLoader = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [checkingToken, setCheckingToken] = React.useState<boolean>(true);
-  const [hasRenewed, setHasRenewed] = React.useState<boolean>(false);
+  const [tokenAccepted, setTokenAccepted] = useState<boolean>(false);
 
   const navigationRef = React.useRef(null);
-
 
   const { token } = useAppSelector((state) => state.authentication);
   const dispatch = useAppDispatch();
 
+  const [a, sa] = useState('----');
+
   useEffect(() => {
+    setIsLoading(true);
     TokenManager.getToken()
-      .then(token => dispatch(setToken(token)))
-      .then(() => renewRequest())
-      .then(() => setHasRenewed(true))
-      .then(() => setCheckingToken(false));
+      .then(token => {
+          if (token) {
+            sa('has token' + token.substring(0,10))
+            dispatch(setToken(token))
+          } else { 
+            sa('has no token')
+            setCheckingToken(false)
+          }
+        })
+      .catch(() => {
+          deleteItemLocally('UserToken')
+          setCheckingToken(false)
+        })
   }, [])
 
   useEffect(() => {
-    if (token && !hasRenewed) return;
+    if (!token) return;
+    setIsLoading(true);
+    renewRequest().then(() => setCheckingToken(false))
+    
+  }, [token])
+
+  useEffect(() => {
+    if (checkingToken || !isLoading) return;
+
     if (!token) {
       setIsLoading(false);
+      setTokenAccepted(false);
       return;
     }
-    setIsLoading(true);
 
     const promises: Promise<any>[] = []
 
@@ -110,13 +130,18 @@ export const TokenLoader = () => {
 
     Promise.all(promises)
       .then(() => setIsLoading(false))
-  }, [token, hasRenewed, checkingToken])
+      .then(() => setTokenAccepted(true))
+  }, [checkingToken, isLoading])
+
+  useEffect(() => {
+    console.log(isLoading, checkingToken, token?.substring(0,10));
+  })
 
   return (
 
-    (isLoading || checkingToken) ? (<><Text>{JSON.stringify(isLoading)}{JSON.stringify(checkingToken)}</Text><LoadingScreen/></>) : (
+    (isLoading || checkingToken) ? (<><Text>    {JSON.stringify(isLoading)} {JSON.stringify(checkingToken)} {a}</Text><LoadingScreen/></>) : (
         <NavigationContainer ref={navigationRef}>
-        {token ? (
+        {token && tokenAccepted ? (
             <ExpoNotificationWrapper navigationRef={navigationRef} />
         ) : (
             <AuthNavigator/>

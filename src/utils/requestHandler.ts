@@ -43,14 +43,15 @@ export const registerRequest = (username: string, email: string, hashed_password
 }))
 
 // /auth/renew/
-export const renewRequest = () : void => {
+export const renewRequest = () => (
   request('/auth/renew/', 'POST')
   .then(r => {
     if(r.ok) {
-      r.json().then(r => {store.dispatch(setToken(r.token))})
+      return r.json().then(r => {store.dispatch(setToken(r.token))})
     }
+  return 0
   })
-}
+)
 
 export const invalidatemessagingtokenRequest = (FMToken: string) => (request('/auth/invalidatemessagingtoken', 'POST', FMToken))
 
