@@ -8,7 +8,7 @@ import { FlatList } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { loadPinnedQuestPath, pinQuest } from '../redux/quests/questsSlice';
-import { GameplayModule, ModuleMememto, QuestPath, QuestTrackerNode, QuestTrackerNodeElement } from '../types/quest';
+import { GameplayModule, ModuleMememto, QuestPath, QuestTrackerNodeElement } from '../types/quest';
 import { playEventChoiceRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
 import { ModuleRenderer } from './ModuleRenderer';
 import { QuestStatsScreen } from './QuestStatsScreen';
@@ -49,7 +49,7 @@ export const GameplayScreen : React.FC = () => {
       dispatch(loadPinnedQuestPath(newQuestPath))
       const trackerNode = newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1]
       dispatch(pinQuest({
-        ...pinnedQuest, 
+        ...pinnedQuest,
         trackerNode: {...trackerNode, createdAt: trackerNode.creationTime.toString(), id: '0'},
         objective: trackerNode.module.objective}))
     } else {
@@ -72,7 +72,7 @@ export const GameplayScreen : React.FC = () => {
 
   }, [loadedTrackerNodes])
 
-  const handleChoiceEvent = useCallback((choiceId=0) => {
+  const handleChoiceEvent = useCallback((choiceId=0) =>
     playEventChoiceRequest(route.params.trackerId, choiceId)
       .then(res => res.json())
       .then(res => res.responseEventCollection)
@@ -89,23 +89,23 @@ export const GameplayScreen : React.FC = () => {
               case 'QuestFinish':
                 console.log('Quest Finish', responseEvent)
                 break;
-                  
+
             }
           }
         )
       })
-  }, [route.params, loadedTrackerNodes])
+  , [route.params, loadedTrackerNodes])
 
   return (
     <View>
       {/* avatar image + name, button to quest settings(vote, remove quest) */}
-      
-      <FlatList 
-        data={loadedTrackerNodesList} 
+
+      <FlatList
+        data={loadedTrackerNodesList}
         renderItem={
           ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} />
         }
-        ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref}/>}
+        ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref} trackerId={route.params.trackerId}/>}
         onLayout={(event) => {
           setInnerHeight(event.nativeEvent.layout.height)
         }}
@@ -129,11 +129,11 @@ export const GameplayScreen : React.FC = () => {
           right: 0,
           top: 0
         }}
-        
+
         icon="plus"
         onPress={() => {ref.current?.scrollToEnd()}}
       /> */}
-        
+
     </View>
   )
 }
