@@ -83,6 +83,30 @@ export interface PrototypeEndingModule extends PrototypeModuleBase {
 
 export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
 
+export interface PrototypeModuleBaseResponse {
+    id: number,
+    type: string,
+    objective: string,
+    components: PrototypeComponentResponse[]
+}
+
+export interface PrototypeChoiceModuleResponse extends PrototypeModuleBaseResponse {
+    type: 'Choice'
+    choices: {
+        text: string,
+    }[]
+}
+
+export interface PrototypeStoryModuleResponse extends PrototypeModuleBaseResponse {
+    type: 'Story'
+}
+
+export interface PrototypeEndingModuleResponse extends PrototypeModuleBaseResponse {
+    type: 'Ending',
+}
+
+export type PrototypeModuleResponse = PrototypeChoiceModuleResponse | PrototypeEndingModuleResponse | PrototypeStoryModuleResponse
+
 export interface ComponentBase {
     componentId: string
 }
@@ -117,10 +141,14 @@ export interface QuestTracker {
     agentProfileImageId: string,
     agentProfileName: string,
     objective: string,
-    author: string
+    author: string,
+    trackerNode: QuestTrackerNode
 }
 
 export interface QuestTrackerNode {
-    module: PrototypeModule,
+    id: string,
+    domainEvents: any[],
+    moduleId: string,
+    createdAt: string,
     memento: any
 }

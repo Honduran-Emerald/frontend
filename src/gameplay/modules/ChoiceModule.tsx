@@ -3,14 +3,14 @@ import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 
 import { ModuleRendererProps } from '../ModuleRenderer';
 import { Colors } from '../../styles';
-import { PrototypeChoiceModule } from '../../types/quest';
+import { PrototypeChoiceModuleResponse } from '../../types/quest';
 import { styleGameplay } from '../styleGameplay';
 
 interface ChoiceType {
   text: string
 }
 
-export const ChoiceModule: React.FC<ModuleRendererProps<PrototypeChoiceModule>> = ({ module}) => {
+export const ChoiceModule: React.FC<ModuleRendererProps<PrototypeChoiceModuleResponse>> = ({ module}) => {
 
   const choices: ChoiceType[] = module.module.choices
 
