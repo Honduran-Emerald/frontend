@@ -2,12 +2,12 @@ import React from 'react';
 import { Dimensions, Image, StyleSheet, TouchableNativeFeedback, TouchableWithoutFeedback, View } from 'react-native';
 import { Modal, Portal } from 'react-native-paper';
 
-import { ImageComponentResponse } from '../../types/quest';
+import { GameplayImageComponent } from '../../types/quest';
 import { SingleComponentProps } from '../ComponentRenderer';
 import { getImageAddress } from '../../utils/requestHandler';
 import { Colors, Containers } from '../../styles';
 
-export const ImageComponent: React.FC<SingleComponentProps<ImageComponentResponse>> = ({ data }) => {
+export const ImageComponent: React.FC<SingleComponentProps<GameplayImageComponent>> = ({ data }) => {
 
   const [modalVisible, setModalVisible] = React.useState(false);
 
