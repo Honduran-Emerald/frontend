@@ -1,5 +1,6 @@
 import React from 'react';
-import {Dimensions, Image, StyleSheet, View} from 'react-native';
+import { Dimensions, Image, StyleSheet, TouchableNativeFeedback, TouchableWithoutFeedback, View } from 'react-native';
+import { Modal, Portal } from 'react-native-paper';
 
 import { ImageComponentResponse } from '../../types/quest';
 import { SingleComponentProps } from '../ComponentRenderer';
@@ -8,9 +9,25 @@ import { Colors, Containers } from '../../styles';
 
 export const ImageComponent: React.FC<SingleComponentProps<ImageComponentResponse>> = ({ data }) => {
 
+  const [modalVisible, setModalVisible] = React.useState(false);
+
+  const showModal = () => setModalVisible(true);
+  const hideModal = () => setModalVisible(false);
+
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={{uri: getImageAddress(data.imageId, '')}}/>
+      <TouchableNativeFeedback onPress={showModal}>
+        <Image style={styles.image} source={{uri: getImageAddress(data.imageId, '')}}/>
+      </TouchableNativeFeedback>
+      <Portal>
+        <Modal visible={modalVisible} dismissable onDismiss={hideModal}>
+          <TouchableWithoutFeedback onPress={hideModal}>
+            <View style={styles.modal}>
+              <Image style={styles.modalImage} resizeMethod={'scale'} resizeMode={'contain'} source={{uri: getImageAddress(data.imageId, '')}}/>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      </Portal>
     </View>
   )
 }
@@ -28,5 +45,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: Dimensions.get('window').height * 0.25,
     borderRadius: 20,
+  },
+  modal: {
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  modalImage: {
+    width: '100%',
+    height: '100%',
   },
 });
