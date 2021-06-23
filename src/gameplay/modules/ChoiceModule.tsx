@@ -10,7 +10,7 @@ interface ChoiceType {
   text: string
 }
 
-export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> = ({ module}) => {
+export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> = ({ module, onChoice }) => {
 
   const choices: ChoiceType[] = module.module.choices
 
@@ -19,6 +19,7 @@ export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> =
   const handleClick = (index: number) => {
     console.log('Pressed ' + (index));
     setHasChosen(index);
+    onChoice(index);
   }
 
   return (

@@ -14,9 +14,10 @@ export interface ModuleRendererProps<ModuleType extends GameplayModule> {
     memento: any
   }
   index: number,
+  onChoice: (choiceId: number) => void
 }
 
-export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index }) => {
+export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index, onChoice }) => {
 
   return (
     <View style={{paddingHorizontal: 10}}>
@@ -39,6 +40,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   memento: module.memento
                 }}
                 index={index}
+                onChoice={onChoice}
               />;
             case 'Choice':
               return <ChoiceModule
@@ -47,6 +49,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   memento: module.memento
                 }}
                 index={index}
+                onChoice={onChoice}
               />;
             case 'Ending':
               return <EndingModule
@@ -55,6 +58,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   memento: module.memento
                 }}
                 index={index}
+                onChoice={onChoice}
               />;
           }
         })()

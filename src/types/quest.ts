@@ -40,12 +40,13 @@ export interface QuestBaseUpdate {
     locationName?: string,
 }
 
+export interface QuestWithTopTrackerNode extends QuestHeader {
+    tracker: QuestTracker
+}
+
 export interface QuestPath  {
-    trackerNodes: {
-        module: PrototypeModule,
-        memento: ModuleMememto
-    }[],
-    quest: QuestHeader
+    trackerNodes: QuestTrackerNodeElement[],
+    quest: QuestWithTopTrackerNode
 }
 
 export type ModuleMememto = any
@@ -147,8 +148,14 @@ export interface QuestTracker {
 
 export interface QuestTrackerNode {
     id: string,
-    domainEvents: any[],
-    moduleId: string,
+    domainEvents?: any[],
+    moduleId?: string,
     createdAt: string,
     memento: ModuleMememto
+}
+
+export interface QuestTrackerNodeElement {
+    module: GameplayModule,
+    memento: ModuleMememto,
+    creationTime: Date
 }
