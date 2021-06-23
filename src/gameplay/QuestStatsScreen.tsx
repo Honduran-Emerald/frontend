@@ -17,7 +17,9 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
     <View style={[styles.stats, {height: height + roundingRadius}]}>
       <Text style={{
         padding: 50
-      }}>
+      }}
+      ellipsizeMode={'tail'}
+      numberOfLines={15}>
         {JSON.stringify(quest)}
       </Text>
       <Text style={{
@@ -25,9 +27,11 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
       }}>
         Hier kommen Quest Details hin
       </Text>
+      <View style={{position: 'absolute', bottom: 100, width: '100%'}}>
       <Button onPress={() => {flatListRef.current?.scrollToOffset({
         offset: 0
       })}} title='Go to Bottom' />
+      </View>
     </View>
   )
 }
