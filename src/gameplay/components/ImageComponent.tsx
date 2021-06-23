@@ -34,7 +34,7 @@ export const ImageComponent: React.FC<SingleComponentProps<GameplayImageComponen
 const styles = StyleSheet.create({
   container: {
     maxWidth: '70%',
-    marginVertical: 10,
+    marginTop: 10,
   },
   image: {
     width: '100%',

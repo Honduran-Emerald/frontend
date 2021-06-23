@@ -157,5 +157,5 @@ export interface QuestTrackerNode {
 export interface QuestTrackerNodeElement {
     module: GameplayModule,
     memento: ModuleMememto,
-    creationTime: Date
+    creationTime: string
 }

@@ -7,7 +7,7 @@ export const styleGameplay = StyleSheet.create({
     backgroundColor: Colors.primary,
     ...Containers.rounded,
     padding: 20,
-    marginVertical: 10,
+    marginTop: 10,
     color: '#fff',
   },
   right: {

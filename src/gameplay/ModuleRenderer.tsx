@@ -14,7 +14,7 @@ export interface ModuleRendererProps<ModuleType extends GameplayModule> {
     memento: any
   }
   index: number,
-  onChoice: (choiceId: number) => void
+  onChoice: (choiceId: number) => Promise<any>
 }
 
 export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index, onChoice }) => {
