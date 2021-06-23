@@ -1,23 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PrototypeModule, QuestPrototype, QuestBaseUpdate } from '../../types/quest';
+import { PrototypeModule, CreateQuestBase, NewImage } from '../../types/quest';
 
 interface EditorState {
-    questPrototype: QuestPrototype | undefined,
+    questPrototype: CreateQuestBase | undefined,
     questId: string | undefined,
-    imagePath: string
+    imagePath: string,
+    newImages: NewImage[]
 }
 
 const initialState: EditorState = {
     questPrototype: undefined,
     questId: undefined,
-    imagePath: ''
+    imagePath: '',
+    newImages: []
 }
 
 export const questsSlice = createSlice({
     name: 'editor',
     initialState,
     reducers: {
-        loadQuest: (state, action: PayloadAction<{questId: string, questPrototype: QuestPrototype}>) => {
+        loadQuest: (state, action: PayloadAction<{questId: string, questPrototype: CreateQuestBase}>) => {
             state.questPrototype = action.payload.questPrototype
             state.questId = action.payload.questId
         },
@@ -48,7 +50,10 @@ export const questsSlice = createSlice({
                 state.questPrototype.modules = state.questPrototype.modules
                     .filter(m => m.id !== action.payload) 
         },
-
+        spliceQuestImages: (state, action: PayloadAction<number>) => {
+            if(state.questPrototype?.images !== undefined)
+                state.questPrototype.images.splice(action.payload, 1);
+        },
         setQuestTitle: (state, action: PayloadAction<string>) => {
             if (state.questPrototype !== undefined)
                 state.questPrototype.title = action.payload
@@ -61,7 +66,7 @@ export const questsSlice = createSlice({
             if (state.questPrototype !== undefined)
                 state.questPrototype.locationName = action.payload
         },
-        setImage: (state, action: PayloadAction<string>) => {
+        setImagePath: (state, action: PayloadAction<string>) => {
             if (state.questPrototype !== undefined)
                 state.imagePath = action.payload
         },
@@ -69,13 +74,27 @@ export const questsSlice = createSlice({
             if (state.questPrototype !== undefined)
                 state.questPrototype.approximateTime = action.payload
         },
-        
-        
+        setImageReference: (state, action: PayloadAction<number>) => {
+            if(state.questPrototype !== undefined)
+                state.questPrototype.imageReference = action.payload; 
+        },
+        setNewImages: (state, action: PayloadAction<NewImage[]>) => {
+            if(state.newImages !== undefined)
+                state.newImages = action.payload;
+        },
+        pushNewImages: (state, action: PayloadAction<NewImage>) => {
+            if(state.newImages !== undefined)
+                state.newImages.push(action.payload);
+        },
+        setNewImagesAt: (state, action: PayloadAction<{index: number, value: NewImage}>) => {
+            if(state.newImages !== undefined)
+                state.newImages[action.payload.index] = action.payload.value; 
+        }
 
     }
 })
 
-export const { loadQuest, unloadQuest, updateQuestMeta, addOrUpdateQuestModule, deleteQuestModule, setModules,
-        setQuestTitle, setQuestDescription, setLocationName, setImage, setEstimatedTime, addOrUpdateMultipleQuestModules } = questsSlice.actions
+export const { loadQuest, unloadQuest, addOrUpdateQuestModule, deleteQuestModule, setModules,
+        setQuestTitle, setQuestDescription, setLocationName, setImagePath, setImageReference, setEstimatedTime, addOrUpdateMultipleQuestModules, spliceQuestImages, setNewImages, pushNewImages, setNewImagesAt} = questsSlice.actions
 
 export default questsSlice.reducer
