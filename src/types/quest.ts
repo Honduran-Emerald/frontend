@@ -83,29 +83,29 @@ export interface PrototypeEndingModule extends PrototypeModuleBase {
 
 export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
 
-export interface PrototypeModuleBaseResponse {
+export interface GameplayModuleBase {
     id: number,
     type: string,
     objective: string,
-    components: PrototypeComponentResponse[]
+    components: GameplayComponent[]
 }
 
-export interface PrototypeChoiceModuleResponse extends PrototypeModuleBaseResponse {
+export interface GameplayChoiceModule extends GameplayModuleBase {
     type: 'Choice'
     choices: {
         text: string,
     }[]
 }
 
-export interface PrototypeStoryModuleResponse extends PrototypeModuleBaseResponse {
+export interface GameplayStoryModule extends GameplayModuleBase {
     type: 'Story'
 }
 
-export interface PrototypeEndingModuleResponse extends PrototypeModuleBaseResponse {
+export interface GameplayEndingModule extends GameplayModuleBase {
     type: 'Ending',
 }
 
-export type PrototypeModuleResponse = PrototypeChoiceModuleResponse | PrototypeEndingModuleResponse | PrototypeStoryModuleResponse
+export type GameplayModule = GameplayChoiceModule | GameplayEndingModule | GameplayStoryModule
 
 export interface ComponentBase {
     componentId: string
@@ -121,14 +121,14 @@ export interface ImageComponent extends ComponentBase {
     imageReference: string,
 }
 
-export interface ImageComponentResponse extends ComponentBase {
+export type PrototypeComponent = TextComponent | ImageComponent
+
+export interface GameplayImageComponent extends ComponentBase {
     componentType: 'Image',
     imageId: string,
 }
 
-export type PrototypeComponent = TextComponent | ImageComponent
-
-export type PrototypeComponentResponse = TextComponent | ImageComponentResponse
+export type GameplayComponent = TextComponent | GameplayImageComponent
 
 export interface QuestTracker {
     questId: string,
@@ -150,5 +150,5 @@ export interface QuestTrackerNode {
     domainEvents: any[],
     moduleId: string,
     createdAt: string,
-    memento: any
+    memento: ModuleMememto
 }

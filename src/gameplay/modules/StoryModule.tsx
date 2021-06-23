@@ -1,9 +1,9 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { PrototypeStoryModuleResponse } from '../../types/quest';
+import { GameplayStoryModule } from '../../types/quest';
 import { ModuleRendererProps } from '../ModuleRenderer';
 
-export const StoryModule: React.FC<ModuleRendererProps<PrototypeStoryModuleResponse>> = ({ module }) => {
+export const StoryModule: React.FC<ModuleRendererProps<GameplayStoryModule>> = ({ module }) => {
 
   return (
     <Text>StoryModule: {module.module.id}</Text>

@@ -1,14 +1,14 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { PrototypeModuleResponse } from '../types/quest';
+import { GameplayModule } from '../types/quest';
 import { ComponentRenderer } from './ComponentRenderer';
 import { ChoiceModule } from './modules/ChoiceModule';
 import { StoryModule } from './modules/StoryModule';
 import { EndingModule } from './modules/EndingModule';
 import { Colors } from '../styles';
 
-export interface ModuleRendererProps<ModuleType extends PrototypeModuleResponse> {
+export interface ModuleRendererProps<ModuleType extends GameplayModule> {
   module: {
     module: ModuleType,
     memento: any
@@ -16,7 +16,7 @@ export interface ModuleRendererProps<ModuleType extends PrototypeModuleResponse>
   index: number,
 }
 
-export const ModuleRenderer: React.FC<ModuleRendererProps<PrototypeModuleResponse>> = ({ module, index }) => {
+export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index }) => {
 
   return (
     <View style={{paddingHorizontal: 10}}>
