@@ -17,7 +17,6 @@ export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> =
   const [hasChosen, setHasChosen] = React.useState(module.memento ? module.memento.choice : -1);
 
   const handleClick = (index: number) => {
-    console.log('Pressed ' + (index));
     setHasChosen(index);
     onChoice(index);
   }
