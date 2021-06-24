@@ -9,7 +9,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
 import { QuestHeader, QuestTracker } from '../types/quest';
-import {createPublishRequest, createTrackerRequest, getImageAddress} from '../utils/requestHandler';
+import { createPublishRequest, createTrackerRequest, getImageAddress } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
@@ -27,7 +27,7 @@ export default function QuestDetailScreen({ route }: any) {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const quest: QuestHeader = route.params.quest;
-  const isQuestCreator = quest.ownerName ? quest.ownerName === user?.userName : true;
+  const isQuestCreator = quest.ownerName === user?.userName;
   const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
   const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0
 
@@ -158,12 +158,11 @@ export default function QuestDetailScreen({ route }: any) {
               <Avatar.Image
                 style={styles.authorAvatar}
                 theme={{colors: {primary: Colors.primary}}}
-                source={{uri: getImageAddress(quest.ownerImageId ? quest.ownerImageId : (user ? user.image : null),
-                    quest.ownerName ? quest.ownerName : (user ? user.userName : ''))}}
+                source={{uri: getImageAddress(quest.ownerImageId, quest.ownerName)}}
               />
               <View>
                 <Text style={styles.authorName}>
-                  {quest.ownerName ? quest.ownerName : (user ? user.userName : '')}
+                  {quest.ownerName}
                 </Text>
                 <Text style={styles.smallText}>
                   {`${creationDate.getDate()}.${creationDate.getMonth() + 1}.${creationDate.getFullYear()}`}
