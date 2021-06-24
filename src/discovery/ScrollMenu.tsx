@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, StatusBar} from "react-native";
+import {View, Text, StyleSheet, ScrollView, StatusBar, FlatList} from "react-native";
 import {Colors} from "../styles";
 import {QuestHeader} from "../types/quest";
 import {queryQuestsRequest} from "../utils/requestHandler";
@@ -59,7 +59,7 @@ export const QuestPreview = (props:questProps) => {
     const [distance, setDistance] = useState("");
 
     useEffect(() => {
-        props.location &&
+        props.location && props.quest.location &&
         setDistance(getDistanceFromLatLonInKm(props.quest.location.latitude, props.quest.location.longitude, props.location.coords.latitude, props.location.coords.longitude));
     }, [props.location])
 
