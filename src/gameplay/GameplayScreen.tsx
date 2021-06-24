@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useCallback } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
-import { Dimensions, View } from 'react-native';
+import { ActivityIndicator, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -13,6 +13,7 @@ import { playEventChoiceRequest, queryTrackerNodesRequest } from '../utils/reque
 import { ModuleRenderer } from './ModuleRenderer';
 import { QuestStatsScreen } from './QuestStatsScreen';
 import _ from 'lodash';
+import { Colors } from '../styles';
 
 export const GameplayScreen : React.FC = () => {
 
@@ -26,6 +27,7 @@ export const GameplayScreen : React.FC = () => {
   const dispatch = useAppDispatch();
 
   const [loadedTrackerNodes, setLoadedTrackerNodes] = useState<QuestPath | undefined>()
+  const [hasLoaded, setHasLoaded] = useState<boolean>(false)
 
   const [loadedTrackerNodesList, setLoadedTrackerNodesList] = useState<QuestTrackerNodeElement[]>([]);
   useEffect(() => {
@@ -41,6 +43,7 @@ export const GameplayScreen : React.FC = () => {
       queryTrackerNodesRequest(route.params.trackerId)
         .then(res => res.json())
         .then(res => setLoadedTrackerNodes(res))
+        .then(() => setHasLoaded(true))
     }
   }, [pinnedQuestPath])
 
@@ -98,31 +101,34 @@ export const GameplayScreen : React.FC = () => {
 
   return (
     <View>
-      {/* avatar image + name, button to quest settings(vote, remove quest) */}
+      {
+        loadedTrackerNodesList.length > 0 &&
+        <View>
+          {/* avatar image + name, button to quest settings(vote, remove quest) */}
 
-      <FlatList
-        data={loadedTrackerNodesList}
-        renderItem={
-          ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} />
-        }
-        ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref} trackerId={route.params.trackerId}/>}
-        onLayout={(event) => {
-          setInnerHeight(event.nativeEvent.layout.height)
-        }}
-        ref={ref}
-        style={{
-          width: '100%',
-        }}
-        contentContainerStyle={{
-          minHeight: '100%',
-          width: '100%',
-          paddingTop: 50
-        }}
+          <FlatList
+            data={loadedTrackerNodesList}
+            renderItem={
+              ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} />
+            }
+            ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref} trackerId={route.params.trackerId}/>}
+            onLayout={(event) => {
+              setInnerHeight(event.nativeEvent.layout.height)
+            }}
+            ref={ref}
+            style={{
+              width: '100%',
+            }}
+            contentContainerStyle={{
+              minHeight: '100%',
+              width: '100%',
+              paddingTop: 50
+            }}
 
-        keyExtractor={item => item.module.id.toString()}
-        inverted
-        />
-      {/* <FAB
+            keyExtractor={item => item.module.id.toString()}
+            inverted
+          />
+          {/* <FAB
         style={{
           position: 'absolute',
           margin: 16,
@@ -134,6 +140,42 @@ export const GameplayScreen : React.FC = () => {
         onPress={() => {ref.current?.scrollToEnd()}}
       /> */}
 
+        </View>
+      }
+      {
+        loadedTrackerNodesList.length === 0 &&
+        <View style={styles.loadingView}>
+          <ActivityIndicator size={'large'} color={Colors.primary}/>
+          <Text style={styles.loadingText}>Loading quest</Text>
+          {
+            hasLoaded &&
+            <Text style={styles.loadingError}>
+              This is taking longer than usual. The quest may have been deleted by the creator.
+              Refresh your Questlog to check if the quest is still there.
+            </Text>
+          }
+        </View>
+      }
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  loadingView: {
+    backgroundColor: Colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%'
+  },
+  loadingText: {
+    textAlign: 'center',
+    fontSize: 20,
+  },
+  loadingError: {
+    textAlign: 'center',
+    marginTop: 20,
+    width: '70%',
+    fontSize: 16,
+  },
+})
