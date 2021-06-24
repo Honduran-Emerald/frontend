@@ -9,7 +9,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
 import { QuestHeader, QuestTracker } from '../types/quest';
-import {createPublishRequest, createTrackerRequest, getImageAddress} from '../utils/requestHandler';
+import {
+  createDeleteQuestRequest,
+  createPublishRequest,
+  createTrackerRequest,
+  getImageAddress
+} from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
@@ -28,7 +33,7 @@ export default function QuestDetailScreen({ route }: any) {
   const quest: QuestHeader = route.params.quest;
   const isQuestCreator = quest.ownerName === user?.userName;
   const creationDate = new Date(Date.parse(quest.creationTime));
-  const finishRate: number = ((quest.finishes / quest.plays) * 100)
+  const finishRate: number = ((quest.finishes / quest.plays) * 100);
 
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -46,6 +51,17 @@ export default function QuestDetailScreen({ route }: any) {
           dispatch(acceptQuest(data.trackerModel));
         }))
   };
+
+  const handleDelete = () => {
+    createDeleteQuestRequest(quest.id).then(res => {
+      if(res.status === 200) {
+        alert('Quest deleted');
+        hideModal();
+      } else {
+        alert('Server Error ' + res.status);
+      }
+    }).then(() => navigation.goBack())
+  }
 
   return (
     <View style={styles.container}>
@@ -182,10 +198,7 @@ export default function QuestDetailScreen({ route }: any) {
           </Text>
           <View style={styles.modalButtons}>
             <View style={styles.modalButton}>
-              <PaperButton color={Colors.primaryLight} compact mode={'outlined'} onPress={() => alert('Implement set to private')}>{i18n.t('modalSetPrivateButton')}</PaperButton>
-            </View>
-            <View style={styles.modalButton}>
-              <PaperButton color={Colors.error} compact mode={'outlined'} onPress={() => alert('Implement delete')}>{i18n.t('deleteButton')}</PaperButton>
+              <PaperButton color={Colors.error} compact mode={'contained'} onPress={() => handleDelete()}>{i18n.t('deleteButton')}</PaperButton>
             </View>
           </View>
           <View style={styles.modalBackButton}>
@@ -315,8 +328,6 @@ const styles = StyleSheet.create({
   },
   modalButtons: {
     width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 20,
     marginBottom: 10,
