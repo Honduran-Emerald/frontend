@@ -136,7 +136,7 @@ export interface QuestTracker {
     trackerId: string,
     newestQuestVersion: boolean,
     finished: boolean,
-    vote: string,
+    vote: Vote,
     creationTime: string,
     questName: string,
     agentProfileImageId: string,
@@ -146,16 +146,13 @@ export interface QuestTracker {
     trackerNode: QuestTrackerNode
 }
 
-export interface QuestTrackerNode {
-    id: string,
-    domainEvents?: any[],
-    moduleId?: string,
-    createdAt: string,
-    memento: ModuleMememto
-}
+export type QuestTrackerNode = QuestTrackerNodeElement
 
 export interface QuestTrackerNodeElement {
     module: GameplayModule,
     memento: ModuleMememto,
     creationTime: string
 }
+
+export type Vote = 'None' | 'Up' | 'Down'
+

@@ -53,7 +53,7 @@ export const GameplayScreen : React.FC = () => {
       const trackerNode = newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1]
       dispatch(pinQuest({
         ...pinnedQuest,
-        trackerNode: {...trackerNode, createdAt: trackerNode.creationTime.toString(), id: '0'},
+        trackerNode: {...trackerNode, creationTime: trackerNode.creationTime.toString()},
         objective: trackerNode.module.objective}))
     } else {
       setLoadedTrackerNodes(newQuestPath)
@@ -69,7 +69,7 @@ export const GameplayScreen : React.FC = () => {
     const newTracker = {module: newModule, memento: null, creationTime: (new Date()).toString()}
     newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1].memento = oldMemento
     newQuestPath.trackerNodes.push(newTracker)
-    newQuestPath.quest.tracker.trackerNode = {...newTracker, id: '0', createdAt: newTracker.creationTime.toString()}
+    newQuestPath.quest.tracker.trackerNode = {...newTracker, creationTime: newTracker.creationTime.toString()}
 
     updateQuestPath(newQuestPath)
 
