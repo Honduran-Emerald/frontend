@@ -11,15 +11,13 @@ import { DiscoveryNavigator } from "./discovery/DiscoveryNavigator";
 
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { logout, setToken } from './redux/authentication/authenticationSlice';
-import { getUserSelfRequest, invalidatemessagingtokenRequest, queryQuestsRequest } from './utils/requestHandler';
+import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
 import QuestlogScreen from './common/QuestlogScreen';
 import { clearQuestState } from './redux/quests/questsSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { Colors } from './styles';
 import { ChatNavigator } from './chat/ChatNavigator';
-import { ProfileNavigator } from './profile/ProfileNavigator';
-import LocationPicker from "./quest-editor/LocationPicker";
-import {Location as LocationType} from "./types/general";
+import { removeData } from './utils/AsyncStore';
 
 const Tab = createBottomTabNavigator();
 
@@ -84,7 +82,7 @@ const Dummy = () => {
 
   const handleLogout = () => {
     deleteItemLocally('UserToken').then(() => {}, () => {});
-    deleteItemLocally('PinnedQuestTracker').then(() => {}, () => {});
+    removeData('PinnedQuestTracker').then(() => {}, () => {});
     dispatch(logout())
     dispatch(clearQuestState())
   }

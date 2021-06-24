@@ -1,8 +1,7 @@
 import 'react-native-gesture-handler';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AuthNavigator from './authentication/AuthNavigator';
-import MainAppNavigator from './MainAppNavigator';
 import { LoadingScreen } from './common/LoadingScreen'
 import { TokenManager } from './utils/TokenManager';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
@@ -11,11 +10,12 @@ import i18n from 'i18n-js';
 import * as Localization from 'expo-localization';
 import { chatQueryRequest, getAllTrackersRequest, getUserSelfRequest, renewRequest } from './utils/requestHandler';
 import { pinQuest, setAcceptedQuests } from './redux/quests/questsSlice';
-import { loadItemLocally } from './utils/SecureStore';
 import { QuestTracker } from './types/quest';
 import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';
 import { Text } from 'react-native'
+import { getData } from './utils/AsyncStore';
+import { deleteItemLocally } from './utils/SecureStore';
 
 
 i18n.fallbacks = true;
@@ -33,6 +33,8 @@ export const TokenLoader = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    // TODO remove cleanup
+    deleteItemLocally('PinnedQuestTracker').then(() => {console.log('deleted PinnedQuestTracker')}, () => {});
     TokenManager.getToken()
       .then(token => dispatch(setToken(token)))
       .then(() => renewRequest())
@@ -60,28 +62,28 @@ export const TokenLoader = () => {
               dispatch(setAcceptedQuests(data.trackers));
               acceptedQuests = data.trackers;
             })
-            .then(() => loadItemLocally('PinnedQuestTracker')
-            .then((res) => {
-              if(res) {
-                const oldPinTracker = JSON.parse(res);
-                acceptedQuests.some((tracker) => {
-                  if(tracker.trackerId === oldPinTracker.trackerId) {
-                    dispatch(pinQuest(tracker));
-                  }
-                })
-              } else {
-                acceptedQuests.some((tracker) => {
-                  if(!tracker.finished) {
-                    dispatch(pinQuest(tracker));
-                    return true;
-                  }
-                });
-              }
-            }))
+            .then(() => getData('PinnedQuestTracker')
+              .then((res) => {
+                if(res) {
+                  const oldPinTracker = JSON.parse(res);
+                  acceptedQuests.some((tracker) => {
+                    if(tracker.trackerId === oldPinTracker.trackerId) {
+                      dispatch(pinQuest(tracker));
+                    }
+                  })
+                } else {
+                  acceptedQuests.some((tracker) => {
+                    if(!tracker.finished) {
+                      dispatch(pinQuest(tracker));
+                      return true;
+                    }
+                  });
+                }
+              }))
         }
       })
     )
-    
+
     promises.push(
       getUserSelfRequest()
         .then((res) => {
@@ -99,7 +101,7 @@ export const TokenLoader = () => {
         .then(res => res.json())
         .then(res => dispatch(loadChatPreview(res.chats)))
     )
-    
+
 
     Promise.all(promises)
       .then(() => setIsLoading(false))
