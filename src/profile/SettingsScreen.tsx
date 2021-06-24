@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Button, StatusBar as StatusBar2, StyleSheet, View} from 'react-native';
+import {StatusBar as StatusBar2, StyleSheet, View} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProfileTop } from './ProfileTop';
@@ -13,6 +13,7 @@ import {useAppDispatch, useAppSelector} from '../redux/hooks';
 import {deleteItemLocally} from "../utils/SecureStore";
 import {logout} from "../redux/authentication/authenticationSlice";
 import {clearQuestState} from "../redux/quests/questsSlice";
+import {Button} from "react-native-paper";
 
 export default interface settingsProps {
     ownProfile: boolean
@@ -34,9 +35,13 @@ export const SettingsScreen = (props: settingsProps) => {
     }
 
     return(
-        <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
+        <View style={[style.screen, { marginBottom: insets.bottom}]}>
             <ScrollView contentContainerStyle={style.settings}>
-                <Button color={'#1D79AC'} title={'Logout'} onPress={handleLogout}/>
+                <Button color={'#1D79AC'}> Delete Backend >:( </Button>
+                <Button color={'#1D79AC'}> Change Language </Button>
+                <Button color={'#1D79AC'}> Delete Account </Button>
+                <Button color={'#1D79AC'}> Legal Disclosure </Button>
+                <Button icon={'logout-variant'} color={'#1D79AC'} onPress={handleLogout}> Logout </Button>
             </ScrollView>
             <StatusBar style="auto"/>
         </View>
@@ -45,10 +50,9 @@ export const SettingsScreen = (props: settingsProps) => {
 
 const style = StyleSheet.create({
     screen: {
-        justifyContent: "center",
+        alignItems: "center",
         flexGrow: 1,
         backgroundColor: Colors.background,
-        marginTop: StatusBar2.currentHeight,
     },
     settings: {
         margin: 10,

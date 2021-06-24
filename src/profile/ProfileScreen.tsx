@@ -35,8 +35,8 @@ export const ProfileScreen = (props: profileProps) => {
   return(
     <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
       <ScrollView contentContainerStyle={style.profile}>
-        <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={{alignSelf: "flex-end"}}>
-          <MaterialCommunityIcons name="cog" size={24} color="black" />
+        <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={{top: 5, right: 5, position: "absolute"}}>
+            <MaterialCommunityIcons name="cog" size={30} color='#1D79AC' />
         </TouchableOpacity>
         {user && <ProfileTop ownProfile profileData={{username: user?.userName, followers: 200, level: user?.level, xp: user?.experience, profileImageId: user?.image, questsCreated: 100, questsPlayed: 300}} />}
           {location && (

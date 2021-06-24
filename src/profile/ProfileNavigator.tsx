@@ -11,6 +11,6 @@ export const ProfileNavigator = () => (
   <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name='Profile' component={ProfileScreen} />
     <Stack.Screen name='QuestDetail' component={QuestDetailScreen}/>
-    <Stack.Screen name='Settings' component={SettingsScreen}/>
+    <Stack.Screen name='Settings' component={SettingsScreen} options={{headerShown: true}}/>
   </Stack.Navigator>
 )
