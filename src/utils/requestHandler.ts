@@ -47,9 +47,8 @@ export const renewRequest = () => (
   request('/auth/renew/', 'POST')
   .then(r => {
     if(r.ok) {
-      return r.json().then(r => {store.dispatch(setToken(r.token))})
+      r.json().then(r => {store.dispatch(setToken(r.token))})
     }
-  return 0
   })
 )
 
@@ -81,6 +80,9 @@ export const createQueryRequest = (offset: number = 0) => (request(`/create/quer
 
 // /create/create/
 export const createQuestRequest = () => (request('/create/create/', 'POST', {}))
+
+// /create/delete/
+export const createDeleteQuestRequest = (questId: string) => (request('/create/delete/', 'POST', questId))
 
 // /create/get/
 export const createGetRequest = (questId: string) => (request(`/create/get/?questId=${questId}`))
