@@ -107,7 +107,7 @@ export const createTrackerRequest = (questId: string) => (request('/play/create'
 export const playVoteRequest = (trackerId: string, vote: 'None' | 'Up' | 'Down') => (request('play/vote', 'POST', {trackerId: trackerId, vote: vote}))
 
 // /play/reset
-export const playResetRequest = (trackerId: string) => (request('/play/reset', 'POST', {trackerId: trackerId}))
+export const playResetRequest = (trackerId: string) => (request('/play/reset', 'POST', trackerId))
 
 // /play/querytrackernodes
 export const queryTrackerNodesRequest = (trackerId: string) => (request(`/play/querytrackernodes?trackerId=${trackerId}`))

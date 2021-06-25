@@ -19,11 +19,10 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
   const navigation = useNavigation();
 
   const resetQuest = () => {
-    /*playResetRequest(trackerId).then((res) => {
+    playResetRequest(trackerId).then((res) => {
       if(res.status === 200) alert('Reload Questlog');
       else alert('Error ' + res.status);
-    }).then(() => navigation.goBack())*/
-    console.log(trackerId)
+    }).then(() => navigation.goBack())
   }
 
   return (
