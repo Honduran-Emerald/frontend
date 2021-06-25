@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, TouchableNativeFeedback, View } from 'react-native';
-import { Text } from 'react-native';
+import { StyleSheet, TouchableNativeFeedback, View, Text } from 'react-native';
+
 import { GameplayStoryModule } from '../../types/quest';
 import { ModuleRendererProps } from '../ModuleRenderer';
-import {Colors} from "../../styles";
+import { Colors } from '../../styles';
 
 export const StoryModule: React.FC<ModuleRendererProps<GameplayStoryModule>> = ({ module, onChoice }) => {
 
