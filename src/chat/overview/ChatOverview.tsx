@@ -7,6 +7,7 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { useAppSelector } from '../../redux/hooks';
 import { getImageAddress } from '../../utils/requestHandler';
 import { Colors } from '../../styles';
+import {FAB} from "react-native-paper";
 
 export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
 
@@ -19,7 +20,7 @@ export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
         userImgSource: string,
         userTargetId: string, */}
         <View style={styles.chats}>
-          {chatsPreviewList && chatsPreviewList.map((val, idx) => 
+          {chatsPreviewList && chatsPreviewList.map((val, idx) =>
             <TouchableOpacity onPress={() => navigation.navigate('ChatPersonal', {
                                                                       userName: val.username,
                                                                       userImgSource: getImageAddress(val.userImageId, val.username),
@@ -27,17 +28,23 @@ export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
                                                                     })}
                               key={idx}>
 
-              <ChatSingleElement 
-                userName={val.username} 
-                lastMessage={val.lastMessageText} 
-                userImgSource={getImageAddress(val.userImageId, val.username)} 
+              <ChatSingleElement
+                userName={val.username}
+                lastMessage={val.lastMessageText}
+                userImgSource={getImageAddress(val.userImageId, val.username)}
                 />
 
             </TouchableOpacity>
             )}
         </View>
-          
+
       </ScrollView>
+      <FAB
+        style={styles.locationButton}
+        icon='account-multiple'
+        onPress={() => navigation.navigate('Friendlist')}
+        color={Colors.primary}
+      />
     </View>
   )
 }
@@ -52,7 +59,7 @@ const styles = StyleSheet.create({
       //paddingTop: StatusBar.currentHeight // not needed if navigation header is shown
     },
     scrollable: {
-      
+
     },
     chats: {
       borderTopWidth: 1,
@@ -68,7 +75,7 @@ const styles = StyleSheet.create({
       bottom: 20,
       backgroundColor: '#FFF',
       borderRadius: 100,
-      padding: 12,
+      padding: 5,
       elevation: 3
     }
   });
