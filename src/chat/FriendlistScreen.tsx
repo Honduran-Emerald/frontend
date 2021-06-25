@@ -1,13 +1,12 @@
 import React from 'react';
-import {RefreshControl, ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
+import { RefreshControl, ScrollView, StatusBar, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {Avatar, TouchableRipple} from 'react-native-paper';
+import { Avatar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 import { Colors } from '../styles';
 import { User } from '../types/general';
 import { getImageAddress } from '../utils/requestHandler';
-import {rounded} from "../styles/containers";
 
 interface FriendItemProps {
   user: User,
@@ -81,19 +80,19 @@ export default function FriendlistScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.touchContainer}>
-          <TouchableRipple style={styles.rounded} onPress={() => navigation.navigate('ChatOverview')}>
+          <TouchableNativeFeedback style={styles.rounded} onPress={() => navigation.navigate('ChatOverview')}>
             <View style={styles.backButton}>
               <MaterialCommunityIcons name='arrow-left' size={24} color={Colors.black}/>
             </View>
-          </TouchableRipple>
+          </TouchableNativeFeedback>
         </View>
         <Text style={styles.headerText}>Friendlist</Text>
         <View style={[styles.touchContainer, styles.marginLeft, styles.addButton]}>
-          <TouchableRipple style={styles.rounded} onPress={() => navigation.navigate('AddFriend')}>
+          <TouchableNativeFeedback style={styles.rounded} onPress={() => navigation.navigate('AddFriend')}>
             <View style={[styles.backButton]}>
               <MaterialCommunityIcons name='account-plus' size={30} color={Colors.primary}/>
             </View>
-          </TouchableRipple>
+          </TouchableNativeFeedback>
         </View>
       </View>
       {
@@ -130,7 +129,7 @@ export default function FriendlistScreen() {
 export function FriendItem({ user, isFriend, hasFollowed, buttonAction }: FriendItemProps) {
 
   return (
-    <TouchableRipple onPress={() => alert('Open profile ' + user.userName)}>
+    <TouchableNativeFeedback onPress={() => alert('Open profile ' + user.userName)}>
       <View style={styles.friendContainer}>
         <Avatar.Image
           style={styles.avatar}
@@ -140,7 +139,7 @@ export function FriendItem({ user, isFriend, hasFollowed, buttonAction }: Friend
         />
         <Text style={styles.friendName}>{user.userName}</Text>
         <View style={[styles.touchContainer, styles.marginLeft]}>
-          <TouchableRipple style={styles.rounded} onPress={buttonAction}>
+          <TouchableNativeFeedback style={styles.rounded} onPress={buttonAction}>
             <View style={styles.friendChat}>
               <MaterialCommunityIcons
                 name={isFriend ? 'message-text' : hasFollowed ? 'check' : 'account-plus'}
@@ -148,10 +147,10 @@ export function FriendItem({ user, isFriend, hasFollowed, buttonAction }: Friend
                 color={!isFriend && hasFollowed ? 'green' : Colors.primary}
               />
             </View>
-          </TouchableRipple>
+          </TouchableNativeFeedback>
         </View>
       </View>
-    </TouchableRipple>
+    </TouchableNativeFeedback>
   )
 }
 
@@ -175,7 +174,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     backgroundColor: 'transparent',
-    ...rounded,
+    borderRadius: 100,
     padding: 10,
   },
   addButton: {
