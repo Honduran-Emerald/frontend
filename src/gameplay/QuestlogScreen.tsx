@@ -68,7 +68,8 @@ export default function QuestlogScreen() {
 
   const loadQuestObjectiveScreen = useCallback((trackerId: string) => {
     navigation.navigate('GameplayScreen', {
-      trackerId: trackerId
+      trackerId: trackerId,
+      tracker: acceptedQuests.find(tracker => tracker.trackerId === trackerId),
     })
   }, [])
 
