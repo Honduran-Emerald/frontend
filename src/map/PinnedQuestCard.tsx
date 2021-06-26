@@ -13,7 +13,6 @@ export default function PinnedQuestCard() {
   const navigation = useNavigation();
 
   const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
-  const acceptedQuests = useAppSelector((state) => state.quests.acceptedQuests);
 
   // TODO adjust feedback source to backend updates
   const [objectiveComplete, setObjectiveComplete] = React.useState(false);
@@ -21,7 +20,7 @@ export default function PinnedQuestCard() {
   const loadQuestObjectiveScreen = () => {
     navigation.navigate('Questlog', { screen: 'GameplayScreen', initial: false,  params: {
       trackerId: pinnedQuest?.trackerId,
-      tracker: acceptedQuests.find(tracker => tracker.trackerId === pinnedQuest?.trackerId),
+      tracker: pinnedQuest,
     }});
   }
 
