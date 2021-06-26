@@ -115,7 +115,7 @@ export const GameplayScreen : React.FC = () => {
                 handleExperience(responseEvent.experience);
                 break;
               case 'QuestFinish':
-                handleQuestFinish(responseEvent.endingFactor);
+                new Promise(resolve => setTimeout(() => resolve(), 1500)).then(() => handleQuestFinish(responseEvent.endingFactor));
                 break;
 
             }
