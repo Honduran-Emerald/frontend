@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import { useEffect } from 'react';
 import { ActivityIndicator, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native';
+import * as Animatable from 'react-native-animatable';
 import { FAB } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {loadPinnedQuestPath, pinQuest, updateAcceptedQuest} from '../redux/quests/questsSlice';
@@ -27,8 +28,11 @@ export const GameplayScreen : React.FC = () => {
   const ref = useRef<FlatList>(null);
   const dispatch = useAppDispatch();
 
-  const [loadedTrackerNodes, setLoadedTrackerNodes] = useState<QuestPath | undefined>()
-  const [hasLoaded, setHasLoaded] = useState<boolean>(false)
+  const [loadedTrackerNodes, setLoadedTrackerNodes] = useState<QuestPath | undefined>();
+  const [hasLoaded, setHasLoaded] = useState<boolean>(false);
+
+  const [showXp, setShowXp] = useState<boolean>(false);
+  const [xpAmount, setXpAmount] = useState<number>(-1);
 
   const [loadedTrackerNodesList, setLoadedTrackerNodesList] = useState<QuestTrackerNodeElement[]>([]);
   useEffect(() => {
@@ -84,6 +88,16 @@ export const GameplayScreen : React.FC = () => {
     }
   }, [])
 
+  const handleExperience = useCallback((experience: number) => {
+    setXpAmount(experience);
+    setShowXp(true);
+  }, [])
+
+  const resetXp = useCallback(() => {
+    setXpAmount(-1);
+    setShowXp(false);
+  }, [])
+
   const handleChoiceEvent = useCallback((choiceId=0) =>
     playEventChoiceRequest(route.params.trackerId, choiceId)
       .then(res => res.json())
@@ -93,10 +107,10 @@ export const GameplayScreen : React.FC = () => {
           (responseEvent: any) => {
             switch (responseEvent.type) {
               case 'ModuleFinish':
-                handleModuleFinish(responseEvent.module, res.memento);
+                new Promise(resolve => setTimeout(() => resolve(), 1500)).then(() => handleModuleFinish(responseEvent.module, res.memento));
                 break;
               case 'Experience':
-                console.log('Experience', responseEvent);
+                handleExperience(responseEvent.experience);
                 break;
               case 'QuestFinish':
                 handleQuestFinish(responseEvent.endingFactor);
@@ -137,6 +151,19 @@ export const GameplayScreen : React.FC = () => {
             keyExtractor={item => item.module.id.toString()}
             inverted
           />
+          {
+            showXp && xpAmount !== -1 &&
+            <Animatable.View
+              animation='fadeOutUp'
+              delay={500}
+              onAnimationEnd={() => resetXp()}
+              style={styles.xpAnimationView}
+            >
+              <Text style={styles.xpText}>
+                +{xpAmount}XP
+              </Text>
+            </Animatable.View>
+          }
           {/* <FAB
         style={{
           position: 'absolute',
@@ -186,5 +213,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: '70%',
     fontSize: 16,
+  },
+  xpAnimationView: {
+    backgroundColor: Colors.background,
+    elevation: 5,
+    borderRadius: 100,
+    position: 'absolute',
+    padding: 10,
+    right: 30,
+    bottom: 120,
+  },
+  xpText: {
+    color: Colors.primary,
+    textAlign: 'center',
   },
 })
