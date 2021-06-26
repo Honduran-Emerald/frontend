@@ -22,6 +22,16 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
 
   const dispatch = useAppDispatch();
 
+  const creationDate = tracker ? new Date(Date.parse(tracker.creationTime)) : new Date();
+  const currentDate = new Date();
+  const secondsElapsed = (currentDate.getTime() - creationDate.getTime()) / 1000;
+  const seconds = Math.floor(secondsElapsed % 60);
+  const minutesElapsed = Math.floor(secondsElapsed / 60);
+  const minutes = Math.floor(minutesElapsed % 60);
+  const hoursElapsed = Math.floor(minutesElapsed / 60);
+  //const timeElapsed = new Date(secondsElapsed * 1000).toISOString().substr(11,8);
+  const timeElapsed = `${hoursElapsed}h ${minutes}m ${seconds}s`
+
   const handleClick = (vote: 'None' | 'Up' | 'Down') => {
     setInputDisabled(true);
     handleVote(vote).then((res) => {
@@ -39,7 +49,10 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
 
   return (
     <View style={[styleGameplay.bubble, styles.container]}>
-      <View style={styles.header}>
+      <Text style={styles.header}>
+        Quest completed
+      </Text>
+      <View style={styles.voteAndTitle}>
         <View style={styles.votes}>
           <View style={styles.touchContainer}>
             <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick('Up')}>
@@ -65,6 +78,13 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
           </Text>
         </View>
       </View>
+      <View style={styles.divider}/>
+      <Text style={styles.stats}>
+        Total Experience: 11400
+      </Text>
+      <Text style={styles.stats}>
+        Time elapsed: {timeElapsed}
+      </Text>
     </View>
   )
 }
@@ -75,14 +95,22 @@ const styles = StyleSheet.create({
     marginTop: 40,
     width: '80%',
     alignItems: 'center',
+    elevation: 5,
   },
   header: {
+    color: '#fff',
+    fontSize: 28,
+    marginBottom: 10,
+  },
+  voteAndTitle: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   title: {
     color: '#fff',
     fontSize: 25,
+    paddingRight: 15,
   },
   voteNumber: {
     color: '#fff',
@@ -94,6 +122,7 @@ const styles = StyleSheet.create({
   },
   votes: {
     marginRight: 10,
+    marginLeft: 10,
   },
   touchContainer: {
     borderRadius: 100,
@@ -107,4 +136,16 @@ const styles = StyleSheet.create({
   round: {
     borderRadius: 100,
   },
+  divider: {
+    width: '90%',
+    marginVertical: 20,
+    borderBottomWidth: 1,
+    borderColor: '#fff',
+  },
+  stats: {
+    marginVertical: 10,
+    color: '#fff',
+    fontSize: 20,
+    textAlign: 'center',
+  }
 });
