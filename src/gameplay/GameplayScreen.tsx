@@ -8,9 +8,9 @@ import { FlatList } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { FAB } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import {loadPinnedQuestPath, pinQuest, updateAcceptedQuest} from '../redux/quests/questsSlice';
+import { loadPinnedQuestPath, pinQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
 import { GameplayModule, ModuleMememto, QuestPath, QuestTrackerNodeElement } from '../types/quest';
-import {playEventChoiceRequest, playVoteRequest, queryTrackerNodesRequest} from '../utils/requestHandler';
+import { playEventChoiceRequest, playVoteRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
 import { ModuleRenderer } from './ModuleRenderer';
 import { QuestStatsScreen } from './QuestStatsScreen';
 import _ from 'lodash';
@@ -83,10 +83,10 @@ export const GameplayScreen : React.FC = () => {
   }, [loadedTrackerNodes])
 
   const handleQuestFinish = useCallback((endingFactor: number) => {
-    let newPinnedQuest = _.cloneDeep(acceptedQuests.find(tracker => tracker.trackerId === route.params.trackerId));
-    if(newPinnedQuest) {
-      newPinnedQuest.finished = true;
-      dispatch(updateAcceptedQuest(newPinnedQuest));
+    let newTracker = _.cloneDeep(currentTracker);
+    if(newTracker) {
+      newTracker.finished = true;
+      dispatch(updateAcceptedQuest(newTracker));
     }
   }, [])
 
