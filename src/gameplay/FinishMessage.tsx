@@ -8,19 +8,22 @@ import { styleGameplay } from './styleGameplay';
 interface FinishMessageProps {
   quest: QuestHeader | undefined,
   tracker: QuestTracker | undefined,
-  handleVote: (vote: 'None' | 'Up' | 'Down') => Promise<void>,
+  handleVote: (vote: 'None' | 'Up' | 'Down') => Promise<Response>,
 }
 
 export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, handleVote }) => {
 
+  const [votes, setVotes] = React.useState(quest ? quest.votes : 0);
   const [hasVoted, setHasVoted] = React.useState(tracker?.vote);
   const [inputDisabled, setInputDisabled] = React.useState(false);
 
   const handleClick = (vote: 'None' | 'Up' | 'Down') => {
     setInputDisabled(true);
-    handleVote(vote).then(() => {
-      setHasVoted(vote);
+    handleVote(vote).then((res) => {
+      console.log(JSON.stringify(res));
       setInputDisabled(false);
+      if(res.status === 200) setHasVoted(vote);
+      if(res.status === 200) vote === 'Up' ? setVotes(votes + 1) : setVotes(votes - 1);
     });
   }
 
@@ -35,6 +38,9 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
               </View>
             </TouchableNativeFeedback>
           </View>
+          <Text style={styles.voteNumber}>
+            {votes}
+          </Text>
           <View style={[styles.touchContainer]}>
             <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick('Down')}>
               <View style={[styles.backButton]}>
@@ -73,12 +79,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 25,
   },
+  voteNumber: {
+    color: '#fff',
+    fontSize: 20,
+    textAlign: 'center',
+  },
   xp: {
     color: '#fff',
   },
   votes: {
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    marginRight: 10,
   },
   touchContainer: {
     borderRadius: 100,
