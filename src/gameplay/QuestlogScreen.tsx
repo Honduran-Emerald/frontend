@@ -207,6 +207,7 @@ export default function QuestlogScreen() {
               )
             }
           </List.Accordion>
+          <View style={{paddingBottom: 40}}/>
         </ScrollView>
       }
     </View>
