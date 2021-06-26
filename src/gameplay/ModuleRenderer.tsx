@@ -15,9 +15,10 @@ export interface ModuleRendererProps<ModuleType extends GameplayModule> {
   }
   index: number,
   onChoice: (choiceId: number) => Promise<any>
+  trackerId?: string,
 }
 
-export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index, onChoice }) => {
+export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index, onChoice, trackerId }) => {
 
   return (
     <View style={{paddingHorizontal: 10}}>
@@ -59,6 +60,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                 }}
                 index={index}
                 onChoice={onChoice}
+                trackerId={trackerId}
               />;
           }
         })()

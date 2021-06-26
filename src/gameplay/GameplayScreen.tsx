@@ -7,7 +7,7 @@ import { ActivityIndicator, Dimensions, StyleSheet, Text, View } from 'react-nat
 import { FlatList } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { loadPinnedQuestPath, pinQuest } from '../redux/quests/questsSlice';
+import {loadPinnedQuestPath, pinQuest, updateAcceptedQuest} from '../redux/quests/questsSlice';
 import { GameplayModule, ModuleMememto, QuestPath, QuestTrackerNodeElement } from '../types/quest';
 import { playEventChoiceRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
 import { ModuleRenderer } from './ModuleRenderer';
@@ -17,6 +17,7 @@ import { Colors } from '../styles';
 
 export const GameplayScreen : React.FC = () => {
 
+  const acceptedQuests = useAppSelector(state => state.quests.acceptedQuests);
   const pinnedQuestPath = useAppSelector(state => state.quests.pinnedQuestPath)
   const pinnedQuest = useAppSelector(state => state.quests.pinnedQuest)
   const route = useRoute<RouteProp<{ params: {
@@ -75,6 +76,14 @@ export const GameplayScreen : React.FC = () => {
 
   }, [loadedTrackerNodes])
 
+  const handleQuestFinish = useCallback((endingFactor: number) => {
+    let newPinnedQuest = _.cloneDeep(acceptedQuests.find(tracker => tracker.trackerId === route.params.trackerId));
+    if(newPinnedQuest) {
+      newPinnedQuest.finished = true;
+      dispatch(updateAcceptedQuest(newPinnedQuest));
+    }
+  }, [])
+
   const handleChoiceEvent = useCallback((choiceId=0) =>
     playEventChoiceRequest(route.params.trackerId, choiceId)
       .then(res => res.json())
@@ -84,13 +93,13 @@ export const GameplayScreen : React.FC = () => {
           (responseEvent: any) => {
             switch (responseEvent.type) {
               case 'ModuleFinish':
-                handleModuleFinish(responseEvent.module, res.memento)
+                handleModuleFinish(responseEvent.module, res.memento);
                 break;
               case 'Experience':
-                console.log('Experience', responseEvent)
+                console.log('Experience', responseEvent);
                 break;
               case 'QuestFinish':
-                console.log('Quest Finish', responseEvent)
+                handleQuestFinish(responseEvent.endingFactor);
                 break;
 
             }
@@ -109,7 +118,7 @@ export const GameplayScreen : React.FC = () => {
           <FlatList
             data={loadedTrackerNodesList}
             renderItem={
-              ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} />
+              ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} trackerId={route.params.trackerId}/>
             }
             ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref} trackerId={route.params.trackerId}/>}
             onLayout={(event) => {

@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { QuestHeader, QuestPath, QuestTracker } from '../../types/quest';
-import {saveItemLocally} from "../../utils/SecureStore";
 
 interface QuestsState {
     localQuests: QuestHeader[],
@@ -25,6 +24,15 @@ export const questsSlice = createSlice({
         },
         setAcceptedQuests: (state, action: PayloadAction<QuestTracker[]>) => {
             state.acceptedQuests = action.payload
+        },
+        updateAcceptedQuest: (state, action: PayloadAction<QuestTracker>) => {
+            const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
+            if(oldTracker) {
+                const index = state.acceptedQuests.indexOf(oldTracker);
+                if(index !== -1) {
+                    state.acceptedQuests[index] = action.payload;
+                }
+            }
         },
         acceptQuest: (state, action: PayloadAction<QuestTracker>) => {
             if (!state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId)) {
@@ -54,6 +62,6 @@ export const questsSlice = createSlice({
     }
 })
 
-export const { setLocalQuests, setAcceptedQuests, acceptQuest, pinQuest, clearQuestState, loadPinnedQuestPath } = questsSlice.actions
+export const { setLocalQuests, setAcceptedQuests, updateAcceptedQuest, acceptQuest, pinQuest, clearQuestState, loadPinnedQuestPath } = questsSlice.actions
 
 export default questsSlice.reducer
