@@ -1,9 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import _ from 'lodash';
 
 import { QuestHeader, QuestTracker } from '../types/quest';
 import { styleGameplay } from './styleGameplay';
+import { updateAcceptedQuest } from '../redux/quests/questsSlice';
+import { useAppDispatch } from '../redux/hooks';
 
 interface FinishMessageProps {
   quest: QuestHeader | undefined,
@@ -17,11 +20,18 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
   const [hasVoted, setHasVoted] = React.useState(tracker?.vote);
   const [inputDisabled, setInputDisabled] = React.useState(false);
 
+  const dispatch = useAppDispatch();
+
   const handleClick = (vote: 'None' | 'Up' | 'Down') => {
     setInputDisabled(true);
     handleVote(vote).then((res) => {
       console.log(JSON.stringify(res));
       setInputDisabled(false);
+      let newTracker = _.cloneDeep(tracker);
+      if(newTracker) {
+        newTracker.vote = vote;
+        dispatch(updateAcceptedQuest(newTracker));
+      }
       if(res.status === 200) setHasVoted(vote);
       if(res.status === 200) vote === 'Up' ? setVotes(votes + 1) : setVotes(votes - 1);
     });
@@ -54,11 +64,6 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
             {quest?.title}
           </Text>
         </View>
-      </View>
-      <View>
-        <Text style={styles.xp}>
-          Total XP: 5600
-        </Text>
       </View>
     </View>
   )
