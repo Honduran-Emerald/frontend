@@ -4,13 +4,10 @@ import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { GameplayEndingModule } from '../../types/quest';
 import { ModuleRendererProps } from '../ModuleRenderer';
 import { Colors } from '../../styles';
-import { useAppSelector } from '../../redux/hooks';
 
-export const EndingModule: React.FC<ModuleRendererProps<GameplayEndingModule>> = ({ onChoice, trackerId }) => {
+export const EndingModule: React.FC<ModuleRendererProps<GameplayEndingModule>> = ({ onChoice, tracker }) => {
 
-  const acceptedQuests = useAppSelector(state => state.quests.acceptedQuests);
-
-  const [hasContinued, setHasContinued] = React.useState(acceptedQuests.find(tracker => tracker.trackerId === trackerId)?.finished);
+  const [hasContinued, setHasContinued] = React.useState(tracker?.finished);
   const [inputDisabled, setInputDisabled] = React.useState(false);
 
   const handleClick = () => {

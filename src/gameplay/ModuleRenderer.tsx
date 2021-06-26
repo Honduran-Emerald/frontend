@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { GameplayModule } from '../types/quest';
+import {GameplayModule, QuestTracker} from '../types/quest';
 import { ComponentRenderer } from './ComponentRenderer';
 import { ChoiceModule } from './modules/ChoiceModule';
 import { StoryModule } from './modules/StoryModule';
@@ -15,15 +15,15 @@ export interface ModuleRendererProps<ModuleType extends GameplayModule> {
   }
   index: number,
   onChoice: (choiceId: number) => Promise<any>
-  trackerId?: string,
+  tracker?: QuestTracker,
 }
 
-export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index, onChoice, trackerId }) => {
+export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index, onChoice, tracker }) => {
 
   return (
     <View style={{paddingHorizontal: 10}}>
       {
-        index === 0 &&
+        index === 0 && !tracker?.finished &&
         <View style={{backgroundColor: Colors.gray, borderRadius: 10, width: '70%', alignSelf: 'center', marginTop: 35, padding: 10}}>
           <Text style={{textAlign: 'center', color: Colors.black}}>
             {module.module.objective}
@@ -60,7 +60,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                 }}
                 index={index}
                 onChoice={onChoice}
-                trackerId={trackerId}
+                tracker={tracker}
               />;
           }
         })()

@@ -10,11 +10,12 @@ import { FAB } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {loadPinnedQuestPath, pinQuest, updateAcceptedQuest} from '../redux/quests/questsSlice';
 import { GameplayModule, ModuleMememto, QuestPath, QuestTrackerNodeElement } from '../types/quest';
-import { playEventChoiceRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
+import {playEventChoiceRequest, playVoteRequest, queryTrackerNodesRequest} from '../utils/requestHandler';
 import { ModuleRenderer } from './ModuleRenderer';
 import { QuestStatsScreen } from './QuestStatsScreen';
 import _ from 'lodash';
 import { Colors } from '../styles';
+import { FinishMessage } from './FinishMessage';
 
 export const GameplayScreen : React.FC = () => {
 
@@ -24,6 +25,7 @@ export const GameplayScreen : React.FC = () => {
   const route = useRoute<RouteProp<{ params: {
     trackerId: string
   }}, 'params'>>();
+  const currentTracker = acceptedQuests.find(tracker => tracker.trackerId === route.params.trackerId);
 
   const ref = useRef<FlatList>(null);
   const dispatch = useAppDispatch();
@@ -122,6 +124,10 @@ export const GameplayScreen : React.FC = () => {
       })
   , [route.params, loadedTrackerNodes])
 
+  const handleVote = useCallback((vote: 'None' | 'Up' | 'Down') => {
+    return playVoteRequest(route.params.trackerId, vote).then(res => console.log(JSON.stringify(res)))
+  }, [])
+
   return (
     <View>
       {
@@ -132,9 +138,10 @@ export const GameplayScreen : React.FC = () => {
           <FlatList
             data={loadedTrackerNodesList}
             renderItem={
-              ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} trackerId={route.params.trackerId}/>
+              ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} tracker={currentTracker}/>
             }
             ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref} trackerId={route.params.trackerId}/>}
+            ListHeaderComponent={currentTracker?.finished ? <FinishMessage quest={loadedTrackerNodes?.quest} tracker={currentTracker} handleVote={handleVote}/> : null}
             onLayout={(event) => {
               setInnerHeight(event.nativeEvent.layout.height)
             }}
