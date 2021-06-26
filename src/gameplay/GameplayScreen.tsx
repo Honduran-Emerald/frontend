@@ -125,7 +125,7 @@ export const GameplayScreen : React.FC = () => {
   , [route.params, loadedTrackerNodes])
 
   const handleVote = useCallback((vote: 'None' | 'Up' | 'Down') => {
-    return playVoteRequest(route.params.trackerId, vote).then(res => console.log(JSON.stringify(res)))
+    return playVoteRequest(route.params.trackerId, vote).then(res => res)
   }, [])
 
   return (
