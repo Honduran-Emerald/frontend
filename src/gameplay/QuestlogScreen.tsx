@@ -1,17 +1,17 @@
 import React from 'react';
-import {ActivityIndicator, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import i18n from 'i18n-js';
-import {List, Searchbar} from 'react-native-paper';
+import { List, Searchbar } from 'react-native-paper';
+import { useCallback } from 'react';
+import { useNavigation } from '@react-navigation/core';
 
 import { Colors } from '../styles';
 import { commonTranslations } from '../common/translations';
 import { getAllTrackersRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
 import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import {loadPinnedQuestPath, pinQuest, setAcceptedQuests} from '../redux/quests/questsSlice';
-import {saveItemLocally} from "../utils/SecureStore";
-import { useCallback } from 'react';
-import { useNavigation } from '@react-navigation/core';
+import { loadPinnedQuestPath, pinQuest, setAcceptedQuests } from '../redux/quests/questsSlice';
+import { saveItemLocally } from '../utils/SecureStore';
 
 export function removeSpecialChars (input: string) {
   if(input) {
