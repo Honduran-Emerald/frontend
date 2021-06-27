@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PrototypeModule, CreateQuestBase, NewImage } from '../../types/quest';
+import { PrototypeModule, CreateQuestBase, NewImage, Image } from '../../types/quest';
 
 interface EditorState {
     questPrototype: CreateQuestBase | undefined,
@@ -20,8 +20,10 @@ export const questsSlice = createSlice({
     initialState,
     reducers: {
         loadQuest: (state, action: PayloadAction<{questId: string, questPrototype: CreateQuestBase}>) => {
-            state.questPrototype = action.payload.questPrototype
-            state.questId = action.payload.questId
+            state.questPrototype = action.payload.questPrototype;
+            state.questId = action.payload.questId;
+            state.imagePath = '';
+            state.newImages = [];
         },
         unloadQuest: (state) => {
             state.questPrototype = undefined
@@ -67,8 +69,12 @@ export const questsSlice = createSlice({
                 state.questPrototype.locationName = action.payload
         },
         setImagePath: (state, action: PayloadAction<string>) => {
-            if (state.questPrototype !== undefined)
+            if (state.imagePath !== undefined)
                 state.imagePath = action.payload
+        },
+        setImages: (state, action: PayloadAction<Image[]>) => {
+            if(state.questPrototype !== undefined)
+                state.questPrototype.images = action.payload
         },
         setEstimatedTime: (state, action: PayloadAction<string>) => {
             if (state.questPrototype !== undefined)
@@ -95,6 +101,6 @@ export const questsSlice = createSlice({
 })
 
 export const { loadQuest, unloadQuest, addOrUpdateQuestModule, deleteQuestModule, setModules,
-        setQuestTitle, setQuestDescription, setLocationName, setImagePath, setImageReference, setEstimatedTime, addOrUpdateMultipleQuestModules, spliceQuestImages, setNewImages, pushNewImages, setNewImagesAt} = questsSlice.actions
+        setQuestTitle, setQuestDescription, setLocationName, setImagePath, setImages, setImageReference, setEstimatedTime, addOrUpdateMultipleQuestModules, spliceQuestImages, setNewImages, pushNewImages, setNewImagesAt} = questsSlice.actions
 
 export default questsSlice.reducer
