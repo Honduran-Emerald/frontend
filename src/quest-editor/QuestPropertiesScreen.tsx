@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ImagePicker } from '../common/ImagePicker';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { pushNewImages, setEstimatedTime, setImagePath, setImageReference, setLocationName, setNewImagesAt, setQuestDescription, setQuestTitle, spliceQuestImages } from '../redux/editor/editorSlice';
+import { pushNewImages, setEstimatedTime, setImagePath, setImageReference, setImages, setLocationName, setNewImagesAt, setQuestDescription, setQuestTitle, spliceQuestImages } from '../redux/editor/editorSlice';
 import I18n from 'i18n-js';
 import { createPutRequest, getImageAddress } from '../utils/requestHandler';
 import { Image, NewImage } from '../types/quest';
@@ -60,11 +60,11 @@ export const QuestPropertiesScreen = () => {
             } else if ((index = newImages.findIndex(image => image.reference === questPrototype.imageReference)) !== -1) {
                 dispatch(setNewImagesAt({index: index, value: {reference: questPrototype.imageReference, image: base64}}));
             } else {
+                // if reference doesn't exist anywhere, find free reference and use it
                 const freeReference = findFreeReference([...questPrototype.images, ...newImages]);
                 dispatch(pushNewImages({reference: findFreeReference([...questPrototype.images, ...newImages]), image: base64}));
                 dispatch(setImageReference(freeReference));
             }
-            newImages.sort((a, b) => a.reference - b.reference);
           }
         } 
         image={
@@ -103,7 +103,8 @@ export const QuestPropertiesScreen = () => {
         mode='contained' 
         onPress={() => {
           createPutRequest(questId!, questPrototype!, newImages)
-            .then(r => console.log(r.status))
+            .then(r => r.json())
+            .then(data => dispatch(setImages(data.images)))
           }}
       >
         {I18n.t('saveButton')}
