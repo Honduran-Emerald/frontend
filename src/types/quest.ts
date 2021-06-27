@@ -106,7 +106,12 @@ export interface GameplayEndingModule extends GameplayModuleBase {
     type: 'Ending',
 }
 
-export type GameplayModule = GameplayChoiceModule | GameplayEndingModule | GameplayStoryModule
+export interface GameplayLocationModule extends GameplayModuleBase {
+    type: 'Location',
+    locationModel: Location,
+}
+
+export type GameplayModule = GameplayChoiceModule | GameplayEndingModule | GameplayStoryModule | GameplayLocationModule
 
 export interface ComponentBase {
     componentId: string
