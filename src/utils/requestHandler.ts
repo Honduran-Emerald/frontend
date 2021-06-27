@@ -2,7 +2,6 @@ import { store } from "../redux/store"
 import { BACKENDIP } from '../../GLOBALCONFIG'
 import { setToken, unsetToken } from "../redux/authentication/authenticationSlice";
 import { QuestPrototype } from "../types/quest";
-import { Colors } from "../styles";
 
 
 const request = (target: string, type: string = 'GET', body?: any) => {
@@ -23,10 +22,6 @@ const request = (target: string, type: string = 'GET', body?: any) => {
       store.dispatch(unsetToken())
     return response;
   })
-}
-
-export const getImageAddress = (imageId: string | null, userName: string) => {
-  return (imageId) ? `${BACKENDIP}/image/get/${imageId}` : `https://ui-avatars.com/api/?length=1&color=FFF&name=${userName}&background=${Colors.primary.substring(1)}&size=256`
 }
 
 // /auth/login/

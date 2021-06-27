@@ -5,9 +5,9 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { NavigationState } from '@react-navigation/routers';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { useAppSelector } from '../../redux/hooks';
-import { getImageAddress } from '../../utils/requestHandler';
 import { Colors } from '../../styles';
 import {FAB} from "react-native-paper";
+import { getImageAddress } from '../../utils/imageHandler';
 
 export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
 

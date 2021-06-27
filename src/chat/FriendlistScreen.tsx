@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { Colors } from '../styles';
 import { User } from '../types/general';
-import { getImageAddress } from '../utils/requestHandler';
+import { getImageAddress } from '../utils/imageHandler';
 
 interface FriendItemProps {
   user: User,

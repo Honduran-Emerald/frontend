@@ -9,11 +9,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
 import { QuestHeader, QuestTracker } from '../types/quest';
-import { createPublishRequest, createTrackerRequest, getImageAddress } from '../utils/requestHandler';
+import { createPublishRequest, createTrackerRequest } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
 import { BACKENDIP } from '../../GLOBALCONFIG';
+import { getImageAddress } from '../utils/imageHandler';
 
 export default function QuestDetailScreen({ route }: any) {
 

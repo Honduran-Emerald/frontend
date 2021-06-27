@@ -6,7 +6,8 @@ import { appendPersonalChat, loadFromApi, loadPersonalChat } from '../../redux/c
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { Colors } from '../../styles';
 import { primary, primaryLight, secondary } from '../../styles/colors';
-import { chatGetRequest, chatSendTextRequest, getImageAddress } from '../../utils/requestHandler';
+import { getImageAddress } from '../../utils/imageHandler';
+import { chatGetRequest, chatSendTextRequest } from '../../utils/requestHandler';
 
 interface ChatPersonalInterface {
     route: any,
