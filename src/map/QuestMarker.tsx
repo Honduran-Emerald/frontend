@@ -7,7 +7,7 @@ import { Colors, Containers } from '../styles';
 import { Avatar } from 'react-native-paper';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { getImageAddress } from '../utils/requestHandler';
+import { getImageAddress } from '../utils/imageHandler';
 
 interface QuestMarkerProps {
   quest: QuestHeader;

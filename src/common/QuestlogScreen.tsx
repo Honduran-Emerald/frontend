@@ -8,8 +8,8 @@ import { commonTranslations } from './translations';
 import { getAllTrackersRequest } from '../utils/requestHandler';
 import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import {pinQuest, setAcceptedQuests} from '../redux/quests/questsSlice';
-import {saveItemLocally} from "../utils/SecureStore";
+import { pinQuest, setAcceptedQuests } from '../redux/quests/questsSlice';
+import { storeData } from '../utils/AsyncStore';
 
 export function removeSpecialChars (input: string) {
   if(input) {
@@ -56,7 +56,7 @@ export default function QuestlogScreen() {
 
   const setPinnedQuest = (tracker: QuestTracker) => {
     dispatch(pinQuest(tracker));
-    saveItemLocally('PinnedQuestTracker', JSON.stringify(tracker)).then(() => {}, () => {});
+    storeData('PinnedQuestTracker', JSON.stringify(tracker)).then(() => {}, () => {});
   }
 
   const sortTrackers = (trackers: QuestTracker[]) => {

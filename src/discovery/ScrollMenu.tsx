@@ -1,13 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, StatusBar} from "react-native";
-import {Colors} from "../styles";
-import {QuestHeader} from "../types/quest";
-import {getImageAddress, queryQuestsRequest} from "../utils/requestHandler";
-import {Button, Card, Paragraph, Surface, Title} from "react-native-paper";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { Colors } from "../styles";
+import { QuestHeader } from "../types/quest";
+import { getImageAddress } from '../utils/imageHandler';
+import { Button, Card, Surface } from "react-native-paper";
 import { useNavigation } from '@react-navigation/core';
 import * as Location from "expo-location";
-import {LocationObject} from "expo-location";
-import {LatLng} from "react-native-maps";
+import { LocationObject } from "expo-location";
 
 export default interface scrollProps {
     header: string

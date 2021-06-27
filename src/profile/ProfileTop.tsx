@@ -5,10 +5,11 @@ import { ButtonOutline } from '../common/ButtonOutline';
 import { StatChips } from './StatChips';
 import { LevelBar } from './LevelBar';
 import { Image } from 'react-native';
-import { getImageAddress, userUpdateImage } from '../utils/requestHandler';
+import { userUpdateImage } from '../utils/requestHandler';
 import { ImagePicker } from '../common/ImagePicker';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { getImageAddress } from '../utils/imageHandler';
 
 interface ProfileTopProps {
   ownProfile?: boolean,

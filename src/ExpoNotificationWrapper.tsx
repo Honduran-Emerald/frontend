@@ -8,10 +8,11 @@ import { useState } from 'react';
 import { Subscription } from 'expo-sensors/build/Pedometer';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { ChatWrapperNavigator } from './ChatWrapperNavigator';
-import { getImageAddress, invalidatemessagingtokenRequest, userUpdatemessagingtoken } from './utils/requestHandler';
+import { invalidatemessagingtokenRequest, userUpdatemessagingtoken } from './utils/requestHandler';
 import { getMessage } from './redux/chat/chatSlice';
 import { ChatMessageNotif, ChatTextMessageNotif } from './types/general';
 import { useNavigation } from '@react-navigation/native';
+import { getImageAddress } from './utils/imageHandler';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
