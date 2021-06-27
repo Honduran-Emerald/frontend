@@ -1,19 +1,21 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import {GameplayModule, QuestTracker} from '../types/quest';
+import { GameplayModule, QuestTracker } from '../types/quest';
 import { ComponentRenderer } from './ComponentRenderer';
 import { ChoiceModule } from './modules/ChoiceModule';
 import { StoryModule } from './modules/StoryModule';
 import { EndingModule } from './modules/EndingModule';
+import { LocationModule } from './modules/LocationModule';
 import { Colors } from '../styles';
+import { Location } from "../types/general";
 
 export interface ModuleRendererProps<ModuleType extends GameplayModule> {
   module: {
     module: ModuleType,
     memento: any
   }
-  index: number,
+  index?: number,
   onChoice: (choiceId: number) => Promise<any>
   tracker?: QuestTracker,
 }
@@ -31,6 +33,27 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
         </View>
       }
       <ComponentRenderer components={module.module.components}/>
+
+      {
+        // TODO remove
+        /*<LocationModule
+          module={{
+            module: {
+              id: 32432534543632434,
+              type: 'Location',
+              objective: 'Go to Luisenplatz',
+              components: [],
+              locationModel: {
+                latitude:  49.87283,
+                longitude: 8.6512067,
+              },
+            },
+            memento: module.memento
+          }}
+          onChoice={onChoice}
+        />*/
+      }
+
       {
         (() => {
           switch (module.module.type) {
@@ -40,7 +63,6 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   module: module.module,
                   memento: module.memento
                 }}
-                index={index}
                 onChoice={onChoice}
               />;
             case 'Choice':
@@ -49,7 +71,14 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   module: module.module,
                   memento: module.memento
                 }}
-                index={index}
+                onChoice={onChoice}
+              />;
+            case 'Location':
+              return <LocationModule
+                module={{
+                  module: module.module,
+                  memento: module.memento
+                }}
                 onChoice={onChoice}
               />;
             case 'Ending':
@@ -58,7 +87,6 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   module: module.module,
                   memento: module.memento
                 }}
-                index={index}
                 onChoice={onChoice}
                 tracker={tracker}
               />;
