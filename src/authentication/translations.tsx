@@ -1,6 +1,7 @@
 export const authTranslations = {
   en: {
     appName: 'HONDURAN EMERALD',
+    invalidSession: 'Your session timed out. Please log in again.',
     forgotPassword: 'Forgot Password?',
     loginButton: 'Login',
     createAccountButton: 'Create new account',
@@ -23,6 +24,7 @@ export const authTranslations = {
   },
   de: {
     appName: 'HONDURAN EMERALD',
+    invalidSession: 'Die Session ist ausgelaufen. Loggen sie sich erneut ein.',
     forgotPassword: 'Passwort vergessen?',
     loginButton: 'Einloggen',
     createAccountButton: 'Neuen Account erstellen',

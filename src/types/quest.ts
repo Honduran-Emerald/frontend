@@ -8,10 +8,11 @@ export interface QuestBase {
     imageId: string,
     creationTime: string,
     location: Location,
-    tags: string[]
-    profileImageId: string,
-    profileName: string,
+    tags: string[],
+    agentProfileImageId: string,
+    agentProfileName: string,
     locationName: string,
+    approximateTime: string,
 
 }
 
@@ -30,13 +31,14 @@ export interface QuestHeader extends QuestBase {
 }
 
 export interface QuestBaseUpdate {
+    approximateTime?: string,
     title?: string,
     description?: string,
     imageId?: string,
     location?: Location,
     tags?: string[],
-    profileImageId?: string,
-    profileName?: string,
+    agentProfileImageId?: string,
+    agentProfileName?: string,
     locationName?: string,
 
 }
@@ -55,19 +57,58 @@ export type ModuleMememto = any
 export interface QuestPrototype extends QuestBase {
 
     approximateTime: string,
-    firstModuleId: number,
+    firstModuleReference: number | null,
     modules: PrototypeModule[]
 
 }
 
-export interface PrototypeModule {
+export interface PrototypeModuleBase {
     id: number,
     type: string,
     objective: string,
     components: PrototypeComponent[]
-    
+  
 }
 
-export interface PrototypeComponent {
-    type: string,
+export interface PrototypeChoiceModule extends PrototypeModuleBase{
+    choices: {
+        text: string,
+        nextModuleReference: number | null,
+    }[]
+}
+
+export interface PrototypeStoryModule extends PrototypeModuleBase{  
+    nextModuleReference: number | null,
+}
+
+export interface PrototypeEndingModule extends PrototypeModuleBase{
+    endingFactor: number,
+}
+
+export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
+
+export interface TextComponent {
+    type: 'text',
+    text: string,
+}
+
+export interface ImageComponent {
+    type: 'image',
+    imageReference: string,
+}
+
+export type PrototypeComponent = TextComponent | ImageComponent
+
+export interface QuestTracker {
+    questId: string,
+    trackerId: string,
+    newestQuestVersion: boolean,
+    finished: boolean,
+    vote: string,
+    creationTime: string,
+    questName: string,
+    agentProfileImageId: string,
+    agentProfileName: string,
+    objective: string,
+    author: string
 }

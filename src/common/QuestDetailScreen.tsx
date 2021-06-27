@@ -1,81 +1,133 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, SafeAreaView, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar} from 'react-native';
+import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar} from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
-import { Avatar } from 'react-native-paper';
+import { Avatar, Modal, Portal, Button as PaperButton } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
-import { QuestHeader } from '../types/quest';
+import { QuestHeader, QuestTracker } from '../types/quest';
+import { createPublishRequest, createTrackerRequest, getImageAddress } from '../utils/requestHandler';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { acceptQuest } from '../redux/quests/questsSlice';
+import { User } from '../types/general';
+import { BACKENDIP } from '../../GLOBALCONFIG';
 
 export default function QuestDetailScreen({ route }: any) {
 
   i18n.translations = commonTranslations;
 
-  // TODO location, author, approx time missing, image fetch needed
-  // route.params ?  route.params.quest :
-  // approximateTime: "2 hours",
-  const quest: QuestHeader = {
-    id: "51243",
-    ownerId: "8127549",
-    ownerImageId: "",
-    ownerName: "",
-    tags: [],
-    profileImageId: "",
-    profileName: "",
-    locationName: "",
-    public: true,
-    title: "Find phisn's bird",
-    description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n",
-    imageId: "87132984761298",
-    version: 7,
-    creationTime: "2021-05-18T18:14:12.793Z",
-    votes: 356,
-    plays: 1425,
-    finishes: 780,
-    location: {
-      longitude: 49.873219,
-      latitude: 8.650930
-    }
-  };
+  const user: User | undefined = useAppSelector((state) => state.authentication.user);
+  const acceptedQuests: QuestTracker[] = useAppSelector((state) => state.quests.acceptedQuests);
 
-  const creationDate = new Date(Date.parse(quest.creationTime));
+  const acceptedIds: string[] = acceptedQuests.map(tracker => tracker.questId)
+  const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
+  const quest: QuestHeader = route.params.quest;
+  const isQuestCreator = quest.ownerName === user?.userName;
+  const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
+  const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0
+
+  const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
+  const [modalVisible, setModalVisible] = React.useState(false);
+
+  const showModal = () => setModalVisible(true);
+  const hideModal = () => setModalVisible(false);
 
   const handleAccept = () => {
-    // TODO implement
-    alert('Add quest to quest log');
+    setIsButtonDisabled(true);
+    createTrackerRequest(quest.id)
+      .then((res) => res.json()
+        .then((data) => {
+          navigation.goBack();
+          setIsButtonDisabled(false);
+          dispatch(acceptQuest(data.trackerModel));
+        }))
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={{flexGrow: 1, alignItems: 'center', justifyContent: 'center'}}>
         <View style={styles.scrollView}>
           <View style={styles.spacer}/>
           <Text style={styles.header}>
             {quest.title}
           </Text>
-          <Image style={styles.image} source={{uri: 'https://wildlife.org/wp-content/uploads/2015/08/Honduran-Emerald-Hummingbird-Image-Credit-Dominic-Sherony.jpg'}}/>
+          {
+            quest.imageId &&
+            <Image style={styles.image} source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}/>
+          }
+          {
+            !quest.imageId &&
+            <Image style={styles.image} source={require('../../assets/background.jpg')}/>
+          }
           <View style={styles.info}>
             <Entypo name='location-pin' size={24} color='black'/>
             <Text style={styles.location}>
-              Darmstadt, Luisenplatz
+              {quest.locationName}
             </Text>
             <Entypo name='stopwatch' size={24} color='black'/>
             <Text style={styles.time}>
-              2 hours
+              {quest.approximateTime}
             </Text>
           </View>
           <Text style={styles.description}>
             {quest.description}
           </Text>
-          <View style={styles.button}>
-            <Button color={Colors.primary} title={i18n.t('acceptButton')} onPress={handleAccept}/>
-          </View>
+          {
+            !isAccepted &&
+            <View style={styles.button}>
+              <Button color={Colors.primary} disabled={isButtonDisabled} title={i18n.t('acceptButton')} onPress={handleAccept}/>
+            </View>
+          }
+          {
+            isAccepted &&
+            <View style={styles.acceptedText}>
+              <MaterialCommunityIcons name='check' size={24} color='green'/>
+              <Text style={{color: 'green'}}>{i18n.t('questAccepted')}</Text>
+            </View>
+          }
+          {
+            isQuestCreator &&
+            <View>
+              <View style={styles.creatorButtons}>
+                <View style={styles.creatorButton}>
+                  <Button
+                    color={Colors.primary}
+                    disabled={isButtonDisabled}
+                    title={i18n.t('editButton')}
+                    onPress={() => navigation.navigate('QuestEditorScreen', {
+                      questId: quest.id
+                    })}
+                  />
+                </View>
+                <View style={styles.creatorButton}>
+                  <Button
+                    color={Colors.primary}
+                    disabled={isButtonDisabled}
+                    title={'Publish Quest'}
+                    onPress={
+                      () => createPublishRequest(quest.id)
+                        .then(res => res.status === 200 ? alert('Quest published') : alert('Server Error'))
+                    }
+                  />
+                </View>
+              </View>
+              <View style={styles.creatorButtons}>
+                <View style={styles.creatorButton}>
+                  <Button color={Colors.error} disabled={isButtonDisabled} title={i18n.t('deleteButton')} onPress={showModal}/>
+                </View>
+              </View>
+            </View>
+          }
           <View style={styles.divider}/>
           <View style={styles.stats}>
             <View style={styles.center}>
               <Text style={styles.mediumText}>
-                {quest.votes}
+                {quest.votes ? quest.votes : 0}
               </Text>
               <Text style={styles.smallText}>
                 {i18n.t('votes')}
@@ -83,7 +135,7 @@ export default function QuestDetailScreen({ route }: any) {
             </View>
             <View style={styles.center}>
               <Text style={styles.mediumText}>
-                {quest.plays}
+                {quest.plays ? quest.plays : 0}
               </Text>
               <Text style={styles.smallText}>
                 {i18n.t('plays')}
@@ -91,7 +143,7 @@ export default function QuestDetailScreen({ route }: any) {
             </View>
             <View style={styles.center}>
               <Text style={styles.mediumText}>
-                {quest.finishes}
+                {isNaN(finishRate) ? '0.00' : finishRate.toFixed(2)}%
               </Text>
               <Text style={styles.smallText}>
                 {i18n.t('finished')}
@@ -103,10 +155,14 @@ export default function QuestDetailScreen({ route }: any) {
           }
           <TouchableNativeFeedback onPress={() => { alert('Go to profile') }}>
             <View style={styles.authorView}>
-              <Avatar.Image style={styles.authorAvatar} source={{uri: 'https://pbs.twimg.com/profile_images/1214590755706150913/Jm78BGWD_400x400.jpg'}}/>
+              <Avatar.Image
+                style={styles.authorAvatar}
+                theme={{colors: {primary: Colors.primary}}}
+                source={{uri: getImageAddress(quest.ownerImageId, quest.ownerName)}}
+              />
               <View>
                 <Text style={styles.authorName}>
-                  Trillugo
+                  {quest.ownerName}
                 </Text>
                 <Text style={styles.smallText}>
                   {`${creationDate.getDate()}.${creationDate.getMonth() + 1}.${creationDate.getFullYear()}`}
@@ -117,7 +173,28 @@ export default function QuestDetailScreen({ route }: any) {
           <View style={styles.spacer}/>
         </View>
       </ScrollView>
-    </SafeAreaView>
+      <Portal>
+        <Modal visible={modalVisible} dismissable onDismiss={hideModal} contentContainerStyle={styles.modal}>
+          <Text style={styles.modalTitle}>
+            {i18n.t('modalDeleteTitle')}
+          </Text>
+          <Text style={styles.modalText}>
+            {i18n.t('modalDeleteText')}
+          </Text>
+          <View style={styles.modalButtons}>
+            <View style={styles.modalButton}>
+              <PaperButton color={Colors.primaryLight} compact mode={'outlined'} onPress={() => alert('Implement set to private')}>{i18n.t('modalSetPrivateButton')}</PaperButton>
+            </View>
+            <View style={styles.modalButton}>
+              <PaperButton color={Colors.error} compact mode={'outlined'} onPress={() => alert('Implement delete')}>{i18n.t('deleteButton')}</PaperButton>
+            </View>
+          </View>
+          <View style={styles.modalBackButton}>
+            <PaperButton color={Colors.primary} compact onPress={hideModal}>{i18n.t('modalBackButton')}</PaperButton>
+          </View>
+        </Modal>
+      </Portal>
+    </View>
   );
 }
 
@@ -138,7 +215,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   spacer: {
-    height: 40,
+    height: 15,
   },
   header: {
     textAlign: 'center',
@@ -175,6 +252,20 @@ const styles = StyleSheet.create({
     width: '50%',
     marginBottom: 25,
   },
+  acceptedText: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 25,
+  },
+  creatorButtons: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  creatorButton: {
+    width: '40%',
+    marginBottom: 25,
+  },
   divider: {
     borderBottomColor: Colors.black,
     borderBottomWidth: 2,
@@ -197,7 +288,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   authorAvatar: {
-    marginRight: 5,
+    marginRight: 10,
   },
   authorName: {
     fontSize: 20,
@@ -209,5 +300,32 @@ const styles = StyleSheet.create({
   },
   smallText: {
     fontSize: 10,
+  },
+  modal: {
+    backgroundColor: Colors.background,
+    padding: 20,
+    margin: 20,
+  },
+  modalTitle: {
+    fontSize: 24,
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  modalText: {
+    fontSize: 16,
+  },
+  modalButtons: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  modalButton: {
+    width: '48%',
+  },
+  modalBackButton: {
+    alignItems: 'flex-start',
   },
 });

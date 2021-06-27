@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Ref } from 'react';
+import React, {useState, useEffect, useRef, Ref, useCallback} from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -12,9 +12,12 @@ import { useDispatch } from 'react-redux';
 import { queryQuestsRequest } from '../utils/requestHandler';
 import { setLocalQuests } from '../redux/quests/questsSlice';
 import { QuestMarker } from './QuestMarker';
+import { useNavigation } from '@react-navigation/core';
+import PinnedQuestCard from './PinnedQuestCard';
+import {setLocation} from "../redux/location/locationSlice";
+import {useFocusEffect} from "@react-navigation/native";
 
 export const MapScreen = () => {
-  const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [heading, setHeading] = useState<number>();
   const [magnetometerSubscription, setMagnetometerSubscription] = useState<Subscription | null>(null);
@@ -23,7 +26,10 @@ export const MapScreen = () => {
   const _map : Ref<MapView> = useRef(null);
 
   const localQuests = useAppSelector((state) => state.quests.localQuests);
+  const location = useAppSelector((state) => state.location.location);
   const dispatch = useDispatch();
+
+  const navigation = useNavigation();
 
   // TEMP, REMOVE LATER
   useEffect(() => {
@@ -34,43 +40,49 @@ export const MapScreen = () => {
   }, [])
 
   // Get Location Permission and set initial Location
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        return Promise.reject(new Error("Permission to access location was denied"))
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        if(!location){
+          let {status} = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') {
+            return Promise.reject(new Error("Permission to access location was denied"))
+          }
+
+          let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
+          dispatch(setLocation(location));
+        }
+      })()
+        .then(async () => {
+          const LOCATION_SETTINGS = {
+            accuracy: Location.Accuracy.Highest,
+            distanceInterval: 0
+          };
+
+          // subscribe to Location updates
+          const unsubscribe = await Location.watchPositionAsync(LOCATION_SETTINGS, (location : Location.LocationObject) => {
+            dispatch(setLocation(location));
+          })
+          MagnetometerSubscription.subscribe(setMagnetometerSubscription, setHeading)
+
+          setLocationSubscription(unsubscribe);
+        })
+        .catch((err : Error) => {setErrorMsg(err.message)});
+
+      return () => {
+        MagnetometerSubscription.unsubscribeAll();
       }
-  
-      let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
-      setLocation(location);
-    })()
-    .then(async () => {
-      const LOCATION_SETTINGS = {
-        accuracy: Location.Accuracy.Highest,
-        distanceInterval: 0
-      };
-      
-      // subscribe to Location updates
-      const unsubscribe = await Location.watchPositionAsync(LOCATION_SETTINGS, (location : Location.LocationObject) => {
-        setLocation(location);
-      })
-      MagnetometerSubscription.subscribe(setMagnetometerSubscription, setHeading)
-      
-      setLocationSubscription(unsubscribe);
-    })
-    .catch((err : Error) => {setErrorMsg(err.message)});
-    
-    return () => {
-      MagnetometerSubscription.unsubscribeAll();
-    }
-  }, [])
+    }, [])
+  )
 
   // Hook to remove locationSubscription, I don't know how and why this works, pls don't touch
-  useEffect(() => {
-    return () => {
-      locationSubscription?.remove();
-    }
-  }, [locationSubscription])
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        locationSubscription?.remove();
+      }
+    }, [locationSubscription])
+  )
 
   // Animate the camera to the current position set in location-state
   const animateCameraToLocation = () => {
@@ -84,7 +96,7 @@ export const MapScreen = () => {
       <Text>{errorMsg}</Text>
     </View>)
   }
-  
+
   return(
     <View style={styles.container}>
       {(location != null && location.coords != null) &&
@@ -101,12 +113,24 @@ export const MapScreen = () => {
       >
         <UserMarker rotation={heading} coordinate={location.coords}/>
         {localQuests && localQuests.map((quest, index) => (
-          <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
+          quest && quest.location &&
+            <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
         ))}
       </MapView>
       )}
 
-      <FAB 
+      {location && location.coords && (
+          <FAB
+            style={styles.createQuestButton}
+            icon="plus"
+            onPress={() => navigation.navigate('QuestCreationScreen', {screen: 'QuestCreation', params: {latitude: location?.coords.latitude, longitude: location?.coords.longitude}})}
+            color={Colors.primary}
+          />
+      )}
+      <View style={styles.pinnedCard}>
+        <PinnedQuestCard/>
+      </View>
+      <FAB
         style={styles.locationButton}
         icon="crosshairs-gps"
         onPress={animateCameraToLocation}
@@ -136,10 +160,23 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height
   },
+  createQuestButton: {
+    position: 'absolute',
+    right: 10,
+    bottom: 90,
+    backgroundColor: Colors.background
+  },
   locationButton: {
     position: 'absolute',
     right: 10,
     bottom: 20,
     backgroundColor: Colors.background,
-  }
+  },
+  pinnedCard: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: '100%',
+    alignItems: 'center',
+  },
 });

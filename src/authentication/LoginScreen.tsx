@@ -1,26 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
 import { sha512 } from 'js-sha512';
 import i18n from 'i18n-js';
 
 import { Colors } from '../styles';
 import { EMAILREGEX } from '../../GLOBALCONFIG';
-import { useAppDispatch } from '../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../redux/hooks';
 import { setToken } from '../redux/authentication/authenticationSlice';
 import { loginRequest } from '../utils/requestHandler';
+import { saveItemLocally } from '../utils/SecureStore';
 import { authTranslations } from './translations';
-
-async function save(key: string, value: string) {
-  await SecureStore.setItemAsync(key, value);
-}
 
 export default function LoginScreen({ navigation }: any) {
 
   i18n.translations = authTranslations;
 
   const dispatch = useAppDispatch();
+  const tokenInvalid = useAppSelector((state) => state.authentication.tokenInvalid);
 
   // TODO remove default mail and pw
   const [email, setEmail] = React.useState('t3st@test.de');
@@ -72,7 +69,7 @@ export default function LoginScreen({ navigation }: any) {
       .then((response) => {
         if(response.ok) {
           response.json().then((data) => {
-            save('UserToken', data.token).then((() => {}), (() => {}));
+            saveItemLocally('UserToken', data.token).then((() => {}), (() => {}));
             dispatch(setToken(data.token));
           })
         } else if(response.status === 400) {
@@ -98,6 +95,12 @@ export default function LoginScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{i18n.t('appName')}</Text>
+      <View>
+        {
+          tokenInvalid &&
+          <Text style={styles.errorText}>{i18n.t('invalidSession')}</Text>
+        }
+      </View>
       <TextInput
         style={{...styles.input, borderColor: errorEmail ? Colors.error : Colors.black}}
         onChangeText={(input) => updateEmail(input)}

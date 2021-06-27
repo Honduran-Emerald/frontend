@@ -12,3 +12,8 @@ export const rounded = {
 export const grow = {
     flex: 1
 }
+
+export const fullHeightAndWidth = {
+    width: '100%',
+    height: '100%'
+}
