@@ -23,6 +23,7 @@ export const QuestMarker : React.FC<QuestMarkerProps> = ({quest, showPreview, se
       key={quest.id}
       coordinate={{latitude: quest.location.latitude, longitude: quest.location.longitude}}
       onPress={() => {!showPreview ? setShowPreview() : navigation.navigate('QuestDetail', {quest: quest})}}
+      tracksViewChanges={false}
     >
       {
         (showPreview) ? (
