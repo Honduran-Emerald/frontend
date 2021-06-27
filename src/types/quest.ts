@@ -16,6 +16,38 @@ export interface QuestBase {
 
 }
 
+export interface CreateQuestBase {
+    id: string,
+    title: string,
+    description: string,
+    tags: string[],
+    locationName: string,
+    location: Location,
+    imageReference: number | null,
+    approximateTime: string,
+    agentProfileReference: string,
+    agentProfileName: string,
+    firstModuleReference: number,
+    modules: PrototypeModule[],
+    images: Image[],
+}
+
+export interface PutQuest {
+    questId: string,
+    questProtoype: CreateQuestBase,
+    newImages: NewImage[]
+}
+
+export interface Image {
+    reference: number,
+    imageId: string
+}
+
+export interface NewImage {
+    reference: number,
+    image: string
+}
+
 /**
  * Class for public query
  */
@@ -28,19 +60,6 @@ export interface QuestHeader extends QuestBase {
     votes: number,
     plays: number,
     finishes: number,
-}
-
-export interface QuestBaseUpdate {
-    approximateTime?: string,
-    title?: string,
-    description?: string,
-    imageId?: string,
-    location?: Location,
-    tags?: string[],
-    agentProfileImageId?: string,
-    agentProfileName?: string,
-    locationName?: string,
-
 }
 
 export interface QuestPath extends QuestHeader {
@@ -64,9 +83,9 @@ export interface QuestPrototype extends QuestBase {
 
 export interface PrototypeModuleBase {
     id: number,
-    type: string,
+    components: PrototypeComponent[],
     objective: string,
-    components: PrototypeComponent[]
+    type: string,
   
 }
 
@@ -77,15 +96,20 @@ export interface PrototypeChoiceModule extends PrototypeModuleBase{
     }[]
 }
 
-export interface PrototypeStoryModule extends PrototypeModuleBase{  
+export interface PrototypeStoryModule extends PrototypeModuleBase {  
     nextModuleReference: number | null,
 }
 
-export interface PrototypeEndingModule extends PrototypeModuleBase{
+export interface PrototypeEndingModule extends PrototypeModuleBase {
     endingFactor: number,
 }
 
-export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
+export interface PrototypeLocationModule extends PrototypeModuleBase {
+    location: Location,
+    nextModuleReference: number | null
+}
+
+export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule | PrototypeLocationModule
 
 export interface TextComponent {
     type: 'text',
