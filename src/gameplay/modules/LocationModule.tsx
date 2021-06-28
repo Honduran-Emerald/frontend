@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, TouchableNativeFeedback, View, Text, Dimensions, StatusBar} from 'react-native';
+import { StyleSheet, TouchableNativeFeedback, View, Text, Dimensions, StatusBar } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Modal, Portal } from 'react-native-paper';
@@ -8,22 +8,18 @@ import { GameplayLocationModule } from '../../types/quest';
 import { ModuleRendererProps } from '../ModuleRenderer';
 import { Colors } from '../../styles';
 import { useAppSelector } from '../../redux/hooks';
+import { styleGameplay } from '../styleGameplay';
 
-export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule>> = ({ module, onChoice }) => {
+export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule>> = ({ module }) => {
 
   const location = useAppSelector((state) => state.location.location);
 
-  const [hasContinued, setHasContinued] = React.useState(!!module.memento);
-  const [locationReached, setLocationReached] = React.useState(false);
-  const [inputDisabled, setInputDisabled] = React.useState(false);
+  const locationReached = !!module.memento;
+
   const [modalVisible, setModalVisible] = React.useState(false);
 
   const showModal = () => setModalVisible(true);
   const hideModal = () => setModalVisible(false);
-
-  const latitudeDelta = location ? Math.abs(module.module.locationModel.latitude - location.coords.latitude) * 1.5 : 0.2;
-  const longitudeDelta = location ? Math.abs(module.module.locationModel.longitude - location.coords.longitude) : 0.2;
-  const delta = Math.max(latitudeDelta, longitudeDelta);
 
   const deg2rad = (deg:number) => {
     return deg * (Math.PI/180);
@@ -50,55 +46,55 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
 
   const { initialLat, initialLon } = getCenterPoint();
 
-  const handleClick = () => {
-    setInputDisabled(true);
-    setHasContinued(true);
-    onChoice(0).then(() => setInputDisabled(false));
-  }
+  const latitudeDelta = location ? Math.abs(module.module.locationModel.latitude - location.coords.latitude) * 1.5 : 0.2;
+  const longitudeDelta = location ? Math.abs(module.module.locationModel.longitude - location.coords.longitude) : 0.2;
+  const delta = Math.max(latitudeDelta, longitudeDelta);
 
   return (
     <View style={styles.container}>
-      <View style={styles.mapContainer}>
-        <MapView
-          onPress={() => showModal()}
-          showsCompass={false}
-          zoomEnabled={false}
-          scrollEnabled={false}
-          rotateEnabled={false}
-          style={styles.map}
-          showsPointsOfInterest={true}
-          initialRegion={{
-            latitude: initialLat,
-            longitude: initialLon,
-            latitudeDelta: delta,
-            longitudeDelta: delta
-          }}
-        >
-          {
-            location &&
-            <>
-              <Marker rotation={0} coordinate={location.coords} flat tracksViewChanges={false}>
-                <View>
-                  <MaterialCommunityIcons name='account' size={30} color={Colors.primary}/>
-                </View>
-              </Marker>
-              <Marker coordinate={module.module.locationModel} tracksViewChanges={false}>
-                <View>
-                  <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.primary}/>
-                </View>
-              </Marker>
-            </>
-          }
-        </MapView>
-      </View>
       {
-        !hasContinued && locationReached &&
-        <View>
-          <TouchableNativeFeedback onPress={() => {}}>
-            <View style={styles.continue}>
-              <Text style={styles.text}>Continue Story</Text>
-            </View>
-          </TouchableNativeFeedback>
+        !locationReached &&
+        <View style={styles.mapContainer}>
+          <MapView
+            onPress={() => showModal()}
+            showsCompass={false}
+            zoomEnabled={false}
+            scrollEnabled={false}
+            rotateEnabled={false}
+            style={styles.map}
+            showsPointsOfInterest={true}
+            initialRegion={{
+              latitude: initialLat,
+              longitude: initialLon,
+              latitudeDelta: delta,
+              longitudeDelta: delta
+            }}
+          >
+            {
+              location &&
+              <>
+                <Marker rotation={0} coordinate={location.coords} flat tracksViewChanges={false}>
+                  <View>
+                    <MaterialCommunityIcons name='account' size={30} color={Colors.primary}/>
+                  </View>
+                </Marker>
+                <Marker coordinate={module.module.locationModel} tracksViewChanges={false}>
+                  <View>
+                    <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.primary}/>
+                  </View>
+                </Marker>
+              </>
+            }
+          </MapView>
+        </View>
+      }
+      {
+        locationReached &&
+        <View style={[styleGameplay.bubble, styleGameplay.left, styles.completedView]}>
+          <MaterialCommunityIcons name='map-marker-check' size={26} color={'#fff'} style={{marginLeft: -5}}/>
+          <Text style={styles.text}>
+            Location reached!
+          </Text>
         </View>
       }
       <Portal>
@@ -205,5 +201,12 @@ const styles = StyleSheet.create({
   },
   rounded: {
     borderRadius: 100,
+  },
+  completedView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  completedIcon: {
+    marginLeft: -5,
   },
 });
