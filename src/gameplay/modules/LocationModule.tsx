@@ -16,6 +16,35 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
   const [locationReached, setLocationReached] = React.useState(false);
   const [inputDisabled, setInputDisabled] = React.useState(false);
 
+  const latitudeDelta = location ? Math.abs(module.module.locationModel.latitude - location.coords.latitude) * 1.5 : 0.2;
+  const longitudeDelta = location ? Math.abs(module.module.locationModel.longitude - location.coords.longitude) : 0.2;
+  const delta = Math.max(latitudeDelta, longitudeDelta);
+
+  const deg2rad = (deg:number) => {
+    return deg * (Math.PI/180);
+  }
+
+  const rad2deg = (rad:number) => {
+    return rad * (180/Math.PI);
+  }
+
+  const getCenterPoint = () => {
+    if(location) {
+      const lat1 = deg2rad(module.module.locationModel.latitude + 0.05);
+      const lat2 = deg2rad(location.coords.latitude - 0.05);
+      const lon1 = deg2rad(module.module.locationModel.longitude);
+      const lonDelta = deg2rad(location.coords.longitude - module.module.locationModel.longitude);
+      const Bx = Math.cos(lat2) * Math.cos(lonDelta);
+      const By = Math.cos(lat2) * Math.sin(lonDelta);
+      const latCenter = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By));
+      const lonCenter = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
+      return { initialLat: rad2deg(latCenter), initialLon: rad2deg(lonCenter) };
+    }
+    return { initialLat: module.module.locationModel.latitude, initialLon: module.module.locationModel.longitude };
+  }
+
+  const { initialLat, initialLon } = getCenterPoint();
+
   const handleClick = () => {
     setInputDisabled(true);
     setHasContinued(true);
@@ -33,21 +62,21 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
           style={styles.map}
           showsPointsOfInterest={true}
           initialRegion={{
-            latitude: module.module.locationModel.latitude,
-            longitude: module.module.locationModel.longitude,
-            latitudeDelta: 0.2,
-            longitudeDelta: 0.2
+            latitude: initialLat,
+            longitude: initialLon,
+            latitudeDelta: delta,
+            longitudeDelta: delta
           }}
         >
           {
             location &&
             <>
-              <Marker rotation={0} coordinate={location.coords} flat>
+              <Marker rotation={0} coordinate={location.coords} flat tracksViewChanges={false}>
                 <View>
                   <MaterialCommunityIcons name='account' size={30} color={Colors.primary}/>
                 </View>
               </Marker>
-              <Marker coordinate={module.module.locationModel}>
+              <Marker coordinate={module.module.locationModel} tracksViewChanges={false}>
                 <View>
                   <MaterialCommunityIcons name='map-marker-alert' size={40} color={Colors.primary}/>
                 </View>
