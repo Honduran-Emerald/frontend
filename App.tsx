@@ -49,7 +49,7 @@ export function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
         identifier: tracker.trackerId,
         latitude: tracker.trackerNode.module.locationModel.latitude,
         longitude: tracker.trackerNode.module.locationModel.longitude,
-        radius: 50,
+        radius: 20,
         notifyOnEnter: true,
       })
     }
@@ -59,7 +59,7 @@ export function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
     identifier: 'test',
     latitude: 49.872762,
     longitude: 8.651217,
-    radius: 50,
+    radius: 20,
     notifyOnEnter: true,
   })
 
