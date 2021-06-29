@@ -8,7 +8,6 @@ import { TokenManager } from './utils/TokenManager';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setToken, setUser } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
-import * as Localization from 'expo-localization';
 import { chatQueryRequest, getAllTrackersRequest, getUserSelfRequest, queryTrackerNodesRequest, renewRequest } from './utils/requestHandler';
 import { loadPinnedQuestPath, pinQuest, setAcceptedQuests } from './redux/quests/questsSlice';
 import { loadItemLocally } from './utils/SecureStore';
@@ -17,10 +16,11 @@ import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';
 import { Text } from 'react-native'
 import { deleteItemLocally } from './utils/SecureStore';
+import { registerGeofencingTask } from '../App';
 
 
 i18n.fallbacks = true;
-i18n.locale = Localization.locale;
+i18n.locale = 'en-GB';
 
 export const TokenLoader = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -41,7 +41,7 @@ export const TokenLoader = () => {
           if (token) {
             sa('has token' + token.substring(0,10))
             dispatch(setToken(token))
-          } else { 
+          } else {
             sa('has no token')
             setCheckingToken(false)
           }
@@ -56,7 +56,7 @@ export const TokenLoader = () => {
     if (!token) return;
     setIsLoading(true);
     renewRequest().then(() => setCheckingToken(false))
-    
+
   }, [token])
 
   useEffect(() => {
@@ -105,10 +105,11 @@ export const TokenLoader = () => {
                 });
               }
             }))
+            .then(() => registerGeofencingTask(acceptedQuests))
         }
       })
     )
-    
+
     promises.push(
       getUserSelfRequest()
         .then((res) => {
@@ -126,7 +127,7 @@ export const TokenLoader = () => {
         .then(res => res.json())
         .then(res => dispatch(loadChatPreview(res.chats)))
     )
-    
+
 
     Promise.all(promises)
       .then(() => setIsLoading(false))
