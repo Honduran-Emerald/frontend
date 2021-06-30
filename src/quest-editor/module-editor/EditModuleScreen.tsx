@@ -9,6 +9,7 @@ import { ChoiceModule } from './module-views/ChoiceModule';
 import { EndingModule } from './module-views/EndingModule';
 import { StoryModule } from './module-views/StoryModule';
 import { PreviewModuleScreen } from './PreviewModuleScreen';
+import { PrototypeChoiceModule, PrototypeEndingModule, PrototypeModule, PrototypeStoryModule } from '../../types/prototypes';
 
 const displayWidth = Dimensions.get('screen').width
 
