@@ -8,12 +8,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
-import { QuestHeader, QuestTracker } from '../types/quest';
-import {
-  createDeleteQuestRequest,
-  createPublishRequest,
-  createTrackerRequest
-} from '../utils/requestHandler';
+import { GameplayQuestHeader, QuestTracker } from '../types/quest';
+import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
@@ -31,7 +27,7 @@ export default function QuestDetailScreen({ route }: any) {
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
-  const quest: QuestHeader = route.params.quest;
+  const quest: GameplayQuestHeader = route.params.quest;
   const isQuestCreator = quest.ownerName === user?.userName;
   const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
   const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0
