@@ -15,7 +15,9 @@ export const GameplayNavigator = () => {
       <Stack.Screen name='QuestlogScreen' component={QuestlogScreen} options={{headerShown: false}}/>
       <Stack.Screen name='GameplayScreen' component={GameplayScreen} options={({ route }: {route: any}) =>
         ({
-          headerTitle: props => <ChatHeaderTitle {...props} userName={route.params.tracker.agentProfileName !== '' ? route.params.tracker.agentProfileName : route.params.tracker.author} userImgSource={getImageAddress(route.params.tracker.agentProfileImageId, route.params.tracker.agentProfileName)}/>,
+          headerTitle: props => <ChatHeaderTitle {...props} userName={route.params.tracker.agentProfileName !== '' ? route.params.tracker.agentProfileName : route.params.tracker.author}
+                                                 userImgSource={getImageAddress(route.params.tracker.agentProfileImageId, route.params.tracker.agentProfileName)}
+                                                 questTitle={route.params.tracker.questName}/>,
           headerTitleContainerStyle: {left: 50}
         })}/>
       <Stack.Screen name='QuestSettings' component={Dummy}/>
