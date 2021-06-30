@@ -10,12 +10,14 @@ import i18n from 'i18n-js';
 import { chatQueryRequest, getAllTrackersRequest, getUserSelfRequest, queryTrackerNodesRequest, renewRequest } from './utils/requestHandler';
 import { loadPinnedQuestPath, pinQuest, setAcceptedQuests } from './redux/quests/questsSlice';
 import { loadItemLocally } from './utils/SecureStore';
+import * as Localization from 'expo-localization';
 import { QuestTracker } from './types/quest';
 import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';
 import { Text } from 'react-native'
 import { deleteItemLocally } from './utils/SecureStore';
 import { registerGeofencingTask } from './utils/TaskManager';
+import { getData } from './utils/AsyncStore';
 
 
 i18n.fallbacks = true;
@@ -35,6 +37,8 @@ export const TokenLoader = () => {
 
   useEffect(() => {
     setIsLoading(true);
+    // TODO remove cleanup
+    deleteItemLocally('PinnedQuestTracker').then(() => {console.log('deleted PinnedQuestTracker')}, () => {});
     TokenManager.getToken()
       .then(token => {
           if (token) {
@@ -79,7 +83,7 @@ export const TokenLoader = () => {
               dispatch(setAcceptedQuests(data.trackers));
               acceptedQuests = data.trackers;
             })
-            .then(() => loadItemLocally('PinnedQuestTracker')
+            .then(() => getData('PinnedQuestTracker')
             .then((res) => {
               if(res) {
                 const oldPinTracker = JSON.parse(res);

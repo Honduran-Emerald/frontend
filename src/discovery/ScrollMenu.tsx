@@ -1,13 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, StatusBar} from "react-native";
-import {Colors} from "../styles";
-import {QuestHeader} from "../types/quest";
-import {queryQuestsRequest} from "../utils/requestHandler";
-import {Button, Card, Paragraph, Surface, Title} from "react-native-paper";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { Colors } from "../styles";
+import { QuestHeader } from "../types/quest";
+import { getImageAddress } from '../utils/imageHandler';
+import { Button, Card, Surface } from "react-native-paper";
 import { useNavigation } from '@react-navigation/core';
 import * as Location from "expo-location";
-import {LocationObject} from "expo-location";
-import {LatLng} from "react-native-maps";
+import { LocationObject } from "expo-location";
 
 export default interface scrollProps {
     header: string
@@ -16,20 +15,16 @@ export default interface scrollProps {
     quests: QuestHeader[]
 }
 
-export interface questProps {
-    quest: QuestHeader
-    location: LocationObject
-}
 
 export function getDistanceFromLatLonInKm(lat1:number, lon1:number, lat2:number, lon2:number) {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1);  // deg2rad below
     const dLon = deg2rad(lon2 - lon1);
     const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2)
-    ;
+        ;
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     let d = R * c; // Distance in km
     let unit = " km";
@@ -52,21 +47,25 @@ export function getDistanceFromLatLonInKm(lat1:number, lon1:number, lat2:number,
 function deg2rad(deg:number) {
     return deg * (Math.PI/180)
 }
+export interface questProps {
+    quest: QuestHeader
+    location: LocationObject
+}
 
 export const QuestPreview = (props:questProps) => {
-
+    
     const [location, setLocation] = useState<Location.LocationObject>();
     const [distance, setDistance] = useState("");
-
+    
     useEffect(() => {
         props.location &&
         setDistance(getDistanceFromLatLonInKm(props.quest.location.latitude, props.quest.location.longitude, props.location.coords.latitude, props.location.coords.longitude));
     }, [props.location])
-
+    
     const navigation = useNavigation();
     return(
         <Card style={styles.quest} onPress={() => navigation.navigate('QuestDetail', {quest: props.quest})}>
-            <Card.Cover style={styles.pic} source={require('../../assets/background.jpg')} resizeMode='stretch' />
+            <Card.Cover style={styles.pic} source={props.quest.imageId != null ? {uri: getImageAddress(props.quest.imageId, '')} : require('../../assets/background.jpg')} resizeMode='stretch' />
             <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={props.quest.title} />
             <Card.Content style={styles.content}>
 

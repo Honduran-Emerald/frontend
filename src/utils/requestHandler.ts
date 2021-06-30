@@ -1,7 +1,7 @@
 import { store } from "../redux/store"
 import { BACKENDIP } from '../../GLOBALCONFIG'
 import { setToken, unsetToken } from "../redux/authentication/authenticationSlice";
-import { QuestPrototype } from "../types/quest";
+import { CreateQuestBase, NewImage, QuestPrototype } from "../types/quest";
 import { Colors } from "../styles";
 
 
@@ -23,10 +23,6 @@ const request = (target: string, type: string = 'GET', body?: any) => {
       store.dispatch(unsetToken())
     return response;
   })
-}
-
-export const getImageAddress = (imageId: string | null, userName: string) => {
-  return (imageId) ? `${BACKENDIP}/image/get/${imageId}` : `https://ui-avatars.com/api/?length=1&color=FFF&name=${userName}&background=${Colors.primary.substring(1)}&size=256`
 }
 
 // /auth/login/
@@ -88,10 +84,10 @@ export const createDeleteQuestRequest = (questId: string) => (request('/create/d
 export const createGetRequest = (questId: string) => (request(`/create/get/?questId=${questId}`))
 
 // /create/put/
-export const createPutRequest = (questId: string, questPrototype: QuestPrototype) => (request('/create/put/', 'POST', {
+export const createPutRequest = (questId: string, questPrototype: CreateQuestBase, newImages: NewImage[]) => (request('/create/put/', 'POST', {
   questId: questId,
   questPrototype: questPrototype,
-  newImages: []
+  newImages: newImages
 }))
 
 // /create/release/

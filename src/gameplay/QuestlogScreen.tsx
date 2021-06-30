@@ -12,6 +12,7 @@ import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { loadPinnedQuestPath, pinQuest, setAcceptedQuests } from '../redux/quests/questsSlice';
 import { saveItemLocally } from '../utils/SecureStore';
+import { storeData } from '../utils/AsyncStore';
 
 export function removeSpecialChars (input: string) {
   if(input) {
@@ -60,10 +61,7 @@ export default function QuestlogScreen() {
 
   const setPinnedQuest = (tracker: QuestTracker) => {
     dispatch(pinQuest(tracker));
-    queryTrackerNodesRequest(tracker.trackerId)
-      .then(res => res.json())
-      .then(res => dispatch(loadPinnedQuestPath(res)))
-    saveItemLocally('PinnedQuestTracker', JSON.stringify(tracker)).then(() => {}, () => {});
+    storeData('PinnedQuestTracker', JSON.stringify(tracker)).then(() => {}, () => {});
   }
 
   const loadQuestObjectiveScreen = useCallback((trackerId: string) => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { loadQuest } from '../redux/editor/editorSlice';
+import { loadQuest, setImagePath } from '../redux/editor/editorSlice';
 import { useAppDispatch } from '../redux/hooks';
 import { createQuestRequest } from '../utils/requestHandler';
 import { QuestEditorNavigator } from './QuestEditorNavigator';
@@ -29,22 +29,22 @@ export const QuestCreatorWrapper : React.FC<QuestCreatorWrapperProps> = ({ route
       .then(r => r.json())
       .then(r => dispatch(loadQuest({questId: r.questId, questPrototype: {
         id: r.questPrototype.id,
-        approximateTime: '',
-        creationTime: '',
+        title: '',
         description: '',
-        firstModuleReference: 1,
-        imageId: '',
+        tags: [],
+        locationName: '',
         location: {
           latitude: route.params.params.latitude,
           longitude: route.params.params.longitude
         },
-        locationName: '',
-        modules: [],
-        agentProfileImageId: '',
+        imageReference: null,
+        approximateTime: '',
+        agentProfileReference: '',
         agentProfileName: '',
-        tags: [],
-        title: ''
-      }})))
+        firstModuleReference: 1,
+        modules: [],
+        images: []
+      }}))).then(() => dispatch(setImagePath('')))
       .then(() => setQuestCreated(true))
   }, [])
 

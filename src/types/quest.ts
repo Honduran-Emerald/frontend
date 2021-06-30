@@ -4,14 +4,22 @@ export interface QuestBase {
     id: string,
     title: string,
     description: string,
-    imageId: string,
-    creationTime: string,
+    //creationTime: string,
     location: Location,
     tags: string[],
-    agentProfileImageId: string,
     agentProfileName: string,
     locationName: string,
     approximateTime: string,
+}
+
+export interface Image {
+    reference: number,
+    imageId: string
+}
+
+export interface NewImage {
+    reference: number,
+    image: string
 }
 
 /**
@@ -26,6 +34,12 @@ export interface QuestHeader extends QuestBase {
     votes: number,
     plays: number,
     finishes: number,
+    creationTime: string,
+}
+
+export interface GameplayQuestHeader extends QuestHeader {
+    imageId: string,
+    agentProfileImageId: string,
 }
 
 export interface QuestBaseUpdate {
@@ -40,8 +54,16 @@ export interface QuestBaseUpdate {
     locationName?: string,
 }
 
-export interface QuestWithTopTrackerNode extends QuestHeader {
+export interface QuestWithTopTrackerNode extends GameplayQuestHeader {
     tracker: QuestTracker
+}
+export interface QuestPath extends GameplayQuestHeader {
+
+    modules: {
+        module: GameplayModule,
+        memento: ModuleMememto
+    }[]
+
 }
 
 export interface QuestPath  {
@@ -53,9 +75,9 @@ export type ModuleMememto = any
 
 export interface GameplayModuleBase {
     id: number,
-    type: string,
+    components: GameplayComponent[],
     objective: string,
-    components: GameplayComponent[]
+    type: string,
 }
 
 export interface GameplayChoiceModule extends GameplayModuleBase {

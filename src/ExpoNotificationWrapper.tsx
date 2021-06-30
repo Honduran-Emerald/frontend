@@ -6,10 +6,12 @@ import { Platform } from 'react-native';
 import { Subscription } from 'expo-sensors/build/Pedometer';
 import { useAppDispatch } from './redux/hooks';
 import { ChatWrapperNavigator } from './ChatWrapperNavigator';
-import { getImageAddress, invalidatemessagingtokenRequest, userUpdatemessagingtoken } from './utils/requestHandler';
+import { invalidatemessagingtokenRequest, userUpdatemessagingtoken } from './utils/requestHandler';
 import { getMessage } from './redux/chat/chatSlice';
-import { ChatMessageNotif } from './types/general';
 import { GeofenceNotifType } from './utils/TaskManager';
+import { ChatMessageNotif, ChatTextMessageNotif } from './types/general';
+import { useNavigation } from '@react-navigation/native';
+import { getImageAddress } from './utils/imageHandler';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

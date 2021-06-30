@@ -17,6 +17,7 @@ import { clearQuestState } from './redux/quests/questsSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { Colors } from './styles';
 import { ChatNavigator } from './chat/ChatNavigator';
+import { removeData } from './utils/AsyncStore';
 import { ProfileNavigator } from './profile/ProfileNavigator';
 import LocationPicker from "./quest-editor/LocationPicker";
 import {Location as LocationType} from "./types/general";
@@ -71,7 +72,7 @@ export default function MainAppNavigator() {
       <Tab.Screen name="Questlog" component={GameplayNavigator}/>
       <Tab.Screen name="Map" component={MapNavigator}/>
       <Tab.Screen name="Chat" component={ChatNavigator}/>
-      <Tab.Screen name="Profile" component={Dummy} />
+      <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );
 }
@@ -86,7 +87,7 @@ const Dummy = () => {
 
   const handleLogout = () => {
     deleteItemLocally('UserToken').then(() => {}, () => {});
-    deleteItemLocally('PinnedQuestTracker').then(() => {}, () => {});
+    removeData('PinnedQuestTracker').then(() => {}, () => {});
     dispatch(logout())
     dispatch(clearQuestState())
   }

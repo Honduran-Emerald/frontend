@@ -7,7 +7,7 @@ import { Colors, Containers } from '../styles';
 import { Avatar } from 'react-native-paper';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { getImageAddress } from '../utils/requestHandler';
+import { getImageAddress } from '../utils/imageHandler';
 
 interface QuestMarkerProps {
   quest: QuestHeader;
@@ -23,6 +23,7 @@ export const QuestMarker : React.FC<QuestMarkerProps> = ({quest, showPreview, se
       key={quest.id}
       coordinate={{latitude: quest.location.latitude, longitude: quest.location.longitude}}
       onPress={() => {!showPreview ? setShowPreview() : navigation.navigate('QuestDetail', {quest: quest})}}
+      tracksViewChanges={false}
     >
       {
         (showPreview) ? (
