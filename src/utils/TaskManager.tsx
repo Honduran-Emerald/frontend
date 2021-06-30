@@ -6,6 +6,7 @@ import { QuestTracker } from '../types/quest';
 
 export const GeofencingTask = 'LocationModuleUpdates';
 export const LocationNotifTitle = 'Reached location';
+export const GeofenceNotifType = 'GeofenceNotification';
 
 TaskManager.defineTask(GeofencingTask, (task) => {
   if(task.error) {
@@ -20,6 +21,9 @@ TaskManager.defineTask(GeofencingTask, (task) => {
         content: {
           title: LocationNotifTitle,
           body: 'Check out the next objective',
+          data: {
+            type: GeofenceNotifType,
+          }
         },
         trigger: {
           seconds: 5,

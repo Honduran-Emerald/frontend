@@ -9,7 +9,7 @@ import { ChatWrapperNavigator } from './ChatWrapperNavigator';
 import { getImageAddress, invalidatemessagingtokenRequest, userUpdatemessagingtoken } from './utils/requestHandler';
 import { getMessage } from './redux/chat/chatSlice';
 import { ChatMessageNotif } from './types/general';
-import { LocationNotifTitle } from './utils/TaskManager';
+import { GeofenceNotifType } from './utils/TaskManager';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -41,7 +41,7 @@ export const ExpoNotificationWrapper: React.FC<{navigationRef: any}> = ({ naviga
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       console.log(notification)
-      if(notification.request.content.title !== LocationNotifTitle && notification.request.content.data) {
+      if(notification.request.content.data && notification.request.content.data.type && notification.request.content.data.type !== GeofenceNotifType) {
         dispatch(getMessage(notification.request.content.data as unknown as ChatMessageNotif))
       }
     })
@@ -49,10 +49,9 @@ export const ExpoNotificationWrapper: React.FC<{navigationRef: any}> = ({ naviga
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       console.log(response)
 
-      if(response.notification.request.content.title === LocationNotifTitle) {
+      if(response.notification.request.content.data && response.notification.request.content.data.type && response.notification.request.content.data.type === GeofenceNotifType) {
         navigationRef?.current.navigate('Questlog', {screen: 'QuestlogScreen'});
-      }
-      if(response.notification.request.content.title !== LocationNotifTitle && response.notification.request.content.data) {
+      } else if(response.notification.request.content.data) {
         dispatch(getMessage(response.notification.request.content.data as unknown as ChatMessageNotif))
         navigationRef?.current.navigate('ChatPersonal', {
           userName: response.notification.request.content.data.Username, //response.notification.request.content.data.Sender,
