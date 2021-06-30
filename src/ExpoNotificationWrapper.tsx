@@ -9,7 +9,7 @@ import { ChatWrapperNavigator } from './ChatWrapperNavigator';
 import { getImageAddress, invalidatemessagingtokenRequest, userUpdatemessagingtoken } from './utils/requestHandler';
 import { getMessage } from './redux/chat/chatSlice';
 import { ChatMessageNotif } from './types/general';
-import { LocationNotifTitle } from '../App';
+import { LocationNotifTitle } from './utils/TaskManager';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -49,14 +49,16 @@ export const ExpoNotificationWrapper: React.FC<{navigationRef: any}> = ({ naviga
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       console.log(response)
 
-      dispatch(getMessage(response.notification.request.content.data as unknown as ChatMessageNotif))
-      navigationRef?.current.navigate('ChatPersonal', {
-        userName: response.notification.request.content.data.Username, //response.notification.request.content.data.Sender,
-        //@ts-ignore
-        userImgSource: getImageAddress(response.notification.request.content.data.UserImageId, response.notification.request.content.data.Username),//response.notification.request.content.data.ImageID,
-        //@ts-ignore
-        userTargetId: response.notification.request.content.data.Message.Sender,
-      })
+      if(response.notification.request.content.title !== LocationNotifTitle && response.notification.request.content.data) {
+        dispatch(getMessage(response.notification.request.content.data as unknown as ChatMessageNotif))
+        navigationRef?.current.navigate('ChatPersonal', {
+          userName: response.notification.request.content.data.Username, //response.notification.request.content.data.Sender,
+          //@ts-ignore
+          userImgSource: getImageAddress(response.notification.request.content.data.UserImageId, response.notification.request.content.data.Username),//response.notification.request.content.data.ImageID,
+          //@ts-ignore
+          userTargetId: response.notification.request.content.data.Message.Sender,
+        })
+      }
     })
 
     return () => {
