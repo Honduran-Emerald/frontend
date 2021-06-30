@@ -4,7 +4,7 @@ import { Modal, Portal } from 'react-native-paper';
 
 import { GameplayImageComponent } from '../../types/quest';
 import { SingleComponentProps } from '../ComponentRenderer';
-import { getImageAddress } from '../../utils/requestHandler';
+import { getImageAddress } from '../../utils/imageHandler';
 
 export const ImageComponent: React.FC<SingleComponentProps<GameplayImageComponent>> = ({ data }) => {
 

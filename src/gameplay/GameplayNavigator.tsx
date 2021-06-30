@@ -4,8 +4,8 @@ import { View } from 'react-native';
 
 import { GameplayScreen } from './GameplayScreen';
 import QuestlogScreen from './QuestlogScreen';
-import {ChatHeaderTitle} from "../chat/personal/ChatHeaderTitle";
-import {getImageAddress} from "../utils/requestHandler";
+import { ChatHeaderTitle } from '../chat/personal/ChatHeaderTitle';
+import { getImageAddress } from '../utils/imageHandler';
 
 const Stack = createStackNavigator();
 
