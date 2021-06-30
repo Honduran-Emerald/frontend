@@ -49,6 +49,9 @@ export const ExpoNotificationWrapper: React.FC<{navigationRef: any}> = ({ naviga
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       console.log(response)
 
+      if(response.notification.request.content.title === LocationNotifTitle) {
+        navigationRef?.current.navigate('Questlog', {screen: 'QuestlogScreen'});
+      }
       if(response.notification.request.content.title !== LocationNotifTitle && response.notification.request.content.data) {
         dispatch(getMessage(response.notification.request.content.data as unknown as ChatMessageNotif))
         navigationRef?.current.navigate('ChatPersonal', {
