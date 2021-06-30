@@ -4,6 +4,8 @@ import { StyleSheet, TouchableNativeFeedback, View, Text } from 'react-native';
 import { GameplayStoryModule } from '../../types/quest';
 import { ModuleRendererProps } from '../ModuleRenderer';
 import { Colors } from '../../styles';
+import { useState } from 'react';
+import { ActivityIndicator } from 'react-native-paper';
 
 export const StoryModule: React.FC<ModuleRendererProps<GameplayStoryModule>> = ({ module, onChoice }) => {
 
@@ -12,8 +14,10 @@ export const StoryModule: React.FC<ModuleRendererProps<GameplayStoryModule>> = (
 
   const handleClick = () => {
     setInputDisabled(true);
-    setHasContinued(true);
-    onChoice(0).then(() => setInputDisabled(false));
+    onChoice(0)
+      .then(() => setHasContinued(true))
+      .catch(() => {})
+      .then(() => setInputDisabled(false))
   }
 
   return (
@@ -22,8 +26,8 @@ export const StoryModule: React.FC<ModuleRendererProps<GameplayStoryModule>> = (
         !hasContinued &&
         <View style={styles.container}>
           <TouchableNativeFeedback onPress={() => inputDisabled ? {} : handleClick()}>
-            <View style={styles.choice}>
-              <Text style={styles.text}>Continue Story</Text>
+            <View style={[styles.choice, inputDisabled && styles.loading]}>
+              <Text style={styles.text}>{ inputDisabled ? <ActivityIndicator size='small' color="#1D79AC" /> : 'Continue Story'}</Text>
             </View>
           </TouchableNativeFeedback>
         </View>
@@ -46,4 +50,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#fff',
   },
+  loading: {
+    backgroundColor: '#777',
+  }
 });
