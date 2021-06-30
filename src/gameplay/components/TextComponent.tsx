@@ -1,10 +1,10 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { TextComponent as TextComponentType } from '../../types/quest';
+import { GameplayTextComponent } from '../../types/quest';
 import { SingleComponentProps } from '../ComponentRenderer';
 import { styleGameplay } from '../styleGameplay';
 
-export const TextComponent: React.FC<SingleComponentProps<TextComponentType>> = ({ data }) => {
+export const TextComponent: React.FC<SingleComponentProps<GameplayTextComponent>> = ({ data }) => {
 
   return (
     <View>
