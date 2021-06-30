@@ -6,7 +6,7 @@ export class TokenManager {
     if (result) {
       return result;
     } else {
-      return '';
+      return undefined;
     }
   }
 }

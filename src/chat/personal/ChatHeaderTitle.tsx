@@ -5,10 +5,11 @@ import { useNavigation } from '@react-navigation/core';
 
 interface ChatHeaderTitleProps {
     userImgSource: string,
-    userName: string
+    userName: string,
+    questTitle? : string,
 }
 
-export const ChatHeaderTitle: React.FC<ChatHeaderTitleProps> = ({ userImgSource, userName }) => {
+export const ChatHeaderTitle: React.FC<ChatHeaderTitleProps> = ({ userImgSource, userName, questTitle}) => {
 
     const navigation = useNavigation();
 
@@ -17,7 +18,12 @@ export const ChatHeaderTitle: React.FC<ChatHeaderTitleProps> = ({ userImgSource,
             <Image source={{
                 uri: userImgSource
             }} style={styles.image}/>
-            <Text>{userName}</Text>
+            <View>
+                <Text style={styles.name}>{userName}</Text>
+                {questTitle &&
+                <Text>{questTitle}</Text>
+                }
+            </View>
         </View>
     )
 }
@@ -34,5 +40,9 @@ const styles = StyleSheet.create({
         height: iconSize,
         borderRadius: 10000,
         marginHorizontal: 10
+    },
+    name: {
+        fontWeight: "bold",
+        fontSize: 18,
     }
 })

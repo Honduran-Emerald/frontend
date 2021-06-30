@@ -1,15 +1,14 @@
 import React, { useRef } from 'react';
-import MainAppNavigator from './MainAppNavigator';
 import * as Notifications from 'expo-notifications';
 import { useEffect } from 'react';
 import Constants from 'expo-constants';
-import { Platform, Text, View } from 'react-native';
-import { useState } from 'react';
+import { Platform } from 'react-native';
 import { Subscription } from 'expo-sensors/build/Pedometer';
-import { useAppDispatch, useAppSelector } from './redux/hooks';
+import { useAppDispatch } from './redux/hooks';
 import { ChatWrapperNavigator } from './ChatWrapperNavigator';
 import { invalidatemessagingtokenRequest, userUpdatemessagingtoken } from './utils/requestHandler';
 import { getMessage } from './redux/chat/chatSlice';
+import { GeofenceNotifType } from './utils/TaskManager';
 import { ChatMessageNotif, ChatTextMessageNotif } from './types/general';
 import { useNavigation } from '@react-navigation/native';
 import { getImageAddress } from './utils/imageHandler';
@@ -44,20 +43,26 @@ export const ExpoNotificationWrapper: React.FC<{navigationRef: any}> = ({ naviga
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       console.log(notification)
-      dispatch(getMessage(notification.request.content.data as unknown as ChatMessageNotif))
+      if(notification.request.content.data && notification.request.content.data.type && notification.request.content.data.type !== GeofenceNotifType) {
+        dispatch(getMessage(notification.request.content.data as unknown as ChatMessageNotif))
+      }
     })
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       console.log(response)
 
-      dispatch(getMessage(response.notification.request.content.data as unknown as ChatMessageNotif))
-      navigationRef?.current.navigate('ChatPersonal', {
-        userName: response.notification.request.content.data.Username, //response.notification.request.content.data.Sender,
-        //@ts-ignore
-        userImgSource: getImageAddress(response.notification.request.content.data.UserImageId, response.notification.request.content.data.Username),//response.notification.request.content.data.ImageID,
-        //@ts-ignore
-        userTargetId: response.notification.request.content.data.Message.Sender, 
-      })
+      if(response.notification.request.content.data && response.notification.request.content.data.type && response.notification.request.content.data.type === GeofenceNotifType) {
+        navigationRef?.current.navigate('Questlog', {screen: 'QuestlogScreen'});
+      } else if(response.notification.request.content.data) {
+        dispatch(getMessage(response.notification.request.content.data as unknown as ChatMessageNotif))
+        navigationRef?.current.navigate('ChatPersonal', {
+          userName: response.notification.request.content.data.Username, //response.notification.request.content.data.Sender,
+          //@ts-ignore
+          userImgSource: getImageAddress(response.notification.request.content.data.UserImageId, response.notification.request.content.data.Username),//response.notification.request.content.data.ImageID,
+          //@ts-ignore
+          userTargetId: response.notification.request.content.data.Message.Sender,
+        })
+      }
     })
 
     return () => {
