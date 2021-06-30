@@ -2,7 +2,6 @@ import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AuthNavigator from './authentication/AuthNavigator';
-import MainAppNavigator from './MainAppNavigator';
 import { LoadingScreen } from './common/LoadingScreen'
 import { TokenManager } from './utils/TokenManager';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
@@ -16,7 +15,7 @@ import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';
 import { Text } from 'react-native'
 import { deleteItemLocally } from './utils/SecureStore';
-import { registerGeofencingTask } from '../App';
+import { registerGeofencingTask } from './utils/TaskManager';
 
 
 i18n.fallbacks = true;
