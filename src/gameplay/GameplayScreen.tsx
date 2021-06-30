@@ -55,15 +55,24 @@ export const GameplayScreen : React.FC = () => {
   }, [pinnedQuestPath])
 
   const updateQuestPath = useCallback((newQuestPath: QuestPath) => {
-    if (pinnedQuest?.trackerId === route.params.trackerId && pinnedQuestPath) {
+    const trackerNode = newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1];
+    if (pinnedQuest?.trackerId === route.params.trackerId) {
       dispatch(loadPinnedQuestPath(newQuestPath))
-      const trackerNode = newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1]
+
       dispatch(pinQuest({
         ...pinnedQuest,
         trackerNode: {...trackerNode, creationTime: trackerNode.creationTime.toString()},
-        objective: trackerNode.module.objective}))
+        objective: trackerNode.module.objective
+      }))
     } else {
-      setLoadedTrackerNodes(newQuestPath)
+      setLoadedTrackerNodes(newQuestPath);
+      if(currentTracker) {
+        dispatch(updateAcceptedQuest({
+          ...currentTracker,
+          trackerNode: {...trackerNode, creationTime: trackerNode.creationTime.toString()},
+          objective: trackerNode.module.objective
+        }))
+      }
     }
   }, [pinnedQuest, pinnedQuestPath, route.params.trackerId])
 
