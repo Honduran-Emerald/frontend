@@ -37,7 +37,13 @@ TaskManager.defineTask(GeofencingTask, (task) => {
   }
 })
 
-export function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
+export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
+  {
+    let {status} = await Location.getBackgroundPermissionsAsync();
+    if (status !== 'granted') {
+      return console.log("Permission to access background location was denied");
+    }
+  }
   let locations: LocationRegion[] = []
   if(acceptedQuests.length === 0) return;
   acceptedQuests.forEach((tracker) => {

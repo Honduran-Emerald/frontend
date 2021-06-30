@@ -8,9 +8,17 @@ export async function getLocation() {
     const location = store.getState().location.location;
 
     if (location === undefined) {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            return Promise.reject(new Error("Permission to access location was denied"))
+        {
+            let {status} = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                return Promise.reject(new Error("Permission to access location was denied"))
+            }
+        }
+        {
+            let {status} = await Location.requestBackgroundPermissionsAsync();
+            if (status !== 'granted') {
+                return Promise.reject(new Error("Permission to access background location was denied"))
+            }
         }
 
         let lastLocation = await Location.getLastKnownPositionAsync();
