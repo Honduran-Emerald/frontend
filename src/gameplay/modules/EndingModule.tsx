@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 
 import { GameplayEndingModule } from '../../types/quest';
 import { ModuleRendererProps } from '../ModuleRenderer';
@@ -12,8 +12,10 @@ export const EndingModule: React.FC<ModuleRendererProps<GameplayEndingModule>> =
 
   const handleClick = () => {
     setInputDisabled(true);
-    setHasContinued(true);
-    onChoice(0).then(() => setInputDisabled(false));
+    onChoice(0)
+      .then(() => setHasContinued(true))
+      .catch(() => {})
+      .then(() => setInputDisabled(false));
   }
 
   return (
@@ -22,8 +24,8 @@ export const EndingModule: React.FC<ModuleRendererProps<GameplayEndingModule>> =
         !hasContinued &&
         <View style={styles.container}>
           <TouchableNativeFeedback onPress={() => inputDisabled ? {} : handleClick()}>
-            <View style={styles.choice}>
-              <Text style={styles.text}>Finish Story</Text>
+            <View style={[styles.choice, inputDisabled && styles.loading]}>
+              <Text style={styles.text}>{inputDisabled ?  <ActivityIndicator size="small" color="#1D79AC" /> : 'Finish Story'}</Text>
             </View>
           </TouchableNativeFeedback>
         </View>
@@ -46,4 +48,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#fff',
   },
+  loading: {
+    backgroundColor: '#777'
+  }
 });
