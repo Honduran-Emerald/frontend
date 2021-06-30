@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 
 import { ModuleRendererProps } from '../ModuleRenderer';
 import { Colors } from '../../styles';
 import { GameplayChoiceModule } from '../../types/quest';
 import { styleGameplay } from '../styleGameplay';
+import { useState } from 'react';
 
 interface ChoiceType {
   text: string
@@ -16,11 +17,18 @@ export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> =
 
   const [hasChosen, setHasChosen] = React.useState(module.memento ? module.memento.choice : -1);
   const [inputDisabled, setInputDisabled] = React.useState(false);
+  const [loadingChoice, setLoadingChoice] = useState(-1);
 
   const handleClick = (index: number) => {
     setInputDisabled(true);
-    setHasChosen(index);
-    onChoice(index).then(() => setInputDisabled(false));
+    setLoadingChoice(index);
+    onChoice(index).then(() => {
+      setHasChosen(index);
+    }).catch(() => {
+    }).then(() => {
+      setInputDisabled(false);
+      setLoadingChoice(-1);
+    });
   }
 
   return (
@@ -29,8 +37,8 @@ export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> =
         hasChosen === -1 &&
         module.module.choices.map((choice: any, index: number) =>
           <TouchableNativeFeedback key={index+1} onPress={() => inputDisabled ? {} : handleClick(index)}>
-            <View style={styles.choice}>
-              <Text style={styles.text}>{choice.text}</Text>
+            <View style={[styles.choice, inputDisabled && styles.selectedOption]}>
+              <Text style={styles.text}>{loadingChoice === index ? <ActivityIndicator size="small" color="#1D79AC" /> : choice.text}</Text>
             </View>
           </TouchableNativeFeedback>
         )
@@ -39,7 +47,7 @@ export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> =
         hasChosen !== -1 &&
         <View style={[styles.chosen, styleGameplay.right]}>
           {
-            <Text style={styles.text}>{choices[hasChosen].text}</Text>
+            <Text style={[styles.text]}>{choices[hasChosen].text}</Text>
           }
         </View>
       }
@@ -77,4 +85,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#fff',
   },
+  selectedOption: {
+    backgroundColor: '#777'
+  }
 });
