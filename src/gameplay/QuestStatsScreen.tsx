@@ -1,9 +1,11 @@
 import React from 'react';
-import { Button, Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
+import {Button, Dimensions, FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import { Colors } from '../styles';
 import { QuestHeader } from '../types/quest';
 import {playResetRequest} from "../utils/requestHandler";
 import {useNavigation} from "@react-navigation/native";
+import {BACKENDIP} from "../../GLOBALCONFIG";
+import {Entypo} from "@expo/vector-icons";
 
 interface QuestStateScreenProps {
   height: number,
@@ -25,19 +27,43 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
     }).then(() => navigation.goBack())
   }
 
-  return (
-    <View style={[styles.stats, {height: height + roundingRadius}]}>
-      <Text style={{
+  /*
+  <Text style={{
         padding: 50
       }}
       ellipsizeMode={'tail'}
       numberOfLines={15}>
         {JSON.stringify(quest)}
       </Text>
-      <Text style={{
-        padding: 50
-      }}>
-        Hier kommen Quest Details hin
+   */
+
+  return (
+    <View style={[styles.stats, {height: height + roundingRadius, flexGrow: 1, alignItems: 'center'}]} >
+
+      <Text>
+        <View>
+          {
+            quest?.imageId &&
+            <Image style={styles.image} source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}/>
+          }
+          {
+            !quest?.imageId &&
+            <Image style={styles.image} source={require('../../assets/background.jpg')}/>
+          }
+        </View>
+        <View style={styles.info}>
+          <Entypo name='location-pin' size={24} color='black'/>
+          <Text style={styles.location}>
+            {quest?.locationName}
+          </Text>
+          <Entypo name='stopwatch' size={24} color='black'/>
+          <Text style={styles.time}>
+            {quest?.approximateTime}
+          </Text>
+        </View>
+        <Text style={styles.description}>
+          {quest?.description}
+        </Text>
       </Text>
       <View style={{position: 'absolute', bottom: 100, width: '100%'}}>
       <Button onPress={() => resetQuest()} title='Reset this quest' />
@@ -56,9 +82,35 @@ const styles = StyleSheet.create({
     margin: 0,
     borderBottomRightRadius: roundingRadius,
     borderBottomLeftRadius: roundingRadius,
-
     borderTopWidth: 0,
     marginBottom: Dimensions.get('screen').height/2,
-    elevation: 5
-  }
+    elevation: 5,
+    width: "100%",
+  },
+  image: {
+    width: 300,
+    height: 200,
+    borderRadius: 20,
+    marginBottom: 15,
+  },
+  info: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  location: {
+    fontSize: 15,
+    marginRight: 'auto',
+    maxWidth: '45%',
+  },
+  time: {
+    fontSize: 15,
+    marginLeft: 3,
+    maxWidth: '45%',
+  },
+  description: {
+    textAlign: 'left',
+    marginBottom: 15,
+  },
 })
