@@ -15,30 +15,30 @@ interface IPreviewModuleScreen {
 }
 
 export const PreviewModuleScreen: React.FC<IPreviewModuleScreen> = ({ prototypeModule, saveModule }) => (
-  <View style={{flex: 1, padding: 20, width: displayWidth}} >
+  <View style={{padding: 20, paddingBottom: 40, width: displayWidth}} >
                     
     <ScrollView 
-      style={{height: '100%'}}
-      contentContainerStyle={{justifyContent: 'space-between', }}>
-      <Text>
-        {JSON.stringify(prototypeModule)}
-      </Text>
-      <View style={{borderWidth: 1, borderRadius: 20, padding: 10, marginVertical: 10, backgroundColor: Colors.background, elevation: 3}}>
+      style={{marginBottom: 20}}>
+
+      <View style={{borderWidth: 1, borderRadius: 20, padding: 10, marginVertical: 20, backgroundColor: Colors.background, elevation: 3}}>
+        {/* 
+        //@ts-ignore */}
         <ModuleRenderer module={{ module: prototypeModule, memento: 0 }} onChoice={(choiceId) => 
           (new Promise((resolve, reject) => {
             setTimeout(() => {
               reject(0);
             }, 1000)
           }))
-          }/>
+          } index={0}/>
       </View>
 
-      <Button 
+      
+    </ScrollView>
+    <Button 
         mode='contained' 
         onPress={saveModule}
         theme={{colors: {primary: Colors.primary}}}>
         Save Module
-      </Button>
-    </ScrollView>
+    </Button>
   </View>
 )
