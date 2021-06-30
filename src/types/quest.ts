@@ -51,39 +51,6 @@ export interface QuestPath  {
 
 export type ModuleMememto = any
 
-export interface QuestPrototype extends QuestBase {
-    approximateTime: string,
-    firstModuleReference: number | null,
-    modules: PrototypeModule[]
-}
-
-export interface PrototypeModuleBase {
-    id: number,
-    type: string,
-    objective: string,
-    components: PrototypeComponent[]
-}
-
-export interface PrototypeChoiceModule extends PrototypeModuleBase {
-    type: 'Choice'
-    choices: {
-        text: string,
-        nextModuleReference: number | null,
-    }[]
-}
-
-export interface PrototypeStoryModule extends PrototypeModuleBase {
-    type: 'Story'
-    nextModuleReference: number | null,
-}
-
-export interface PrototypeEndingModule extends PrototypeModuleBase {
-    type: 'Ending',
-    endingFactor: number,
-}
-
-export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
-
 export interface GameplayModuleBase {
     id: number,
     type: string,
@@ -117,24 +84,17 @@ export interface ComponentBase {
     componentId: string
 }
 
-export interface TextComponent extends ComponentBase {
+export interface GameplayTextComponent extends ComponentBase {
     componentType: 'Text',
     text: string,
 }
-
-export interface ImageComponent extends ComponentBase {
-    componentType: 'Image',
-    imageReference: string,
-}
-
-export type PrototypeComponent = TextComponent | ImageComponent
 
 export interface GameplayImageComponent extends ComponentBase {
     componentType: 'Image',
     imageId: string,
 }
 
-export type GameplayComponent = TextComponent | GameplayImageComponent
+export type GameplayComponent = GameplayTextComponent | GameplayImageComponent
 
 export interface QuestTracker {
     questId: string,

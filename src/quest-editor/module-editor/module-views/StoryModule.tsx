@@ -3,10 +3,10 @@ import { Text, View } from 'react-native';
 import { Button, Subheading, TextInput, Divider } from 'react-native-paper';
 import { ICreateModule, IModuleBase } from '../CreateModuleScreen';
 import i18n from 'i18n-js';
-import { PrototypeComponent, PrototypeModule, PrototypeStoryModule, TextComponent } from '../../../types/quest';
 import { primary } from '../../../styles/colors';
 import { Colors } from '../../../styles';
 import I18n from 'i18n-js';
+import { PrototypeStoryModule, PrototypeTextComponent } from '../../../types/prototypes';
 
 
 interface IStoryModuleData {
@@ -18,7 +18,7 @@ export const StoryModule: React.FC<ICreateModule<PrototypeStoryModule>> = ({ set
 
     const [moduleData, setModuleData] = useState<IStoryModuleData>(edit 
         ? {
-            text: (defaultValues?.components[0] as TextComponent)?.text || '',
+            text: (defaultValues?.components[0] as PrototypeTextComponent)?.text || '',
             objective: defaultValues?.objective || '',
         } : {
             text: '', 
@@ -31,7 +31,7 @@ export const StoryModule: React.FC<ICreateModule<PrototypeStoryModule>> = ({ set
             objective: moduleData.objective,
             type: 'Story',
             components: [{
-                type: 'text',
+                type: 'Text',
                 text: moduleData.text
             }],
             nextModuleReference: (edit && defaultValues) ? defaultValues.nextModuleReference : null
