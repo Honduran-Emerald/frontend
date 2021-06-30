@@ -25,7 +25,7 @@ export const EndingModule: React.FC<ModuleRendererProps<GameplayEndingModule>> =
         <View style={styles.container}>
           <TouchableNativeFeedback onPress={() => inputDisabled ? {} : handleClick()}>
             <View style={[styles.choice, inputDisabled && styles.loading]}>
-              <Text style={styles.text}>{inputDisabled ?  <ActivityIndicator size="small" color="#1D79AC" /> : 'Finish Story'}</Text>
+              <Text style={styles.text}>{inputDisabled ?  <ActivityIndicator size="small" color="#fff" /> : 'Finish Story'}</Text>
             </View>
           </TouchableNativeFeedback>
         </View>

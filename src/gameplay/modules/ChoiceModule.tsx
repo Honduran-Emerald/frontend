@@ -38,7 +38,7 @@ export const ChoiceModule: React.FC<ModuleRendererProps<GameplayChoiceModule>> =
         module.module.choices.map((choice: any, index: number) =>
           <TouchableNativeFeedback key={index+1} onPress={() => inputDisabled ? {} : handleClick(index)}>
             <View style={[styles.choice, inputDisabled && styles.selectedOption]}>
-              <Text style={styles.text}>{loadingChoice === index ? <ActivityIndicator size="small" color="#1D79AC" /> : choice.text}</Text>
+              <Text style={styles.text}>{loadingChoice === index ? <ActivityIndicator size="small" color="#fff" /> : choice.text}</Text>
             </View>
           </TouchableNativeFeedback>
         )
