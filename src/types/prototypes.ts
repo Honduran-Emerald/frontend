@@ -1,3 +1,4 @@
+import { Location } from "./general"
 import { Image, QuestBase } from "./quest"
 
 //############################# Quest
@@ -38,7 +39,13 @@ export interface PrototypeEndingModule extends PrototypeModuleBase {
   endingFactor: number,
 }
 
-export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
+export interface PrototypeLocationModule extends PrototypeModuleBase {
+  type: 'Location',
+  location: Location | null,
+  nextModuleReference: number | null,
+}
+
+export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule | PrototypeLocationModule
 
 //############################# Components
 

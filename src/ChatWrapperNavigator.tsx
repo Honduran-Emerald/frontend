@@ -3,6 +3,7 @@ import React from 'react';
 import { ChatHeaderTitle } from './chat/personal/ChatHeaderTitle';
 import { ChatPersonal } from './chat/personal/ChatPersonal';
 import MainAppNavigator from './MainAppNavigator';
+import LocationPicker from './quest-editor/LocationPicker';
 import { QuestCreatorWrapper } from './quest-editor/QuestCreatorWrapper';
 import { QuestEditorWrapper } from './quest-editor/QuestEditorWrapper';
 
@@ -32,6 +33,11 @@ export const ChatWrapperNavigator: React.FC = () => {
         }}/>
 
       <Stack.Screen name='QuestEditorScreen' component={QuestEditorWrapper} 
+        options={{
+          headerShown: false
+        }}/>
+
+      <Stack.Screen name='LocationPicker' component={LocationPicker} 
         options={{
           headerShown: false
         }}/>

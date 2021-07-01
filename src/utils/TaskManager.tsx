@@ -50,8 +50,8 @@ export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
     if(tracker.trackerNode.module.type === 'Location') {
       locations.push({
         identifier: tracker.trackerId,
-        latitude: tracker.trackerNode.module.locationModel.latitude,
-        longitude: tracker.trackerNode.module.locationModel.longitude,
+        latitude: tracker.trackerNode.module.location.latitude,
+        longitude: tracker.trackerNode.module.location.longitude,
         radius: 20,
         notifyOnEnter: true,
       })
