@@ -3,6 +3,8 @@ import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
 import { LocationGeofencingEventType, LocationRegion } from 'expo-location';
 import { QuestTracker } from '../types/quest';
+import { addTrackerWithUpdate, removeTrackerWithUpdate } from '../redux/quests/questsSlice';
+import { store } from '../redux/store';
 
 export const GeofencingTask = 'LocationModuleUpdates';
 export const LocationNotifTitle = 'Reached location';
@@ -30,7 +32,8 @@ TaskManager.defineTask(GeofencingTask, (task) => {
         },
       }).then(() => console.log('location notification scheduled'));
       // TODO send fetch, show indicator in questlog (and optionally pinned quest card)
-
+      // @ts-ignore
+      addUpdatedQuest(task.data.region.identifier)
       // @ts-ignore
       updateGeofencingTask(task.data.region);
     }
@@ -59,7 +62,7 @@ export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
   })
   // TODO remove testing region
   locations.push({
-    identifier: 'test',
+    identifier: '60d0e27dea7aa52a3456a237',
     latitude: 49.872762,
     longitude: 8.651217,
     radius: 20,
@@ -88,4 +91,14 @@ export function updateGeofencingTask(regionReached: LocationRegion) {
     }
     Location.startGeofencingAsync(GeofencingTask, newRegions).then(() => console.log('geofencing task updated' + JSON.stringify(newRegions)))
   })
+}
+
+export function addUpdatedQuest(trackerId: string) {
+  store.dispatch(addTrackerWithUpdate(trackerId));
+  console.log('Added new updated tracker: ' + trackerId);
+}
+
+export function removeUpdatedQuest(trackerId: string) {
+  store.dispatch(removeTrackerWithUpdate(trackerId));
+  console.log('Removed updated tracker: ' + trackerId);
 }

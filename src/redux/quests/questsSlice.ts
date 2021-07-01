@@ -5,14 +5,16 @@ interface QuestsState {
     localQuests: QuestHeader[],
     acceptedQuests: QuestTracker[],
     pinnedQuest: QuestTracker | undefined,
-    pinnedQuestPath: QuestPath | undefined
+    pinnedQuestPath: QuestPath | undefined,
+    trackerWithUpdates: string[],
 }
 
 const initialState: QuestsState = {
     localQuests: [],
     acceptedQuests: [],
     pinnedQuest: undefined,
-    pinnedQuestPath: undefined
+    pinnedQuestPath: undefined,
+    trackerWithUpdates: [],
 }
 
 export const questsSlice = createSlice({
@@ -58,10 +60,27 @@ export const questsSlice = createSlice({
             state.pinnedQuestPath = undefined
             state.acceptedQuests = []
             state.localQuests = []
-        }
+            state.trackerWithUpdates = []
+        },
+        addTrackerWithUpdate: (state, action: PayloadAction<string>) => {
+            state.trackerWithUpdates.push(action.payload);
+        },
+        removeTrackerWithUpdate: (state, action: PayloadAction<string>) => {
+            state.trackerWithUpdates = state.trackerWithUpdates.filter((trackerId) => trackerId !== action.payload);
+        },
     }
 })
 
-export const { setLocalQuests, setAcceptedQuests, updateAcceptedQuest, acceptQuest, pinQuest, clearQuestState, loadPinnedQuestPath } = questsSlice.actions
+export const {
+    setLocalQuests,
+    setAcceptedQuests,
+    updateAcceptedQuest,
+    acceptQuest,
+    pinQuest,
+    clearQuestState,
+    loadPinnedQuestPath,
+    addTrackerWithUpdate,
+    removeTrackerWithUpdate
+} = questsSlice.actions
 
 export default questsSlice.reducer

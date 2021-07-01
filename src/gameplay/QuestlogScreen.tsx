@@ -7,11 +7,10 @@ import { useNavigation } from '@react-navigation/core';
 
 import { Colors } from '../styles';
 import { commonTranslations } from '../common/translations';
-import { getAllTrackersRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
+import { getAllTrackersRequest } from '../utils/requestHandler';
 import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { loadPinnedQuestPath, pinQuest, setAcceptedQuests } from '../redux/quests/questsSlice';
-import { saveItemLocally } from '../utils/SecureStore';
+import { pinQuest, removeTrackerWithUpdate, setAcceptedQuests } from '../redux/quests/questsSlice';
 import { storeData } from '../utils/AsyncStore';
 
 export function removeSpecialChars (input: string) {
@@ -41,6 +40,7 @@ export default function QuestlogScreen() {
 
   const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
   const acceptedQuests = useAppSelector((state) => state.quests.acceptedQuests);
+  const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
 
   const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -65,6 +65,9 @@ export default function QuestlogScreen() {
   }
 
   const loadQuestObjectiveScreen = useCallback((trackerId: string) => {
+    if(trackerWithUpdates.includes(trackerId)) {
+      dispatch(removeTrackerWithUpdate(trackerId))
+    }
     navigation.navigate('GameplayScreen', {
       trackerId: trackerId,
       tracker: acceptedQuests.find(tracker => tracker.trackerId === trackerId),

@@ -11,21 +11,20 @@ import { DiscoveryNavigator } from "./discovery/DiscoveryNavigator";
 
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { logout, setToken } from './redux/authentication/authenticationSlice';
-import { getUserSelfRequest, invalidatemessagingtokenRequest, queryQuestsRequest } from './utils/requestHandler';
-import QuestlogScreen from './gameplay/QuestlogScreen';
+import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
 import { clearQuestState } from './redux/quests/questsSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { Colors } from './styles';
 import { ChatNavigator } from './chat/ChatNavigator';
 import { removeData } from './utils/AsyncStore';
 import { ProfileNavigator } from './profile/ProfileNavigator';
-import LocationPicker from "./quest-editor/LocationPicker";
-import {Location as LocationType} from "./types/general";
 import { GameplayNavigator } from './gameplay/GameplayNavigator';
 
 const Tab = createBottomTabNavigator();
 
 export default function MainAppNavigator() {
+  const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -41,7 +40,7 @@ export default function MainAppNavigator() {
               return (
                 <View>
                   <MaterialCommunityIcons name={iconName} size={size} color={focused ? Colors.primary : "grey"}/>
-                  <Badge visible={true} style={styles.badge} theme={{colors: {notification: Colors.primaryLight}}} size={13}/>
+                  <Badge visible={trackerWithUpdates.length > 0} style={styles.badge} theme={{colors: {notification: Colors.primaryLight}}} size={13}/>
                 </View>
               );
             case "Map":

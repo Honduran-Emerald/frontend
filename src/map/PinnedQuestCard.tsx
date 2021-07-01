@@ -5,19 +5,23 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/core';
 
 import { Colors } from '../styles';
-import { useAppSelector } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { BACKENDIP } from '../../GLOBALCONFIG';
+import { removeTrackerWithUpdate } from '../redux/quests/questsSlice';
 
 export default function PinnedQuestCard() {
 
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
 
   const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
-
-  // TODO adjust feedback source to backend updates
-  const [objectiveComplete, setObjectiveComplete] = React.useState(false);
+  const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
+  const hasUpdate = pinnedQuest ? trackerWithUpdates.includes(pinnedQuest.trackerId) : false;
 
   const loadQuestObjectiveScreen = () => {
+    if(pinnedQuest && trackerWithUpdates.includes(pinnedQuest.trackerId)) {
+      dispatch(removeTrackerWithUpdate(pinnedQuest.trackerId))
+    }
     navigation.navigate('Questlog', { screen: 'GameplayScreen', initial: false,  params: {
       trackerId: pinnedQuest?.trackerId,
       tracker: pinnedQuest,
@@ -33,7 +37,7 @@ export default function PinnedQuestCard() {
             <LinearGradient
               colors={[Colors.primaryLight, 'white']}
               start={{ x: 1, y: 1 }}
-              end={{ x: objectiveComplete ? 0.2 : 0.6, y: objectiveComplete ? 0.2 : 0.6 }}
+              end={{ x: hasUpdate ? 0.2 : 0.6, y: hasUpdate ? 0.2 : 0.6 }}
             >
               <View style={{flexDirection: 'row', alignItems: 'center',}}>
                 {
@@ -54,7 +58,7 @@ export default function PinnedQuestCard() {
                     source={require('../../assets/background.jpg')}
                   />
                 }
-                <Badge visible={objectiveComplete} size={18} theme={{colors: {notification: Colors.primaryLight}}} style={styles.badge}/>
+                <Badge visible={hasUpdate} size={18} theme={{colors: {notification: Colors.primaryLight}}} style={styles.badge}/>
                 <View style={{flexDirection: 'column', width: '100%'}}>
                   <Text style={styles.questName} numberOfLines={1}>
                     {pinnedQuest.questName}
