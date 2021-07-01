@@ -22,7 +22,6 @@ export const QuestEditorWrapper = () => {
       createGetRequest(route.params.questId)
         .then(q => q.json())
         .then(questDeep => dispatch(loadQuest({questId: route.params.questId, questPrototype: questDeep.questPrototype})))
-        .then(() => console.log('Done Loading...'))
       
     }
   }, [route.params.questId])  

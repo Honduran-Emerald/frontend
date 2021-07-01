@@ -25,10 +25,8 @@ export const ModuleGraphCaller = () => {
 
     const questPrototype = useAppSelector((state) => state.editor.questPrototype); // redux selector
 
-    const [sheetOptions, setSheetOptions] = useState<[string, string, (() => void)][]>([['hi', 'plus', (() => console.log(5))], ['hi there', 'plus', (() => console.log(6))]])
+    const [sheetOptions, setSheetOptions] = useState<[string, string, (() => void)][]>([])
     const sheet = useRef<BottomSheet>(null);
-
-    console.log('Current Quest', JSON.stringify(questPrototype))
 
     const dispatch = useAppDispatch();
 

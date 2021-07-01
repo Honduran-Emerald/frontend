@@ -22,8 +22,6 @@ export const EditModuleScreen = () => {
     }
   }, 'params'>>();
 
-  console.log(route.params)
-
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
 

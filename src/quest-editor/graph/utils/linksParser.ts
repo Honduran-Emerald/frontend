@@ -38,7 +38,7 @@ const virtualizeEmptyLink = (link: [string|number, string|number], nodes: Intern
     } else {
         (nodes.find(node => node.id === link[1]) as InternalFullNode).setSources.push(setSource)
 
-        console.log('Called on', link[1], '-- length sour sources array', (nodes.find(node => node.id === link[1]) as InternalFullNode).setSources);
+        //console.log('Called on', link[1], '-- length sour sources array', (nodes.find(node => node.id === link[1]) as InternalFullNode).setSources);
     }
     return link
 }
@@ -59,13 +59,13 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
         switch (module.type) {
             case 'Choice':
                 let getSetChoiceSource = (choiceIndex: number) => {
-                    console.log('generated with idx', choiceIndex)
+                    //console.log('generated with idx', choiceIndex)
                     return (questPrototype: QuestPrototype, moduleId: number) => {
                         console.log('Setting sourece:', module.id, '| Index:', choiceIndex, 'to', moduleId)
                         let newQuestPrototype = _.cloneDeep(questPrototype)
                         let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | PrototypeChoiceModule )
                         if (!newModule) {
-                            console.log('Fuck, source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser scheiß code macht depressiv')
+                            console.log('Source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser code macht depressiv')
                         }
                         (newModule as PrototypeChoiceModule).choices[choiceIndex] = {...(newModule as PrototypeChoiceModule).choices[choiceIndex], nextModuleReference: moduleId}
                         //return newModule as PrototypeChoiceModule
@@ -83,7 +83,7 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
                     let newQuestPrototype = _.cloneDeep(questPrototype)
                     let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | PrototypeStoryModule )
                     if (!newModule) {
-                        console.log('Fuck, source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser scheiß code macht depressiv')
+                        console.log('Source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser code macht depressiv')
                     }
                     (newModule as PrototypeStoryModule).nextModuleReference = moduleId
                     //return newModule as PrototypeStoryModule
@@ -98,7 +98,7 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
                     let newQuestPrototype = _.cloneDeep(questPrototype)
                     let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | PrototypeLocationModule )
                     if (!newModule) {
-                        console.log('Fuck, source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser scheiß code macht depressiv')
+                        console.log('Source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser code macht depressiv')
                     }
                     (newModule as PrototypeLocationModule).nextModuleReference = moduleId
                     //return newModule as PrototypeStoryModule
@@ -114,9 +114,6 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
                 return [];
         }
     }).reduce((acc, curVal) => acc.concat(curVal), [])
-
-
-    console.log('links', links);
 
     return {
         nodes: nodes,

@@ -32,7 +32,6 @@ export const questsSlice = createSlice({
         },
 
         setModules: (state, action: PayloadAction<PrototypeModule[]>) => {
-            console.log('Updating modules to', action.payload)
             if (state.questPrototype !== undefined)
                 state.questPrototype.modules = action.payload
         },

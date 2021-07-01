@@ -28,9 +28,7 @@ export const RegularModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, s
     return (
         <TouchableOpacity onPress={() => {
             if (linkOnChoice !== undefined && questPrototype !== undefined && linkable) {
-                console.log('PreLink \nModules ---------', linkOnChoice(questPrototype, node.id as number).modules)
                 dispatch(setModules(linkOnChoice(questPrototype, node.id as number).modules))
-                console.log('PostLink')
                 setLinkOnChoice(undefined)
             } else {
                 // Sheet Options on Click
