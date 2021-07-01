@@ -7,7 +7,7 @@ import { Colors } from '../styles';
 import { ScrollMenu } from "../discovery/ScrollMenu";
 import { StatusBar } from "expo-status-bar";
 import { getLocation } from "../utils/locationHandler";
-import { QuestHeader } from "../types/quest";
+import { GameplayQuestHeader, QuestHeader } from "../types/quest";
 import { queryQuestsRequest } from "../utils/requestHandler";
 import { useAppSelector } from '../redux/hooks';
 
@@ -20,7 +20,7 @@ export const ProfileScreen = (props: profileProps) => {
 
   const location = useAppSelector(state => state.location.location)
   const user = useAppSelector((state) => state.authentication.user);
-  const [quests, setQuests] = useState<QuestHeader[]>([]);
+  const [quests, setQuests] = useState<GameplayQuestHeader[]>([]);
 
   useEffect(() => {
       queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));

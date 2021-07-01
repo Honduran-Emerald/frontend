@@ -11,16 +11,13 @@ import { DiscoveryNavigator } from "./discovery/DiscoveryNavigator";
 
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { logout, setToken } from './redux/authentication/authenticationSlice';
-import { getUserSelfRequest, invalidatemessagingtokenRequest, queryQuestsRequest } from './utils/requestHandler';
-import QuestlogScreen from './gameplay/QuestlogScreen';
+import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
 import { clearQuestState } from './redux/quests/questsSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { Colors } from './styles';
 import { ChatNavigator } from './chat/ChatNavigator';
 import { removeData } from './utils/AsyncStore';
 import { ProfileNavigator } from './profile/ProfileNavigator';
-import LocationPicker from "./quest-editor/LocationPicker";
-import {Location as LocationType} from "./types/general";
 import { GameplayNavigator } from './gameplay/GameplayNavigator';
 
 const Tab = createBottomTabNavigator();

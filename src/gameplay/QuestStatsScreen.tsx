@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Dimensions, FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import { Colors } from '../styles';
-import { QuestHeader } from '../types/quest';
+import { GameplayQuestHeader, QuestHeader } from '../types/quest';
 import {playResetRequest} from "../utils/requestHandler";
 import {useNavigation} from "@react-navigation/native";
 import {BACKENDIP} from "../../GLOBALCONFIG";
@@ -9,7 +9,7 @@ import {Entypo} from "@expo/vector-icons";
 
 interface QuestStateScreenProps {
   height: number,
-  quest: QuestHeader | undefined,
+  quest: GameplayQuestHeader | undefined,
   flatListRef: React.RefObject<FlatList<any>>,
   trackerId: string
 }

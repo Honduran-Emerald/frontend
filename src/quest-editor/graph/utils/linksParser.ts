@@ -1,4 +1,3 @@
-import { PrototypeChoiceModule, PrototypeModule, PrototypeStoryModule, QuestPrototype } from "../../../types/quest";
 import _ from 'lodash';
 
 export interface InternalFullNode {

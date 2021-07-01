@@ -8,8 +8,9 @@ import { ImagePicker } from '../common/ImagePicker';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { pushNewImages, setEstimatedTime, setImagePath, setImageReference, setImages, setLocationName, setNewImagesAt, setQuestDescription, setQuestTitle, spliceQuestImages } from '../redux/editor/editorSlice';
 import I18n from 'i18n-js';
-import { createPutRequest, getImageAddress } from '../utils/requestHandler';
+import { createPutRequest } from '../utils/requestHandler';
 import { Image, NewImage } from '../types/quest';
+import { getImageAddress } from '../utils/imageHandler';
 
 export const QuestPropertiesScreen = () => {
   const questPrototype = useAppSelector(state => state.editor.questPrototype)

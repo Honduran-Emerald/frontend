@@ -3,8 +3,8 @@ import { Dimensions, Image, StyleSheet, TouchableNativeFeedback, TouchableWithou
 import { Modal, Portal } from 'react-native-paper';
 
 import { GameplayImageComponent } from '../../types/quest';
-import { SingleComponentProps } from '../ComponentRenderer';
 import { getImageAddress } from '../../utils/imageHandler';
+import { SingleComponentProps } from '../ComponentRenderer';
 
 export const ImageComponent: React.FC<SingleComponentProps<GameplayImageComponent>> = ({ data }) => {
 

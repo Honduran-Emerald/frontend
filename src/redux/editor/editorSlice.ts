@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PrototypeModule, CreateQuestBase, NewImage, Image } from '../../types/quest';
+import { PrototypeModule, QuestPrototype } from '../../types/prototypes';
+import { NewImage, Image } from '../../types/quest';
 
 interface EditorState {
-    questPrototype: CreateQuestBase | undefined,
+    questPrototype: QuestPrototype | undefined,
     questId: string | undefined,
     imagePath: string,
     newImages: NewImage[]
@@ -19,7 +20,7 @@ export const questsSlice = createSlice({
     name: 'editor',
     initialState,
     reducers: {
-        loadQuest: (state, action: PayloadAction<{questId: string, questPrototype: CreateQuestBase}>) => {
+        loadQuest: (state, action: PayloadAction<{questId: string, questPrototype: QuestPrototype}>) => {
             state.questPrototype = action.payload.questPrototype;
             state.questId = action.payload.questId;
             state.imagePath = '';

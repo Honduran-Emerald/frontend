@@ -2,7 +2,6 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { QuestPropertiesScreen } from './QuestPropertiesScreen';
 import { Colors } from '../styles';
-import { QuestEditorNavigator } from './QuestEditorNavigator';
 import { ModuleGraphCaller } from './graph/ModuleGraphCaller';
 
 type TabParams = {

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { Divider, Menu } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { PrototypeModule, QuestPrototype } from '../../types/quest';
 import { AddModuleNode } from './node-types/AddModuleNode';
 import { LinkModuleNode as LinkModuleNode } from './node-types/LinkModuleNode';
 import { parseModule } from './utils/linksParser';
@@ -13,6 +12,7 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Graph } from 'graphlib';
 import { addOrUpdateMultipleQuestModules, addOrUpdateQuestModule, deleteQuestModule, setModules } from '../../redux/editor/editorSlice';
+import { QuestPrototype } from '../../types/prototypes';
 
 export const ModuleGraphCaller = () => {
 
