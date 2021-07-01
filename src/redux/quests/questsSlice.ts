@@ -63,6 +63,7 @@ export const questsSlice = createSlice({
             state.trackerWithUpdates = []
         },
         addTrackerWithUpdate: (state, action: PayloadAction<string>) => {
+            if(state.trackerWithUpdates.includes(action.payload)) return;
             state.trackerWithUpdates.push(action.payload);
         },
         removeTrackerWithUpdate: (state, action: PayloadAction<string>) => {
