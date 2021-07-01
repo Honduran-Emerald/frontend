@@ -32,7 +32,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
             .then((data) => {
               const newTracker = data.quest.tracker;
               if(pinnedQuest && trackerId === pinnedQuest.trackerId){
-                dispatch(loadPinnedQuestPath(undefined))
+                dispatch(loadPinnedQuestPath(data))
                 dispatch(pinQuest(newTracker));
               }
               dispatch(updateAcceptedQuest(newTracker));
