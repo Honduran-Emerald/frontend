@@ -9,8 +9,6 @@ import { setToken, setUser } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
 import { chatQueryRequest, getAllTrackersRequest, getUserSelfRequest, queryTrackerNodesRequest, renewRequest } from './utils/requestHandler';
 import { loadPinnedQuestPath, pinQuest, setAcceptedQuests } from './redux/quests/questsSlice';
-import { loadItemLocally } from './utils/SecureStore';
-import * as Localization from 'expo-localization';
 import { QuestTracker } from './types/quest';
 import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';

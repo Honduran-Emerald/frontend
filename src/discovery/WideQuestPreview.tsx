@@ -8,7 +8,7 @@ import { Colors } from '../styles';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 
 
-export const WideQuestPreview = (props:questProps) => {
+export const WideQuestPreview = (props: questProps) => {
 
   const [distance, setDistance] = useState("");
 

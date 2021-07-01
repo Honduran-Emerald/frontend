@@ -1,11 +1,14 @@
-import { QuestBase } from "./quest"
+import { Image, QuestBase } from "./quest"
 
 //############################# Quest
 
 export interface QuestPrototype extends QuestBase {
   approximateTime: string,
   firstModuleReference: number | null,
-  modules: PrototypeModule[]
+  modules: PrototypeModule[],
+  images: Image[],
+  imageReference: number | null,
+  agentProfileReference: number | null,
 }
 
 //############################# Modules

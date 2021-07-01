@@ -8,8 +8,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
-import { GameplayQuestHeader, QuestTracker } from '../types/quest';
-import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest } from '../utils/requestHandler';
+import { GameplayQuestHeader, QuestHeader, QuestTracker } from '../types/quest';
+import {
+  createDeleteQuestRequest,
+  createPublishRequest,
+  createTrackerRequest
+} from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';

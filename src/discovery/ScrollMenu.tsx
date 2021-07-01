@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Colors } from "../styles";
-import { QuestHeader } from "../types/quest";
+import { GameplayQuestHeader, QuestHeader } from "../types/quest";
 import { getImageAddress } from '../utils/imageHandler';
 import { Button, Card, Surface } from "react-native-paper";
 import { useNavigation } from '@react-navigation/core';
@@ -12,7 +12,7 @@ export default interface scrollProps {
     header: string
     type: string
     location: LocationObject
-    quests: QuestHeader[]
+    quests: GameplayQuestHeader[]
 }
 
 
@@ -48,7 +48,7 @@ function deg2rad(deg:number) {
     return deg * (Math.PI/180)
 }
 export interface questProps {
-    quest: QuestHeader
+    quest: GameplayQuestHeader
     location: LocationObject
 }
 

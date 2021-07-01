@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View, Dimensions, Image } from 'react-native';
 import MapView, { Region } from 'react-native-maps';
-import * as Location from 'expo-location';
 import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 

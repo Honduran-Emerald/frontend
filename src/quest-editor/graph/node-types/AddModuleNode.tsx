@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { Text } from 'react-native-paper';
 import { useAppSelector } from '../../../redux/hooks';
-import { PrototypeModule, QuestPrototype } from '../../../types/quest';
 import _ from 'lodash';
 import { useNavigation } from '@react-navigation/core';
 import I18n from 'i18n-js';

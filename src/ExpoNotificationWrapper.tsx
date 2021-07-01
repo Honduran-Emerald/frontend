@@ -9,8 +9,7 @@ import { ChatWrapperNavigator } from './ChatWrapperNavigator';
 import { invalidatemessagingtokenRequest, userUpdatemessagingtoken } from './utils/requestHandler';
 import { getMessage } from './redux/chat/chatSlice';
 import { GeofenceNotifType } from './utils/TaskManager';
-import { ChatMessageNotif, ChatTextMessageNotif } from './types/general';
-import { useNavigation } from '@react-navigation/native';
+import { ChatMessageNotif } from './types/general';
 import { getImageAddress } from './utils/imageHandler';
 
 Notifications.setNotificationHandler({

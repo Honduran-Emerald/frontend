@@ -118,13 +118,13 @@ export const GameplayScreen : React.FC = () => {
           (responseEvent: any) => {
             switch (responseEvent.type) {
               case 'ModuleFinish':
-                new Promise(resolve => setTimeout(() => resolve(), 1500)).then(() => handleModuleFinish(responseEvent.module, res.memento));
+                new Promise<void>(resolve => setTimeout(() => resolve(), 1500)).then(() => handleModuleFinish(responseEvent.module, res.memento));
                 break;
               case 'Experience':
                 handleExperience(responseEvent.experience);
                 break;
               case 'QuestFinish':
-                new Promise(resolve => setTimeout(() => resolve(), 1500)).then(() => handleQuestFinish(responseEvent.endingFactor));
+                new Promise<void>(resolve => setTimeout(() => resolve(), 1500)).then(() => handleQuestFinish(responseEvent.endingFactor));
                 break;
 
             }
