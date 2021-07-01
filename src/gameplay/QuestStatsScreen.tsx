@@ -1,11 +1,12 @@
 import React from 'react';
-import {Button, Dimensions, FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import { Dimensions, FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import { Colors } from '../styles';
 import {GameplayQuestHeader, QuestHeader} from '../types/quest';
 import {playResetRequest} from "../utils/requestHandler";
 import {useNavigation} from "@react-navigation/native";
 import {BACKENDIP} from "../../GLOBALCONFIG";
 import {Entypo} from "@expo/vector-icons";
+import {Button, FAB} from "react-native-paper";
 
 interface QuestStateScreenProps {
   height: number,
@@ -36,7 +37,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
    */
 
   return (
-    <View style={[styles.stats, {height: height, flexGrow: 1, alignItems: 'center'}]} >
+    <View style={[styles.stats, {height: height + 40, flexGrow: 1, alignItems: 'center'}]} >
 
       <View>
         {
@@ -64,15 +65,30 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         </View>
       </View>
 
-      <Text style={styles.description}>
+      <Text style={styles.description} ellipsizeMode={'tail'} numberOfLines={10}>
         {quest?.description}
       </Text>
-
-      <View style={{position: 'absolute', bottom: 100, width: '100%'}}>
-        <Button onPress={() => resetQuest()} title='Reset this quest' />
-        <Button onPress={() => {flatListRef.current?.scrollToOffset({
+      <FAB
+        style={styles.goDown}
+        small
+        icon="chevron-down"
+        onPress={() => {flatListRef.current?.scrollToOffset({
           offset: 0
-        })}} title='Go to Bottom' />
+        })}}
+      />
+      <View style={{position: 'absolute', bottom: 10}}>
+        <FAB
+          style={styles.reset}
+          small
+          icon="restart"
+          onPress={() => {resetQuest()}}
+          label={"Reset all progress for quest"}
+        />
+        <Button style={styles.goUp} icon={"chevron-up"} onPress={() => {flatListRef.current?.scrollToOffset({
+          offset: 100000000,
+        })}} color={Colors.primary}>
+          View Quest Details
+        </Button>
       </View>
     </View>
   )
@@ -84,7 +100,7 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
     borderTopWidth: 0,
-    marginBottom: 30,
+    marginBottom: 20,
     elevation: 5,
     width: "100%",
   },
@@ -118,5 +134,15 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 5,
     marginTop: -5,
+  },
+  goUp: {
+
+  },
+  goDown: {
+    backgroundColor: Colors.primary,
+  },
+  reset: {
+    marginBottom: 30,
+    backgroundColor: Colors.primary,
   },
 })
