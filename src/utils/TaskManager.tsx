@@ -11,27 +11,19 @@ export const LocationNotifTitle = 'Reached location';
 export const GeofenceNotifType = 'GeofenceNotification';
 
 TaskManager.defineTask(GeofencingTask, (task) => {
+  console.log(JSON.stringify(task))
   if(task.error) {
     console.log('LocationModuleUpdates error: ' + task.error.message);
   }
   if(task.data) {
     // @ts-ignore
+    if(store.getState().quests.trackerWithUpdates.includes(task.data.region.identifier)) return;
+    // @ts-ignore
     if(task.data.eventType === LocationGeofencingEventType.Enter) {
       // @ts-ignore
       console.log('reached location ' + task.data.region.identifier);
-      Notifications.scheduleNotificationAsync({
-        content: {
-          title: LocationNotifTitle,
-          body: 'Check out the next objective',
-          data: {
-            type: GeofenceNotifType,
-          }
-        },
-        trigger: {
-          seconds: 5,
-        },
-      }).then(() => console.log('location notification scheduled'));
-      // TODO send fetch, show indicator in questlog (and optionally pinned quest card)
+      scheduleGeofenceNotification();
+      // TODO send fetch, save updated trackers locally
       // @ts-ignore
       addUpdatedQuest(task.data.region.identifier)
       // @ts-ignore
@@ -65,6 +57,8 @@ export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
     identifier: '60d0e27dea7aa52a3456a237',
     latitude: 49.872762,
     longitude: 8.651217,
+    //latitude: 49.5532839,
+    //longitude: 8.6667761,
     radius: 20,
     notifyOnEnter: true,
   })
@@ -76,21 +70,32 @@ export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
 }
 
 export function updateGeofencingTask(regionReached: LocationRegion) {
-  let regions: LocationRegion[] = [];
-  TaskManager.getRegisteredTasksAsync().then((tasks) => {
-    tasks.forEach((task) => {
-      if (task.taskName === GeofencingTask) {
-        regions = task.options.regions
+  TaskManager.getTaskOptionsAsync(GeofencingTask)
+    // @ts-ignore
+    .then((options) => options.regions)
+    .then((regions: LocationRegion[]) => {
+      const newRegions = regions.filter((region) => region.identifier !== regionReached.identifier)
+      if(newRegions.length === 0) {
+        Location.stopGeofencingAsync(GeofencingTask).then(() => console.log('Stopped geofencing'));
+        return;
       }
+      Location.startGeofencingAsync(GeofencingTask, newRegions).then(() => console.log('geofencing task updated' + JSON.stringify(newRegions)))
     })
-  }).then(() => {
-    const newRegions = regions.filter((region) => region.identifier !== regionReached.identifier)
-    if(newRegions.length === 0) {
-      Location.stopGeofencingAsync(GeofencingTask).then(() => console.log('Stopped geofencing'));
-      return;
-    }
-    Location.startGeofencingAsync(GeofencingTask, newRegions).then(() => console.log('geofencing task updated' + JSON.stringify(newRegions)))
-  })
+}
+
+export function scheduleGeofenceNotification() {
+  Notifications.scheduleNotificationAsync({
+    content: {
+      title: LocationNotifTitle,
+      body: 'Check out the next objective',
+      data: {
+        type: GeofenceNotifType,
+      }
+    },
+    trigger: {
+      seconds: 1,
+    },
+  }).then(() => console.log('location notification scheduled'));
 }
 
 export function addUpdatedQuest(trackerId: string) {
