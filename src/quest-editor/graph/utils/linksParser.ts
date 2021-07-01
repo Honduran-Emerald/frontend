@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { PrototypeChoiceModule, PrototypeLocationModule, PrototypeModule, PrototypeStoryModule, QuestPrototype } from '../../../types/prototypes';
 
 export interface InternalFullNode {
     id: number,
@@ -91,6 +92,22 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
 
                 //@ts-ignore TODO: Create some better type annotations for this
                 return [virtualizeEmptyLink([module.id, (module as PrototypeStoryModule).nextModuleReference], nodes, empty_idx++, setStorySource)];
+            
+            case 'Location':
+                let setLocationSource = (questPrototype: QuestPrototype, moduleId: number) => {
+                    let newQuestPrototype = _.cloneDeep(questPrototype)
+                    let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | PrototypeLocationModule )
+                    if (!newModule) {
+                        console.log('Fuck, source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser scheiß code macht depressiv')
+                    }
+                    (newModule as PrototypeLocationModule).nextModuleReference = moduleId
+                    //return newModule as PrototypeStoryModule
+                    return newQuestPrototype
+                }
+
+                //@ts-ignore TODO: Create some better type annotations for this
+                return [virtualizeEmptyLink([module.id, (module as PrototypeLocationModule).nextModuleReference], nodes, empty_idx++, setLocationSource)];
+
             case 'Ending':
                 return [];
             default:

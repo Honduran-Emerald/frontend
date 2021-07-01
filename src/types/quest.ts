@@ -97,7 +97,7 @@ export interface GameplayEndingModule extends GameplayModuleBase {
 
 export interface GameplayLocationModule extends GameplayModuleBase {
     type: 'Location',
-    locationModel: Location,
+    location: Location,
 }
 
 export type GameplayModule = GameplayChoiceModule | GameplayEndingModule | GameplayStoryModule | GameplayLocationModule
