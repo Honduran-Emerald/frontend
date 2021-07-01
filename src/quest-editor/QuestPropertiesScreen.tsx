@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ImagePicker } from '../common/ImagePicker';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { pushNewImages, setEstimatedTime, setImagePath, setImageReference, setImages, setLocationName, setNewImagesAt, setQuestDescription, setQuestTitle, spliceQuestImages } from '../redux/editor/editorSlice';
+import { pushNewImages, setEstimatedTime, setImagePath, setImageReference, setImages, setLocationName, setNewImages, setNewImagesAt, setQuestDescription, setQuestTitle, spliceQuestImages } from '../redux/editor/editorSlice';
 import I18n from 'i18n-js';
 import { createPutRequest } from '../utils/requestHandler';
 import { Image, NewImage } from '../types/quest';
@@ -50,7 +50,6 @@ export const QuestPropertiesScreen = () => {
               return;
             }
 
-            
             // if reference exists in questPrototype.images, delete from images and push new image to newImages
             let index
             if((index = questPrototype.images.findIndex(image => image.reference === questPrototype.imageReference)) !== -1) {
@@ -105,7 +104,7 @@ export const QuestPropertiesScreen = () => {
         onPress={() => {
           createPutRequest(questId!, questPrototype!, newImages)
             .then(r => r.json())
-            .then(data => dispatch(setImages(data.images)))
+            .then(data => {dispatch(setImages(data.images));dispatch(setNewImages([]))})
           }}
       >
         {I18n.t('saveButton')}
