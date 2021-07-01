@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Text } from 'react-native-paper';
 import { setModules } from '../../../redux/editor/editorSlice';
@@ -8,6 +8,7 @@ import { InternalFullNode } from '../utils/linksParser';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
 import { QuestPrototype } from '../../../types/prototypes';
+import { unset } from 'lodash';
 export interface IModuleNode {
     node: InternalFullNode,
     linkOnChoice: ((questPrototype: QuestPrototype, module_id: number) => QuestPrototype) | undefined,
@@ -45,6 +46,10 @@ export const RegularModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, s
                 sheetRef.current?.snapTo(1)
             }
         }}>
+            <View>
+            {node.parentTags.map((tag, idx) => <View key={idx} style={{...styles.textcomponent, minHeight: 42, padding: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, marginBottom: -20}}>
+                <Text style={{textAlign: 'center', paddingHorizontal: 13}} ellipsizeMode={'tail'} numberOfLines={1}>{tag.choice}</Text>
+            </View>)}
             <Text 
                 style={{...styles.textcomponent, 
                     backgroundColor: 'white',
@@ -53,6 +58,7 @@ export const RegularModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, s
             }}>
                     {node.moduleObject.objective}
             </Text>
+            </View>
         </TouchableOpacity>
         
     )

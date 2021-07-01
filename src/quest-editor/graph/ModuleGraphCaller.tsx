@@ -61,7 +61,7 @@ export const ModuleGraphCaller = () => {
                 dispatch(setModules(node.setSources.reduce((acc, current) => current(acc, null), questPrototype).modules))
                 dispatch(deleteQuestModule(node.id))
             }}/> // regular node. can be adjusted to return different types of nodes
-            : <LinkModuleNode setSource={node.setSource} setLinkOnChoice={setLinkOnChoice} sheetRef={sheet} setSheetOptions={setSheetOptions} setLinkSourceId={setLinkSourceId} parentId={node.parentId}/> // empty node. clicking will allow to add a new or link to an existing module
+            : <LinkModuleNode setSource={node.setSource} setLinkOnChoice={setLinkOnChoice} sheetRef={sheet} setSheetOptions={setSheetOptions} setLinkSourceId={setLinkSourceId} parentId={node.parentId} parentTags={node.parentTags}/> // empty node. clicking will allow to add a new or link to an existing module
         })), links);
 
         if (positions.length > 0) {

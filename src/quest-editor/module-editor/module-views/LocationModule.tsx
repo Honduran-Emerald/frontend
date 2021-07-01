@@ -1,36 +1,43 @@
-import React, { useState } from 'react';
-import { Dimensions, StyleSheet, Text, View, StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, StyleSheet, View, StatusBar } from 'react-native';
 import { Button, Subheading, TextInput, Divider } from 'react-native-paper';
-import { ICreateModule, IModuleBase } from '../CreateModuleScreen';
+import { ICreateModule } from '../CreateModuleScreen';
 import i18n from 'i18n-js';
 import { primary } from '../../../styles/colors';
 import { Colors } from '../../../styles';
 import I18n from 'i18n-js';
-import { PrototypeLocationModule, PrototypeStoryModule, PrototypeTextComponent } from '../../../types/prototypes';
-import LocationPicker from '../../LocationPicker';
+import { PrototypeLocationModule } from '../../../types/prototypes';
 import { useNavigation } from '@react-navigation/native';
 import { Location } from '../../../types/general';
 import MapView, { Marker } from 'react-native-maps';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface ILocationModuleData {
-    text: string,
     objective: string,
     targetLocation: Location | null
 }
 
-export const LocationModule: React.FC<ICreateModule<PrototypeLocationModule>> = ({ setFinalModule, edit, defaultValues }) => {
+export const LocationModule: React.FC<ICreateModule<PrototypeLocationModule>> = ({ setFinalModule, edit, defaultValues, setComponents }) => {
 
     const [moduleData, setModuleData] = useState<ILocationModuleData>(edit 
         ? {
-            text: (defaultValues?.components[0] as PrototypeTextComponent)?.text || '',
             objective: defaultValues?.objective || '',
             targetLocation: defaultValues?.location || null
         } : {
-            text: '', 
             objective: '',
             targetLocation: null
         });
+
+    useEffect(() => {
+      if (!edit) {
+          setComponents([
+              {
+                  type: 'Text',
+                  text: ''
+              }
+          ])
+      }
+      }, [])
 
     const navigation = useNavigation();
 
@@ -39,10 +46,7 @@ export const LocationModule: React.FC<ICreateModule<PrototypeLocationModule>> = 
             id: -1,
             objective: moduleData.objective,
             type: 'Location',
-            components: [{
-                type: 'Text',
-                text: moduleData.text
-            }],
+            components: [],
             nextModuleReference: (edit && defaultValues) ? defaultValues.nextModuleReference : null,
             location: moduleData.targetLocation!
         })
@@ -58,16 +62,6 @@ export const LocationModule: React.FC<ICreateModule<PrototypeLocationModule>> = 
                 onChangeText={(data) => setModuleData({...moduleData, objective: data})}
                 theme={{colors: {primary: Colors.primary}}} />
             <Divider/>
-            <Subheading 
-                style={{margin: 10, marginTop: 20}}>
-                {i18n.t('addStoryText')}
-            </Subheading>
-            <TextInput
-                theme={{colors: {primary: primary}}} 
-                style={{marginVertical: 10}}
-                value={moduleData.text || ''}
-                onChange={(data) => setModuleData({...moduleData, text: data.nativeEvent.text})}
-                multiline/>
             <Subheading 
                 style={{margin: 10, marginTop: 20}}>
                 Choose Target Location

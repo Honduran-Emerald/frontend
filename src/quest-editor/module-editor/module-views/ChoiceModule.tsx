@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Button, IconButton, Subheading, TextInput, Divider } from 'react-native-paper';
 import { ICreateModule } from '../CreateModuleScreen';
@@ -6,39 +6,44 @@ import I18n from 'i18n-js';
 import { lightGray, primary } from '../../../styles/colors';
 import _ from 'lodash';
 import { Colors } from '../../../styles';
-import { PrototypeChoiceModule, PrototypeTextComponent } from '../../../types/prototypes';
+import { PrototypeChoiceModule } from '../../../types/prototypes';
 
 interface IChoiceModuleData {
-    text: string,
     choiceTexts: string[],
     objective: string,
 }
 
 const maxChoices = 5;
 
-export const ChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ setFinalModule, edit, defaultValues }) => {
+export const ChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ setFinalModule, edit, defaultValues, setComponents }) => {
 
     const [moduleData, setModuleData] = useState<IChoiceModuleData>(
         edit 
         ? { // edit module
-            text: (defaultValues!.components[0] as PrototypeTextComponent).text!, // TODO: Change this once multiple modules can be used
             choiceTexts: defaultValues!.choices!.map(c => c.text),
             objective: defaultValues!.objective
         }
         : { // new module
-            text: '', 
             choiceTexts: ['', ''], 
             objective: ''}
         );
+
+    useEffect(() => {
+        if (!edit) {
+            setComponents([
+                {
+                    type: 'Text',
+                    text: ''
+                }
+            ])
+        }
+    }, [])
 
     const parseToModule = (moduleData: IChoiceModuleData): PrototypeChoiceModule => {
         return ({
             id: -1,
             type: 'Choice',
-            components: [{
-                type: 'Text',
-                text: moduleData.text
-            }],
+            components: [],
             choices: moduleData.choiceTexts.map((text, idx) => ({
                 text: text,
                 nextModuleReference: (edit && defaultValues && idx in defaultValues.choices) ? defaultValues.choices[idx].nextModuleReference : null,
@@ -57,16 +62,6 @@ export const ChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ s
                 onChangeText={(data) => setModuleData({...moduleData, objective: data})}
                 theme={{colors: {primary: Colors.primary}}} />
             <Divider/>
-            <Subheading 
-                style={{margin: 10, marginTop: 20}}>
-                {I18n.t('addEndText')}
-            </Subheading>
-            <TextInput 
-                theme={{colors: {primary: primary}}}
-                style={{marginVertical: 10}}
-                value={moduleData.text}
-                onChange={(data) => setModuleData({...moduleData, text: data.nativeEvent.text})}
-                multiline/>
 
             <Subheading 
                 style={{margin: 10, marginTop: 20}}>

@@ -1,10 +1,18 @@
 import _ from 'lodash';
 import { PrototypeChoiceModule, PrototypeLocationModule, PrototypeModule, PrototypeStoryModule, QuestPrototype } from '../../../types/prototypes';
 
+export interface ChoiceTag {
+    type: 'Choice'
+    choice: string
+}
+
+export type GraphTag = ChoiceTag;
+
 export interface InternalFullNode {
     id: number,
     type: 'normal',
-    setSources: ((questPrototype: QuestPrototype, moduleId: number | null) => QuestPrototype)[]
+    setSources: ((questPrototype: QuestPrototype, moduleId: number | null) => QuestPrototype)[],
+    parentTags: GraphTag[],
     moduleObject: PrototypeModule
 }
 
@@ -13,6 +21,7 @@ export interface InternalEmptyNode {
     type: 'empty',
     setSource: (questPrototype: QuestPrototype, moduleId: number | null) => QuestPrototype,
     parentId: string | number
+    parentTags: GraphTag[],
 }
 
 export type InternalNode = InternalEmptyNode | InternalFullNode
@@ -25,19 +34,24 @@ export type InternalNode = InternalEmptyNode | InternalFullNode
  * @param setSource function to allow the parents link to be changed from the child component
  * @returns virtualized link
  */
-const virtualizeEmptyLink = (link: [string|number, string|number], nodes: InternalNode[], idx: number, setSource: (questPrototype: QuestPrototype, moduleId: number | null) => QuestPrototype): [string|number, string|number] => {
+const virtualizeEmptyLink = (link: [string|number, string|number], nodes: InternalNode[], idx: number, setSource: (questPrototype: QuestPrototype, moduleId: number | null) => QuestPrototype, parentTag?: GraphTag): [string|number, string|number] => {
     if (link[1] == null) {
         const emptyNodeString = `empty${idx}`
         nodes.push({
             id: emptyNodeString,
             type: 'empty',
             setSource: setSource,
-            parentId: link[0]
+            parentId: link[0],
+            parentTags: parentTag ? [parentTag] : []
         })
         return [link[0], emptyNodeString]
     } else {
-        (nodes.find(node => node.id === link[1]) as InternalFullNode).setSources.push(setSource)
-
+        const targetNode = (nodes.find(node => node.id === link[1]) as InternalFullNode);
+        targetNode.setSources.push(setSource)
+        if (parentTag !== undefined) {
+            targetNode.parentTags?.push(parentTag)
+        } 
+    
         //console.log('Called on', link[1], '-- length sour sources array', (nodes.find(node => node.id === link[1]) as InternalFullNode).setSources);
     }
     return link
@@ -51,7 +65,7 @@ const virtualizeEmptyLink = (link: [string|number, string|number], nodes: Intern
 export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNode[], links: [string|number, string|number][]} => {
 
 
-    let nodes: InternalNode[] = questPrototype.modules.map(module => ({id: module.id, type: 'normal', moduleObject: module, setSources: []}));
+    let nodes: InternalNode[] = questPrototype.modules.map(module => ({id: module.id, type: 'normal', moduleObject: module, setSources: [], parentTags: []}));
 
     let empty_idx = 0;
 
@@ -75,7 +89,7 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
                 }
     
                 //@ts-ignore TODO: Create some better type annotations for this
-                return (module as PrototypeChoiceModule).choices.map((choice, choiceIdx) => virtualizeEmptyLink([module.id, choice.nextModuleReference], nodes, empty_idx++, getSetChoiceSource(choiceIdx)));
+                return (module as PrototypeChoiceModule).choices.map((choice, choiceIdx) => virtualizeEmptyLink([module.id, choice.nextModuleReference], nodes, empty_idx++, getSetChoiceSource(choiceIdx), {type: 'Choice', choice: choice.text}));
             
             
             case 'Story':

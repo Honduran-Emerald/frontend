@@ -14,6 +14,8 @@ import { RouteProp } from "@react-navigation/native";
 import { InternalFullNode } from "../graph/utils/linksParser";
 import { PrototypeComponent, PrototypeModule, PrototypeModuleBase } from "../../types/prototypes";
 import { LocationModule } from "./module-views/LocationModule";
+import { ComponentCreator } from "./ComponentCreator";
+import { ComponentCreateScreen } from "./ComponentCreateScreen";
 
 const displayWidth = Dimensions.get("screen").width;
 
@@ -21,6 +23,7 @@ export interface ICreateModule<ModuleType extends PrototypeModuleBase> {
   setFinalModule: (finalModule: PrototypeModule) => void;
   edit?: boolean;
   defaultValues?: ModuleType;
+  setComponents: React.Dispatch<React.SetStateAction<PrototypeComponent[]>>,
 }
 
 export interface IModuleBase {
@@ -37,6 +40,7 @@ export interface IModuleBase {
 export const CreateModuleScreen = () => {
   const [chosenModuleType, setChosenModuleType] = useState("");
   const [finalModule, setFinalModule] = useState<PrototypeModule>();
+  const [components, setComponents] = useState<PrototypeComponent[]>([]);
 
   const route = useRoute<RouteProp<{
           params: {
@@ -55,16 +59,16 @@ export const CreateModuleScreen = () => {
       id: route.params?.moduleId,
     };
 
-    setFinalModule({ ...finalModule, ...baseModule });
+    setFinalModule({ ...finalModule, ...baseModule, components: components });
   };
 
   const modules = ["Location", "Choice", "Story", "Ending"];
 
   const moduleMap: { [moduleName: string]: JSX.Element } = {
-    Story: <StoryModule setFinalModule={saveModule} />,
-    Ending: <EndingModule setFinalModule={saveModule} />,
-    Choice: <ChoiceModule setFinalModule={saveModule} />,
-    Location: <LocationModule setFinalModule={saveModule} />
+    Story: <StoryModule setFinalModule={saveModule} setComponents={setComponents}/>,
+    Ending: <EndingModule setFinalModule={saveModule} setComponents={setComponents} />,
+    Choice: <ChoiceModule setFinalModule={saveModule} setComponents={setComponents} />,
+    Location: <LocationModule setFinalModule={saveModule} setComponents={setComponents} />
   };
 
   useEffect(() => {
@@ -98,6 +102,13 @@ export const CreateModuleScreen = () => {
           setChosenModuleType={setChosenModuleType}
           swiper={swiper}
         />
+        {chosenModuleType !== '' && 
+          <ComponentCreateScreen 
+            components={components}
+            setComponents={setComponents}
+            onConfirm={() => swiper.current?.scrollTo({x: 2*displayWidth})}
+
+          />}
         {chosenModuleType in moduleMap && (
           <ScrollView style={{ width: displayWidth, margin: 0, padding: 0 }}>
             {moduleMap[chosenModuleType]}

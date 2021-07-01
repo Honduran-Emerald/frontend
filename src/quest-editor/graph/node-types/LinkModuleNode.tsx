@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Text } from 'react-native-paper';
 import { addOrUpdateQuestModule, setModules } from '../../../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/core';
 import I18n from 'i18n-js';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { QuestPrototype } from '../../../types/prototypes';
+import { GraphTag } from '../utils/linksParser';
 
 interface ILinkModuleNode {
     setSource: (questPrototype: QuestPrototype, moduleId: number) => QuestPrototype,
@@ -17,9 +18,10 @@ interface ILinkModuleNode {
     setSheetOptions: React.Dispatch<React.SetStateAction<[string, string, () => void][]>>,
     setLinkSourceId: React.Dispatch<React.SetStateAction<string | number | undefined>>,
     parentId: number | string | undefined,
+    parentTags: GraphTag[],
 }
 
-export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, sheetRef, setSheetOptions, setLinkOnChoice, setLinkSourceId, parentId }) => {
+export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, sheetRef, setSheetOptions, setLinkOnChoice, setLinkSourceId, parentId, parentTags }) => {
 
     const questPrototype = useAppSelector(state => state.editor.questPrototype);
     const dispatch = useAppDispatch();
@@ -28,7 +30,7 @@ export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, sheetRef,
 
     return (
         <View>
-            <TouchableHighlight style={{borderRadius: 20}} onPress={() => {
+            <TouchableOpacity style={{borderRadius: 20}} onPress={() => {
                 setSheetOptions([[I18n.t('createModuleBottomSheet'), 'puzzle-plus-outline', (
                     () => {
                         if (!questPrototype) {
@@ -59,9 +61,13 @@ export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, sheetRef,
 
                 sheetRef.current?.snapTo(1)
             }}>
+                <View>
+                {parentTags.map((tag, idx) => <View key={idx} style={{...styles.component, height: 42, padding: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, marginBottom: -20}}>
+                    <Text style={{textAlign: 'center', paddingHorizontal: 13}} ellipsizeMode={'tail'} numberOfLines={1}>{tag.choice}</Text>
+                </View>)}
                 <Text style={styles.component}>{I18n.t('addOrConnectModule')}</Text>
-
-            </TouchableHighlight>
+                </View>
+            </TouchableOpacity>
         </View>
     )
 }

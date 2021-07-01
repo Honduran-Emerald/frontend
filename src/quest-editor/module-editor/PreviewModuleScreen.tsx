@@ -31,7 +31,7 @@ const toGameplayComponent = (prototypeComponent: PrototypeComponent, idx: number
 export const PreviewModuleScreen: React.FC<IPreviewModuleScreen> = ({ prototypeModule, saveModule }) => (
 
 
-  <View style={{padding: 20, paddingBottom: 40, width: displayWidth}} >
+  <View style={{paddingHorizontal: 20, paddingBottom: 40, width: displayWidth}} >
                     
     <ScrollView 
       style={{marginBottom: 20}}>

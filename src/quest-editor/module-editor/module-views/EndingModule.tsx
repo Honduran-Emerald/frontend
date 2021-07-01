@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { Button, Subheading, TextInput, Divider } from 'react-native-paper';
 import { ICreateModule } from '../CreateModuleScreen';
@@ -9,29 +9,35 @@ import { Colors } from '../../../styles';
 import { PrototypeEndingModule, PrototypeTextComponent } from '../../../types/prototypes';
 
 interface IEndingModuleData {
-    text: string,
     objective: string,
 }
 
-export const EndingModule: React.FC<ICreateModule<PrototypeEndingModule>> = ({ setFinalModule, edit, defaultValues }) => {
+export const EndingModule: React.FC<ICreateModule<PrototypeEndingModule>> = ({ setFinalModule, edit, defaultValues, setComponents }) => {
 
     const [moduleData, setModuleData] = useState<IEndingModuleData>(edit ? {
-        text: (defaultValues?.components[0] as PrototypeTextComponent).text || '',
         objective: defaultValues?.objective || ''
     } : {
-        text: '',
         objective: '',
     });
+
+    useEffect(() => {
+        if (!edit) {
+            setComponents([
+                {
+                    type: 'Text',
+                    text: ''
+                }
+            ])
+        }
+    }, [])
+
 
     const parseToModule = (moduleData: IEndingModuleData): PrototypeEndingModule => {
         return ({
             id: -1,
             type: 'Ending',
             endingFactor: (edit && defaultValues) ? defaultValues.endingFactor : 1, //TODO Make this dynamic
-            components: [{
-                type: 'Text',
-                text: moduleData.text
-            }],
+            components: [],
             objective: moduleData.objective
         })
     }
@@ -47,17 +53,6 @@ export const EndingModule: React.FC<ICreateModule<PrototypeEndingModule>> = ({ s
                 onChangeText={(data) => setModuleData({...moduleData, objective: data})}
                 theme={{colors: {primary: Colors.primary}}} />
             <Divider/>
-            <Subheading 
-                style={{margin: 10, marginTop: 20}}>
-                {i18n.t('addEndText')}
-            </Subheading>
-            <TextInput 
-                theme={{colors: {primary: primary}}}
-                style={{marginVertical: 10}}
-                value={moduleData.text || ''}
-                onChange={(data) => setModuleData({...moduleData, text: data.nativeEvent.text})}
-                multiline/>
-
             <Subheading 
                 style={{margin: 10, marginTop: 20}}>
                 {i18n.t('addEndSlider')}
