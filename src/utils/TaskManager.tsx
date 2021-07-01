@@ -5,10 +5,12 @@ import { LocationGeofencingEventType, LocationRegion } from 'expo-location';
 import { QuestTracker } from '../types/quest';
 import { addTrackerWithUpdate, removeTrackerWithUpdate } from '../redux/quests/questsSlice';
 import { store } from '../redux/store';
+import { getData, storeData } from './AsyncStore';
 
 export const GeofencingTask = 'LocationModuleUpdates';
 export const LocationNotifTitle = 'Reached location';
 export const GeofenceNotifType = 'GeofenceNotification';
+export const LocalUpdatedTrackerIds = 'LocalUpdatedTrackerIds';
 
 TaskManager.defineTask(GeofencingTask, (task) => {
   console.log(JSON.stringify(task))
@@ -36,7 +38,7 @@ export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
   {
     let {status} = await Location.getBackgroundPermissionsAsync();
     if (status !== 'granted') {
-      return console.log("Permission to access background location was denied");
+      return console.log('Permission to access background location was denied');
     }
   }
   let locations: LocationRegion[] = []
@@ -57,8 +59,6 @@ export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
     identifier: '60d0e27dea7aa52a3456a237',
     latitude: 49.872762,
     longitude: 8.651217,
-    //latitude: 49.5532839,
-    //longitude: 8.6667761,
     radius: 20,
     notifyOnEnter: true,
   })
@@ -100,10 +100,27 @@ export function scheduleGeofenceNotification() {
 
 export function addUpdatedQuest(trackerId: string) {
   store.dispatch(addTrackerWithUpdate(trackerId));
-  console.log('Added new updated tracker: ' + trackerId);
+  getData(LocalUpdatedTrackerIds).then((res) => {
+    if(res) {
+      const data = JSON.parse(res);
+      console.log(JSON.stringify(data));
+      data.push(trackerId);
+      storeData(LocalUpdatedTrackerIds, JSON.stringify(data)).then(() => {})
+    } else {
+      storeData(LocalUpdatedTrackerIds, JSON.stringify([trackerId])).then(() => {})
+    }
+  })
+  console.log('Added new unread tracker: ' + trackerId);
 }
 
 export function removeUpdatedQuest(trackerId: string) {
   store.dispatch(removeTrackerWithUpdate(trackerId));
-  console.log('Removed updated tracker: ' + trackerId);
+  getData(LocalUpdatedTrackerIds).then((res) => {
+    if(res) {
+      const data = JSON.parse(res);
+      const newData = data.filter((id: string) => id !== trackerId);
+      storeData(LocalUpdatedTrackerIds, JSON.stringify(newData)).then(() => {})
+    }
+  })
+  console.log('Removed unread tracker: ' + trackerId);
 }

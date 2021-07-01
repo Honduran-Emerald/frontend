@@ -8,7 +8,6 @@ import { Badge } from 'react-native-paper';
 
 import { MapNavigator } from './map/MapNavigator';
 import { DiscoveryNavigator } from "./discovery/DiscoveryNavigator";
-
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { logout, setToken } from './redux/authentication/authenticationSlice';
 import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
@@ -19,6 +18,7 @@ import { ChatNavigator } from './chat/ChatNavigator';
 import { removeData } from './utils/AsyncStore';
 import { ProfileNavigator } from './profile/ProfileNavigator';
 import { GameplayNavigator } from './gameplay/GameplayNavigator';
+import { LocalUpdatedTrackerIds } from './utils/TaskManager';
 
 const Tab = createBottomTabNavigator();
 
@@ -87,6 +87,7 @@ const Dummy = () => {
   const handleLogout = () => {
     deleteItemLocally('UserToken').then(() => {}, () => {});
     removeData('PinnedQuestTracker').then(() => {}, () => {});
+    removeData(LocalUpdatedTrackerIds).then(() => {}, () => {});
     dispatch(logout())
     dispatch(clearQuestState())
   }

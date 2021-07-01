@@ -5,14 +5,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/core';
 
 import { Colors } from '../styles';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { useAppSelector } from '../redux/hooks';
 import { BACKENDIP } from '../../GLOBALCONFIG';
-import { removeTrackerWithUpdate } from '../redux/quests/questsSlice';
+import { removeUpdatedQuest } from '../utils/TaskManager';
 
 export default function PinnedQuestCard() {
 
   const navigation = useNavigation();
-  const dispatch = useAppDispatch();
 
   const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
   const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
@@ -20,7 +19,7 @@ export default function PinnedQuestCard() {
 
   const loadQuestObjectiveScreen = () => {
     if(pinnedQuest && trackerWithUpdates.includes(pinnedQuest.trackerId)) {
-      dispatch(removeTrackerWithUpdate(pinnedQuest.trackerId))
+      removeUpdatedQuest(pinnedQuest.trackerId);
     }
     navigation.navigate('Questlog', { screen: 'GameplayScreen', initial: false,  params: {
       trackerId: pinnedQuest?.trackerId,

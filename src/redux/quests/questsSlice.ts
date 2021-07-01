@@ -62,6 +62,9 @@ export const questsSlice = createSlice({
             state.localQuests = []
             state.trackerWithUpdates = []
         },
+        setTrackerWithUpdate: (state, action: PayloadAction<string[]>) => {
+            state.trackerWithUpdates = action.payload;
+        },
         addTrackerWithUpdate: (state, action: PayloadAction<string>) => {
             if(state.trackerWithUpdates.includes(action.payload)) return;
             state.trackerWithUpdates.push(action.payload);
@@ -80,6 +83,7 @@ export const {
     pinQuest,
     clearQuestState,
     loadPinnedQuestPath,
+    setTrackerWithUpdate,
     addTrackerWithUpdate,
     removeTrackerWithUpdate
 } = questsSlice.actions

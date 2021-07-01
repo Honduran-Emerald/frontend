@@ -10,8 +10,9 @@ import { commonTranslations } from '../common/translations';
 import { getAllTrackersRequest } from '../utils/requestHandler';
 import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { pinQuest, removeTrackerWithUpdate, setAcceptedQuests } from '../redux/quests/questsSlice';
+import { pinQuest, setAcceptedQuests } from '../redux/quests/questsSlice';
 import { storeData } from '../utils/AsyncStore';
+import { removeUpdatedQuest } from '../utils/TaskManager';
 
 export function removeSpecialChars (input: string) {
   if(input) {
@@ -66,7 +67,7 @@ export default function QuestlogScreen() {
 
   const loadQuestObjectiveScreen = useCallback((trackerId: string) => {
     if(trackerWithUpdates.includes(trackerId)) {
-      dispatch(removeTrackerWithUpdate(trackerId))
+      removeUpdatedQuest(trackerId);
     }
     navigation.navigate('GameplayScreen', {
       trackerId: trackerId,
