@@ -126,6 +126,7 @@ export const MapScreen = () => {
           <Marker coordinate={quest.trackerNode.module.type === 'Location' ? quest.trackerNode.module.location : {latitude: 0, longitude: 0}} key={quest.trackerNode.module.id} tracksViewChanges={false} onPress={() => {
             navigation.navigate('Questlog', {
               screen: 'GameplayScreen',
+              initial: false,
               params: {
                 trackerId: quest.trackerId,
                 tracker: quest,
