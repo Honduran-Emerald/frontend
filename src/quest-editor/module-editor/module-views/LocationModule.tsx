@@ -44,7 +44,7 @@ export const LocationModule: React.FC<ICreateModule<PrototypeLocationModule>> = 
                 text: moduleData.text
             }],
             nextModuleReference: (edit && defaultValues) ? defaultValues.nextModuleReference : null,
-            location: moduleData.targetLocation
+            location: moduleData.targetLocation!
         })
     }
 

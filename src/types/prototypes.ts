@@ -41,7 +41,7 @@ export interface PrototypeEndingModule extends PrototypeModuleBase {
 
 export interface PrototypeLocationModule extends PrototypeModuleBase {
   type: 'Location',
-  location: Location | null,
+  location: Location,
   nextModuleReference: number | null,
 }
 
