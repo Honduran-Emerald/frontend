@@ -52,7 +52,7 @@ export const questsSlice = createSlice({
                 state.pinnedQuest = action.payload;
             }
         },
-        loadPinnedQuestPath: (state, action: PayloadAction<QuestPath>) => {
+        loadPinnedQuestPath: (state, action: PayloadAction<QuestPath | undefined>) => {
             state.pinnedQuestPath = action.payload
         },
         clearQuestState: (state) => {

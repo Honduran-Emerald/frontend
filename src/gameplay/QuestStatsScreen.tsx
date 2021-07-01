@@ -1,12 +1,14 @@
 import React from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import { Colors } from '../styles';
-import {GameplayQuestHeader, QuestHeader} from '../types/quest';
-import {playResetRequest} from "../utils/requestHandler";
-import {useNavigation} from "@react-navigation/native";
-import {BACKENDIP} from "../../GLOBALCONFIG";
-import {Entypo} from "@expo/vector-icons";
-import {Button, FAB} from "react-native-paper";
+import { GameplayQuestHeader } from '../types/quest';
+import { playResetRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
+import { useNavigation } from '@react-navigation/native';
+import { BACKENDIP } from '../../GLOBALCONFIG';
+import { Entypo } from '@expo/vector-icons';
+import { Button, FAB } from 'react-native-paper';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { loadPinnedQuestPath, pinQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
 
 interface QuestStateScreenProps {
   height: number,
@@ -17,11 +19,26 @@ interface QuestStateScreenProps {
 
 export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, quest, flatListRef, trackerId }) => {
 
+  const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
+
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
 
   const resetQuest = () => {
     playResetRequest(trackerId).then((res) => {
-      if(res.status === 200) alert('Reload Questlog');
+      if(res.status === 200) {
+        queryTrackerNodesRequest(trackerId)
+          .then((res) => res.json()
+            .then((data) => {
+              const newTracker = data.quest.tracker;
+              if(pinnedQuest && trackerId === pinnedQuest.trackerId){
+                dispatch(loadPinnedQuestPath(undefined))
+                dispatch(pinQuest(newTracker));
+              }
+              dispatch(updateAcceptedQuest(newTracker));
+            })
+          )
+      }
       else alert('Error ' + res.status);
     }).then(() => navigation.goBack())
   }
