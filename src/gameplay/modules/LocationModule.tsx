@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableNativeFeedback, View, Text, Dimensions, StatusBar } from 'react-native';
+import { StyleSheet, TouchableNativeFeedback, View, Text, Dimensions } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Modal, Portal } from 'react-native-paper';
@@ -61,9 +61,10 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
             zoomEnabled={false}
             scrollEnabled={false}
             rotateEnabled={false}
-            style={styles.map}
+            moveOnMarkerPress={false}
             showsPointsOfInterest={true}
-            initialRegion={{
+            style={styles.map}
+            region={{
               latitude: initialLat,
               longitude: initialLon,
               latitudeDelta: delta,
@@ -108,6 +109,9 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
                   </View>
                 </TouchableNativeFeedback>
               </View>
+              <Text style={styles.objective}>
+                {module.module.objective}
+              </Text>
             </View>
             <MapView
               showsCompass={false}
@@ -175,20 +179,23 @@ const styles = StyleSheet.create({
   },
   modal: {
     backgroundColor: Colors.background,
-    height: Dimensions.get('screen').height,
-    marginTop: StatusBar.currentHeight,
+    height: '100%',
   },
   modalMap: {
     width: '100%',
     height: '100%',
   },
   header: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row',
     borderBottomWidth: 1,
-    paddingTop: 29,
     paddingLeft: 4,
     paddingVertical: 5,
     borderColor: Colors.gray,
+  },
+  objective: {
+    color: Colors.black,
+    fontSize: 20,
   },
   backButton: {
     backgroundColor: 'transparent',
