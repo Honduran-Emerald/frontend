@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Dimensions, FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import { Colors } from '../styles';
-import { QuestHeader } from '../types/quest';
+import {GameplayQuestHeader, QuestHeader} from '../types/quest';
 import {playResetRequest} from "../utils/requestHandler";
 import {useNavigation} from "@react-navigation/native";
 import {BACKENDIP} from "../../GLOBALCONFIG";
@@ -9,12 +9,10 @@ import {Entypo} from "@expo/vector-icons";
 
 interface QuestStateScreenProps {
   height: number,
-  quest: QuestHeader | undefined,
+  quest: GameplayQuestHeader | undefined,
   flatListRef: React.RefObject<FlatList<any>>,
   trackerId: string
 }
-
-const roundingRadius = 50;
 
 export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, quest, flatListRef, trackerId }) => {
 
@@ -38,38 +36,43 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
    */
 
   return (
-    <View style={[styles.stats, {height: height + roundingRadius, flexGrow: 1, alignItems: 'center'}]} >
+    <View style={[styles.stats, {height: height, flexGrow: 1, alignItems: 'center'}]} >
 
-      <Text>
-        <View>
-          {
-            quest?.imageId &&
-            <Image style={styles.image} source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}/>
-          }
-          {
-            !quest?.imageId &&
-            <Image style={styles.image} source={require('../../assets/background.jpg')}/>
-          }
-        </View>
-        <View style={styles.info}>
-          <Entypo name='location-pin' size={24} color='black'/>
-          <Text style={styles.location}>
+      <View>
+        {
+          quest?.imageId &&
+          <Image style={styles.image} source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}/>
+        }
+        {
+          !quest?.imageId &&
+          <Image style={styles.image} source={require('../../assets/background.jpg')}/>
+        }
+      </View>
+
+      <View style={styles.info}>
+        <View style={styles.location}>
+          <Entypo name='location-pin' size={24} color='black' style={styles.icon}/>
+          <Text>
             {quest?.locationName}
           </Text>
-          <Entypo name='stopwatch' size={24} color='black'/>
-          <Text style={styles.time}>
+        </View>
+        <View style={styles.time}>
+          <Entypo name='stopwatch' size={24} color='black' style={styles.icon}/>
+          <Text>
             {quest?.approximateTime}
           </Text>
         </View>
-        <Text style={styles.description}>
-          {quest?.description}
-        </Text>
+      </View>
+
+      <Text style={styles.description}>
+        {quest?.description}
       </Text>
+
       <View style={{position: 'absolute', bottom: 100, width: '100%'}}>
-      <Button onPress={() => resetQuest()} title='Reset this quest' />
-      <Button onPress={() => {flatListRef.current?.scrollToOffset({
-        offset: 0
-      })}} title='Go to Bottom' />
+        <Button onPress={() => resetQuest()} title='Reset this quest' />
+        <Button onPress={() => {flatListRef.current?.scrollToOffset({
+          offset: 0
+        })}} title='Go to Bottom' />
       </View>
     </View>
   )
@@ -80,37 +83,40 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     padding: 0,
     margin: 0,
-    borderBottomRightRadius: roundingRadius,
-    borderBottomLeftRadius: roundingRadius,
     borderTopWidth: 0,
-    marginBottom: Dimensions.get('screen').height/2,
+    marginBottom: 30,
     elevation: 5,
     width: "100%",
   },
   image: {
-    width: 300,
+    width: Dimensions.get('screen').width * 0.8,
     height: 200,
     borderRadius: 20,
-    marginBottom: 15,
+    marginBottom: 20,
+    marginTop: 15,
   },
   info: {
-    width: '100%',
+    width: Dimensions.get('screen').width * 0.8,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 15,
   },
   location: {
-    fontSize: 15,
-    marginRight: 'auto',
+    flexDirection: 'row',
+    marginRight: "auto",
     maxWidth: '45%',
   },
   time: {
-    fontSize: 15,
-    marginLeft: 3,
+    flexDirection: 'row',
+    marginRight: 3,
     maxWidth: '45%',
   },
   description: {
     textAlign: 'left',
     marginBottom: 15,
+  },
+  icon: {
+    marginRight: 5,
+    marginTop: -5,
   },
 })
