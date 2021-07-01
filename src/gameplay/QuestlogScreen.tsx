@@ -175,6 +175,7 @@ export default function QuestlogScreen() {
                     onPress={() => loadQuestObjectiveScreen(quest.trackerId)}
                     onLongPress={() => setPinnedQuest(quest)}
                     left={() => <List.Icon color={Colors.background} icon='pin'/>}
+                    right={() => trackerWithUpdates.includes(quest.trackerId) ? <List.Icon color={Colors.background} icon={'email-alert'}/> : null}
                     titleStyle={styles.white}
                     descriptionStyle={styles.white}
                     style={styles.trackedActive}
@@ -186,6 +187,8 @@ export default function QuestlogScreen() {
                     key={quest.trackerId}
                     onPress={() => loadQuestObjectiveScreen(quest.trackerId)}
                     onLongPress={() => setPinnedQuest(quest)}
+                    left={() => <List.Icon color={Colors.background} icon='pin'/>}
+                    right={() => trackerWithUpdates.includes(quest.trackerId) ? <List.Icon color={Colors.primary} icon={'email-alert'}/> : null}
                   />
               )
             }
