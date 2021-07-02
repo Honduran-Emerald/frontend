@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/core';
 import { Colors } from '../styles';
 import { useAppSelector } from '../redux/hooks';
 import { BACKENDIP } from '../../GLOBALCONFIG';
-import { removeUpdatedQuest } from '../utils/TaskManager';
 
 export default function PinnedQuestCard() {
 
@@ -18,9 +17,6 @@ export default function PinnedQuestCard() {
   const hasUpdate = pinnedQuest ? trackerWithUpdates.includes(pinnedQuest.trackerId) : false;
 
   const loadQuestObjectiveScreen = () => {
-    if(pinnedQuest && trackerWithUpdates.includes(pinnedQuest.trackerId)) {
-      removeUpdatedQuest(pinnedQuest.trackerId);
-    }
     navigation.navigate('Questlog', { screen: 'GameplayScreen', initial: false,  params: {
       trackerId: pinnedQuest?.trackerId,
       tracker: pinnedQuest,
