@@ -77,7 +77,6 @@ export const DiscoveryScreen = () => {
 
 const styles = StyleSheet.create({
     screen: {
-        justifyContent: "center",
         flexGrow: 1,
         backgroundColor: Colors.background,
         marginTop: StatusBar2.currentHeight,

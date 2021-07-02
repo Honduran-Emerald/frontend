@@ -75,6 +75,9 @@ export const chatSendImageRequest = (userId: string, binaryImage: string) => (re
 // /quest/query/
 export const queryQuestsRequest = (offset: number = 0) => (request(`/quest/query/?offset=${offset}`))
 
+// /quest/queryvoted
+export const queryvotedQuestsRequest = (voteType : string) => (request(`/quest/queryvoted/?voteType=${voteType}`))
+
 // /create/create/
 export const createQuestRequest = () => (request('/create/create/', 'POST', {}))
 
@@ -108,3 +111,6 @@ export const userUpdateImage = (base64: string) => (request('/user/updateimage',
 
 // /user/me
 export const getUserSelfRequest = () => (request('/user/me/'))
+
+// /user/followers
+export const getUserFollowers = () => (request('/user/followers/'))
