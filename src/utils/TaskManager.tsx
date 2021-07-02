@@ -3,9 +3,11 @@ import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
 import { LocationGeofencingEventType, LocationRegion } from 'expo-location';
 import { QuestTracker } from '../types/quest';
-import { addTrackerWithUpdate, removeTrackerWithUpdate } from '../redux/quests/questsSlice';
+import { addTrackerWithUpdate, removeTrackerWithUpdate, updateAcceptedQuest } from '../redux/quests/questsSlice';
 import { store } from '../redux/store';
 import { getData, storeData } from './AsyncStore';
+import { playEventChoiceRequest } from './requestHandler';
+import _ from 'lodash';
 
 export const GeofencingTask = 'LocationModuleUpdates';
 export const LocationNotifTitle = 'Reached location';
@@ -24,8 +26,8 @@ TaskManager.defineTask(GeofencingTask, (task) => {
     if(task.data.eventType === LocationGeofencingEventType.Enter) {
       // @ts-ignore
       console.log('reached location ' + task.data.region.identifier);
-      scheduleGeofenceNotification();
-      // TODO send fetch, save updated trackers locally
+      // @ts-ignore
+      updateQuest(task.data.region.identifier, 0)
       // @ts-ignore
       addUpdatedQuest(task.data.region.identifier)
       // @ts-ignore
@@ -54,14 +56,6 @@ export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
       })
     }
   })
-  // TODO remove testing region
-  locations.push({
-    identifier: '60d0e27dea7aa52a3456a237',
-    latitude: 49.872762,
-    longitude: 8.651217,
-    radius: 20,
-    notifyOnEnter: true,
-  })
 
   if(locations.length === 0) {
     return;
@@ -83,11 +77,62 @@ export function updateGeofencingTask(regionReached: LocationRegion) {
     })
 }
 
-export function scheduleGeofenceNotification() {
+export function addGeofencingRegion(region: LocationRegion) {
+  TaskManager.getTaskOptionsAsync(GeofencingTask)
+    // @ts-ignore
+    .then((options) => {
+      if(options) {
+        // @ts-ignore
+        return options.regions
+      } else {
+        return []
+      }
+    })
+    .then((regions: LocationRegion[]) => {
+      regions.push(region)
+      Location.startGeofencingAsync(GeofencingTask, regions).then(() => console.log('geofencing task updated, added ' + JSON.stringify(region)))
+    })
+}
+
+export function updateQuest(trackerId: string, choice = 0) {
+  const currentTracker = store.getState().quests.acceptedQuests.find(tracker => tracker.trackerId === trackerId);
+  playEventChoiceRequest(trackerId, choice)
+    .then(res => res.json())
+    .then(res => res.responseEventCollection)
+    .then(res => {
+      res.responseEvents.forEach(
+        (responseEvent: any) => {
+          switch (responseEvent.type) {
+            case 'ModuleFinish':
+              // handled by reloading the path in gameplay screen if there is an update for the quest
+              break;
+            case 'Experience':
+              console.log('Got XP: +' + responseEvent.experience);
+              scheduleGeofenceNotification(responseEvent.experience);
+              break;
+            case 'QuestFinish':
+              handleQuestFinish(responseEvent.endingFactor, currentTracker);
+              break;
+
+          }
+        }
+      )
+    })
+}
+
+function handleQuestFinish(endingFactor: number, currentTracker: QuestTracker|undefined) {
+  let newTracker = _.cloneDeep(currentTracker);
+  if(newTracker) {
+    newTracker.finished = true;
+    store.dispatch(updateAcceptedQuest(newTracker));
+  }
+}
+
+export function scheduleGeofenceNotification(experience: number) {
   Notifications.scheduleNotificationAsync({
     content: {
       title: LocationNotifTitle,
-      body: 'Check out the next objective',
+      body: `You received ${experience}XP! Check out the next objective`,
       data: {
         type: GeofenceNotifType,
       }

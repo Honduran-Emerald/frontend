@@ -14,7 +14,7 @@ import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';
 import { Text } from 'react-native'
 import { deleteItemLocally } from './utils/SecureStore';
-import {LocalUpdatedTrackerIds, registerGeofencingTask} from './utils/TaskManager';
+import { LocalUpdatedTrackerIds, registerGeofencingTask } from './utils/TaskManager';
 import { getData } from './utils/AsyncStore';
 
 
@@ -108,9 +108,8 @@ export const TokenLoader = () => {
             .then(() => getData(LocalUpdatedTrackerIds).then((res) => {
               if(res) {
                 const updates = JSON.parse(res)
-                // TODO remove
-                updates.push('60d5d34ee1220e682b7fbc4b');
-                dispatch(setTrackerWithUpdate(updates))
+                const newUpdates = updates.filter((id: string) => acceptedQuests.find((tracker) => tracker.trackerId === id))
+                dispatch(setTrackerWithUpdate(newUpdates))
               }
             }))
         }
