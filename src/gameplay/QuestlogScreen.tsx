@@ -12,7 +12,6 @@ import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { pinQuest, setAcceptedQuests } from '../redux/quests/questsSlice';
 import { storeData } from '../utils/AsyncStore';
-import { removeUpdatedQuest } from '../utils/TaskManager';
 
 export function removeSpecialChars (input: string) {
   if(input) {
@@ -61,14 +60,11 @@ export default function QuestlogScreen() {
   const handleOldExpanded = () => setOldExpanded(!oldExpanded);
 
   const setPinnedQuest = (tracker: QuestTracker) => {
-    dispatch(pinQuest(tracker));
+    if(tracker) dispatch(pinQuest(tracker));
     storeData('PinnedQuestTracker', JSON.stringify(tracker)).then(() => {}, () => {});
   }
 
   const loadQuestObjectiveScreen = useCallback((trackerId: string) => {
-    if(trackerWithUpdates.includes(trackerId)) {
-      removeUpdatedQuest(trackerId);
-    }
     navigation.navigate('GameplayScreen', {
       trackerId: trackerId,
       tracker: acceptedQuests.find(tracker => tracker.trackerId === trackerId),
