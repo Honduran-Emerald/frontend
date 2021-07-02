@@ -1,8 +1,8 @@
 import { store } from "../redux/store"
 import { BACKENDIP } from '../../GLOBALCONFIG'
 import { setToken, unsetToken } from "../redux/authentication/authenticationSlice";
-import { QuestPrototype } from "../types/quest";
-import { Colors } from "../styles";
+import { NewImage } from "../types/quest";
+import { QuestPrototype } from "../types/prototypes";
 
 
 const request = (target: string, type: string = 'GET', body?: any) => {
@@ -25,10 +25,6 @@ const request = (target: string, type: string = 'GET', body?: any) => {
   })
 }
 
-export const getImageAddress = (imageId: string | null, userName: string) => {
-  return (imageId) ? `${BACKENDIP}/image/get/${imageId}` : `https://ui-avatars.com/api/?length=1&color=FFF&name=${userName}&background=${Colors.primary.substring(1)}&size=256`
-}
-
 // /auth/login/
 export const loginRequest = (email: string, hashed_password: string) => (request('/auth/login/', 'POST', {
   email: email,
@@ -43,14 +39,14 @@ export const registerRequest = (username: string, email: string, hashed_password
 }))
 
 // /auth/renew/
-export const renewRequest = () : void => {
+export const renewRequest = () => (
   request('/auth/renew/', 'POST')
   .then(r => {
     if(r.ok) {
       r.json().then(r => {store.dispatch(setToken(r.token))})
     }
   })
-}
+)
 
 export const invalidatemessagingtokenRequest = (FMToken: string) => (request('/auth/invalidatemessagingtoken', 'POST', FMToken))
 
@@ -78,20 +74,23 @@ export const queryQuestsRequest = (offset: number = 0) => (request(`/quest/query
 // /quest/queryvoted
 export const queryvotedQuestsRequest = (voteType : string) => (request(`/quest/queryvoted/?voteType=${voteType}`))
 
+// /create/query/
+export const createQueryRequest = (offset: number = 0) => (request(`/create/query?offset=${offset}`))
+
 // /create/create/
 export const createQuestRequest = () => (request('/create/create/', 'POST', {}))
 
-// /create/query/
-export const createQueryRequest = (offset: number = 0) => (request(`/create/query?offset=${offset}`))
+// /create/delete/
+export const createDeleteQuestRequest = (questId: string) => (request('/create/delete/', 'POST', questId))
 
 // /create/get/
 export const createGetRequest = (questId: string) => (request(`/create/get/?questId=${questId}`))
 
 // /create/put/
-export const createPutRequest = (questId: string, questPrototype: QuestPrototype) => (request('/create/put/', 'POST', {
+export const createPutRequest = (questId: string, questPrototype: QuestPrototype, newImages: NewImage[]) => (request('/create/put/', 'POST', {
   questId: questId,
   questPrototype: questPrototype,
-  newImages: []
+  newImages: newImages
 }))
 
 // /create/release/
@@ -102,6 +101,23 @@ export const getAllTrackersRequest = () => (request('/play/query'))
 
 // /play/create
 export const createTrackerRequest = (questId: string) => (request('/play/create', 'POST', {questId: questId}))
+
+// /play/vote
+export const playVoteRequest = (trackerId: string, vote: 'None' | 'Up' | 'Down') => (request('/play/vote', 'POST', {trackerId: trackerId, vote: vote}))
+
+// /play/reset
+export const playResetRequest = (trackerId: string) => (request('/play/reset', 'POST', trackerId))
+
+// /play/querytrackernodes
+export const queryTrackerNodesRequest = (trackerId: string) => (request(`/play/querytrackernodes?trackerId=${trackerId}`))
+
+// /play/event/position
+
+// /play/event/choice
+export const playEventChoiceRequest = (trackerId: string, choice: number) => (request('/play/event/choice', 'POST', {
+  trackerId: trackerId,
+  choice: choice
+}))
 
 // /user/updatemessagingtoken
 export const userUpdatemessagingtoken = (token: string) => (request('/user/updatemessagingtoken', 'POST', token))
@@ -114,3 +130,7 @@ export const getUserSelfRequest = () => (request('/user/me/'))
 
 // /user/followers
 export const getUserFollowers = () => (request('/user/followers/'))
+
+// /user/get
+export const getUserRequest = (userId: string) => (request(`/user/get?userId=${userId}`))
+

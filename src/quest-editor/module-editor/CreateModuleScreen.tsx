@@ -4,11 +4,6 @@ import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import { StoryModule } from "./module-views/StoryModule";
 import { EndingModule } from "./module-views/EndingModule";
 import { ChoiceModule } from "./module-views/ChoiceModule";
-import {
-  PrototypeComponent,
-  PrototypeModule,
-  PrototypeModuleBase,
-} from "../../types/quest";
 import { useAppDispatch } from "../../redux/hooks";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { addOrUpdateQuestModule } from "../../redux/editor/editorSlice";
@@ -17,6 +12,7 @@ import { ModuleTypeChoice } from "./ModuleTypeChoice";
 import { PreviewModuleScreen } from "./PreviewModuleScreen";
 import { RouteProp } from "@react-navigation/native";
 import { InternalFullNode } from "../graph/utils/linksParser";
+import { PrototypeComponent, PrototypeModule, PrototypeModuleBase } from "../../types/prototypes";
 
 const displayWidth = Dimensions.get("screen").width;
 
@@ -109,10 +105,8 @@ export const CreateModuleScreen = () => {
           <PreviewModuleScreen
             prototypeModule={finalModule}
             saveModule={() => {
-              console.log('Preinsert CMS')
               route.params?.insertModuleId();
               dispatch(addOrUpdateQuestModule(finalModule));
-              console.log('Postinsert CMS')
               navigation.navigate("ModuleGraph");
             }}
           />

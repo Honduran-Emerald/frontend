@@ -1,13 +1,13 @@
-import React, { MutableRefObject } from 'react';
+import React from 'react';
 import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Text } from 'react-native-paper';
-import { addOrUpdateQuestModule, setModules } from '../../../redux/editor/editorSlice';
+import { setModules } from '../../../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { PrototypeModule, QuestPrototype } from '../../../types/quest';
 import { InternalFullNode } from '../utils/linksParser';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
+import { QuestPrototype } from '../../../types/prototypes';
 export interface IModuleNode {
     node: InternalFullNode,
     linkOnChoice: ((questPrototype: QuestPrototype, module_id: number) => QuestPrototype) | undefined,

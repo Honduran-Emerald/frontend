@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash'
 import { IMessage } from 'react-native-gifted-chat';
 import { ChatMessage, ChatMessageNotif } from '../../types/general';
-import { getImageAddress } from '../../utils/requestHandler';
+import { getImageAddress } from '../../utils/imageHandler';
 
 interface ChatPreview {
   userId: string,

@@ -4,12 +4,12 @@ import { Dimensions } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { addOrUpdateQuestModule } from '../../redux/editor/editorSlice';
 import { useAppDispatch } from '../../redux/hooks';
-import { PrototypeChoiceModule, PrototypeEndingModule, PrototypeModule, PrototypeStoryModule } from '../../types/quest';
 import { InternalFullNode } from '../graph/utils/linksParser';
 import { ChoiceModule } from './module-views/ChoiceModule';
 import { EndingModule } from './module-views/EndingModule';
 import { StoryModule } from './module-views/StoryModule';
 import { PreviewModuleScreen } from './PreviewModuleScreen';
+import { PrototypeChoiceModule, PrototypeEndingModule, PrototypeModule, PrototypeStoryModule } from '../../types/prototypes';
 
 const displayWidth = Dimensions.get('screen').width
 

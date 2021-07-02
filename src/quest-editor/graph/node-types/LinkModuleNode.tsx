@@ -4,11 +4,11 @@ import { TouchableHighlight } from 'react-native-gesture-handler';
 import { Text } from 'react-native-paper';
 import { addOrUpdateQuestModule, setModules } from '../../../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { PrototypeModule, QuestPrototype } from '../../../types/quest';
 import _ from 'lodash';
 import { useNavigation } from '@react-navigation/core';
 import I18n from 'i18n-js';
 import BottomSheet from 'reanimated-bottom-sheet';
+import { QuestPrototype } from '../../../types/prototypes';
 
 interface ILinkModuleNode {
     setSource: (questPrototype: QuestPrototype, moduleId: number) => QuestPrototype,

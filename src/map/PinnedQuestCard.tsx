@@ -2,6 +2,7 @@ import React from 'react';
 import { StatusBar, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { Avatar, Badge } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/core';
 
 import { Colors } from '../styles';
 import { useAppSelector } from '../redux/hooks';
@@ -9,16 +10,26 @@ import { BACKENDIP } from '../../GLOBALCONFIG';
 
 export default function PinnedQuestCard() {
 
+  const navigation = useNavigation();
+
   const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
 
+  // TODO adjust feedback source to backend updates
   const [objectiveComplete, setObjectiveComplete] = React.useState(false);
+
+  const loadQuestObjectiveScreen = () => {
+    navigation.navigate('Questlog', { screen: 'GameplayScreen', initial: false,  params: {
+      trackerId: pinnedQuest?.trackerId,
+      tracker: pinnedQuest,
+    }});
+  }
 
   return (
     <View style={styles.outer}>
       {
         pinnedQuest &&
         <View style={styles.container}>
-          <TouchableNativeFeedback useForeground={true} onPress={() => { setObjectiveComplete(!objectiveComplete) }}>
+          <TouchableNativeFeedback useForeground={true} onPress={() => loadQuestObjectiveScreen()}>
             <LinearGradient
               colors={[Colors.primaryLight, 'white']}
               start={{ x: 1, y: 1 }}

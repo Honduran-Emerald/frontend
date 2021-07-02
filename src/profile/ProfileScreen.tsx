@@ -7,13 +7,13 @@ import { Colors } from '../styles';
 import { ScrollMenu } from "../discovery/ScrollMenu";
 import { StatusBar } from "expo-status-bar";
 import { getLocation } from "../utils/locationHandler";
-import { QuestHeader } from "../types/quest";
 import {
   createQueryRequest,
   getUserFollowers,
   queryQuestsRequest,
   queryvotedQuestsRequest
 } from "../utils/requestHandler";
+import { GameplayQuestHeader, QuestHeader } from "../types/quest";
 import { useAppSelector } from '../redux/hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {useNavigation} from "@react-navigation/core";
@@ -28,11 +28,11 @@ export const ProfileScreen = (props: profileProps) => {
   const location = useAppSelector(state => state.location.location)
   const user = useAppSelector((state) => state.authentication.user);
 
-  const [quests, setQuests] = useState<QuestHeader[]>([]);
-  const [publishedQuests, setPublishedQuests] = useState<QuestHeader[]>([]);
-  const [completedQuests, setCompletedQuests] = useState<QuestHeader[]>([]);
-  const [draftQuests, setDraftQuests] = useState<QuestHeader[]>([]);
-  const [upvotedQuests, setUpvotedQuests] = useState<QuestHeader[]>([]);
+  const [quests, setQuests] = useState<GameplayQuestHeader[]>([]);
+  const [publishedQuests, setPublishedQuests] = useState<GameplayQuestHeader[]>([]);
+  const [completedQuests, setCompletedQuests] = useState<GameplayQuestHeader[]>([]);
+  const [draftQuests, setDraftQuests] = useState<GameplayQuestHeader[]>([]);
+  const [upvotedQuests, setUpvotedQuests] = useState<GameplayQuestHeader[]>([]);
   const [followerCount, setFollowerCount] = useState(0);
 
   const navigation = useNavigation();
@@ -43,8 +43,8 @@ export const ProfileScreen = (props: profileProps) => {
     getUserFollowers().then(res => res.json()).then((followers) => setFollowerCount(followers.users.length));
     queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
     createQueryRequest(0).then(res => res.json()).then((quests) => {
-      let drafts : QuestHeader[] = [];
-      let published : QuestHeader[] = [];
+      let drafts : GameplayQuestHeader[] = [];
+      let published : GameplayQuestHeader[] = [];
       quests.prototypes.forEach(
         (prototype : any) => {
           if (prototype.released) {

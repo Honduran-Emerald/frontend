@@ -6,7 +6,7 @@ import i18n from 'i18n-js';
 import { primary } from '../../../styles/colors';
 import I18n from 'i18n-js';
 import { Colors } from '../../../styles';
-import { PrototypeEndingModule } from '../../../types/quest';
+import { PrototypeEndingModule, PrototypeTextComponent } from '../../../types/prototypes';
 
 interface IEndingModuleData {
     text: string,
@@ -16,7 +16,7 @@ interface IEndingModuleData {
 export const EndingModule: React.FC<ICreateModule<PrototypeEndingModule>> = ({ setFinalModule, edit, defaultValues }) => {
 
     const [moduleData, setModuleData] = useState<IEndingModuleData>(edit ? {
-        text: defaultValues?.components[0]?.text || '',
+        text: (defaultValues?.components[0] as PrototypeTextComponent).text || '',
         objective: defaultValues?.objective || ''
     } : {
         text: '',
@@ -29,7 +29,7 @@ export const EndingModule: React.FC<ICreateModule<PrototypeEndingModule>> = ({ s
             type: 'Ending',
             endingFactor: (edit && defaultValues) ? defaultValues.endingFactor : 1, //TODO Make this dynamic
             components: [{
-                type: 'text',
+                type: 'Text',
                 text: moduleData.text
             }],
             objective: moduleData.objective

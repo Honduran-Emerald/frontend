@@ -6,7 +6,7 @@ import I18n from 'i18n-js';
 import { lightGray, primary } from '../../../styles/colors';
 import _ from 'lodash';
 import { Colors } from '../../../styles';
-import { PrototypeChoiceModule, TextComponent } from '../../../types/quest';
+import { PrototypeChoiceModule, PrototypeTextComponent } from '../../../types/prototypes';
 
 interface IChoiceModuleData {
     text: string,
@@ -21,7 +21,7 @@ export const ChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ s
     const [moduleData, setModuleData] = useState<IChoiceModuleData>(
         edit 
         ? { // edit module
-            text: (defaultValues!.components[0] as TextComponent).text!, // TODO: Change this once multiple modules can be used
+            text: (defaultValues!.components[0] as PrototypeTextComponent).text!, // TODO: Change this once multiple modules can be used
             choiceTexts: defaultValues!.choices!.map(c => c.text),
             objective: defaultValues!.objective
         }
@@ -36,7 +36,7 @@ export const ChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ s
             id: -1,
             type: 'Choice',
             components: [{
-                type: 'text',
+                type: 'Text',
                 text: moduleData.text
             }],
             choices: moduleData.choiceTexts.map((text, idx) => ({

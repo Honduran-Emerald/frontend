@@ -11,15 +11,14 @@ import { DiscoveryNavigator } from "./discovery/DiscoveryNavigator";
 
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { logout, setToken } from './redux/authentication/authenticationSlice';
-import { getUserSelfRequest, invalidatemessagingtokenRequest, queryQuestsRequest } from './utils/requestHandler';
-import QuestlogScreen from './common/QuestlogScreen';
+import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
 import { clearQuestState } from './redux/quests/questsSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { Colors } from './styles';
 import { ChatNavigator } from './chat/ChatNavigator';
+import { removeData } from './utils/AsyncStore';
 import { ProfileNavigator } from './profile/ProfileNavigator';
-import LocationPicker from "./quest-editor/LocationPicker";
-import {Location as LocationType} from "./types/general";
+import { GameplayNavigator } from './gameplay/GameplayNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -62,11 +61,12 @@ export default function MainAppNavigator() {
       })}
       tabBarOptions={{
         showLabel: false,
-        activeTintColor: "#1D79AC"
+        activeTintColor: "#1D79AC",
+        keyboardHidesTabBar: true
       }}
     >
       <Tab.Screen name="Home" component={DiscoveryNavigator}/>
-      <Tab.Screen name="Questlog" component={QuestlogScreen}/>
+      <Tab.Screen name="Questlog" component={GameplayNavigator}/>
       <Tab.Screen name="Map" component={MapNavigator}/>
       <Tab.Screen name="Chat" component={ChatNavigator}/>
       <Tab.Screen name="Profile" component={ProfileNavigator}/>
@@ -84,7 +84,7 @@ const Dummy = () => {
 
   const handleLogout = () => {
     deleteItemLocally('UserToken').then(() => {}, () => {});
-    deleteItemLocally('PinnedQuestTracker').then(() => {}, () => {});
+    removeData('PinnedQuestTracker').then(() => {}, () => {});
     dispatch(logout())
     dispatch(clearQuestState())
   }

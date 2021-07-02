@@ -8,27 +8,33 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
-import { QuestHeader, QuestTracker } from '../types/quest';
-import {createPublishRequest, createTrackerRequest, getImageAddress} from '../utils/requestHandler';
+import { GameplayQuestHeader, QuestHeader, QuestTracker } from '../types/quest';
+import {
+  createDeleteQuestRequest,
+  createPublishRequest,
+  createTrackerRequest
+} from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
 import { BACKENDIP } from '../../GLOBALCONFIG';
+import { getImageAddress } from '../utils/imageHandler';
 
 export default function QuestDetailScreen({ route }: any) {
 
-  const user: User | undefined = useAppSelector((state) => state.authentication.user);
-
   i18n.translations = commonTranslations;
+
+  const user: User | undefined = useAppSelector((state) => state.authentication.user);
   const acceptedQuests: QuestTracker[] = useAppSelector((state) => state.quests.acceptedQuests);
+
   const acceptedIds: string[] = acceptedQuests.map(tracker => tracker.questId)
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
-  const quest: QuestHeader = route.params.quest;
+  const quest: GameplayQuestHeader = route.params.quest;
   const isQuestCreator = quest.ownerName === user?.userName;
-  const creationDate = new Date(Date.parse(quest.creationTime));
-  const finishRate: number = ((quest.finishes / quest.plays) * 100)
+  const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
+  const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0
 
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -46,6 +52,17 @@ export default function QuestDetailScreen({ route }: any) {
           dispatch(acceptQuest(data.trackerModel));
         }))
   };
+
+  const handleDelete = () => {
+    createDeleteQuestRequest(quest.id).then(res => {
+      if(res.status === 200) {
+        alert('Quest deleted');
+        hideModal();
+      } else {
+        alert('Server Error ' + res.status);
+      }
+    }).then(() => navigation.goBack())
+  }
 
   return (
     <View style={styles.container}>
@@ -126,7 +143,7 @@ export default function QuestDetailScreen({ route }: any) {
           <View style={styles.stats}>
             <View style={styles.center}>
               <Text style={styles.mediumText}>
-                {quest.votes}
+                {quest.votes ? quest.votes : 0}
               </Text>
               <Text style={styles.smallText}>
                 {i18n.t('votes')}
@@ -134,7 +151,7 @@ export default function QuestDetailScreen({ route }: any) {
             </View>
             <View style={styles.center}>
               <Text style={styles.mediumText}>
-                {quest.plays}
+                {quest.plays ? quest.plays : 0}
               </Text>
               <Text style={styles.smallText}>
                 {i18n.t('plays')}
@@ -142,7 +159,7 @@ export default function QuestDetailScreen({ route }: any) {
             </View>
             <View style={styles.center}>
               <Text style={styles.mediumText}>
-                {isNaN(finishRate) ? '0' : finishRate.toFixed(0)}%
+                {isNaN(finishRate) ? '0.00' : finishRate.toFixed(2)}%
               </Text>
               <Text style={styles.smallText}>
                 {i18n.t('finished')}
@@ -182,10 +199,7 @@ export default function QuestDetailScreen({ route }: any) {
           </Text>
           <View style={styles.modalButtons}>
             <View style={styles.modalButton}>
-              <PaperButton color={Colors.primaryLight} compact mode={'outlined'} onPress={() => alert('Implement set to private')}>{i18n.t('modalSetPrivateButton')}</PaperButton>
-            </View>
-            <View style={styles.modalButton}>
-              <PaperButton color={Colors.error} compact mode={'outlined'} onPress={() => alert('Implement delete')}>{i18n.t('deleteButton')}</PaperButton>
+              <PaperButton color={Colors.error} compact mode={'contained'} onPress={() => handleDelete()}>{i18n.t('deleteButton')}</PaperButton>
             </View>
           </View>
           <View style={styles.modalBackButton}>
@@ -315,8 +329,6 @@ const styles = StyleSheet.create({
   },
   modalButtons: {
     width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 20,
     marginBottom: 10,
