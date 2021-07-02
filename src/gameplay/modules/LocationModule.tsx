@@ -109,7 +109,7 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
                   </View>
                 </TouchableNativeFeedback>
               </View>
-              <Text style={styles.objective}>
+              <Text style={styles.objective} numberOfLines={2}>
                 {module.module.objective}
               </Text>
             </View>
@@ -196,6 +196,7 @@ const styles = StyleSheet.create({
   objective: {
     color: Colors.black,
     fontSize: 20,
+    paddingRight: 50,
   },
   backButton: {
     backgroundColor: 'transparent',
