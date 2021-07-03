@@ -54,7 +54,7 @@ export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor: Colors.background,
       alignItems: 'center',
       //paddingTop: StatusBar.currentHeight // not needed if navigation header is shown
     },

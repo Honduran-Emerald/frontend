@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Colors } from "../styles";
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, ScrollView, StatusBar, FlatList} from "react-native";
+import {Colors} from "../styles";
+import {queryQuestsRequest} from "../utils/requestHandler";
+import {Button, Card, Paragraph, Surface, Title} from "react-native-paper";
 import { GameplayQuestHeader, QuestHeader } from "../types/quest";
 import { getImageAddress } from '../utils/imageHandler';
-import { Button, Card, Surface } from "react-native-paper";
 import { useNavigation } from '@react-navigation/core';
 import * as Location from "expo-location";
 import { LocationObject } from "expo-location";
@@ -58,7 +59,7 @@ export const QuestPreview = (props:questProps) => {
     const [distance, setDistance] = useState("");
     
     useEffect(() => {
-        props.location &&
+        props.location && props.quest.location &&
         setDistance(getDistanceFromLatLonInKm(props.quest.location.latitude, props.quest.location.longitude, props.location.coords.latitude, props.location.coords.longitude));
     }, [props.location])
     
@@ -116,7 +117,6 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingHorizontal: 0,
         height: 250,
-        justifyContent: 'center',
     },
     quest: {
         margin: 1,

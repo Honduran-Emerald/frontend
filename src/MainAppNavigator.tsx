@@ -69,7 +69,7 @@ export default function MainAppNavigator() {
       <Tab.Screen name="Questlog" component={GameplayNavigator}/>
       <Tab.Screen name="Map" component={MapNavigator}/>
       <Tab.Screen name="Chat" component={ChatNavigator}/>
-      <Tab.Screen name="Profile" component={ProfileNavigator} />
+      <Tab.Screen name="Profile" component={ProfileNavigator}/>
     </Tab.Navigator>
   );
 }
