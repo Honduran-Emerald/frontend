@@ -95,6 +95,13 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         onPress={() => {resetQuest()}}
         label={"Reset all progress for quest"}
       />
+      <FAB
+        style={styles.reset}
+        small
+        icon="vote"
+        onPress={() => {resetQuest()}}
+        label={"Vote"}
+      />
 
       <View style={styles.downView}>
         <FAB
@@ -106,8 +113,6 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
           })}}
         />
       </View>
-
-
       <View style={{position: 'absolute', bottom: 10}}>
         <Button style={styles.goUp} icon={"chevron-up"} onPress={() => {flatListRef.current?.scrollToOffset({
           offset: 100000000,
@@ -115,10 +120,14 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
           View Quest Details
         </Button>
       </View>
+
     </View>
   )
 }
 
+/*
+
+ */
 const styles = StyleSheet.create({
   stats: {
     backgroundColor: Colors.background,
@@ -154,15 +163,17 @@ const styles = StyleSheet.create({
   },
   block: {
     margin: 20,
+    width: Dimensions.get('screen').width * 0.9,
     padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 8,
+    elevation: 5,
     borderWidth: 1,
+    borderRadius: 20,
     marginBottom: 25,
   },
   description: {
-    textAlign: 'center',
+    textAlign: 'left',
   },
   icon: {
     marginRight: 5,
