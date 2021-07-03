@@ -15,6 +15,7 @@ import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { getImageAddress } from '../utils/imageHandler';
+import {addGeofencingRegion} from "../utils/TaskManager";
 
 export default function QuestDetailScreen({ route }: any) {
 
@@ -46,6 +47,16 @@ export default function QuestDetailScreen({ route }: any) {
           navigation.goBack();
           setIsButtonDisabled(false);
           dispatch(acceptQuest(data.trackerModel));
+          if(data.trackerModel.trackerNode.module.type === 'Location') {
+            const newRegion = {
+              identifier: data.trackerModel.trackerId,
+              latitude: data.trackerModel.trackerNode.module.location.latitude,
+              longitude: data.trackerModel.trackerNode.module.location.longitude,
+              radius: 20,
+              notifyOnEnter: true,
+            };
+            addGeofencingRegion(newRegion);
+          }
         }))
   };
 
