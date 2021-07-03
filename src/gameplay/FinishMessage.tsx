@@ -23,8 +23,8 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
   const dispatch = useAppDispatch();
 
   const creationDate = tracker ? new Date(Date.parse(tracker.creationTime)) : new Date();
-  const currentDate = new Date();
-  const secondsElapsed = (currentDate.getTime() - creationDate.getTime()) / 1000;
+  const finishingDate = tracker ? new Date(Date.parse(tracker.trackerNode.creationTime)) : new Date();
+  const secondsElapsed = (finishingDate.getTime() - creationDate.getTime()) / 1000;
   const seconds = Math.floor(secondsElapsed % 60);
   const minutesElapsed = Math.floor(secondsElapsed / 60);
   const minutes = Math.floor(minutesElapsed % 60);
@@ -80,7 +80,7 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
       </View>
       <View style={styles.divider}/>
       <Text style={styles.stats}>
-        Total Experience: 11400
+        Total Experience: {tracker?.experienceCollected ? tracker.experienceCollected : 'Error'}
       </Text>
       <Text style={styles.stats}>
         Time elapsed: {timeElapsed}
