@@ -6,10 +6,10 @@ import { playResetRequest, queryTrackerNodesRequest } from '../utils/requestHand
 import { useNavigation } from '@react-navigation/native';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { Entypo } from '@expo/vector-icons';
-import {Button, FAB, Surface} from 'react-native-paper';
+import { Button, FAB, Surface } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { loadPinnedQuestPath, pinQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
-import {addGeofencingRegion} from "../utils/TaskManager";
+import { addGeofencingRegion } from '../utils/TaskManager';
 
 interface QuestStateScreenProps {
   height: number,
