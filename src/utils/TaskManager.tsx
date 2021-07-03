@@ -60,7 +60,7 @@ export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
   if(locations.length === 0) {
     return;
   }
-  Location.startGeofencingAsync(GeofencingTask, locations).then(() => console.log('geofencing task registered' + JSON.stringify(locations)))
+  Location.startGeofencingAsync(GeofencingTask, locations).then(() => console.log('geofencing task registered' + JSON.stringify(locations)), () => console.log('Can\'t start geofencing'))
 }
 
 export function updateGeofencingTask(regionReached: LocationRegion) {
