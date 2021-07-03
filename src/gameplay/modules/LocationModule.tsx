@@ -152,9 +152,10 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
+    marginTop: 0,
   },
   mapContainer: {
+    marginTop: 10,
     width: '70%',
     borderRadius: 20,
     borderTopLeftRadius: 3,
