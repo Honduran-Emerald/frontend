@@ -28,7 +28,7 @@ export default function QuestDetailScreen({ route }: any) {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const quest: QueriedQuest = route.params.quest;
-  const isQuestCreator = quest.ownerName === user?.userName;
+  const isQuestCreator = quest.ownerId === user?.userId;
   const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
   const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0
 
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   scrollView: {
-    width: '80%',
+    width: '90%',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -234,13 +234,13 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   image: {
-    width: '100%',
+    width: '88.8%',
     height: Dimensions.get('window').height * 0.25,
     borderRadius: 20,
     marginBottom: 15,
   },
   info: {
-    width: '100%',
+    width: '88.8%',
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 15,
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     maxWidth: '45%',
   },
   block: {
-    padding: 15,
+    padding: 20,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
