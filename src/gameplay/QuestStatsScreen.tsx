@@ -6,7 +6,7 @@ import { playResetRequest, queryTrackerNodesRequest } from '../utils/requestHand
 import { useNavigation } from '@react-navigation/native';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { Entypo } from '@expo/vector-icons';
-import { Button, FAB } from 'react-native-paper';
+import {Button, FAB, Surface} from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { loadPinnedQuestPath, pinQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
 
@@ -82,25 +82,33 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         </View>
       </View>
 
-      <Text style={styles.description} ellipsizeMode={'tail'} numberOfLines={10}>
-        {quest?.description}
-      </Text>
+      <Surface style={styles.block}>
+        <Text style={styles.description} ellipsizeMode={'tail'} numberOfLines={10}>
+          {quest?.description}
+        </Text>
+      </Surface>
+
       <FAB
-        style={styles.goDown}
+        style={styles.reset}
         small
-        icon="chevron-down"
-        onPress={() => {flatListRef.current?.scrollToOffset({
-          offset: 0
-        })}}
+        icon="restart"
+        onPress={() => {resetQuest()}}
+        label={"Reset all progress for quest"}
       />
-      <View style={{position: 'absolute', bottom: 10}}>
+
+      <View style={styles.downView}>
         <FAB
-          style={styles.reset}
+          style={styles.goDown}
           small
-          icon="restart"
-          onPress={() => {resetQuest()}}
-          label={"Reset all progress for quest"}
+          icon="chevron-down"
+          onPress={() => {flatListRef.current?.scrollToOffset({
+            offset: 0
+          })}}
         />
+      </View>
+
+
+      <View style={{position: 'absolute', bottom: 10}}>
         <Button style={styles.goUp} icon={"chevron-up"} onPress={() => {flatListRef.current?.scrollToOffset({
           offset: 100000000,
         })}} color={Colors.primary}>
@@ -126,13 +134,13 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 20,
     marginBottom: 20,
-    marginTop: 15,
+    marginTop: 25,
   },
   info: {
     width: Dimensions.get('screen').width * 0.8,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 5,
   },
   location: {
     flexDirection: 'row',
@@ -144,9 +152,17 @@ const styles = StyleSheet.create({
     marginRight: 3,
     maxWidth: '45%',
   },
+  block: {
+    margin: 20,
+    padding: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 8,
+    borderWidth: 1,
+    marginBottom: 25,
+  },
   description: {
-    textAlign: 'left',
-    marginBottom: 15,
+    textAlign: 'center',
   },
   icon: {
     marginRight: 5,
@@ -154,6 +170,11 @@ const styles = StyleSheet.create({
   },
   goUp: {
 
+  },
+  downView: {
+    position: "absolute",
+    bottom: 70,
+    right: 20,
   },
   goDown: {
     backgroundColor: Colors.primary,
