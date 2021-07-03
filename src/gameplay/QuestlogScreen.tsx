@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import i18n from 'i18n-js';
-import { List, Searchbar } from 'react-native-paper';
+import {Divider, List, Searchbar} from 'react-native-paper';
 import { useCallback } from 'react';
 import { useNavigation } from '@react-navigation/core';
 
@@ -141,9 +141,11 @@ export default function QuestlogScreen() {
             />
           }
         >
-          <Text style={styles.header}>
-            Questlog
-          </Text>
+        <View style={styles.headerView}>
+            <Text style={styles.header}>
+                Questlog
+            </Text>
+        </View>
           <View style={styles.searchbar}>
             <Searchbar
               placeholder={i18n.t('searchbarPlaceholder')}
@@ -234,9 +236,18 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    textAlign: 'center',
-    fontSize: 25,
-    marginTop: 10,
+    textAlign: 'left',
+    fontWeight: "600",
+    includeFontPadding: true,
+    fontSize: 20,
+    top: 14,
+    left: 16,
+    height: 50,
+  },
+  headerView: {
+    height: 55,
+    backgroundColor: Colors.background,
+    elevation: 5,
   },
   title: {
     fontSize: 20,
