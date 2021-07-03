@@ -94,7 +94,7 @@ export default function QuestDetailScreen({ route }: any) {
           {
             !isAccepted &&
             <View style={styles.button}>
-              <Button color={Colors.primary} disabled={isButtonDisabled} title={i18n.t('acceptButton')} onPress={handleAccept}/>
+              <Button color={Colors.primary} disabled={isButtonDisabled || !quest.released} title={i18n.t('acceptButton')} onPress={handleAccept}/>
             </View>
           }
           {
