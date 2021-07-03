@@ -130,6 +130,7 @@ export interface QuestTracker {
     agentProfileName: string,
     objective: string,
     author: string,
+    experienceCollected: number
     trackerNode: QuestTrackerNode
 }
 
