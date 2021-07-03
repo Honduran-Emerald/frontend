@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { QuestHeader, QuestPath, QuestTracker } from '../../types/quest';
+import {QuestHeader, QuestPath, QuestTracker, QuestTrackerNode, Vote} from '../../types/quest';
 
 interface QuestsState {
     localQuests: QuestHeader[],
@@ -33,6 +33,43 @@ export const questsSlice = createSlice({
                 const index = state.acceptedQuests.indexOf(oldTracker);
                 if(index !== -1) {
                     state.acceptedQuests[index] = action.payload;
+                }
+            }
+        },
+        setTrackerFinished: (state, action: PayloadAction<{ trackerId: string, finished: boolean }>) => {
+            const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
+            if(oldTracker) {
+                const index = state.acceptedQuests.indexOf(oldTracker);
+                if(index !== -1) {
+                    state.acceptedQuests[index].finished = action.payload.finished;
+                }
+            }
+        },
+        setTrackerVote: (state, action: PayloadAction<{ trackerId: string, vote: Vote }>) => {
+            const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
+            if(oldTracker) {
+                const index = state.acceptedQuests.indexOf(oldTracker);
+                if(index !== -1) {
+                    state.acceptedQuests[index].vote = action.payload.vote;
+                }
+            }
+        },
+        addTrackerExperience: (state, action: PayloadAction<{ trackerId: string, experience: number }>) => {
+            const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
+            if(oldTracker) {
+                const index = state.acceptedQuests.indexOf(oldTracker);
+                if(index !== -1) {
+                    state.acceptedQuests[index].experienceCollected = state.acceptedQuests[index].experienceCollected + action.payload.experience;
+                }
+            }
+        },
+        setTrackerObjectiveAndTrackerNode: (state, action: PayloadAction<{ trackerId: string, objective: string, trackerNode: QuestTrackerNode }>) => {
+            const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
+            if(oldTracker) {
+                const index = state.acceptedQuests.indexOf(oldTracker);
+                if(index !== -1) {
+                    state.acceptedQuests[index].objective = action.payload.objective;
+                    state.acceptedQuests[index].trackerNode = action.payload.trackerNode;
                 }
             }
         },
@@ -79,6 +116,10 @@ export const {
     setLocalQuests,
     setAcceptedQuests,
     updateAcceptedQuest,
+    setTrackerFinished,
+    setTrackerVote,
+    addTrackerExperience,
+    setTrackerObjectiveAndTrackerNode,
     acceptQuest,
     pinQuest,
     clearQuestState,

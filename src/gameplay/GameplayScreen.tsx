@@ -8,7 +8,14 @@ import { FlatList } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { FAB } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { loadPinnedQuestPath, pinQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
+import {
+  addTrackerExperience,
+  loadPinnedQuestPath,
+  pinQuest,
+  setTrackerFinished,
+  setTrackerObjectiveAndTrackerNode,
+  setTrackerVote
+} from '../redux/quests/questsSlice';
 import { GameplayModule, ModuleMememto, QuestPath, QuestTrackerNodeElement } from '../types/quest';
 import { playEventChoiceRequest, playVoteRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
 import { ModuleRenderer } from './ModuleRenderer';
@@ -83,17 +90,17 @@ export const GameplayScreen : React.FC = () => {
 
       dispatch(pinQuest({
         ...pinnedQuest,
-        trackerNode: {...trackerNode, creationTime: trackerNode.creationTime.toString()},
+        trackerNode: {...trackerNode},
         objective: trackerNode.module.objective
       }))
     } else {
       setLoadedTrackerNodes(newQuestPath);
       if(currentTracker) {
-        dispatch(updateAcceptedQuest({
-          ...currentTracker,
-          trackerNode: {...trackerNode, creationTime: trackerNode.creationTime.toString()},
+        dispatch(setTrackerObjectiveAndTrackerNode({
+          trackerId: route.params.trackerId,
+          trackerNode: {...trackerNode},
           objective: trackerNode.module.objective
-        }))
+        }));
       }
     }
   }, [pinnedQuest, pinnedQuestPath, route.params.trackerId])
@@ -125,14 +132,11 @@ export const GameplayScreen : React.FC = () => {
   }, [loadedTrackerNodes])
 
   const handleQuestFinish = useCallback((endingFactor: number) => {
-    let newTracker = _.cloneDeep(currentTracker);
-    if(newTracker) {
-      newTracker.finished = true;
-      dispatch(updateAcceptedQuest(newTracker));
-    }
+    dispatch(setTrackerFinished({ trackerId: route.params.trackerId, finished: true }));
   }, [])
 
   const handleExperience = useCallback((experience: number) => {
+    dispatch(addTrackerExperience({ trackerId: route.params.trackerId, experience: experience }));
     setXpAmount(experience);
     setShowXp(true);
   }, [])
@@ -167,7 +171,10 @@ export const GameplayScreen : React.FC = () => {
   , [route.params, loadedTrackerNodes])
 
   const handleVote = useCallback((vote: 'None' | 'Up' | 'Down') => {
-    return playVoteRequest(route.params.trackerId, vote).then(res => res)
+    return playVoteRequest(route.params.trackerId, vote).then(res => {
+      dispatch(setTrackerVote({ trackerId: route.params.trackerId, vote: vote }))
+      return res;
+    })
   }, [])
 
   return (

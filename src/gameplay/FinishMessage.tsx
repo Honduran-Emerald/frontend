@@ -1,12 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import _ from 'lodash';
 
 import { QuestHeader, QuestTracker } from '../types/quest';
 import { styleGameplay } from './styleGameplay';
-import { updateAcceptedQuest } from '../redux/quests/questsSlice';
-import { useAppDispatch } from '../redux/hooks';
 
 interface FinishMessageProps {
   quest: QuestHeader | undefined,
@@ -20,8 +17,6 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
   const [hasVoted, setHasVoted] = React.useState(tracker?.vote);
   const [inputDisabled, setInputDisabled] = React.useState(false);
 
-  const dispatch = useAppDispatch();
-
   const creationDate = tracker ? new Date(Date.parse(tracker.creationTime)) : new Date();
   const finishingDate = tracker ? new Date(Date.parse(tracker.trackerNode.creationTime)) : new Date();
   const secondsElapsed = (finishingDate.getTime() - creationDate.getTime()) / 1000;
@@ -29,18 +24,12 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
   const minutesElapsed = Math.floor(secondsElapsed / 60);
   const minutes = Math.floor(minutesElapsed % 60);
   const hoursElapsed = Math.floor(minutesElapsed / 60);
-  //const timeElapsed = new Date(secondsElapsed * 1000).toISOString().substr(11,8);
   const timeElapsed = `${hoursElapsed}h ${minutes}m ${seconds}s`
 
   const handleClick = (vote: 'None' | 'Up' | 'Down') => {
     const oldVote = tracker?.vote
     setInputDisabled(true);
     handleVote(vote).then((res) => {
-      let newTracker = _.cloneDeep(tracker);
-      if(newTracker) {
-        newTracker.vote = vote;
-        dispatch(updateAcceptedQuest(newTracker));
-      }
       if(res.status === 200) setHasVoted(vote);
       if(res.status === 200) {
         if(oldVote !== 'None') {
