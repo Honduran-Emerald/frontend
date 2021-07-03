@@ -9,7 +9,8 @@ import { ChoiceModule } from './module-views/ChoiceModule';
 import { EndingModule } from './module-views/EndingModule';
 import { StoryModule } from './module-views/StoryModule';
 import { PreviewModuleScreen } from './PreviewModuleScreen';
-import { PrototypeChoiceModule, PrototypeEndingModule, PrototypeModule, PrototypeStoryModule } from '../../types/prototypes';
+import { PrototypeChoiceModule, PrototypeEndingModule, PrototypeLocationModule, PrototypeModule, PrototypeStoryModule } from '../../types/prototypes';
+import { LocationModule } from './module-views/LocationModule';
 
 const displayWidth = Dimensions.get('screen').width
 
@@ -39,7 +40,8 @@ export const EditModuleScreen = () => {
   const moduleMap: {[moduleName: string]: JSX.Element} = {
     'Story': <StoryModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeStoryModule}/>,
     'Ending': <EndingModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeEndingModule}/>,
-    'Choice': <ChoiceModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeChoiceModule}/>
+    'Choice': <ChoiceModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeChoiceModule}/>,
+    'Location': <LocationModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeLocationModule} />
   }
 
   useEffect(() => {

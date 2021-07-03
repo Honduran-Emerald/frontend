@@ -42,6 +42,31 @@ export interface GameplayQuestHeader extends QuestHeader {
     agentProfileImageId: string,
 }
 
+export interface QueriedQuest {
+    id: string,
+    ownerId: string,
+    tracker: QuestTracker,
+    ownerName: string,
+    ownerImageId: string,
+    public: boolean,
+    version: number,
+    approximateTime: string,
+    locationName: string,
+    title: string,
+    description: string,
+    tags: string[],
+    location: Location,
+    imageId: string,
+    agentProfileImageId: string,
+    agentProfileName: string,
+    creationTime: string,
+    votes: number,
+    plays: number,
+    finishes: number,
+    released: boolean,
+    outdated: boolean,
+}
+
 export interface QuestBaseUpdate {
     approximateTime?: string,
     title?: string,
@@ -97,7 +122,7 @@ export interface GameplayEndingModule extends GameplayModuleBase {
 
 export interface GameplayLocationModule extends GameplayModuleBase {
     type: 'Location',
-    locationModel: Location,
+    location: Location,
 }
 
 export type GameplayModule = GameplayChoiceModule | GameplayEndingModule | GameplayStoryModule | GameplayLocationModule
@@ -130,6 +155,7 @@ export interface QuestTracker {
     agentProfileName: string,
     objective: string,
     author: string,
+    experienceCollected: number
     trackerNode: QuestTrackerNode
 }
 

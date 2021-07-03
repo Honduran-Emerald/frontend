@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableNativeFeedback, View, Text, Dimensions, StatusBar } from 'react-native';
+import { StyleSheet, TouchableNativeFeedback, View, Text, Dimensions } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Modal, Portal } from 'react-native-paper';
@@ -31,23 +31,23 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
 
   const getCenterPoint = () => {
     if(location) {
-      const lat1 = deg2rad(module.module.locationModel.latitude + 0.05);
+      const lat1 = deg2rad(module.module.location.latitude + 0.05);
       const lat2 = deg2rad(location.coords.latitude - 0.05);
-      const lon1 = deg2rad(module.module.locationModel.longitude);
-      const lonDelta = deg2rad(location.coords.longitude - module.module.locationModel.longitude);
+      const lon1 = deg2rad(module.module.location.longitude);
+      const lonDelta = deg2rad(location.coords.longitude - module.module.location.longitude);
       const Bx = Math.cos(lat2) * Math.cos(lonDelta);
       const By = Math.cos(lat2) * Math.sin(lonDelta);
       const latCenter = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By));
       const lonCenter = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
       return { initialLat: rad2deg(latCenter), initialLon: rad2deg(lonCenter) };
     }
-    return { initialLat: module.module.locationModel.latitude, initialLon: module.module.locationModel.longitude };
+    return { initialLat: module.module.location.latitude, initialLon: module.module.location.longitude };
   }
 
   const { initialLat, initialLon } = getCenterPoint();
 
-  const latitudeDelta = location ? Math.abs(module.module.locationModel.latitude - location.coords.latitude) * 1.5 : 0.2;
-  const longitudeDelta = location ? Math.abs(module.module.locationModel.longitude - location.coords.longitude) : 0.2;
+  const latitudeDelta = location ? Math.abs(module.module.location.latitude - location.coords.latitude) * 1.5 : 0.2;
+  const longitudeDelta = location ? Math.abs(module.module.location.longitude - location.coords.longitude) : 0.2;
   const delta = Math.max(latitudeDelta, longitudeDelta);
 
   return (
@@ -61,9 +61,10 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
             zoomEnabled={false}
             scrollEnabled={false}
             rotateEnabled={false}
-            style={styles.map}
+            moveOnMarkerPress={false}
             showsPointsOfInterest={true}
-            initialRegion={{
+            style={styles.map}
+            region={{
               latitude: initialLat,
               longitude: initialLon,
               latitudeDelta: delta,
@@ -78,7 +79,7 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
                     <MaterialCommunityIcons name='account' size={30} color={Colors.primary}/>
                   </View>
                 </Marker>
-                <Marker coordinate={module.module.locationModel} tracksViewChanges={false}>
+                <Marker coordinate={module.module.location} tracksViewChanges={false}>
                   <View>
                     <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.primary}/>
                   </View>
@@ -108,6 +109,9 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
                   </View>
                 </TouchableNativeFeedback>
               </View>
+              <Text style={styles.objective} numberOfLines={2}>
+                {module.module.objective}
+              </Text>
             </View>
             <MapView
               showsCompass={false}
@@ -131,7 +135,7 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
                       <MaterialCommunityIcons name='account' size={30} color={Colors.primary}/>
                     </View>
                   </Marker>
-                  <Marker coordinate={module.module.locationModel} tracksViewChanges={false}>
+                  <Marker coordinate={module.module.location} tracksViewChanges={false}>
                     <View>
                       <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.primary}/>
                     </View>
@@ -148,9 +152,10 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
+    marginTop: 0,
   },
   mapContainer: {
+    marginTop: 10,
     width: '70%',
     borderRadius: 20,
     borderTopLeftRadius: 3,
@@ -175,20 +180,24 @@ const styles = StyleSheet.create({
   },
   modal: {
     backgroundColor: Colors.background,
-    height: Dimensions.get('screen').height,
-    marginTop: StatusBar.currentHeight,
+    height: '100%',
   },
   modalMap: {
     width: '100%',
     height: '100%',
   },
   header: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row',
     borderBottomWidth: 1,
-    paddingTop: 29,
     paddingLeft: 4,
     paddingVertical: 5,
     borderColor: Colors.gray,
+  },
+  objective: {
+    color: Colors.black,
+    fontSize: 20,
+    paddingRight: 50,
   },
   backButton: {
     backgroundColor: 'transparent',

@@ -1,12 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import _ from 'lodash';
 
 import { QuestHeader, QuestTracker } from '../types/quest';
 import { styleGameplay } from './styleGameplay';
-import { updateAcceptedQuest } from '../redux/quests/questsSlice';
-import { useAppDispatch } from '../redux/hooks';
 
 interface FinishMessageProps {
   quest: QuestHeader | undefined,
@@ -20,30 +17,38 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
   const [hasVoted, setHasVoted] = React.useState(tracker?.vote);
   const [inputDisabled, setInputDisabled] = React.useState(false);
 
-  const dispatch = useAppDispatch();
-
   const creationDate = tracker ? new Date(Date.parse(tracker.creationTime)) : new Date();
-  const currentDate = new Date();
-  const secondsElapsed = (currentDate.getTime() - creationDate.getTime()) / 1000;
+  const finishingDate = tracker ? new Date(Date.parse(tracker.trackerNode.creationTime)) : new Date();
+  const secondsElapsed = (finishingDate.getTime() - creationDate.getTime()) / 1000;
   const seconds = Math.floor(secondsElapsed % 60);
   const minutesElapsed = Math.floor(secondsElapsed / 60);
   const minutes = Math.floor(minutesElapsed % 60);
   const hoursElapsed = Math.floor(minutesElapsed / 60);
-  //const timeElapsed = new Date(secondsElapsed * 1000).toISOString().substr(11,8);
   const timeElapsed = `${hoursElapsed}h ${minutes}m ${seconds}s`
 
   const handleClick = (vote: 'None' | 'Up' | 'Down') => {
+    const oldVote = tracker?.vote
     setInputDisabled(true);
     handleVote(vote).then((res) => {
-      console.log(JSON.stringify(res));
-      setInputDisabled(false);
-      let newTracker = _.cloneDeep(tracker);
-      if(newTracker) {
-        newTracker.vote = vote;
-        dispatch(updateAcceptedQuest(newTracker));
-      }
       if(res.status === 200) setHasVoted(vote);
-      if(res.status === 200) vote === 'Up' ? setVotes(votes + 1) : setVotes(votes - 1);
+      if(res.status === 200) {
+        if(oldVote !== 'None') {
+          if(vote === 'Up' && oldVote === 'Down') {
+            setVotes(votes + 2);
+          }
+          else if(vote === 'Down' && oldVote === 'Up') {
+            setVotes(votes - 2);
+          }
+          else if(vote === 'None' && oldVote === 'Down') {
+            setVotes(votes + 1);
+          }
+          else if(vote === 'None' && oldVote === 'Up') {
+            setVotes(votes - 1);
+          }
+        } else
+          vote === 'Up' ? setVotes(votes + 1) : setVotes(votes - 1);
+      }
+      setInputDisabled(false);
     });
   }
 
@@ -55,7 +60,7 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
       <View style={styles.voteAndTitle}>
         <View style={styles.votes}>
           <View style={styles.touchContainer}>
-            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick('Up')}>
+            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick(hasVoted === 'Up' ? 'None' : 'Up')}>
               <View style={styles.backButton}>
                 <MaterialCommunityIcons name='chevron-up' size={36} color={hasVoted === 'Up' ? 'lime' : '#fff'}/>
               </View>
@@ -65,7 +70,7 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
             {votes}
           </Text>
           <View style={[styles.touchContainer]}>
-            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick('Down')}>
+            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick(hasVoted === 'Down' ? 'None' : 'Down')}>
               <View style={[styles.backButton]}>
                 <MaterialCommunityIcons name='chevron-down' size={36} color={hasVoted === 'Down' ? 'red' : '#fff'}/>
               </View>
@@ -80,7 +85,7 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
       </View>
       <View style={styles.divider}/>
       <Text style={styles.stats}>
-        Total Experience: 11400
+        Total Experience: {tracker?.experienceCollected ? tracker.experienceCollected : 'Error'}
       </Text>
       <Text style={styles.stats}>
         Time elapsed: {timeElapsed}

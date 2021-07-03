@@ -8,13 +8,13 @@ import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setToken, setUser } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
 import { chatQueryRequest, getAllTrackersRequest, getUserSelfRequest, queryTrackerNodesRequest, renewRequest } from './utils/requestHandler';
-import { loadPinnedQuestPath, pinQuest, setAcceptedQuests } from './redux/quests/questsSlice';
+import { loadPinnedQuestPath, pinQuest, setAcceptedQuests, setTrackerWithUpdate } from './redux/quests/questsSlice';
 import { QuestTracker } from './types/quest';
 import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';
 import { Text } from 'react-native'
 import { deleteItemLocally } from './utils/SecureStore';
-import { registerGeofencingTask } from './utils/TaskManager';
+import { LocalUpdatedTrackerIds, registerGeofencingTask } from './utils/TaskManager';
 import { getData } from './utils/AsyncStore';
 
 
@@ -35,8 +35,6 @@ export const TokenLoader = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    // TODO remove cleanup
-    deleteItemLocally('PinnedQuestTracker').then(() => {console.log('deleted PinnedQuestTracker')}, () => {});
     TokenManager.getToken()
       .then(token => {
           if (token) {
@@ -107,6 +105,13 @@ export const TokenLoader = () => {
               }
             }))
             .then(() => registerGeofencingTask(acceptedQuests))
+            .then(() => getData(LocalUpdatedTrackerIds).then((res) => {
+              if(res) {
+                const updates = JSON.parse(res)
+                const newUpdates = updates.filter((id: string) => acceptedQuests.find((tracker) => tracker.trackerId === id))
+                dispatch(setTrackerWithUpdate(newUpdates))
+              }
+            }))
         }
       })
     )

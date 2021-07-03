@@ -13,6 +13,7 @@ import { PreviewModuleScreen } from "./PreviewModuleScreen";
 import { RouteProp } from "@react-navigation/native";
 import { InternalFullNode } from "../graph/utils/linksParser";
 import { PrototypeComponent, PrototypeModule, PrototypeModuleBase } from "../../types/prototypes";
+import { LocationModule } from "./module-views/LocationModule";
 
 const displayWidth = Dimensions.get("screen").width;
 
@@ -63,6 +64,7 @@ export const CreateModuleScreen = () => {
     Story: <StoryModule setFinalModule={saveModule} />,
     Ending: <EndingModule setFinalModule={saveModule} />,
     Choice: <ChoiceModule setFinalModule={saveModule} />,
+    Location: <LocationModule setFinalModule={saveModule} />
   };
 
   useEffect(() => {
