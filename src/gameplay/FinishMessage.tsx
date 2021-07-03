@@ -33,17 +33,33 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
   const timeElapsed = `${hoursElapsed}h ${minutes}m ${seconds}s`
 
   const handleClick = (vote: 'None' | 'Up' | 'Down') => {
+    const oldVote = tracker?.vote
     setInputDisabled(true);
     handleVote(vote).then((res) => {
-      console.log(JSON.stringify(res));
-      setInputDisabled(false);
       let newTracker = _.cloneDeep(tracker);
       if(newTracker) {
         newTracker.vote = vote;
         dispatch(updateAcceptedQuest(newTracker));
       }
       if(res.status === 200) setHasVoted(vote);
-      if(res.status === 200) vote === 'Up' ? setVotes(votes + 1) : setVotes(votes - 1);
+      if(res.status === 200) {
+        if(oldVote !== 'None') {
+          if(vote === 'Up' && oldVote === 'Down') {
+            setVotes(votes + 2);
+          }
+          else if(vote === 'Down' && oldVote === 'Up') {
+            setVotes(votes - 2);
+          }
+          else if(vote === 'None' && oldVote === 'Down') {
+            setVotes(votes + 1);
+          }
+          else if(vote === 'None' && oldVote === 'Up') {
+            setVotes(votes - 1);
+          }
+        } else
+          vote === 'Up' ? setVotes(votes + 1) : setVotes(votes - 1);
+      }
+      setInputDisabled(false);
     });
   }
 
@@ -55,7 +71,7 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
       <View style={styles.voteAndTitle}>
         <View style={styles.votes}>
           <View style={styles.touchContainer}>
-            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick('Up')}>
+            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick(hasVoted === 'Up' ? 'None' : 'Up')}>
               <View style={styles.backButton}>
                 <MaterialCommunityIcons name='chevron-up' size={36} color={hasVoted === 'Up' ? 'lime' : '#fff'}/>
               </View>
@@ -65,7 +81,7 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
             {votes}
           </Text>
           <View style={[styles.touchContainer]}>
-            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick('Down')}>
+            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick(hasVoted === 'Down' ? 'None' : 'Down')}>
               <View style={[styles.backButton]}>
                 <MaterialCommunityIcons name='chevron-down' size={36} color={hasVoted === 'Down' ? 'red' : '#fff'}/>
               </View>
