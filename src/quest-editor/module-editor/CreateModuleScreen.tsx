@@ -73,7 +73,7 @@ export const CreateModuleScreen = () => {
 
   useEffect(() => {
     swiper.current?.scrollTo({
-      x: 2 * displayWidth,
+      x: 3 * displayWidth,
     });
   }, [finalModule]);
 
@@ -115,6 +115,7 @@ export const CreateModuleScreen = () => {
           </ScrollView>
         )}
         {finalModule && (
+          <View style={{width: displayWidth}}>
           <PreviewModuleScreen
             prototypeModule={finalModule}
             saveModule={() => {
@@ -123,6 +124,7 @@ export const CreateModuleScreen = () => {
               navigation.navigate("ModuleGraph");
             }}
           />
+          </View>
         )}
       </ScrollView>
     </View>
