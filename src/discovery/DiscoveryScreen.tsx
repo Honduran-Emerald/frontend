@@ -88,6 +88,6 @@ const styles = StyleSheet.create({
     discovery: {
         margin: 10,
         marginTop: 0,
-        paddingBottom: 50,
+        paddingBottom: 90,
     },
 });
