@@ -2,23 +2,20 @@ import React from 'react';
 import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar} from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
-import { Avatar, Modal, Portal, Button as PaperButton } from 'react-native-paper';
+import { Avatar, Modal, Portal, Button as PaperButton, Surface } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
-import { GameplayQuestHeader, QuestHeader, QuestTracker } from '../types/quest';
-import {
-  createDeleteQuestRequest,
-  createPublishRequest,
-  createTrackerRequest
-} from '../utils/requestHandler';
+import { QueriedQuest, QuestTracker } from '../types/quest';
+import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { getImageAddress } from '../utils/imageHandler';
+import {addGeofencingRegion} from "../utils/TaskManager";
 
 export default function QuestDetailScreen({ route }: any) {
 
@@ -31,8 +28,8 @@ export default function QuestDetailScreen({ route }: any) {
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
-  const quest: GameplayQuestHeader = route.params.quest;
-  const isQuestCreator = quest.ownerName === user?.userName;
+  const quest: QueriedQuest = route.params.quest;
+  const isQuestCreator = quest.ownerId === user?.userId;
   const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
   const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0
 
@@ -50,6 +47,17 @@ export default function QuestDetailScreen({ route }: any) {
           navigation.goBack();
           setIsButtonDisabled(false);
           dispatch(acceptQuest(data.trackerModel));
+          if(data.trackerModel.trackerNode.module.type === 'Location') {
+            const newRegion = {
+              identifier: data.trackerModel.trackerId,
+              latitude: data.trackerModel.trackerNode.module.location.latitude,
+              longitude: data.trackerModel.trackerNode.module.location.longitude,
+              radius: 20,
+              notifyOnEnter: true,
+              notifyOnExit: false,
+            };
+            addGeofencingRegion(newRegion);
+          }
         }))
   };
 
@@ -90,13 +98,15 @@ export default function QuestDetailScreen({ route }: any) {
               {quest.approximateTime}
             </Text>
           </View>
-          <Text style={styles.description}>
-            {quest.description}
-          </Text>
+          <Surface style={styles.block}>
+            <Text style={styles.description}>
+              {quest.description}
+            </Text>
+          </Surface>
           {
             !isAccepted &&
             <View style={styles.button}>
-              <Button color={Colors.primary} disabled={isButtonDisabled} title={i18n.t('acceptButton')} onPress={handleAccept}/>
+              <Button color={Colors.primary} disabled={isButtonDisabled || !quest.released} title={i18n.t('acceptButton')} onPress={handleAccept}/>
             </View>
           }
           {
@@ -123,7 +133,7 @@ export default function QuestDetailScreen({ route }: any) {
                 <View style={styles.creatorButton}>
                   <Button
                     color={Colors.primary}
-                    disabled={isButtonDisabled}
+                    disabled={isButtonDisabled || (quest.released && !quest.outdated)}
                     title={'Publish Quest'}
                     onPress={
                       () => createPublishRequest(quest.id)
@@ -223,7 +233,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   scrollView: {
-    width: '80%',
+    width: '90%',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -236,13 +246,13 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   image: {
-    width: '100%',
+    width: '88.8%',
     height: Dimensions.get('window').height * 0.25,
     borderRadius: 20,
     marginBottom: 15,
   },
   info: {
-    width: '100%',
+    width: '88.8%',
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 15,
@@ -257,9 +267,18 @@ const styles = StyleSheet.create({
     marginLeft: 3,
     maxWidth: '45%',
   },
+  block: {
+    padding: 20,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+    borderWidth: 1,
+    borderRadius: 20,
+    marginBottom: 25,
+  },
   description: {
     textAlign: 'left',
-    marginBottom: 15,
   },
   button: {
     width: '50%',

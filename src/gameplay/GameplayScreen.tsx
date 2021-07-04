@@ -8,7 +8,14 @@ import { FlatList } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { FAB } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { loadPinnedQuestPath, pinQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
+import {
+  addTrackerExperience,
+  loadPinnedQuestPath,
+  pinQuest,
+  setTrackerFinished,
+  setTrackerObjectiveAndTrackerNode,
+  setTrackerVote
+} from '../redux/quests/questsSlice';
 import { GameplayModule, ModuleMememto, QuestPath, QuestTrackerNodeElement } from '../types/quest';
 import { playEventChoiceRequest, playVoteRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
 import { ModuleRenderer } from './ModuleRenderer';
@@ -16,9 +23,12 @@ import { QuestStatsScreen } from './QuestStatsScreen';
 import _ from 'lodash';
 import { Colors } from '../styles';
 import { FinishMessage } from './FinishMessage';
+import { addGeofencingRegion, removeUpdatedQuest } from '../utils/TaskManager';
+import { useIsFocused } from '@react-navigation/native';
 
 export const GameplayScreen : React.FC = () => {
 
+  const trackerWithUpdates = useAppSelector(state => state.quests.trackerWithUpdates);
   const acceptedQuests = useAppSelector(state => state.quests.acceptedQuests);
   const pinnedQuestPath = useAppSelector(state => state.quests.pinnedQuestPath)
   const pinnedQuest = useAppSelector(state => state.quests.pinnedQuest)
@@ -29,6 +39,7 @@ export const GameplayScreen : React.FC = () => {
 
   const ref = useRef<FlatList>(null);
   const dispatch = useAppDispatch();
+  const isFocused = useIsFocused();
 
   const [loadedTrackerNodes, setLoadedTrackerNodes] = useState<QuestPath | undefined>();
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
@@ -44,6 +55,24 @@ export const GameplayScreen : React.FC = () => {
   const [innerHeight, setInnerHeight] = useState<number>(Dimensions.get('screen').height);
 
   useEffect(() => {
+    if(isFocused && trackerWithUpdates.includes(route.params.trackerId)) {
+      removeUpdatedQuest(route.params.trackerId);
+    }
+  }, [isFocused])
+
+  useEffect(() => {
+    if(trackerWithUpdates.includes(route.params.trackerId)) {
+      queryTrackerNodesRequest(route.params.trackerId)
+        .then(res => res.json())
+        .then(res => {
+          setLoadedTrackerNodes(res)
+          if(pinnedQuest?.trackerId === route.params.trackerId) {
+            dispatch(loadPinnedQuestPath(res))
+          }
+        })
+        .then(() => setHasLoaded(true));
+      return;
+    }
     if (pinnedQuest?.trackerId === route.params.trackerId && pinnedQuestPath) {
       setLoadedTrackerNodes(pinnedQuestPath)
     } else {
@@ -52,7 +81,7 @@ export const GameplayScreen : React.FC = () => {
         .then(res => setLoadedTrackerNodes(res))
         .then(() => setHasLoaded(true))
     }
-  }, [pinnedQuestPath])
+  }, [pinnedQuestPath, trackerWithUpdates])
 
   const updateQuestPath = useCallback((newQuestPath: QuestPath) => {
     const trackerNode = newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1];
@@ -61,17 +90,17 @@ export const GameplayScreen : React.FC = () => {
 
       dispatch(pinQuest({
         ...pinnedQuest,
-        trackerNode: {...trackerNode, creationTime: trackerNode.creationTime.toString()},
+        trackerNode: {...trackerNode},
         objective: trackerNode.module.objective
       }))
     } else {
       setLoadedTrackerNodes(newQuestPath);
       if(currentTracker) {
-        dispatch(updateAcceptedQuest({
-          ...currentTracker,
-          trackerNode: {...trackerNode, creationTime: trackerNode.creationTime.toString()},
+        dispatch(setTrackerObjectiveAndTrackerNode({
+          trackerId: route.params.trackerId,
+          trackerNode: {...trackerNode},
           objective: trackerNode.module.objective
-        }))
+        }));
       }
     }
   }, [pinnedQuest, pinnedQuestPath, route.params.trackerId])
@@ -89,17 +118,26 @@ export const GameplayScreen : React.FC = () => {
 
     updateQuestPath(newQuestPath)
 
+    if(newModule.type === 'Location') {
+      const newRegion = {
+        identifier: currentTracker?.trackerId,
+        latitude: newModule.location.latitude,
+        longitude: newModule.location.longitude,
+        radius: 20,
+        notifyOnEnter: true,
+        notifyOnExit: false,
+      };
+      addGeofencingRegion(newRegion);
+    }
+
   }, [loadedTrackerNodes])
 
   const handleQuestFinish = useCallback((endingFactor: number) => {
-    let newTracker = _.cloneDeep(currentTracker);
-    if(newTracker) {
-      newTracker.finished = true;
-      dispatch(updateAcceptedQuest(newTracker));
-    }
+    dispatch(setTrackerFinished({ trackerId: route.params.trackerId, finished: true }));
   }, [])
 
   const handleExperience = useCallback((experience: number) => {
+    dispatch(addTrackerExperience({ trackerId: route.params.trackerId, experience: experience }));
     setXpAmount(experience);
     setShowXp(true);
   }, [])
@@ -134,7 +172,10 @@ export const GameplayScreen : React.FC = () => {
   , [route.params, loadedTrackerNodes])
 
   const handleVote = useCallback((vote: 'None' | 'Up' | 'Down') => {
-    return playVoteRequest(route.params.trackerId, vote).then(res => res)
+    return playVoteRequest(route.params.trackerId, vote).then(res => {
+      dispatch(setTrackerVote({ trackerId: route.params.trackerId, vote: vote }))
+      return res;
+    })
   }, [])
 
   return (

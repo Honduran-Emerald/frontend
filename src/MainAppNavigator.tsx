@@ -8,7 +8,6 @@ import { Badge } from 'react-native-paper';
 
 import { MapNavigator } from './map/MapNavigator';
 import { DiscoveryNavigator } from "./discovery/DiscoveryNavigator";
-
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { logout, setToken } from './redux/authentication/authenticationSlice';
 import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
@@ -19,10 +18,13 @@ import { ChatNavigator } from './chat/ChatNavigator';
 import { removeData } from './utils/AsyncStore';
 import { ProfileNavigator } from './profile/ProfileNavigator';
 import { GameplayNavigator } from './gameplay/GameplayNavigator';
+import { LocalUpdatedTrackerIds } from './utils/TaskManager';
 
 const Tab = createBottomTabNavigator();
 
 export default function MainAppNavigator() {
+  const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -38,7 +40,7 @@ export default function MainAppNavigator() {
               return (
                 <View>
                   <MaterialCommunityIcons name={iconName} size={size} color={focused ? Colors.primary : "grey"}/>
-                  <Badge visible={true} style={styles.badge} theme={{colors: {notification: Colors.primaryLight}}} size={13}/>
+                  <Badge visible={trackerWithUpdates.length > 0} style={styles.badge} theme={{colors: {notification: Colors.primaryLight}}} size={13}/>
                 </View>
               );
             case "Map":
@@ -69,7 +71,7 @@ export default function MainAppNavigator() {
       <Tab.Screen name="Questlog" component={GameplayNavigator}/>
       <Tab.Screen name="Map" component={MapNavigator}/>
       <Tab.Screen name="Chat" component={ChatNavigator}/>
-      <Tab.Screen name="Profile" component={ProfileNavigator} />
+      <Tab.Screen name="Profile" component={ProfileNavigator}/>
     </Tab.Navigator>
   );
 }
@@ -85,6 +87,7 @@ const Dummy = () => {
   const handleLogout = () => {
     deleteItemLocally('UserToken').then(() => {}, () => {});
     removeData('PinnedQuestTracker').then(() => {}, () => {});
+    removeData(LocalUpdatedTrackerIds).then(() => {}, () => {});
     dispatch(logout())
     dispatch(clearQuestState())
   }

@@ -3,8 +3,7 @@ import {View, StyleSheet, ScrollView, StatusBar as StatusBar2} from "react-nativ
 import {StatusBar} from "expo-status-bar";
 import {Colors} from "../styles";
 import {ScrollMenu} from "./ScrollMenu";
-import * as Location from "expo-location";
-import {QuestHeader} from "../types/quest";
+import {GameplayQuestHeader} from "../types/quest";
 import {queryQuestsRequest} from "../utils/requestHandler";
 import {Searchbar} from "react-native-paper";
 import {removeSpecialChars} from "../gameplay/QuestlogScreen";
@@ -14,22 +13,22 @@ import {getLocation} from "../utils/locationHandler";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 export const DiscoveryScreen = () => {
-  
+
     const insets = useSafeAreaInsets();
 
     const location = useAppSelector(state => state.location.location)
-    const [quests, setQuests] = useState<QuestHeader[]>([]);
+    const [quests, setQuests] = useState<GameplayQuestHeader[]>([]);
     const [search, setSearch] = React.useState('');
 
     useEffect(() => {
         queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
         // Get Location Permission and set initial Location
-        getLocation().catch((err: Error) => {});
+        getLocation().catch(() => {});
     },[])
 
     const getQuestSearch = () => {
         if(search) {
-            let newQuests: QuestHeader[] = [];
+            let newQuests: GameplayQuestHeader[] = [];
             const normalizedSearch = removeSpecialChars(search);
             quests.map((quest) => {
                 const normalizedQuestName = removeSpecialChars(quest.title);
@@ -77,7 +76,6 @@ export const DiscoveryScreen = () => {
 
 const styles = StyleSheet.create({
     screen: {
-        justifyContent: "center",
         flexGrow: 1,
         backgroundColor: Colors.background,
         marginTop: StatusBar2.currentHeight,
@@ -90,6 +88,6 @@ const styles = StyleSheet.create({
     discovery: {
         margin: 10,
         marginTop: 0,
-        paddingBottom: 50,
+        paddingBottom: 90,
     },
 });

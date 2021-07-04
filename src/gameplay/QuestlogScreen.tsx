@@ -1,17 +1,16 @@
 import React from 'react';
 import { ActivityIndicator, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import i18n from 'i18n-js';
-import { List, Searchbar } from 'react-native-paper';
+import {Divider, List, Searchbar} from 'react-native-paper';
 import { useCallback } from 'react';
 import { useNavigation } from '@react-navigation/core';
 
 import { Colors } from '../styles';
 import { commonTranslations } from '../common/translations';
-import { getAllTrackersRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
+import { getAllTrackersRequest } from '../utils/requestHandler';
 import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { loadPinnedQuestPath, pinQuest, setAcceptedQuests } from '../redux/quests/questsSlice';
-import { saveItemLocally } from '../utils/SecureStore';
+import { pinQuest, setAcceptedQuests } from '../redux/quests/questsSlice';
 import { storeData } from '../utils/AsyncStore';
 
 export function removeSpecialChars (input: string) {
@@ -41,6 +40,7 @@ export default function QuestlogScreen() {
 
   const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
   const acceptedQuests = useAppSelector((state) => state.quests.acceptedQuests);
+  const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
 
   const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -60,7 +60,7 @@ export default function QuestlogScreen() {
   const handleOldExpanded = () => setOldExpanded(!oldExpanded);
 
   const setPinnedQuest = (tracker: QuestTracker) => {
-    dispatch(pinQuest(tracker));
+    if(tracker) dispatch(pinQuest(tracker));
     storeData('PinnedQuestTracker', JSON.stringify(tracker)).then(() => {}, () => {});
   }
 
@@ -141,9 +141,11 @@ export default function QuestlogScreen() {
             />
           }
         >
-          <Text style={styles.header}>
-            Questlog
-          </Text>
+        <View style={styles.headerView}>
+            <Text style={styles.header}>
+                Questlog
+            </Text>
+        </View>
           <View style={styles.searchbar}>
             <Searchbar
               placeholder={i18n.t('searchbarPlaceholder')}
@@ -172,6 +174,7 @@ export default function QuestlogScreen() {
                     onPress={() => loadQuestObjectiveScreen(quest.trackerId)}
                     onLongPress={() => setPinnedQuest(quest)}
                     left={() => <List.Icon color={Colors.background} icon='pin'/>}
+                    right={() => trackerWithUpdates.includes(quest.trackerId) ? <List.Icon color={Colors.background} icon={'email-alert'}/> : null}
                     titleStyle={styles.white}
                     descriptionStyle={styles.white}
                     style={styles.trackedActive}
@@ -183,6 +186,8 @@ export default function QuestlogScreen() {
                     key={quest.trackerId}
                     onPress={() => loadQuestObjectiveScreen(quest.trackerId)}
                     onLongPress={() => setPinnedQuest(quest)}
+                    left={() => <List.Icon color={Colors.background} icon='pin'/>}
+                    right={() => trackerWithUpdates.includes(quest.trackerId) ? <List.Icon color={Colors.primary} icon={'email-alert'}/> : null}
                   />
               )
             }
@@ -231,9 +236,18 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    textAlign: 'center',
-    fontSize: 25,
-    marginTop: 10,
+    textAlign: 'left',
+    fontWeight: "600",
+    includeFontPadding: true,
+    fontSize: 20,
+    top: 14,
+    left: 16,
+    height: 50,
+  },
+  headerView: {
+    height: 55,
+    backgroundColor: Colors.background,
+    elevation: 5,
   },
   title: {
     fontSize: 20,

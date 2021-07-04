@@ -1,18 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { QuestHeader, QuestPath, QuestTracker } from '../../types/quest';
+import {QuestHeader, QuestPath, QuestTracker, QuestTrackerNode, Vote} from '../../types/quest';
 
 interface QuestsState {
     localQuests: QuestHeader[],
     acceptedQuests: QuestTracker[],
     pinnedQuest: QuestTracker | undefined,
-    pinnedQuestPath: QuestPath | undefined
+    pinnedQuestPath: QuestPath | undefined,
+    trackerWithUpdates: string[],
 }
 
 const initialState: QuestsState = {
     localQuests: [],
     acceptedQuests: [],
     pinnedQuest: undefined,
-    pinnedQuestPath: undefined
+    pinnedQuestPath: undefined,
+    trackerWithUpdates: [],
 }
 
 export const questsSlice = createSlice({
@@ -31,6 +33,43 @@ export const questsSlice = createSlice({
                 const index = state.acceptedQuests.indexOf(oldTracker);
                 if(index !== -1) {
                     state.acceptedQuests[index] = action.payload;
+                }
+            }
+        },
+        setTrackerFinished: (state, action: PayloadAction<{ trackerId: string, finished: boolean }>) => {
+            const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
+            if(oldTracker) {
+                const index = state.acceptedQuests.indexOf(oldTracker);
+                if(index !== -1) {
+                    state.acceptedQuests[index].finished = action.payload.finished;
+                }
+            }
+        },
+        setTrackerVote: (state, action: PayloadAction<{ trackerId: string, vote: Vote }>) => {
+            const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
+            if(oldTracker) {
+                const index = state.acceptedQuests.indexOf(oldTracker);
+                if(index !== -1) {
+                    state.acceptedQuests[index].vote = action.payload.vote;
+                }
+            }
+        },
+        addTrackerExperience: (state, action: PayloadAction<{ trackerId: string, experience: number }>) => {
+            const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
+            if(oldTracker) {
+                const index = state.acceptedQuests.indexOf(oldTracker);
+                if(index !== -1) {
+                    state.acceptedQuests[index].experienceCollected = state.acceptedQuests[index].experienceCollected + action.payload.experience;
+                }
+            }
+        },
+        setTrackerObjectiveAndTrackerNode: (state, action: PayloadAction<{ trackerId: string, objective: string, trackerNode: QuestTrackerNode }>) => {
+            const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
+            if(oldTracker) {
+                const index = state.acceptedQuests.indexOf(oldTracker);
+                if(index !== -1) {
+                    state.acceptedQuests[index].objective = action.payload.objective;
+                    state.acceptedQuests[index].trackerNode = action.payload.trackerNode;
                 }
             }
         },
@@ -58,10 +97,36 @@ export const questsSlice = createSlice({
             state.pinnedQuestPath = undefined
             state.acceptedQuests = []
             state.localQuests = []
-        }
+            state.trackerWithUpdates = []
+        },
+        setTrackerWithUpdate: (state, action: PayloadAction<string[]>) => {
+            state.trackerWithUpdates = action.payload;
+        },
+        addTrackerWithUpdate: (state, action: PayloadAction<string>) => {
+            if(state.trackerWithUpdates.includes(action.payload)) return;
+            state.trackerWithUpdates.push(action.payload);
+        },
+        removeTrackerWithUpdate: (state, action: PayloadAction<string>) => {
+            state.trackerWithUpdates = state.trackerWithUpdates.filter((trackerId) => trackerId !== action.payload);
+        },
     }
 })
 
-export const { setLocalQuests, setAcceptedQuests, updateAcceptedQuest, acceptQuest, pinQuest, clearQuestState, loadPinnedQuestPath } = questsSlice.actions
+export const {
+    setLocalQuests,
+    setAcceptedQuests,
+    updateAcceptedQuest,
+    setTrackerFinished,
+    setTrackerVote,
+    addTrackerExperience,
+    setTrackerObjectiveAndTrackerNode,
+    acceptQuest,
+    pinQuest,
+    clearQuestState,
+    loadPinnedQuestPath,
+    setTrackerWithUpdate,
+    addTrackerWithUpdate,
+    removeTrackerWithUpdate
+} = questsSlice.actions
 
 export default questsSlice.reducer
