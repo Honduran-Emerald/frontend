@@ -11,7 +11,10 @@ export interface User {
     experience: number,
     glory: number,
     questCount: number,
-    trackerCount: number
+    trackerCount: number,
+    followerCount: number,
+    following: boolean,
+    follower: boolean
 }
 
 export interface ChatBaseMessageNotif {
