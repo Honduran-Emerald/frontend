@@ -93,12 +93,12 @@ export const ScrollMenu = (props:scrollProps) => {
                 <Text style={styles.header}>
                     {props.header}
                 </Text>
-                <ScrollView horizontal>
-                    {props.quests && props.quests.map((q, index) => (
-                            <QuestPreview key={index} quest={q} location={props.location} />
-                        )
-                    )}
-                </ScrollView>
+                <FlatList 
+                    horizontal
+                    data={props.quests}
+                    renderItem={
+                        ({item}) => <QuestPreview quest={item} location={props.location} />
+                    }/>
             </Surface>
         </View>
 
