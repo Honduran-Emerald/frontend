@@ -52,6 +52,7 @@ export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
         longitude: tracker.trackerNode.module.location.longitude,
         radius: 20,
         notifyOnEnter: true,
+        notifyOnExit: false,
       })
     }
   })

@@ -54,6 +54,7 @@ export default function QuestDetailScreen({ route }: any) {
               longitude: data.trackerModel.trackerNode.module.location.longitude,
               radius: 20,
               notifyOnEnter: true,
+              notifyOnExit: false,
             };
             addGeofencingRegion(newRegion);
           }

@@ -125,6 +125,7 @@ export const GameplayScreen : React.FC = () => {
         longitude: newModule.location.longitude,
         radius: 20,
         notifyOnEnter: true,
+        notifyOnExit: false,
       };
       addGeofencingRegion(newRegion);
     }

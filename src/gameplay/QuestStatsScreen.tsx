@@ -44,6 +44,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
                   longitude: data.quest.tracker.trackerNode.module.location.longitude,
                   radius: 20,
                   notifyOnEnter: true,
+                  notifyOnExit: false,
                 };
                 addGeofencingRegion(newRegion);
               }
