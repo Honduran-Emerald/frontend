@@ -18,9 +18,10 @@ export interface ModuleRendererProps<ModuleType extends GameplayModule> {
   index?: number,
   onChoice: (choiceId: number) => Promise<any>
   tracker?: QuestTracker,
+  edit?: boolean
 }
 
-export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index, onChoice, tracker }) => {
+export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index, onChoice, tracker, edit }) => {
 
   return (
     <View style={{paddingHorizontal: 10}}>

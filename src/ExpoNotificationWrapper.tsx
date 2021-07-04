@@ -30,14 +30,10 @@ export const ExpoNotificationWrapper: React.FC<{navigationRef: any}> = ({ naviga
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => {
-      if (token) userUpdatemessagingtoken(token).then(
-        () => console.log('Set token to', token)
-      )
+      if (token) userUpdatemessagingtoken(token)
     })
     tokenListener.current = Notifications.addPushTokenListener((token) => {
-      userUpdatemessagingtoken(token.data).then(
-        () => console.log('Updated token to', token)
-      )
+      userUpdatemessagingtoken(token.data)
     })
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
@@ -99,7 +95,7 @@ async function registerForPushNotificationsAsync() {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
+    //console.log(token);
   } else {
     alert('Must use physical device for Push Notifications');
   }

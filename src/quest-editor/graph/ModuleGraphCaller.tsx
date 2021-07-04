@@ -25,10 +25,8 @@ export const ModuleGraphCaller = () => {
 
     const questPrototype = useAppSelector((state) => state.editor.questPrototype); // redux selector
 
-    const [sheetOptions, setSheetOptions] = useState<[string, string, (() => void)][]>([['hi', 'plus', (() => console.log(5))], ['hi there', 'plus', (() => console.log(6))]])
+    const [sheetOptions, setSheetOptions] = useState<[string, string, (() => void)][]>([])
     const sheet = useRef<BottomSheet>(null);
-
-    console.log('Current Quest', JSON.stringify(questPrototype))
 
     const dispatch = useAppDispatch();
 
@@ -63,7 +61,7 @@ export const ModuleGraphCaller = () => {
                 dispatch(setModules(node.setSources.reduce((acc, current) => current(acc, null), questPrototype).modules))
                 dispatch(deleteQuestModule(node.id))
             }}/> // regular node. can be adjusted to return different types of nodes
-            : <LinkModuleNode setSource={node.setSource} setLinkOnChoice={setLinkOnChoice} sheetRef={sheet} setSheetOptions={setSheetOptions} setLinkSourceId={setLinkSourceId} parentId={node.parentId}/> // empty node. clicking will allow to add a new or link to an existing module
+            : <LinkModuleNode setSource={node.setSource} setLinkOnChoice={setLinkOnChoice} sheetRef={sheet} setSheetOptions={setSheetOptions} setLinkSourceId={setLinkSourceId} parentId={node.parentId} parentTags={node.parentTags}/> // empty node. clicking will allow to add a new or link to an existing module
         })), links);
 
         if (positions.length > 0) {

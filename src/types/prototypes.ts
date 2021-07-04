@@ -56,7 +56,7 @@ export interface PrototypeTextComponent {
 
 export interface PrototypeImageComponent {
   type: 'Image',
-  text: string,
+  imageReference: number | null,
 }
 
 export type PrototypeComponent = PrototypeTextComponent | PrototypeImageComponent

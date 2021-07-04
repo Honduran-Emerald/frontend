@@ -10,12 +10,13 @@ import { FAB } from 'react-native-paper';
 import { useAppSelector } from '../redux/hooks';
 import { useDispatch } from 'react-redux';
 import { queryQuestsRequest } from '../utils/requestHandler';
-import { setLocalQuests } from '../redux/quests/questsSlice';
+import { acceptQuest, setLocalQuests } from '../redux/quests/questsSlice';
 import { QuestMarker } from './QuestMarker';
 import { useNavigation } from '@react-navigation/core';
 import PinnedQuestCard from './PinnedQuestCard';
 import {setLocation} from "../redux/location/locationSlice";
 import {useFocusEffect} from "@react-navigation/native";
+import { GameplayLocationModule } from '../types/quest';
 
 export const MapScreen = () => {
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -28,6 +29,8 @@ export const MapScreen = () => {
   const localQuests = useAppSelector((state) => state.quests.localQuests);
   const location = useAppSelector((state) => state.location.location);
   const dispatch = useDispatch();
+
+  const trackedQuests = useAppSelector(state => state.quests.acceptedQuests);
 
   const navigation = useNavigation();
 
@@ -115,6 +118,25 @@ export const MapScreen = () => {
         {localQuests && localQuests.map((quest, index) => (
           quest && quest.location &&
             <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
+        ))}
+        {trackedQuests
+          .filter((quest) => quest.trackerNode.module.type === 'Location')
+          .map(quest => (
+          //Ternary expression is here because ts doesn't want to understand that quest.trackerNode.module.type is a location module. Second option should never be called
+          <Marker coordinate={quest.trackerNode.module.type === 'Location' ? quest.trackerNode.module.location : {latitude: 0, longitude: 0}} key={quest.trackerNode.module.id} tracksViewChanges={false} onPress={() => {
+            navigation.navigate('Questlog', {
+              screen: 'GameplayScreen',
+              initial: false,
+              params: {
+                trackerId: quest.trackerId,
+                tracker: quest,
+              }
+            })
+          }}>
+            <View>
+              <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.primary}/>
+            </View>
+          </Marker>
         ))}
       </MapView>
       )}

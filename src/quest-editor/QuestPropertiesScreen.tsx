@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TextInput as TextInputNative} from 'react-native';
+import { View, StyleSheet, TextInput as TextInputNative, ActivityIndicator} from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { Colors, Containers } from '../styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,11 +11,15 @@ import I18n from 'i18n-js';
 import { createPutRequest } from '../utils/requestHandler';
 import { Image, NewImage } from '../types/quest';
 import { getImageAddress } from '../utils/imageHandler';
+import { ImageReferencePicker } from './module-editor/ImageReferencePicker';
+import { useState } from 'react';
 
 export const QuestPropertiesScreen = () => {
   const questPrototype = useAppSelector(state => state.editor.questPrototype)
   const questId = useAppSelector(state => state.editor.questId)
   const imagePath = useAppSelector(state => state.editor.imagePath)
+  const [displayImageReference, setDisplayImageReference] = useState<undefined | number>();
+  const [isSaving, setIsSaving] = useState(false);
   const newImages = useAppSelector(state => state.editor.newImages)
   const dispatch = useAppDispatch();
 
@@ -37,7 +41,12 @@ export const QuestPropertiesScreen = () => {
         theme={{colors: {primary: Colors.primary}}} 
         style={[style.container, style.questTitleInput]}
       />
-      <ImagePicker
+      <ImageReferencePicker 
+        reference={questPrototype?.imageReference}
+        setReference={(ref) => dispatch(setImageReference(ref))}
+        style={[style.container, style.imagePicker]}
+      />
+      {/* <ImagePicker
         setBase64={
           (base64) => {
             if(questPrototype == null)
@@ -78,7 +87,7 @@ export const QuestPropertiesScreen = () => {
           }
         } 
         style={[style.container, style.imagePicker]}
-      />
+      /> */}
       <View style={[style.container, style.smallInputsGroup]}>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='map-marker' size={16} color='darkgray'/>
@@ -96,15 +105,19 @@ export const QuestPropertiesScreen = () => {
             && questPrototype!.locationName 
             && questPrototype!.approximateTime  
             && questPrototype!.description
-          )
+          ) && isSaving
         } 
         theme={{colors: {primary: Colors.primary}}} 
         icon='content-save' 
         mode='contained' 
+        loading={isSaving}
         onPress={() => {
+          setIsSaving(true);
           createPutRequest(questId!, questPrototype!, newImages)
             .then(r => r.json())
-            .then(data => {dispatch(setImages(data.images));dispatch(setNewImages([]))})
+            .then(data => {dispatch(setImages(questPrototype!.images.concat(data.images)));dispatch(setNewImages([]))})
+            .catch(() => console.log('Image too large.')) // TODO Compress
+            .then(() => setIsSaving(false))
           }}
       >
         {I18n.t('saveButton')}

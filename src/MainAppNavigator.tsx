@@ -105,13 +105,11 @@ const Dummy = () => {
         queryQuestsRequest()
         .then(x => x.json())
         .then(x => st(x))
-        .catch(x => console.log('hkkek'))
       }}/>
       <Button color={'#1D79AC'} title={'Get Self'} onPress={() => {
         getUserSelfRequest()
         .then(x => x.json())
         .then(x => su(x))
-        .catch(x => console.log('joynere kek'))
       }}/>
       <Button color={'#1D79AC'} title={'Poison Token'} onPress={() => {
         dispatch(setToken('ABC'))
