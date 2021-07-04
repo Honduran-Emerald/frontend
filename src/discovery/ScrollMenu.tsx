@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, StatusBar, FlatList} from "react-native";
+import {View, Text, StyleSheet, ScrollView, StatusBar, FlatList, ListRenderItem} from "react-native";
 import {Colors} from "../styles";
 import {queryQuestsRequest} from "../utils/requestHandler";
 import {Button, Card, Paragraph, Surface, Title} from "react-native-paper";
@@ -93,12 +93,9 @@ export const ScrollMenu = (props:scrollProps) => {
                 <Text style={styles.header}>
                     {props.header}
                 </Text>
-                <ScrollView horizontal>
-                    {props.quests && props.quests.map((q, index) => (
-                            <QuestPreview key={index} quest={q} location={props.location} />
-                        )
-                    )}
-                </ScrollView>
+                <FlatList data={props.quests} horizontal renderItem={({item}) =>
+                  <QuestPreview quest={item} location={props.location}/>}>
+                </FlatList>
             </Surface>
         </View>
 
