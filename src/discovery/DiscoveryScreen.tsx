@@ -17,7 +17,7 @@ export const DiscoveryScreen = () => {
     const insets = useSafeAreaInsets();
 
     const location = useAppSelector(state => state.location.location)
-    const [quests, setQuests] = useState<GameplayQuestHeader[]>([]);
+    const [quests, setQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
     const [search, setSearch] = React.useState('');
 
     useEffect(() => {
@@ -27,7 +27,8 @@ export const DiscoveryScreen = () => {
     },[])
 
     const getQuestSearch = () => {
-        if(search) {
+        if (!quests) return [];
+        if (search) {
             let newQuests: GameplayQuestHeader[] = [];
             const normalizedSearch = removeSpecialChars(search);
             quests.map((quest) => {
@@ -53,11 +54,11 @@ export const DiscoveryScreen = () => {
                 />
             </View>
             <ScrollView contentContainerStyle={styles.discovery}>
-                {location && search === '' && (
+                {search === '' && (
                     <>
-                    <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={quests}/>
-                    <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={quests}/>
-                    <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={quests}/>
+                        <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={quests}/>
+                        <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={quests}/>
+                        <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={quests}/>
                     </>)
                 }
                 {quests && search !== '' && location && (
