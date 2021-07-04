@@ -128,9 +128,17 @@ export const userUpdateImage = (base64: string) => (request('/user/updateimage',
 // /user/me
 export const getUserSelfRequest = () => (request('/user/me/'))
 
-// /user/followers
-export const getUserFollowers = () => (request('/user/followers/'))
-
 // /user/get
 export const getUserRequest = (userId: string) => (request(`/user/get?userId=${userId}`))
 
+// /user/followers
+export const getUserFollowers = () => (request('/user/followers/'))
+
+// /user/following
+export const getUserFollowing = () => (request('/user/following/'))
+
+// /user/togglefollow
+export const userToggleFollowRequest = (userId: string) => (request('/user/togglefollow', 'POST', userId))
+
+// /user/friends
+export const getUserFriends = () => (request('/user/friends/'))
