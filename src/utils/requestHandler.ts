@@ -6,7 +6,6 @@ import { QuestPrototype } from "../types/prototypes";
 
 
 const request = (target: string, type: string = 'GET', body?: any) => {
-
   const token = store.getState().authentication.token;
 
   return fetch(BACKENDIP + target, {
@@ -69,7 +68,7 @@ export const chatSendImageRequest = (userId: string, binaryImage: string) => (re
 }))
 
 // /quest/query/
-export const queryQuestsRequest = (offset: number = 0) => (request(`/quest/query/?offset=${offset}`))
+export const queryQuestsRequest = (offset: number = 0, ownerId?: string) => (request(`/quest/query/?Offset=${offset}` + (ownerId != null ? `&OwnerId=${ownerId}` : '')))
 
 // /quest/queryvoted
 export const queryvotedQuestsRequest = (voteType : string) => (request(`/quest/queryvoted/?voteType=${voteType}`))
