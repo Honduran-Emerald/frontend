@@ -88,7 +88,7 @@ export const QuestPreview: React.FC<QuestPreviewProps> = (props) => {
     return(
         <Card style={styles.quest} onPress={() => navigation.navigate('QuestDetail', {quest: props.quest})}>
             <Card.Cover style={styles.pic} source={props.quest.imageId != null ? {uri: getImageAddress(props.quest.imageId, '')} : require('../../assets/background.jpg')} resizeMode='stretch' />
-            <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={props.quest.title + 'dwaddwajdawoi'} />
+            <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={props.quest.title} />
             
             <View style={{
                     flexDirection: 'row',
