@@ -13,7 +13,7 @@ import {
   queryQuestsRequest,
   queryvotedQuestsRequest
 } from "../utils/requestHandler";
-import { GameplayQuestHeader, QuestHeader } from "../types/quest";
+import { GameplayQuestHeader } from "../types/quest";
 import { useAppSelector } from '../redux/hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {useNavigation} from "@react-navigation/core";
@@ -72,14 +72,14 @@ export const ProfileScreen = (props: profileProps) => {
             <MaterialCommunityIcons name="cog" size={30} color='#1D79AC' />
         </TouchableOpacity>
         {user && <ProfileTop ownProfile profileData={{username: user?.userName, followers: followerCount, level: user?.level, xp: user?.experience, profileImageId: user?.image, questsCreated: publishedQuests.length, questsPlayed: 300}} />}
-          {location && (
-            <>
-              <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={publishedQuests}/>
-              <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={quests}/>
-              <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests}/>
-              <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={upvotedQuests}/>
-            </>)
-            }
+        {(
+          <>
+            <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={publishedQuests}/>
+            <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={quests}/>
+            <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests} addQuest/>
+            <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={upvotedQuests}/>
+          </>)
+          }
       </ScrollView>
       <StatusBar style="auto"/>
     </View>
