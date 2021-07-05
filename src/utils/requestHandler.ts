@@ -3,6 +3,7 @@ import { BACKENDIP } from '../../GLOBALCONFIG'
 import { setToken, unsetToken } from "../redux/authentication/authenticationSlice";
 import { NewImage } from "../types/quest";
 import { QuestPrototype } from "../types/prototypes";
+import { loadQuest } from "../redux/editor/editorSlice";
 
 
 const request = (target: string, type: string = 'GET', body?: any) => {
@@ -92,6 +93,26 @@ export const createPutRequest = (questId: string, questPrototype: QuestPrototype
   questPrototype: questPrototype,
   newImages: newImages
 }))
+
+export const createAndPutRequest = (questId: string, questPrototype: QuestPrototype, newImages: NewImage[]) => (
+  questId && questPrototype.id 
+    ? (createPutRequest(questId, questPrototype, newImages))
+    : (createQuestRequest()
+        .then(r => r.json())
+        .then(r => {
+          store.dispatch(loadQuest({
+            questId: r.questId,
+            questPrototype: {...questPrototype, id: r.questPrototype.id}
+          }))
+          console.log('Am here')
+          return createPutRequest(
+            r.questId,
+            {...questPrototype, id: r.questPrototype.id},
+            newImages
+          );
+      }))
+
+)
 
 // /create/release/
 export const createPublishRequest = (questId: string) => (request('/create/release/', 'POST', {questId: questId}))

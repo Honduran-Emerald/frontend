@@ -24,8 +24,6 @@ export const ImageReferencePicker : React.FC<ImagePickerProps> = ({aspect, style
   const newImages = useAppSelector(state => state.editor.newImages);
   const dispatch = useAppDispatch();
 
-  console.log(loadedImage?.substring(0, 50))
-
   const requestPermission = async () => {
     const { status } = await PickImage.requestMediaLibraryPermissionsAsync();
 

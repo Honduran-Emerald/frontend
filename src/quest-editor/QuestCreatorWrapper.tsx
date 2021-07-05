@@ -24,8 +24,31 @@ export const QuestCreatorWrapper : React.FC<QuestCreatorWrapperProps> = ({ route
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    dispatch(loadQuest({
+      questId: '',
+      questPrototype: {
+        id: '',
+        title: '',
+        description: '',
+        tags: [],
+        locationName: '',
+        location: {
+          latitude: route.params.params.latitude,
+          longitude: route.params.params.longitude
+        },
+        imageReference: null,
+        approximateTime: '',
+        agentProfileReference: null,
+        agentProfileName: '',
+        firstModuleReference: 1,
+        modules: [],
+        images: []
+      }
+    }));
+    dispatch(setImagePath(''));
+    setQuestCreated(true);
     // latitude, longitude
-    createQuestRequest()
+    /* createQuestRequest()
       .then(r => r.json())
       .then(r => dispatch(loadQuest({questId: r.questId, questPrototype: {
         id: r.questPrototype.id,
@@ -45,7 +68,7 @@ export const QuestCreatorWrapper : React.FC<QuestCreatorWrapperProps> = ({ route
         modules: [],
         images: []
       }}))).then(() => dispatch(setImagePath('')))
-      .then(() => setQuestCreated(true))
+      .then(() => setQuestCreated(true)) */
   }, [])
 
   return (

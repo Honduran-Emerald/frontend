@@ -1,16 +1,14 @@
 import React from 'react';
-import { View, StyleSheet, TextInput as TextInputNative, ActivityIndicator} from 'react-native';
+import { View, StyleSheet, TextInput as TextInputNative} from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { Colors, Containers } from '../styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { ImagePicker } from '../common/ImagePicker';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { pushNewImages, setEstimatedTime, setImagePath, setImageReference, setImages, setLocationName, setNewImages, setNewImagesAt, setQuestDescription, setQuestTitle, spliceQuestImages } from '../redux/editor/editorSlice';
+import { setEstimatedTime, setImageReference, setImages, setLocationName, setNewImages, setQuestDescription, setQuestTitle } from '../redux/editor/editorSlice';
 import I18n from 'i18n-js';
-import { createPutRequest } from '../utils/requestHandler';
+import { createAndPutRequest } from '../utils/requestHandler';
 import { Image, NewImage } from '../types/quest';
-import { getImageAddress } from '../utils/imageHandler';
 import { ImageReferencePicker } from './module-editor/ImageReferencePicker';
 import { useState } from 'react';
 
@@ -46,48 +44,6 @@ export const QuestPropertiesScreen = () => {
         setReference={(ref) => dispatch(setImageReference(ref))}
         style={[style.container, style.imagePicker]}
       />
-      {/* <ImagePicker
-        setBase64={
-          (base64) => {
-            if(questPrototype == null)
-              return;
-            
-            if(questPrototype.imageReference == null) {
-              const freeReference = findFreeReference([...questPrototype.images, ...newImages]);
-              dispatch(pushNewImages({reference: freeReference, image: base64}));
-              dispatch(setImageReference(freeReference));
-              return;
-            }
-
-            // if reference exists in questPrototype.images, delete from images and push new image to newImages
-            let index
-            if((index = questPrototype.images.findIndex(image => image.reference === questPrototype.imageReference)) !== -1) {
-              dispatch(spliceQuestImages(index));
-              dispatch(pushNewImages({reference: questPrototype.imageReference, image: base64}));
-
-            // if reference exists in newImages but not in images
-            } else if ((index = newImages.findIndex(image => image.reference === questPrototype.imageReference)) !== -1) {
-                dispatch(setNewImagesAt({index: index, value: {reference: questPrototype.imageReference, image: base64}}));
-            } else {
-                // if reference doesn't exist anywhere, find free reference and use it
-                const freeReference = findFreeReference([...questPrototype.images, ...newImages]);
-                dispatch(pushNewImages({reference: findFreeReference([...questPrototype.images, ...newImages]), image: base64}));
-                dispatch(setImageReference(freeReference));
-            }
-          }
-        } 
-        image={
-          questPrototype && questPrototype.imageReference != null && questPrototype.images.find(image => image.reference === questPrototype.imageReference) ? 
-            getImageAddress(questPrototype.images.find(image => image.reference === questPrototype.imageReference)!.imageId, '') :
-            imagePath
-        } 
-        setImage={
-          (path: string) => {
-            dispatch(setImagePath(path))
-          }
-        } 
-        style={[style.container, style.imagePicker]}
-      /> */}
       <View style={[style.container, style.smallInputsGroup]}>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='map-marker' size={16} color='darkgray'/>
@@ -113,10 +69,10 @@ export const QuestPropertiesScreen = () => {
         loading={isSaving}
         onPress={() => {
           setIsSaving(true);
-          createPutRequest(questId!, questPrototype!, newImages)
+          createAndPutRequest(questId!, questPrototype!, newImages)
             .then(r => r.json())
             .then(data => {dispatch(setImages(questPrototype!.images.concat(data.images)));dispatch(setNewImages([]))})
-            .catch(() => console.log('Image too large.')) // TODO Compress
+            //.catch(() => console.log('Image too large.')) // TODO Compress
             .then(() => setIsSaving(false))
           }}
       >

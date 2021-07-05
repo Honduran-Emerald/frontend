@@ -16,7 +16,7 @@ interface IStoryModuleData {
     objective: string,
 }
 
-export const StoryModule: React.FC<ICreateModule<PrototypeStoryModule>> = ({ setFinalModule, edit, defaultValues, setComponents }) => {
+export const StoryModule: React.FC<ICreateModule<PrototypeStoryModule>> = ({ setFinalModule, edit, defaultValues, setComponents, scrollToPreview }) => {
 
     const [moduleData, setModuleData] = useState<IStoryModuleData>(edit 
         ? {
@@ -52,6 +52,10 @@ export const StoryModule: React.FC<ICreateModule<PrototypeStoryModule>> = ({ set
         })
     }
 
+    useEffect(() => {
+        setFinalModule(parseToModule(moduleData))
+    }, [moduleData])
+
     return (
         <View style={{marginHorizontal: 10}}>
             <TextInput
@@ -70,9 +74,8 @@ export const StoryModule: React.FC<ICreateModule<PrototypeStoryModule>> = ({ set
                 theme={{colors: {primary: primary}}}
                 mode='contained'
                 style={{marginBottom: 20}}
-                onPress={() => {
-                    setFinalModule(parseToModule(moduleData)) /* TODO: Add Module Preprocessing here as soon as module structure is fully defined. Don't forget it */
-                    setComponents}}>
+
+                onPress={scrollToPreview}>
                 {i18n.t('createModuleButton')}
             </Button>
         </View>
