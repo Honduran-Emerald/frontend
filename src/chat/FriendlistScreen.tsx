@@ -53,7 +53,7 @@ export default function FriendlistScreen() {
     {
       userId: '60e21d6dbd66c5bc76cbe394',
       userName: 'joy',
-      image: '',
+      image: null,
       level: 0,
       experience: 0,
       glory: 0,
@@ -108,7 +108,15 @@ export default function FriendlistScreen() {
         >
           {
             friends.map((user) =>
-              <FriendItem key={user.userId} user={user} isFriend hasFollowed buttonAction={() => alert('Open chat with ' + user.userName)}/>
+              <FriendItem 
+                key={user.userId} 
+                user={user} 
+                isFriend 
+                hasFollowed 
+                buttonAction={
+                  () => navigation.navigate('ChatPersonal', {userName: user.userName, userImgSource: getImageAddress(user.image, user.userName), userTargetId: user.userId})
+                }
+              />
             )
           }
         </ScrollView>
