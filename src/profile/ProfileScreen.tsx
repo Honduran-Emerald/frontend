@@ -65,7 +65,6 @@ export const ProfileScreen = (props: profileProps) => {
 
   useEffect(() => {
     if(route.params?.userId && route.params.userId !== authenticatedUser?.userId) {
-      console.log(route.params.userId);
       getUserRequest(route.params.userId).then(response => response.json()).then(obj => setUser(obj.user));
     } else {
       setUser(authenticatedUser);
@@ -79,13 +78,15 @@ export const ProfileScreen = (props: profileProps) => {
   return(
     <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
       <ScrollView contentContainerStyle={style.profile}>
-        <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={{top: 5, right: 5, position: "absolute"}}>
+        {(authenticatedUser?.userId === user?.userId) &&
+          <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={{top: 5, right: 5, position: "absolute"}}>
             <MaterialCommunityIcons name="cog" size={30} color='#1D79AC' />
-        </TouchableOpacity>
+          </TouchableOpacity>
+        }
         {user && authenticatedUser && 
           <ProfileTop 
             ownProfile={authenticatedUser.userId === user.userId} 
-            profileData={{username: user.userName, followers: user.followerCount, level: user.level, xp: user.experience, profileImageId: user.image, questsCreated: user.questCount, questsPlayed: user.trackerCount}} 
+            profileData={{userId: user.userId, username: user.userName, followers: user.followerCount, level: user.level, xp: user.experience, profileImageId: user.image, questsCreated: user.questCount, questsPlayed: user.trackerCount}} 
             following={user.following}
             friends={user.follower && user.following}
           />
