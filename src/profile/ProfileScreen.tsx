@@ -13,7 +13,7 @@ import {
   queryQuestsRequest,
   queryvotedQuestsRequest
 } from "../utils/requestHandler";
-import { GameplayQuestHeader, QuestHeader } from "../types/quest";
+import { GameplayQuestHeader } from "../types/quest";
 import { useAppSelector } from '../redux/hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {useNavigation} from "@react-navigation/core";
@@ -76,7 +76,7 @@ export const ProfileScreen = (props: profileProps) => {
           <>
             <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={publishedQuests}/>
             <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={quests}/>
-            <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests}/>
+            <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests} addQuest/>
             <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={upvotedQuests}/>
           </>)
           }

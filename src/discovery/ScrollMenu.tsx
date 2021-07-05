@@ -4,15 +4,17 @@ import { Surface } from "react-native-paper";
 import { GameplayQuestHeader } from "../types/quest";
 import { LocationObject } from "expo-location";
 import { QuestPreviewLoader } from './QuestPreviewLoader';
+import { AddDraftCard } from './AddDraftCard';
 
 export default interface ScrollMenuProps {
     header: string
     type: string
     location: LocationObject | undefined
     quests: GameplayQuestHeader[] | undefined
+    addQuest?: true
 }
 
-export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location }) => {
+export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location, addQuest }) => {
 
     const [loadingArray, ] = useState(new Array(2+Math.floor(Math.random()*3)));
 
@@ -26,6 +28,9 @@ export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location
                     horizontal
                     data={quests || loadingArray}
                     showsHorizontalScrollIndicator={false}
+                    ListFooterComponent={addQuest && location && (() => (
+                        <AddDraftCard />
+                    ))}
                     renderItem={
                         ({ item }: {item: GameplayQuestHeader | undefined}) => <QuestPreviewLoader loading={item === undefined} content={(item === undefined) ? null : {location: location, quest: item}}/>
                     }
