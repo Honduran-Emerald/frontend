@@ -4,6 +4,7 @@ import { ChatOverview } from './overview/ChatOverview';
 import FriendlistScreen from './FriendlistScreen';
 import AddFriendScreen from './AddFriendScreen';
 import {StatusBar as StatusBar2} from "react-native";
+import { ProfileNavigator } from '../profile/ProfileNavigator';
 
 export const ChatNavigator: React.FC = () => {
   const Stack = createStackNavigator();
@@ -20,6 +21,7 @@ export const ChatNavigator: React.FC = () => {
           }}/>
       <Stack.Screen name={'Friendlist'} component={FriendlistScreen} options={{headerShown: false}}/>
       <Stack.Screen name={'AddFriend'} component={AddFriendScreen} options={{headerTitle: 'Follow new users'}}/>
+      <Stack.Screen name={'UserProfile'} component={ProfileNavigator} options={{headerShown: false}}/>
     </Stack.Navigator>
   )
 }

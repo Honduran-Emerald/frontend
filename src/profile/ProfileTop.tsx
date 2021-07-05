@@ -5,7 +5,7 @@ import { ButtonOutline } from '../common/ButtonOutline';
 import { StatChips } from './StatChips';
 import { LevelBar } from './LevelBar';
 import { Image } from 'react-native';
-import { userUpdateImage } from '../utils/requestHandler';
+import { userToggleFollow, userUpdateImage } from '../utils/requestHandler';
 import { ImagePicker } from '../common/ImagePicker';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -13,9 +13,10 @@ import { getImageAddress } from '../utils/imageHandler';
 
 interface ProfileTopProps {
   ownProfile?: boolean,
-  following?: boolean,
+  following: boolean,
   friends? : boolean,
   profileData: {
+    userId: string,
     username: string,
     profileImageId: string,
     followers: number,
@@ -28,6 +29,7 @@ interface ProfileTopProps {
 export const ProfileTop = ({following, ownProfile, friends, profileData} : ProfileTopProps) => {
   const [image, setImage] = useState<string>(ownProfile ? getImageAddress(profileData.profileImageId, profileData.username): "");
   const [base64, setBase64] = useState<string>();
+  const [followingState, setFollowingState] = useState<boolean>(following);
 
   useEffect(() => {
     base64 && userUpdateImage(base64)
@@ -40,7 +42,6 @@ export const ProfileTop = ({following, ownProfile, friends, profileData} : Profi
             ownProfile ? 
               <ImagePicker setBase64={setBase64} aspect={[4, 4]} image={image} setImage={setImage} style={style.profileImage} />
               : <Image source={{uri: getImageAddress(profileData.profileImageId, profileData.username)}} style={style.profileImage} />
-              
           }
         </View>
         <View style={style.buttonGroup}>
@@ -50,8 +51,12 @@ export const ProfileTop = ({following, ownProfile, friends, profileData} : Profi
               <ButtonOutline label='Edit Profile' onPress={() => {}} /> : 
               (
                 <>
-                  {following ? <ButtonOutline label='Unfollow' onPress={() => {}} /> : <ButtonGradient label='Follow' onPress={() => {}}/>}
-                  {friends && <ButtonGradient label='Message' onPress={() => {}} />}
+                  {
+                    followingState ? 
+                      <ButtonOutline label='Unfollow' onPress={() => {setFollowingState(false); userToggleFollow(profileData.userId)}} /> : 
+                      <ButtonGradient label='Follow' onPress={() => {setFollowingState(true); userToggleFollow(profileData.userId)}}/>
+                  }
+                  {friends && <ButtonGradient label='Message' style={{marginTop: 5}} onPress={() => {/*TODO: add navigation to chat*/}} />}
                 </>
               )
           }

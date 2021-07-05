@@ -37,8 +37,7 @@ export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location
                     keyExtractor={(item, idx) => (
                         item ? item.id : idx.toString()
                     )}
-                    />
-                    
+                />
             </Surface>
         </View>
 
