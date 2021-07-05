@@ -1,21 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Dimensions, View } from "react-native";
-import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { StoryModule } from "./module-views/StoryModule";
 import { EndingModule } from "./module-views/EndingModule";
 import { ChoiceModule } from "./module-views/ChoiceModule";
 import { useAppDispatch } from "../../redux/hooks";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { addOrUpdateQuestModule } from "../../redux/editor/editorSlice";
-import StepIndicator from "react-native-step-indicator";
 import { ModuleTypeChoice } from "./ModuleTypeChoice";
 import { PreviewModuleScreen } from "./PreviewModuleScreen";
 import { RouteProp } from "@react-navigation/native";
-import { InternalFullNode } from "../graph/utils/linksParser";
 import { PrototypeComponent, PrototypeModule, PrototypeModuleBase } from "../../types/prototypes";
 import { LocationModule } from "./module-views/LocationModule";
-import { ComponentCreator } from "./ComponentCreator";
 import { ComponentCreateScreen } from "./ComponentCreateScreen";
+import { useCallback } from "react";
 
 const displayWidth = Dimensions.get("screen").width;
 
@@ -24,6 +22,7 @@ export interface ICreateModule<ModuleType extends PrototypeModuleBase> {
   edit?: boolean;
   defaultValues?: ModuleType;
   setComponents: React.Dispatch<React.SetStateAction<PrototypeComponent[]>>,
+  scrollToPreview: () => void
 }
 
 export interface IModuleBase {
@@ -59,23 +58,34 @@ export const CreateModuleScreen = () => {
       id: route.params?.moduleId,
     };
 
-    setFinalModule({ ...finalModule, ...baseModule, components: components });
+    setFinalModule(finalModule)
+    //setFinalModule({ ...finalModule, ...baseModule, components: components });
   };
+
+  const [combinedModule, setCombinedModule] = useState<PrototypeModule>();
+
+  useEffect(() => {
+    const baseModule = {
+      id: route.params?.moduleId,
+    };
+    if (finalModule) {
+      setCombinedModule({...finalModule, ...baseModule, components: components})
+    }
+  }, [finalModule, route.params.moduleId, components])
 
   const modules = ["Location", "Choice", "Story", "Ending"];
 
-  const moduleMap: { [moduleName: string]: JSX.Element } = {
-    Story: <StoryModule setFinalModule={saveModule} setComponents={setComponents}/>,
-    Ending: <EndingModule setFinalModule={saveModule} setComponents={setComponents} />,
-    Choice: <ChoiceModule setFinalModule={saveModule} setComponents={setComponents} />,
-    Location: <LocationModule setFinalModule={saveModule} setComponents={setComponents} />
-  };
-
-  useEffect(() => {
+  const scrollToPreview = useCallback(() => {
     swiper.current?.scrollTo({
       x: 3 * displayWidth,
-    });
-  }, [finalModule]);
+    })}, [swiper])
+
+  const moduleMap: { [moduleName: string]: JSX.Element } = {
+    Story: <StoryModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview} />,
+    Ending: <EndingModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview} />,
+    Choice: <ChoiceModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview} />,
+    Location: <LocationModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview}/>
+  };
 
   useEffect(() => {
     swiper.current?.scrollTo({
@@ -85,11 +95,6 @@ export const CreateModuleScreen = () => {
 
   return (
     <View style={{ margin: 0, borderColor: "black", flexGrow: 1 }}>
-      {/*<StepIndicator 
-      customStyles={customStyles} 
-      labels={['Choose\nModule Type', 'Choose Module Properties', 'Create\nModule']}
-      currentPosition={currentIndex}
-    stepCount={3}/>*/}
       <ScrollView
         horizontal
         pagingEnabled
@@ -114,13 +119,13 @@ export const CreateModuleScreen = () => {
             {moduleMap[chosenModuleType]}
           </ScrollView>
         )}
-        {finalModule && (
+        {combinedModule && (
           <View style={{width: displayWidth}}>
           <PreviewModuleScreen
-            prototypeModule={finalModule}
+            prototypeModule={combinedModule}
             saveModule={() => {
               route.params?.insertModuleId();
-              dispatch(addOrUpdateQuestModule(finalModule));
+              dispatch(addOrUpdateQuestModule(combinedModule));
               navigation.navigate("ModuleGraph");
             }}
           />

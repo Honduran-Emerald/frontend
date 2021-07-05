@@ -15,7 +15,7 @@ interface IChoiceModuleData {
 
 const maxChoices = 5;
 
-export const ChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ setFinalModule, edit, defaultValues, setComponents }) => {
+export const ChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ setFinalModule, edit, defaultValues, setComponents, scrollToPreview }) => {
 
     const [moduleData, setModuleData] = useState<IChoiceModuleData>(
         edit 
@@ -51,6 +51,10 @@ export const ChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ s
             objective: moduleData.objective
         })
     }
+
+    useEffect(() => {
+        setFinalModule(parseToModule(moduleData))
+    }, [moduleData])
 
     return (
         <View style={{marginHorizontal: 10}}>
@@ -137,7 +141,7 @@ export const ChoiceModule: React.FC<ICreateModule<PrototypeChoiceModule>> = ({ s
                 theme={{colors: {primary: primary}}}
                 mode='contained'
                 style={{marginBottom: 20}}
-                onPress={() => {setFinalModule(parseToModule(moduleData)) /* TODO: Add Module Preprocessing here as soon as module structure is fully defined. Don't forget it */}}>
+                onPress={scrollToPreview}>
                 
                 {I18n.t('createModuleButton')}
             </Button>

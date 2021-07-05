@@ -12,7 +12,7 @@ interface IEndingModuleData {
     objective: string,
 }
 
-export const EndingModule: React.FC<ICreateModule<PrototypeEndingModule>> = ({ setFinalModule, edit, defaultValues, setComponents }) => {
+export const EndingModule: React.FC<ICreateModule<PrototypeEndingModule>> = ({ setFinalModule, edit, defaultValues, setComponents, scrollToPreview }) => {
 
     const [moduleData, setModuleData] = useState<IEndingModuleData>(edit ? {
         objective: defaultValues?.objective || ''
@@ -42,6 +42,9 @@ export const EndingModule: React.FC<ICreateModule<PrototypeEndingModule>> = ({ s
         })
     }
 
+    useEffect(() => {
+        setFinalModule(parseToModule(moduleData))
+    }, [moduleData])
 
     return (
         <View style={{marginHorizontal: 10}}>
@@ -67,8 +70,8 @@ export const EndingModule: React.FC<ICreateModule<PrototypeEndingModule>> = ({ s
                 theme={{colors: {primary: primary}}}
                 mode='contained'
                 style={{marginBottom: 20}}
-                onPress={() => {setFinalModule(parseToModule(moduleData)) /* TODO: Add Module Preprocessing here as soon as module structure is fully defined. Don't forget it */}}>
-                
+                onPress={scrollToPreview}>
+
                 {i18n.t('createModuleButton')}
             </Button>
         </View>
