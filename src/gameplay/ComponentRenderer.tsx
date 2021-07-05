@@ -21,7 +21,7 @@ export const ComponentRenderer: React.FC<ComponentRendererProps> = ({ components
       {
         //TODO remove placeholder image
       }
-      <ImageComponent key={'abseie434'} data={{componentId: 'abseie434', componentType: 'Image', imageId: 'RABN90uqFCUHW8CH'}}/>
+      {/* <ImageComponent key={'abseie434'} data={{componentId: 'abseie434', componentType: 'Image', imageId: 'RABN90uqFCUHW8CH'}}/> */}
       {components.map(component => {
         switch (component.componentType) {
           case 'Text':

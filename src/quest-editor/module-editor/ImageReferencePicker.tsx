@@ -63,7 +63,7 @@ export const ImageReferencePicker : React.FC<ImagePickerProps> = ({aspect, style
         result.uri,
         [
           { resize: {
-              width: 1800,
+              width: aspect ? 1000 * aspect[0] / aspect[1] : 1800,
               height: 1000
               }}
         ],

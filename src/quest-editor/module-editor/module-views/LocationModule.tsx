@@ -48,7 +48,10 @@ export const LocationModule: React.FC<ICreateModule<PrototypeLocationModule>> = 
             type: 'Location',
             components: [],
             nextModuleReference: (edit && defaultValues) ? defaultValues.nextModuleReference : null,
-            location: moduleData.targetLocation!
+            location: moduleData.targetLocation || {
+              latitude: 0,
+              longitude: 0
+            }
         })
     }
 

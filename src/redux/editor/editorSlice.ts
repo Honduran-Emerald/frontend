@@ -84,6 +84,14 @@ export const questsSlice = createSlice({
             if(state.questPrototype !== undefined)
                 state.questPrototype.imageReference = action.payload; 
         },
+        setAgentImageReference: (state, action: PayloadAction<number>) => {
+            if (state.questPrototype !== undefined)
+                state.questPrototype.agentProfileReference = action.payload
+        },
+        setAgentName: (state, action: PayloadAction<string>) => {
+            if (state.questPrototype !== undefined)
+                state.questPrototype.agentProfileName = action.payload
+        },
         setNewImages: (state, action: PayloadAction<NewImage[]>) => {
             state.newImages = action.payload;
         },
@@ -110,6 +118,7 @@ export const questsSlice = createSlice({
 
 export const { loadQuest, unloadQuest, addOrUpdateQuestModule, deleteQuestModule, setModules,
         setQuestTitle, setQuestDescription, setLocationName, setImagePath, setImages, setImageReference, 
-        setEstimatedTime, addOrUpdateMultipleQuestModules, spliceQuestImages, setNewImages, pushNewImages, setNewImagesAt, setNewImageReference} = questsSlice.actions
+        setEstimatedTime, addOrUpdateMultipleQuestModules, spliceQuestImages, setNewImages, pushNewImages, 
+        setNewImagesAt, setNewImageReference, setAgentImageReference, setAgentName} = questsSlice.actions
 
 export default questsSlice.reducer
