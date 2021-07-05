@@ -1,5 +1,5 @@
 import React from 'react';
-import { RefreshControl, ScrollView, StatusBar, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { FlatList, StatusBar, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Avatar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../styles';
 import { User } from '../types/general';
 import { getImageAddress } from '../utils/imageHandler';
+import { getUserFriends } from '../utils/requestHandler';
 
 interface FriendItemProps {
   user: User,
@@ -28,7 +29,10 @@ export default function FriendlistScreen() {
       experience: 0,
       glory: 0,
       questCount: 0,
-      trackerCount: 0
+      trackerCount: 0,
+      followerCount: 1,
+      following: true,
+      follower: false,
     },
     {
       userId: '98fdg87fd978f7',
@@ -38,7 +42,10 @@ export default function FriendlistScreen() {
       experience: 0,
       glory: 0,
       questCount: 0,
-      trackerCount: 0
+      trackerCount: 0,
+      followerCount: 1,
+      following: true,
+      follower: false,
     },
     {
       userId: 'jv78ds678d6767d',
@@ -48,7 +55,10 @@ export default function FriendlistScreen() {
       experience: 0,
       glory: 0,
       questCount: 0,
-      trackerCount: 0
+      trackerCount: 0,
+      followerCount: 1,
+      following: true,
+      follower: false,
     },
     {
       userId: 'd343adasdfdsjkhfj6',
@@ -58,22 +68,46 @@ export default function FriendlistScreen() {
       experience: 0,
       glory: 0,
       questCount: 0,
-      trackerCount: 0
+      trackerCount: 0,
+      followerCount: 1,
+      following: true,
+      follower: false,
     },
   ]
 
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = React.useState<boolean>(false);
   const [friends, setFriends] = React.useState<User[]>([]);
 
   React.useEffect(() => {
     // get friends data
-    setFriends(friendsPlaceholder);
+    getFriends().then(() => {});
   }, [])
+
+  const getFriends = () => {
+    return getUserFriends()
+      .then((res) => res.json()
+        .then((data) => {
+          console.log(JSON.stringify(data))
+          if(res.status === 200) {
+            setFriends(data.users);
+          } else {
+            setFriends(friendsPlaceholder);
+          }
+        })
+      )
+  }
 
   const onRefresh = () => {
     setRefreshing(true);
-    // get new friends data
-    setRefreshing(false);
+    getFriends().then(() => setRefreshing(false));
+  }
+
+  const openChat = (user: User) => {
+    navigation.navigate('ChatPersonal', {
+      userName: user.userName,
+      userImgSource: getImageAddress(user.image, user.userName),
+      userTargetId: user.userId
+    })
   }
 
   return (
@@ -95,33 +129,32 @@ export default function FriendlistScreen() {
           </TouchableNativeFeedback>
         </View>
       </View>
-      {
-        friends.length > 0 &&
-        <ScrollView
-          style={{width: '100%'}}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
+      <FlatList
+        data={friends}
+        renderItem={
+          ({ item }) =>
+            <FriendItem
+              user={item}
+              isFriend={true}
+              hasFollowed={true}
+              buttonAction={() => openChat(item)}
             />
-          }
-        >
-          {
-            friends.map((user) =>
-              <FriendItem key={user.userId} user={user} isFriend hasFollowed buttonAction={() => alert('Open chat with ' + user.userName)}/>
-            )
-          }
-        </ScrollView>
-      }
-      {
-        friends.length === 0 &&
-        <View style={styles.noFriends}>
-          <MaterialCommunityIcons name='magnify' size={48} color={Colors.gray}/>
-          <Text style={styles.info}>
-            Search for other players and follow each other to become friends and chat!
-          </Text>
-        </View>
-      }
+        }
+        ListHeaderComponent={() =>
+          friends.length === 0 ?
+            <View style={styles.noFriends}>
+              <MaterialCommunityIcons name='magnify' size={48} color={Colors.gray}/>
+              <Text style={styles.info}>
+                Search for other players and follow each other to become friends and chat!
+              </Text>
+            </View>
+            :
+            null
+        }
+        onRefresh={() => onRefresh()}
+        refreshing={refreshing}
+        style={{height: '100%', width: '100%'}}
+      />
     </View>
   )
 }
@@ -166,11 +199,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     borderBottomWidth: 1,
-    paddingVertical: 5,
     borderColor: Colors.gray,
   },
   headerText: {
-    fontSize: 24,
+    fontSize: 20,
   },
   backButton: {
     backgroundColor: 'transparent',
@@ -185,6 +217,7 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 270,
   },
   info: {
     width: '70%',
