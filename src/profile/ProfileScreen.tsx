@@ -72,14 +72,14 @@ export const ProfileScreen = (props: profileProps) => {
             <MaterialCommunityIcons name="cog" size={30} color='#1D79AC' />
         </TouchableOpacity>
         {user && <ProfileTop ownProfile profileData={{username: user?.userName, followers: followerCount, level: user?.level, xp: user?.experience, profileImageId: user?.image, questsCreated: publishedQuests.length, questsPlayed: 300}} />}
-          {location && (
-            <>
-              <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={publishedQuests}/>
-              <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={quests}/>
-              <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests}/>
-              <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={upvotedQuests}/>
-            </>)
-            }
+        {(
+          <>
+            <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={publishedQuests}/>
+            <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={quests}/>
+            <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests}/>
+            <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={upvotedQuests}/>
+          </>)
+          }
       </ScrollView>
       <StatusBar style="auto"/>
     </View>
