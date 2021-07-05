@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, ScrollView, StatusBar as StatusBar2} from "react-native";
-import {StatusBar} from "expo-status-bar";
-import {Colors} from "../styles";
-import {ScrollMenu} from "./ScrollMenu";
-import {GameplayQuestHeader} from "../types/quest";
-import {queryQuestsRequest} from "../utils/requestHandler";
-import {Searchbar} from "react-native-paper";
-import {removeSpecialChars} from "../gameplay/QuestlogScreen";
-import {WideQuestPreview} from "./WideQuestPreview";
-import {useAppSelector} from "../redux/hooks";
-import {getLocation} from "../utils/locationHandler";
-import {useSafeAreaInsets} from "react-native-safe-area-context";
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, StatusBar as StatusBar2 } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { Colors } from "../styles";
+import { ScrollMenu } from "./ScrollMenu";
+import { GameplayQuestHeader } from "../types/quest";
+import { queryQuestsRequest } from "../utils/requestHandler";
+import { Searchbar } from "react-native-paper";
+import { removeSpecialChars } from "../gameplay/QuestlogScreen";
+import { WideQuestPreview } from "./WideQuestPreview";
+import { useAppSelector } from "../redux/hooks";
+import { getLocation } from "../utils/locationHandler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const DiscoveryScreen = () => {
 

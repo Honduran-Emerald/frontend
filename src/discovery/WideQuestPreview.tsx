@@ -3,12 +3,13 @@ import { useNavigation } from '@react-navigation/core';
 import { Button, Card, Title } from 'react-native-paper';
 import { StyleSheet, Text, View } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { getDistanceFromLatLonInKm, QuestPreviewProps } from './ScrollMenu';
 import { Colors } from '../styles';
 import { BACKENDIP } from '../../GLOBALCONFIG';
+import { getDistanceFromLatLonInKm } from './locationUtils';
+import { QuestPreviewProps } from './QuestPreview';
 
 
-export const WideQuestPreview = (props: QuestPreviewProps) => {
+export const WideQuestPreview: React.FC<QuestPreviewProps> = ( props ) => {
 
   const [distance, setDistance] = useState("");
 
