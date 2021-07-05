@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import { Colors } from "../styles";
 import { Surface } from "react-native-paper";
 import { GameplayQuestHeader } from "../types/quest";
 import { LocationObject } from "expo-location";
@@ -15,7 +14,7 @@ export default interface ScrollMenuProps {
 
 export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location }) => {
 
-    const [loadingArray, ] = useState(new Array(1+Math.floor(Math.random()*4)));
+    const [loadingArray, ] = useState(new Array(2+Math.floor(Math.random()*3)));
 
     return (
         <View style={styles.surface}>
