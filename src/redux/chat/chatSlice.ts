@@ -94,8 +94,8 @@ export const chatSlice = createSlice({
       })
         const previewObject = state.chatsPreviewList?.find(cp => cp.userId === action.payload.other.id)
         if (previewObject) {
-          previewObject.lastMessageText = action.payload.messages[0].text
-          previewObject.newestMessage = action.payload.messages[0].creationTime.toString()
+          previewObject.lastMessageText = action.payload.messages.length>0 ? action.payload.messages[0].text : ''
+          previewObject.newestMessage = action.payload.messages.length>0 ? action.payload.messages[0].creationTime.toString() : (new Date).toString()
           state.chatsPreviewList = _.orderBy(state.chatsPreviewList, 'newestMessage', 'desc')
         }
     },

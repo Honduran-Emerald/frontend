@@ -17,7 +17,7 @@ interface ILocationModuleData {
     targetLocation: Location | null
 }
 
-export const LocationModule: React.FC<ICreateModule<PrototypeLocationModule>> = ({ setFinalModule, edit, defaultValues, setComponents }) => {
+export const LocationModule: React.FC<ICreateModule<PrototypeLocationModule>> = ({ setFinalModule, edit, defaultValues, setComponents, scrollToPreview }) => {
 
     const [moduleData, setModuleData] = useState<ILocationModuleData>(edit 
         ? {
@@ -48,9 +48,16 @@ export const LocationModule: React.FC<ICreateModule<PrototypeLocationModule>> = 
             type: 'Location',
             components: [],
             nextModuleReference: (edit && defaultValues) ? defaultValues.nextModuleReference : null,
-            location: moduleData.targetLocation!
+            location: moduleData.targetLocation || {
+              latitude: 0,
+              longitude: 0
+            }
         })
     }
+
+    useEffect(() => {
+      setFinalModule(parseToModule(moduleData))
+    }, [moduleData])
 
     return (
         <View style={{marginHorizontal: 10}}>
@@ -113,7 +120,7 @@ export const LocationModule: React.FC<ICreateModule<PrototypeLocationModule>> = 
                 mode='contained'
                 style={{marginBottom: 20, marginTop: 20}}
                 disabled={moduleData.targetLocation === null}
-                onPress={() => {setFinalModule(parseToModule(moduleData)) /* TODO: Add Module Preprocessing here as soon as module structure is fully defined. Don't forget it */}}>
+                onPress={scrollToPreview} >
                 {i18n.t('createModuleButton')}
             </Button>
         </View>

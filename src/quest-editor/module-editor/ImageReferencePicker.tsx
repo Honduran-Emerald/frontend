@@ -24,8 +24,6 @@ export const ImageReferencePicker : React.FC<ImagePickerProps> = ({aspect, style
   const newImages = useAppSelector(state => state.editor.newImages);
   const dispatch = useAppDispatch();
 
-  console.log(loadedImage?.substring(0, 50))
-
   const requestPermission = async () => {
     const { status } = await PickImage.requestMediaLibraryPermissionsAsync();
 
@@ -65,7 +63,7 @@ export const ImageReferencePicker : React.FC<ImagePickerProps> = ({aspect, style
         result.uri,
         [
           { resize: {
-              width: 1800,
+              width: aspect ? 1000 * aspect[0] / aspect[1] : 1800,
               height: 1000
               }}
         ],

@@ -1,104 +1,43 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, StatusBar, FlatList} from "react-native";
-import {Colors} from "../styles";
-import {queryQuestsRequest} from "../utils/requestHandler";
-import {Button, Card, Paragraph, Surface, Title} from "react-native-paper";
-import { GameplayQuestHeader, QuestHeader } from "../types/quest";
-import { getImageAddress } from '../utils/imageHandler';
-import { useNavigation } from '@react-navigation/core';
-import * as Location from "expo-location";
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList } from "react-native";
+import { Surface } from "react-native-paper";
+import { GameplayQuestHeader } from "../types/quest";
 import { LocationObject } from "expo-location";
+import { QuestPreviewLoader } from './QuestPreviewLoader';
+import { AddDraftCard } from './AddDraftCard';
 
-export default interface scrollProps {
+export default interface ScrollMenuProps {
     header: string
     type: string
-    location: LocationObject
-    quests: GameplayQuestHeader[]
+    location: LocationObject | undefined
+    quests: GameplayQuestHeader[] | undefined
+    addQuest?: true
 }
 
+export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location, addQuest }) => {
 
-export function getDistanceFromLatLonInKm(lat1:number, lon1:number, lat2:number, lon2:number) {
-    const R = 6371; // Radius of the earth in km
-    const dLat = deg2rad(lat2 - lat1);  // deg2rad below
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2)
-        ;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    let d = R * c; // Distance in km
-    let unit = " km";
-    if (d > 10) {
-        d = Math.round(d);
-    }
-    else if (d > 1) {
-        d = d * 10;
-        d = Math.round(d);
-        d = d / 10;
-    }
-    else {
-        d = d * 1000;
-        d = Math.round(d);
-        unit = " m";
-    }
-    return d + unit;
-}
-
-function deg2rad(deg:number) {
-    return deg * (Math.PI/180)
-}
-export interface questProps {
-    quest: GameplayQuestHeader
-    location: LocationObject
-}
-
-export const QuestPreview = (props:questProps) => {
-    
-    const [location, setLocation] = useState<Location.LocationObject>();
-    const [distance, setDistance] = useState("");
-    
-    useEffect(() => {
-        props.location && props.quest.location &&
-        setDistance(getDistanceFromLatLonInKm(props.quest.location.latitude, props.quest.location.longitude, props.location.coords.latitude, props.location.coords.longitude));
-    }, [props.location])
-    
-    const navigation = useNavigation();
-    return(
-        <Card style={styles.quest} onPress={() => navigation.navigate('QuestDetail', {quest: props.quest})}>
-            <Card.Cover style={styles.pic} source={props.quest.imageId != null ? {uri: getImageAddress(props.quest.imageId, '')} : require('../../assets/background.jpg')} resizeMode='stretch' />
-            <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={props.quest.title} />
-            <Card.Content style={styles.content}>
-
-            </Card.Content>
-            <Card.Actions style={styles.actions}>
-                <View>
-                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>{distance}</Button>
-                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>{props.quest.votes}</Button>
-                </View>
-                <View>
-                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>{props.quest.approximateTime}</Button>
-                    <Button compact contentStyle={styles.bContent} labelStyle={styles.bLabel}>{props.quest.ownerName}</Button>
-                </View>
-            </Card.Actions>
-        </Card>
-    )
-}
-
-export const ScrollMenu = (props:scrollProps) => {
+    const [loadingArray, ] = useState(new Array(2+Math.floor(Math.random()*3)));
 
     return (
         <View style={styles.surface}>
             <Surface>
                 <Text style={styles.header}>
-                    {props.header}
+                    {header}
                 </Text>
-                <FlatList 
+                <FlatList
                     horizontal
-                    data={props.quests}
+                    data={quests || loadingArray}
+                    showsHorizontalScrollIndicator={false}
+                    ListFooterComponent={addQuest && location && (() => (
+                        <AddDraftCard />
+                    ))}
                     renderItem={
-                        ({item}) => <QuestPreview quest={item} location={props.location} />
-                    }/>
+                        ({ item }: {item: GameplayQuestHeader | undefined}) => <QuestPreviewLoader loading={item === undefined} content={(item === undefined) ? null : {location: location, quest: item}}/>
+                    }
+                    keyExtractor={(item, idx) => (
+                        item ? item.id : idx.toString()
+                    )}
+                />
             </Surface>
         </View>
 
@@ -116,33 +55,6 @@ const styles = StyleSheet.create({
         margin: 0,
         padding: 10,
         paddingHorizontal: 0,
-        height: 250,
-    },
-    quest: {
-        margin: 1,
-        marginHorizontal: 7,
-        width: 150,
-    },
-    pic: {
-        height: 80,
-    },
-    title: {
-        fontSize: 12,
-        lineHeight: 15,
-    },
-    content: {
-        marginLeft: -10,
-        marginTop: -5,
-    },
-    bContent: {
-        width: 75,
-        margin: -5,
-    },
-    bLabel: {
-        fontSize: 10,
-        color: Colors.primary,
-    },
-    actions: {
-        marginTop: 4,
+        height: 240,
     },
 });

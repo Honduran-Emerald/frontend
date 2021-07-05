@@ -31,7 +31,7 @@ export interface ChatMessageNotif {
     Message: ChatTextMessageNotif,
     UserImageId: string,
     Username: string
-} 
+}
 
 export interface ChatBaseMessage {
     sender: string,
