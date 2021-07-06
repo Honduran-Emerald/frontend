@@ -1,12 +1,14 @@
 import React from 'react';
-import { RefreshControl, ScrollView, StatusBar, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { FlatList, StatusBar, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Avatar } from 'react-native-paper';
+import {Avatar, Searchbar} from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 import { Colors } from '../styles';
 import { User } from '../types/general';
 import { getImageAddress } from '../utils/imageHandler';
+import { getUserFriends } from '../utils/requestHandler';
+import {removeSpecialChars} from "../gameplay/QuestlogScreen";
 
 interface FriendItemProps {
   user: User,
@@ -15,65 +17,57 @@ interface FriendItemProps {
   buttonAction: () => void
 }
 
+export function getUserSearch(users: User[], searchInput: string) {
+  if (!users) return [];
+  if (searchInput) {
+    let newUsers: User[] = [];
+    const normalizedSearch = removeSpecialChars(searchInput);
+    users.map((user) => {
+      const normalizedUserName = removeSpecialChars(user.userName);
+      if (normalizedUserName.includes(normalizedSearch)) {
+        newUsers.push(user);
+      }
+    })
+    return newUsers;
+  }
+  return users;
+}
+
 export default function FriendlistScreen() {
 
   const navigation = useNavigation();
 
-  const friendsPlaceholder: User[] = [
-    {
-      userId: 'ds7ztd78s6fd5f6',
-      userName: 'string',
-      image: 'RABN90uqFCUHW8CH',
-      level: 0,
-      experience: 0,
-      glory: 0,
-      questCount: 0,
-      trackerCount: 0
-    },
-    {
-      userId: '98fdg87fd978f7',
-      userName: 'Felex',
-      image: '',
-      level: 0,
-      experience: 0,
-      glory: 0,
-      questCount: 0,
-      trackerCount: 0
-    },
-    {
-      userId: '60df74001963c1a48915855b',
-      userName: 'testaccount',
-      image: 'RABN90uqFCUHW8CH',
-      level: 0,
-      experience: 0,
-      glory: 0,
-      questCount: 0,
-      trackerCount: 0
-    },
-    {
-      userId: '60e21d6dbd66c5bc76cbe394',
-      userName: 'joy',
-      image: null,
-      level: 0,
-      experience: 0,
-      glory: 0,
-      questCount: 0,
-      trackerCount: 0
-    },
-  ]
-
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = React.useState<boolean>(false);
+  const [searchInput, setSearchInput] = React.useState<string>('');
   const [friends, setFriends] = React.useState<User[]>([]);
 
   React.useEffect(() => {
     // get friends data
-    setFriends(friendsPlaceholder);
+    getFriends().then(() => {});
   }, [])
+
+  const getFriends = () => {
+    return getUserFriends()
+      .then((res) => res.json()
+        .then((data) => {
+          if(res.status === 200) {
+            setFriends(data.users);
+          }
+        })
+      )
+  }
 
   const onRefresh = () => {
     setRefreshing(true);
-    // get new friends data
-    setRefreshing(false);
+    getFriends().then(() => setRefreshing(false));
+  }
+
+  const openChat = (user: User) => {
+    navigation.navigate('ChatPersonal', {
+      userName: user.userName,
+      userImgSource: getImageAddress(user.image, user.userName),
+      userTargetId: user.userId
+    })
   }
 
   return (
@@ -95,41 +89,41 @@ export default function FriendlistScreen() {
           </TouchableNativeFeedback>
         </View>
       </View>
-      {
-        friends.length > 0 &&
-        <ScrollView
-          style={{width: '100%'}}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
+      <View style={styles.searchbar}>
+        <Searchbar
+          placeholder={'Search users'}
+          onChangeText={(input) => setSearchInput(input)}
+          value={searchInput}
+          theme={{colors: {primary: Colors.primary}}}
+        />
+      </View>
+      <FlatList
+        data={getUserSearch(friends, searchInput)}
+        keyExtractor={(item) => item.userId}
+        renderItem={
+          ({ item }) =>
+            <FriendItem
+              user={item}
+              isFriend={true}
+              hasFollowed={true}
+              buttonAction={() => openChat(item)}
             />
-          }
-        >
-          {
-            friends.map((user) =>
-              <FriendItem 
-                key={user.userId} 
-                user={user} 
-                isFriend 
-                hasFollowed 
-                buttonAction={
-                  () => navigation.navigate('ChatPersonal', {userName: user.userName, userImgSource: getImageAddress(user.image, user.userName), userTargetId: user.userId})
-                }
-              />
-            )
-          }
-        </ScrollView>
-      }
-      {
-        friends.length === 0 &&
-        <View style={styles.noFriends}>
-          <MaterialCommunityIcons name='magnify' size={48} color={Colors.gray}/>
-          <Text style={styles.info}>
-            Search for other players and follow each other to become friends and chat!
-          </Text>
-        </View>
-      }
+        }
+        ListHeaderComponent={() =>
+          friends.length === 0 ?
+            <View style={styles.noFriends}>
+              <MaterialCommunityIcons name='magnify' size={48} color={Colors.gray}/>
+              <Text style={styles.info}>
+                Search for other players and follow each other to become friends and chat!
+              </Text>
+            </View>
+            :
+            null
+        }
+        onRefresh={() => onRefresh()}
+        refreshing={refreshing}
+        style={{height: '100%', width: '100%'}}
+      />
     </View>
   )
 }
@@ -175,11 +169,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     borderBottomWidth: 1,
-    paddingVertical: 5,
     borderColor: Colors.gray,
   },
   headerText: {
-    fontSize: 24,
+    fontSize: 20,
   },
   backButton: {
     backgroundColor: 'transparent',
@@ -189,11 +182,19 @@ const styles = StyleSheet.create({
   addButton: {
     marginRight: 20,
   },
+  searchbar: {
+    justifyContent: 'center',
+    padding: 15,
+    backgroundColor: Colors.background,
+    borderBottomWidth: 1,
+    borderColor: Colors.gray,
+  },
   noFriends: {
     width: '100%',
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 270,
   },
   info: {
     width: '70%',
