@@ -29,6 +29,14 @@
           "apiKey": "AIzaSyA5hcQYAQCq2gsMM6_LhYRpt6-eA9WaKaM"
         }
       },
+      "permissions": [
+        "CAMERA",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
       "package": "honduran.emerald",
       "googleServicesFile": "./google-services.json"
     },
