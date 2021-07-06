@@ -8,6 +8,7 @@ import { Colors } from '../styles';
 import { FriendItem } from './FriendlistScreen';
 import { User } from '../types/general';
 import { getUserFollowers, userToggleFollowRequest } from '../utils/requestHandler';
+import { removeSpecialChars } from '../gameplay/QuestlogScreen';
 
 export default function AddFriendScreen() {
 
@@ -39,8 +40,7 @@ export default function AddFriendScreen() {
   const followUser = (user: User) => {
     userToggleFollowRequest(user.userId).then((res) => {
       if(res.status === 200) {
-        alert('Changed follow status with ' + user.userName);
-        // TODO update local user follow booleans
+        console.log('Changed follow status with ' + user.userName);
         const index = users.indexOf(user);
         if(index !== -1) {
           const newUsers = lodash.cloneDeep(users);
@@ -51,8 +51,23 @@ export default function AddFriendScreen() {
     })
   }
 
+  const getUserSearch = () => {
+    if (!users) return [];
+    if (searchInput) {
+      let newUsers: User[] = [];
+      const normalizedSearch = removeSpecialChars(searchInput);
+      users.map((user) => {
+        const normalizedUserName = removeSpecialChars(user.userName);
+        if (normalizedUserName.includes(normalizedSearch)) {
+          newUsers.push(user);
+        }
+      })
+      return newUsers;
+    }
+    return users;
+  }
+
   const searchUsers = () => {
-    alert('search for ' + searchInput);
     setInputUpdated(false);
     // TODO endpoint needed, normalization maybe
   }
@@ -69,12 +84,13 @@ export default function AddFriendScreen() {
         />
       </View>
       <FlatList
-        data={users}
+        data={getUserSearch()}
+        keyExtractor={(item) => item.userId}
         renderItem={
           ({ item }) =>
             <FriendItem
               user={item}
-              isFriend={item.follower && item.following}
+              isFriend={false}
               hasFollowed={item.following}
               buttonAction={() => followUser(item)}
             />

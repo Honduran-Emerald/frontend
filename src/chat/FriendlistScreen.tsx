@@ -131,6 +131,7 @@ export default function FriendlistScreen() {
       </View>
       <FlatList
         data={friends}
+        keyExtractor={(item) => item.userId}
         renderItem={
           ({ item }) =>
             <FriendItem
