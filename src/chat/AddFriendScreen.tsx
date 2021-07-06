@@ -43,7 +43,8 @@ export default function AddFriendScreen() {
         const index = users.indexOf(user);
         if(index !== -1) {
           const newUsers = lodash.cloneDeep(users);
-          newUsers[index] = {...user, following: true};
+          const following = user.following;
+          newUsers[index] = {...user, following: !following};
           setUsers(newUsers);
         }
       }
