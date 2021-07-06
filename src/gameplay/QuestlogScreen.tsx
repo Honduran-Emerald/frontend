@@ -63,13 +63,13 @@ export default function QuestlogScreen() {
     if(tracker) dispatch(pinQuest(tracker));
     storeData('PinnedQuestTracker', JSON.stringify(tracker)).then(() => {}, () => {});
   }
-
+  
   const loadQuestObjectiveScreen = useCallback((trackerId: string) => {
     navigation.navigate('GameplayScreen', {
       trackerId: trackerId,
       tracker: acceptedQuests.find(tracker => tracker.trackerId === trackerId),
     })
-  }, [])
+  }, [acceptedQuests])
 
   const sortTrackers = (trackers: QuestTracker[]) => {
     if(trackers.length === 0) {

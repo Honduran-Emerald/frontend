@@ -4,15 +4,15 @@ import { Colors } from '../styles';
 
 export const ButtonOutline = ({label, onPress} : {label: string, onPress: ((event: GestureResponderEvent) => void)}) => (
   <TouchableNativeFeedback style={{elevation: 2}} onPress={onPress}>
-    <View style={style.outline}>
-      <Text style={style.textOutline}>
+    <View style={styleButton.outline}>
+      <Text style={styleButton.textOutline}>
         {label}
       </Text>
     </View>
   </TouchableNativeFeedback>
 );
 
-const style = StyleSheet.create({
+const styleButton = StyleSheet.create({
   outline: {
     borderColor: Colors.primary,
     backgroundColor: Colors.background,
@@ -22,7 +22,6 @@ const style = StyleSheet.create({
     borderRadius: 5,
     textAlign: 'center',
     alignItems: 'center',
-    marginBottom: 5,
     elevation: 5
   },
   textOutline: {
