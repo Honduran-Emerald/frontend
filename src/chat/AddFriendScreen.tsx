@@ -7,7 +7,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../styles';
 import { FriendItem } from './FriendlistScreen';
 import { User } from '../types/general';
-import { getUserFollowers, userToggleFollowRequest } from '../utils/requestHandler';
+import { getUserFollowers, userToggleFollow } from '../utils/requestHandler';
 import { removeSpecialChars } from '../gameplay/QuestlogScreen';
 
 export default function AddFriendScreen() {
@@ -38,7 +38,7 @@ export default function AddFriendScreen() {
   }
 
   const followUser = (user: User) => {
-    userToggleFollowRequest(user.userId).then((res) => {
+    userToggleFollow(user.userId).then((res) => {
       if(res.status === 200) {
         console.log('Changed follow status with ' + user.userName);
         const index = users.indexOf(user);

@@ -63,7 +63,7 @@ export default function FriendlistScreen() {
     {
       userId: '60e21d6dbd66c5bc76cbe394',
       userName: 'joy',
-      image: null,
+      image: '',
       level: 0,
       experience: 0,
       glory: 0,
