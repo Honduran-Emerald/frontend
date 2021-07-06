@@ -20,61 +20,6 @@ export default function FriendlistScreen() {
 
   const navigation = useNavigation();
 
-  const friendsPlaceholder: User[] = [
-    {
-      userId: 'ds7ztd78s6fd5f6',
-      userName: 'string',
-      image: 'RABN90uqFCUHW8CH',
-      level: 0,
-      experience: 0,
-      glory: 0,
-      questCount: 0,
-      trackerCount: 0,
-      followerCount: 1,
-      following: true,
-      follower: false,
-    },
-    {
-      userId: '98fdg87fd978f7',
-      userName: 'Felex',
-      image: '',
-      level: 0,
-      experience: 0,
-      glory: 0,
-      questCount: 0,
-      trackerCount: 0,
-      followerCount: 1,
-      following: true,
-      follower: false,
-    },
-    {
-      userId: '60df74001963c1a48915855b',
-      userName: 'testaccount',
-      image: 'RABN90uqFCUHW8CH',
-      level: 0,
-      experience: 0,
-      glory: 0,
-      questCount: 0,
-      trackerCount: 0,
-      followerCount: 1,
-      following: true,
-      follower: false,
-    },
-    {
-      userId: '60e21d6dbd66c5bc76cbe394',
-      userName: 'joy',
-      image: '',
-      level: 0,
-      experience: 0,
-      glory: 0,
-      questCount: 0,
-      trackerCount: 0,
-      followerCount: 1,
-      following: true,
-      follower: false,
-    },
-  ]
-
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
   const [friends, setFriends] = React.useState<User[]>([]);
 
@@ -87,11 +32,8 @@ export default function FriendlistScreen() {
     return getUserFriends()
       .then((res) => res.json()
         .then((data) => {
-          console.log(JSON.stringify(data))
           if(res.status === 200) {
             setFriends(data.users);
-          } else {
-            setFriends(friendsPlaceholder);
           }
         })
       )

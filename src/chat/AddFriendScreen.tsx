@@ -29,7 +29,6 @@ export default function AddFriendScreen() {
     return getUserFollowers()
       .then((res) => res.json()
         .then((data) => {
-          console.log(JSON.stringify(data))
           if(res.status === 200) {
             setUsers(data.users);
           }
