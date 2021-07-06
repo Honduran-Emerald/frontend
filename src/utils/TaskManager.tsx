@@ -12,7 +12,7 @@ export const GeofencingTask = 'LocationModuleUpdates';
 export const LocationNotifTitle = 'Reached location';
 export const GeofenceNotifType = 'GeofenceNotification';
 export const LocalUpdatedTrackerIds = 'LocalUpdatedTrackerIds';
-export const SingleGeoFenceLocationRadius = 20;
+export const SingleGeoFenceLocationRadius = 30;
 
 TaskManager.defineTask(GeofencingTask, (task) => {
   console.log(JSON.stringify(task))
