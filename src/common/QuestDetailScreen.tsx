@@ -15,7 +15,7 @@ import { acceptQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { getImageAddress } from '../utils/imageHandler';
-import {addGeofencingRegion} from "../utils/TaskManager";
+import { addGeofencingRegion, SingleGeoFenceLocationRadius } from '../utils/TaskManager';
 
 export default function QuestDetailScreen({ route }: any) {
 
@@ -52,7 +52,7 @@ export default function QuestDetailScreen({ route }: any) {
               identifier: data.trackerModel.trackerId,
               latitude: data.trackerModel.trackerNode.module.location.latitude,
               longitude: data.trackerModel.trackerNode.module.location.longitude,
-              radius: 20,
+              radius: SingleGeoFenceLocationRadius,
               notifyOnEnter: true,
               notifyOnExit: false,
             };
@@ -179,7 +179,7 @@ export default function QuestDetailScreen({ route }: any) {
           {
             // TODO implement go to profile navigation
           }
-          <TouchableNativeFeedback onPress={() => { alert('Go to profile') }}>
+          <TouchableNativeFeedback onPress={() => { navigation.navigate('UserProfile', {screen: 'Profile', params: {userId: quest.ownerId}}) }}>
             <View style={styles.authorView}>
               <Avatar.Image
                 style={styles.authorAvatar}

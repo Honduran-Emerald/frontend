@@ -7,7 +7,6 @@ import { loadQuest } from "../redux/editor/editorSlice";
 
 
 const request = (target: string, type: string = 'GET', body?: any) => {
-
   const token = store.getState().authentication.token;
 
   return fetch(BACKENDIP + target, {
@@ -70,7 +69,7 @@ export const chatSendImageRequest = (userId: string, binaryImage: string) => (re
 }))
 
 // /quest/query/
-export const queryQuestsRequest = (offset: number = 0) => (request(`/quest/query/?offset=${offset}`))
+export const queryQuestsRequest = (offset: number = 0, ownerId?: string) => (request(`/quest/query/?Offset=${offset}` + (ownerId != null ? `&OwnerId=${ownerId}` : '')))
 
 // /quest/queryvoted
 export const queryvotedQuestsRequest = (voteType : string) => (request(`/quest/queryvoted/?voteType=${voteType}`))
@@ -155,11 +154,11 @@ export const getUserRequest = (userId: string) => (request(`/user/get?userId=${u
 // /user/followers
 export const getUserFollowers = () => (request('/user/followers/'))
 
+// /user/togglefollow
+export const userToggleFollow = (userId: string) => (request('/user/togglefollow', 'POST', userId))
+
 // /user/following
 export const getUserFollowing = () => (request('/user/following/'))
-
-// /user/togglefollow
-export const userToggleFollowRequest = (userId: string) => (request('/user/togglefollow', 'POST', userId))
 
 // /user/friends
 export const getUserFriends = () => (request('/user/friends/'))

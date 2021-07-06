@@ -23,7 +23,7 @@ import { QuestStatsScreen } from './QuestStatsScreen';
 import _ from 'lodash';
 import { Colors } from '../styles';
 import { FinishMessage } from './FinishMessage';
-import { addGeofencingRegion, removeUpdatedQuest } from '../utils/TaskManager';
+import { addGeofencingRegion, removeUpdatedQuest, SingleGeoFenceLocationRadius } from '../utils/TaskManager';
 import { useIsFocused } from '@react-navigation/native';
 
 export const GameplayScreen : React.FC = () => {
@@ -123,7 +123,7 @@ export const GameplayScreen : React.FC = () => {
         identifier: currentTracker?.trackerId,
         latitude: newModule.location.latitude,
         longitude: newModule.location.longitude,
-        radius: 20,
+        radius: SingleGeoFenceLocationRadius,
         notifyOnEnter: true,
         notifyOnExit: false,
       };

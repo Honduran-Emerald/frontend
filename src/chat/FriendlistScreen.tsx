@@ -48,8 +48,8 @@ export default function FriendlistScreen() {
       follower: false,
     },
     {
-      userId: 'jv78ds678d6767d',
-      userName: 'HK',
+      userId: '60df74001963c1a48915855b',
+      userName: 'testaccount',
       image: 'RABN90uqFCUHW8CH',
       level: 0,
       experience: 0,
@@ -61,9 +61,9 @@ export default function FriendlistScreen() {
       follower: false,
     },
     {
-      userId: 'd343adasdfdsjkhfj6',
-      userName: 'vogel',
-      image: '',
+      userId: '60e21d6dbd66c5bc76cbe394',
+      userName: 'joy',
+      image: null,
       level: 0,
       experience: 0,
       glory: 0,
@@ -161,9 +161,10 @@ export default function FriendlistScreen() {
 }
 
 export function FriendItem({ user, isFriend, hasFollowed, buttonAction }: FriendItemProps) {
+  const navigation = useNavigation();
 
   return (
-    <TouchableNativeFeedback onPress={() => alert('Open profile ' + user.userName)}>
+    <TouchableNativeFeedback onPress={() => navigation.navigate('UserProfile', {screen: 'Profile', params:{userId: user.userId}})}>
       <View style={styles.friendContainer}>
         <Avatar.Image
           style={styles.avatar}

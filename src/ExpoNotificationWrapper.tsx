@@ -38,7 +38,7 @@ export const ExpoNotificationWrapper: React.FC<{navigationRef: any}> = ({ naviga
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       console.log(notification)
-      if(notification.request.content.data && notification.request.content.data.type && notification.request.content.data.type !== GeofenceNotifType) {
+      if(notification.request.content.data && notification.request.content.data.type !== GeofenceNotifType) {
         dispatch(getMessage(notification.request.content.data as unknown as ChatMessageNotif))
       }
     })
