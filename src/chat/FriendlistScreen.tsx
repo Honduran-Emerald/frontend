@@ -1,13 +1,14 @@
 import React from 'react';
 import { FlatList, StatusBar, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Avatar } from 'react-native-paper';
+import {Avatar, Searchbar} from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 import { Colors } from '../styles';
 import { User } from '../types/general';
 import { getImageAddress } from '../utils/imageHandler';
 import { getUserFriends } from '../utils/requestHandler';
+import {removeSpecialChars} from "../gameplay/QuestlogScreen";
 
 interface FriendItemProps {
   user: User,
@@ -16,11 +17,28 @@ interface FriendItemProps {
   buttonAction: () => void
 }
 
+export function getUserSearch(users: User[], searchInput: string) {
+  if (!users) return [];
+  if (searchInput) {
+    let newUsers: User[] = [];
+    const normalizedSearch = removeSpecialChars(searchInput);
+    users.map((user) => {
+      const normalizedUserName = removeSpecialChars(user.userName);
+      if (normalizedUserName.includes(normalizedSearch)) {
+        newUsers.push(user);
+      }
+    })
+    return newUsers;
+  }
+  return users;
+}
+
 export default function FriendlistScreen() {
 
   const navigation = useNavigation();
 
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
+  const [searchInput, setSearchInput] = React.useState<string>('');
   const [friends, setFriends] = React.useState<User[]>([]);
 
   React.useEffect(() => {
@@ -71,8 +89,16 @@ export default function FriendlistScreen() {
           </TouchableNativeFeedback>
         </View>
       </View>
+      <View style={styles.searchbar}>
+        <Searchbar
+          placeholder={'Search users'}
+          onChangeText={(input) => setSearchInput(input)}
+          value={searchInput}
+          theme={{colors: {primary: Colors.primary}}}
+        />
+      </View>
       <FlatList
-        data={friends}
+        data={getUserSearch(friends, searchInput)}
         keyExtractor={(item) => item.userId}
         renderItem={
           ({ item }) =>
@@ -155,6 +181,13 @@ const styles = StyleSheet.create({
   },
   addButton: {
     marginRight: 20,
+  },
+  searchbar: {
+    justifyContent: 'center',
+    padding: 15,
+    backgroundColor: Colors.background,
+    borderBottomWidth: 1,
+    borderColor: Colors.gray,
   },
   noFriends: {
     width: '100%',

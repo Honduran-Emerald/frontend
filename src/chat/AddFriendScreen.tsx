@@ -5,10 +5,9 @@ import lodash from 'lodash';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Colors } from '../styles';
-import { FriendItem } from './FriendlistScreen';
+import { FriendItem, getUserSearch } from './FriendlistScreen';
 import { User } from '../types/general';
 import { getUserFollowers, userToggleFollow } from '../utils/requestHandler';
-import { removeSpecialChars } from '../gameplay/QuestlogScreen';
 
 export default function AddFriendScreen() {
 
@@ -51,22 +50,6 @@ export default function AddFriendScreen() {
     })
   }
 
-  const getUserSearch = () => {
-    if (!users) return [];
-    if (searchInput) {
-      let newUsers: User[] = [];
-      const normalizedSearch = removeSpecialChars(searchInput);
-      users.map((user) => {
-        const normalizedUserName = removeSpecialChars(user.userName);
-        if (normalizedUserName.includes(normalizedSearch)) {
-          newUsers.push(user);
-        }
-      })
-      return newUsers;
-    }
-    return users;
-  }
-
   const searchUsers = () => {
     setInputUpdated(false);
     // TODO endpoint needed, normalization maybe
@@ -84,7 +67,7 @@ export default function AddFriendScreen() {
         />
       </View>
       <FlatList
-        data={getUserSearch()}
+        data={getUserSearch(users, searchInput)}
         keyExtractor={(item) => item.userId}
         renderItem={
           ({ item }) =>
