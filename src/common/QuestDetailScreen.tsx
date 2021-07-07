@@ -19,7 +19,6 @@ import { getImageAddress } from '../utils/imageHandler';
 import { addGeofencingRegion, SingleGeoFenceLocationRadius } from '../utils/TaskManager';
 import { storeData } from '../utils/AsyncStore';
 
-
 export default function QuestDetailScreen({ route }: any) {
 
   i18n.translations = commonTranslations;
