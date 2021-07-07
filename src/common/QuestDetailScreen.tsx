@@ -192,9 +192,6 @@ export default function QuestDetailScreen({ route }: any) {
               </Text>
             </View>
           </View>
-          {
-            // TODO implement go to profile navigation
-          }
           <TouchableNativeFeedback onPress={() => { navigation.navigate('UserProfile', {screen: 'Profile', params: {userId: quest.ownerId}}) }}>
             <View style={styles.authorView}>
               <Avatar.Image
