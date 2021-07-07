@@ -4,7 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { Colors } from "../styles";
 import { ScrollMenu } from "./ScrollMenu";
 import { GameplayQuestHeader } from "../types/quest";
-import { queryQuestsRequest } from "../utils/requestHandler";
+import {nearbyQuestsRequest, queryQuestsRequest} from "../utils/requestHandler";
 import { Searchbar } from "react-native-paper";
 import { removeSpecialChars } from "../gameplay/QuestlogScreen";
 import { WideQuestPreview } from "./WideQuestPreview";
@@ -18,10 +18,13 @@ export const DiscoveryScreen = () => {
 
     const location = useAppSelector(state => state.location.location)
     const [quests, setQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
+    const [nearbyQuests, setNearbyQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
     const [search, setSearch] = React.useState('');
 
     useEffect(() => {
         queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
+        console.log(location?.coords.longitude, location?.coords.latitude)
+        nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 100).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests));
         // Get Location Permission and set initial Location
         getLocation().catch(() => {});
     },[])
@@ -56,7 +59,7 @@ export const DiscoveryScreen = () => {
             <ScrollView contentContainerStyle={styles.discovery}>
                 {search === '' && (
                     <>
-                        <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={quests}/>
+                        <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={nearbyQuests}/>
                         <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={quests}/>
                         <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={quests}/>
                     </>)
