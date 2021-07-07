@@ -9,7 +9,7 @@ import { Entypo } from '@expo/vector-icons';
 import { Button, FAB, Surface } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { loadPinnedQuestPath, pinQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
-import { addGeofencingRegion } from '../utils/TaskManager';
+import { addGeofencingRegion, SingleGeoFenceLocationRadius } from '../utils/TaskManager';
 
 interface QuestStateScreenProps {
   height: number,
@@ -42,7 +42,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
                   identifier: data.quest.tracker.trackerId,
                   latitude: data.quest.tracker.trackerNode.module.location.latitude,
                   longitude: data.quest.tracker.trackerNode.module.location.longitude,
-                  radius: 20,
+                  radius: SingleGeoFenceLocationRadius,
                   notifyOnEnter: true,
                   notifyOnExit: false,
                 };

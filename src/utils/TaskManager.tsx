@@ -12,6 +12,7 @@ export const GeofencingTask = 'LocationModuleUpdates';
 export const LocationNotifTitle = 'Reached location';
 export const GeofenceNotifType = 'GeofenceNotification';
 export const LocalUpdatedTrackerIds = 'LocalUpdatedTrackerIds';
+export const SingleGeoFenceLocationRadius = 30;
 
 TaskManager.defineTask(GeofencingTask, (task) => {
   console.log(JSON.stringify(task))
@@ -50,7 +51,7 @@ export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
         identifier: tracker.trackerId,
         latitude: tracker.trackerNode.module.location.latitude,
         longitude: tracker.trackerNode.module.location.longitude,
-        radius: 20,
+        radius: SingleGeoFenceLocationRadius,
         notifyOnEnter: true,
         notifyOnExit: false,
       })

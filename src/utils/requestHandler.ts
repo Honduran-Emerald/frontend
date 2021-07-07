@@ -94,7 +94,7 @@ export const createPutRequest = (questId: string, questPrototype: QuestPrototype
 }))
 
 export const createAndPutRequest = (questId: string, questPrototype: QuestPrototype, newImages: NewImage[]) => (
-  questId && questPrototype.id 
+  questId && questPrototype.id
     ? (createPutRequest(questId, questPrototype, newImages))
     : (createQuestRequest()
         .then(r => r.json())
@@ -162,3 +162,6 @@ export const getUserFollowing = () => (request('/user/following/'))
 
 // /user/friends
 export const getUserFriends = () => (request('/user/friends/'))
+
+// /user/query/
+export const queryUsersRequest = (offset: number = 0, searchString?: string) => (request(`/user/query?offset=${offset}` + (searchString != null ? `&search=${searchString}` : '')))
