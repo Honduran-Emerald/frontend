@@ -11,6 +11,28 @@ interface FinishMessageProps {
   handleVote: (vote: 'None' | 'Up' | 'Down') => Promise<Response>,
 }
 
+export function handleNewVote(vote: 'None' | 'Up' | 'Down',
+                              oldVote: 'None' | 'Up' | 'Down',
+                              votes: number,
+                              setVotes: (newVotes: number) => void,
+) {
+  if(oldVote !== 'None') {
+    if(vote === 'Up' && oldVote === 'Down') {
+      setVotes(votes + 2);
+    }
+    else if(vote === 'Down' && oldVote === 'Up') {
+      setVotes(votes - 2);
+    }
+    else if(vote === 'None' && oldVote === 'Down') {
+      setVotes(votes + 1);
+    }
+    else if(vote === 'None' && oldVote === 'Up') {
+      setVotes(votes - 1);
+    }
+  } else
+    vote === 'Up' ? setVotes(votes + 1) : setVotes(votes - 1);
+}
+
 export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, handleVote }) => {
 
   const [votes, setVotes] = React.useState(quest ? quest.votes : 0);
@@ -27,26 +49,12 @@ export const FinishMessage: React.FC<FinishMessageProps> = ({ quest, tracker, ha
   const timeElapsed = `${hoursElapsed}h ${minutes}m ${seconds}s`
 
   const handleClick = (vote: 'None' | 'Up' | 'Down') => {
-    const oldVote = tracker?.vote
+    const oldVote = tracker ? tracker.vote : 'None'
     setInputDisabled(true);
     handleVote(vote).then((res) => {
-      if(res.status === 200) setHasVoted(vote);
       if(res.status === 200) {
-        if(oldVote !== 'None') {
-          if(vote === 'Up' && oldVote === 'Down') {
-            setVotes(votes + 2);
-          }
-          else if(vote === 'Down' && oldVote === 'Up') {
-            setVotes(votes - 2);
-          }
-          else if(vote === 'None' && oldVote === 'Down') {
-            setVotes(votes + 1);
-          }
-          else if(vote === 'None' && oldVote === 'Up') {
-            setVotes(votes - 1);
-          }
-        } else
-          vote === 'Up' ? setVotes(votes + 1) : setVotes(votes - 1);
+        handleNewVote(vote, oldVote, votes, setVotes)
+        setHasVoted(vote);
       }
       setInputDisabled(false);
     });
