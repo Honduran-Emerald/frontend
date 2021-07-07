@@ -7,9 +7,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../styles';
 import { FriendItem, getUserSearch } from './FriendlistScreen';
 import { User } from '../types/general';
-import { getUserFollowers, userToggleFollow } from '../utils/requestHandler';
+import { queryUsersRequest, userToggleFollow } from '../utils/requestHandler';
+import {useAppSelector} from "../redux/hooks";
 
 export default function AddFriendScreen() {
+
+  const currentUser: User | undefined = useAppSelector((state) => state.authentication.user);
 
   const [users, setUsers] = React.useState<User[]>([])
   const [searchInput, setSearchInput] = React.useState<string>('');
@@ -25,11 +28,17 @@ export default function AddFriendScreen() {
   }
 
   const getUsers = () => {
-    return getUserFollowers()
+    return queryUsersRequest()
       .then((res) => res.json()
         .then((data) => {
           if(res.status === 200) {
-            setUsers(data.users);
+            const filteredUsers = data.users.filter((user: User) => user.userId !== currentUser?.userId)
+            filteredUsers.sort((a: User, b: User) => {
+              const textA = a.userName.toUpperCase();
+              const textB = b.userName.toUpperCase();
+              return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            });
+            setUsers(filteredUsers);
           }
         })
       )
