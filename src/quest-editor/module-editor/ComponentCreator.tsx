@@ -94,6 +94,7 @@ const ComponentOption: React.FC<ComponentOptionProps> = ({ component, idx, compo
             alignSelf: 'center'
                 }}>
             <TextInput 
+                theme={{colors: {primary: Colors.primary}}}
                 value={component.text}
                 underlineColor="transparent"
                 style={{
@@ -106,6 +107,7 @@ const ComponentOption: React.FC<ComponentOptionProps> = ({ component, idx, compo
           </View>
 
           <IconButton    
+              theme={{colors: {primary: Colors.primary}}}
               style={{marginHorizontal: 15}}
               disabled={components.length <= 1}
               color='grey'
@@ -139,6 +141,7 @@ const ComponentOption: React.FC<ComponentOptionProps> = ({ component, idx, compo
               flexGrow: 1,
               }}/>
           <IconButton 
+            theme={{colors: {primary: Colors.primary}}}
             style={{marginHorizontal: 15}}
             disabled={components.length <= 1}
             color='grey'
