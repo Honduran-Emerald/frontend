@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setToken, setUser } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
 import { chatQueryRequest, getAllTrackersRequest, getUserSelfRequest, queryTrackerNodesRequest, renewRequest } from './utils/requestHandler';
-import { loadPinnedQuestPath, pinQuest, setAcceptedQuests, setTrackerWithUpdate } from './redux/quests/questsSlice';
+import { loadPinnedQuestPath, pinQuest, setAcceptedQuests, setRecentlyVisitedQuest, setTrackerWithUpdate } from './redux/quests/questsSlice';
 import { QuestTracker } from './types/quest';
 import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';
@@ -114,6 +114,16 @@ export const TokenLoader = () => {
             }))
         }
       })
+    )
+
+    promises.push(
+      getData('RecentlyVisitedQuests')
+        .then((res) => {
+          if(res) {
+            const recentQuests = JSON.parse(res);
+            dispatch(setRecentlyVisitedQuest(recentQuests));
+          }
+        })
     )
 
     promises.push(

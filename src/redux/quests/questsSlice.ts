@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {QuestHeader, QuestPath, QuestTracker, QuestTrackerNode, Vote} from '../../types/quest';
+import { QueriedQuest, QuestHeader, QuestPath, QuestTracker, QuestTrackerNode, Vote } from '../../types/quest';
 
 interface QuestsState {
     localQuests: QuestHeader[],
@@ -7,6 +7,7 @@ interface QuestsState {
     pinnedQuest: QuestTracker | undefined,
     pinnedQuestPath: QuestPath | undefined,
     trackerWithUpdates: string[],
+    recentlyVisitedQuests: QueriedQuest[],
 }
 
 const initialState: QuestsState = {
@@ -15,6 +16,7 @@ const initialState: QuestsState = {
     pinnedQuest: undefined,
     pinnedQuestPath: undefined,
     trackerWithUpdates: [],
+    recentlyVisitedQuests: [],
 }
 
 export const questsSlice = createSlice({
@@ -98,6 +100,7 @@ export const questsSlice = createSlice({
             state.acceptedQuests = []
             state.localQuests = []
             state.trackerWithUpdates = []
+            state.recentlyVisitedQuests = []
         },
         setTrackerWithUpdate: (state, action: PayloadAction<string[]>) => {
             state.trackerWithUpdates = action.payload;
@@ -108,6 +111,15 @@ export const questsSlice = createSlice({
         },
         removeTrackerWithUpdate: (state, action: PayloadAction<string>) => {
             state.trackerWithUpdates = state.trackerWithUpdates.filter((trackerId) => trackerId !== action.payload);
+        },
+        setRecentlyVisitedQuest: (state, action: PayloadAction<QueriedQuest[]>) => {
+            state.recentlyVisitedQuests = action.payload;
+        },
+        addRecentlyVisitedQuest: (state, action: PayloadAction<QueriedQuest>) => {
+            if(state.recentlyVisitedQuests.length > 19) {
+                state.recentlyVisitedQuests.splice(0, 1)
+            }
+            state.recentlyVisitedQuests.push(action.payload);
         },
     }
 })
@@ -126,7 +138,9 @@ export const {
     loadPinnedQuestPath,
     setTrackerWithUpdate,
     addTrackerWithUpdate,
-    removeTrackerWithUpdate
+    removeTrackerWithUpdate,
+    setRecentlyVisitedQuest,
+    addRecentlyVisitedQuest,
 } = questsSlice.actions
 
 export default questsSlice.reducer
