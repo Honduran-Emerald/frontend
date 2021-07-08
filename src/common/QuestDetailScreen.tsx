@@ -12,7 +12,7 @@ import { commonTranslations } from './translations';
 import { QueriedQuest, QuestTracker } from '../types/quest';
 import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import {acceptQuest, addRecentlyVisitedQuest, refreshRecentlyVisitedQuest} from '../redux/quests/questsSlice';
+import { acceptQuest, addRecentlyVisitedQuest, refreshRecentlyVisitedQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { getImageAddress } from '../utils/imageHandler';
