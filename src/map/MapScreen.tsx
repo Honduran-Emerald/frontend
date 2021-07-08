@@ -10,13 +10,12 @@ import { FAB } from 'react-native-paper';
 import { useAppSelector } from '../redux/hooks';
 import { useDispatch } from 'react-redux';
 import { queryQuestsRequest } from '../utils/requestHandler';
-import { acceptQuest, setLocalQuests } from '../redux/quests/questsSlice';
+import { setLocalQuests } from '../redux/quests/questsSlice';
 import { QuestMarker } from './QuestMarker';
 import { useNavigation } from '@react-navigation/core';
 import PinnedQuestCard from './PinnedQuestCard';
-import {setLocation} from "../redux/location/locationSlice";
-import {useFocusEffect} from "@react-navigation/native";
-import { GameplayLocationModule } from '../types/quest';
+import { setLocation } from '../redux/location/locationSlice';
+import { useFocusEffect } from '@react-navigation/native';
 
 export const MapScreen = () => {
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -59,7 +58,8 @@ export const MapScreen = () => {
         .then(async () => {
           const LOCATION_SETTINGS = {
             accuracy: Location.Accuracy.Highest,
-            distanceInterval: 0
+            timeInterval: 3000,
+            distanceInterval: 3,
           };
 
           // subscribe to Location updates
