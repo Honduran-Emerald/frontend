@@ -27,7 +27,7 @@ export const DiscoveryScreen = () => {
         fetchData();
     },[])
 
-    const fetchData = () => {
+    const fetchData = async () => {
         // Get Location Permission and set initial Location
         getLocation().catch(() => {});
         // set quest arrays
@@ -35,9 +35,9 @@ export const DiscoveryScreen = () => {
         // nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests));
     }
 
-    const onRefresh = () => {
+    const onRefresh = async () => {
         setRefreshing(true);
-        fetchData();
+        await fetchData();
         setRefreshing(false);
     }
 
