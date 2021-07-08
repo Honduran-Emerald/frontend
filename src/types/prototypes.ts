@@ -22,11 +22,40 @@ export interface PrototypeModuleBase {
 }
 
 export interface PrototypeChoiceModule extends PrototypeModuleBase {
-  type: 'Choice'
+  type: 'Choice',
   choices: {
       text: string,
       nextModuleReference: number | null,
   }[]
+}
+
+export interface PrototypeRandomModule extends PrototypeModuleBase {
+  type: 'Random',
+  paths: [{
+    nextModuleReference: number | null,
+    weight: number
+  }, {
+    nextModuleReference: number | null,
+    weight: number
+  }]
+}
+
+export interface PrototypeWideAreaModule extends PrototypeModuleBase {
+  type: 'WideArea',
+  location: Location,
+  radius: number,
+  nextModuleReference: number | null,
+}
+
+export interface PrototypePassphraseModule extends PrototypeModuleBase {
+  type: 'Passphrase',
+  phrase: string,
+  nextModuleReference: number | null,
+}
+
+export interface PrototypeQRModule extends PrototypeModuleBase {
+  type: 'QR',
+  nextModuleReference: number | null,
 }
 
 export interface PrototypeStoryModule extends PrototypeModuleBase {
@@ -45,7 +74,7 @@ export interface PrototypeLocationModule extends PrototypeModuleBase {
   nextModuleReference: number | null,
 }
 
-export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule | PrototypeLocationModule
+export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule | PrototypeLocationModule | PrototypeRandomModule | PrototypeWideAreaModule | PrototypePassphraseModule | PrototypeQRModule
 
 //############################# Components
 
