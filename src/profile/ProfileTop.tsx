@@ -10,6 +10,7 @@ import { ImagePicker } from '../common/ImagePicker';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { getImageAddress } from '../utils/imageHandler';
+import { useNavigation } from '@react-navigation/native';
 
 interface ProfileTopProps {
   ownProfile?: boolean,
@@ -30,6 +31,7 @@ export const ProfileTop = ({following, ownProfile, friends, profileData} : Profi
   const [image, setImage] = useState<string>(ownProfile ? getImageAddress(profileData.profileImageId, profileData.username): "");
   const [base64, setBase64] = useState<string>();
   const [followingState, setFollowingState] = useState<boolean>(following);
+  const navigation = useNavigation();
 
   useEffect(() => {
     base64 && userUpdateImage(base64)
@@ -56,7 +58,21 @@ export const ProfileTop = ({following, ownProfile, friends, profileData} : Profi
                       <ButtonOutline label='Unfollow' onPress={() => {setFollowingState(false); userToggleFollow(profileData.userId)}} /> : 
                       <ButtonGradient label='Follow' onPress={() => {setFollowingState(true); userToggleFollow(profileData.userId)}}/>
                   }
-                  {friends && <ButtonGradient label='Message' style={{marginTop: 5}} onPress={() => {/*TODO: add navigation to chat*/}} />}
+                  {
+                    friends && 
+                      <ButtonGradient 
+                        label='Message' 
+                        style={{marginTop: 5}} 
+                        onPress={() => {
+                          navigation.navigate('ChatPersonal', {
+                            userName: profileData.username,
+                            userImgSource: getImageAddress(profileData.profileImageId, profileData.username),
+                            userTargetId: profileData.userId
+                          })
+                        }} 
+                      />
+                  
+                  }
                 </>
               )
           }
