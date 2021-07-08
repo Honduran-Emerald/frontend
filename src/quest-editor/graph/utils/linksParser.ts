@@ -1,12 +1,17 @@
 import _ from 'lodash';
-import { PrototypeChoiceModule, PrototypeLocationModule, PrototypeModule, PrototypeStoryModule, QuestPrototype } from '../../../types/prototypes';
+import { PrototypeChoiceModule, PrototypeLocationModule, PrototypeModule, PrototypePassphraseModule, PrototypeRandomModule, PrototypeStoryModule, QuestPrototype } from '../../../types/prototypes';
 
 export interface ChoiceTag {
     type: 'Choice'
     choice: string
 }
 
-export type GraphTag = ChoiceTag;
+export interface RandomTag {
+    type: 'Random'
+    probability: number
+}
+
+export type GraphTag = ChoiceTag | RandomTag;
 
 export interface InternalFullNode {
     id: number,
@@ -75,7 +80,7 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
                 let getSetChoiceSource = (choiceIndex: number) => {
                     //console.log('generated with idx', choiceIndex)
                     return (questPrototype: QuestPrototype, moduleId: number) => {
-                        console.log('Setting sourece:', module.id, '| Index:', choiceIndex, 'to', moduleId)
+                        //console.log('Setting sourece:', module.id, '| Index:', choiceIndex, 'to', moduleId)
                         let newQuestPrototype = _.cloneDeep(questPrototype)
                         let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | PrototypeChoiceModule )
                         if (!newModule) {
@@ -124,6 +129,42 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
 
             case 'Ending':
                 return [];
+
+            case 'Random':
+                let getSetRandomSource = (pathIndex: number) => {
+                    //console.log('generated with idx', choiceIndex)
+                    return (questPrototype: QuestPrototype, moduleId: number) => {
+                        //console.log('Setting sourece:', module.id, '| Index:', choiceIndex, 'to', moduleId)
+                        let newQuestPrototype = _.cloneDeep(questPrototype)
+                        let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | PrototypeRandomModule )
+                        if (!newModule) {
+                            console.log('Source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser code macht depressiv')
+                        }
+                        (newModule as PrototypeRandomModule).paths[pathIndex] = {...(newModule as PrototypeRandomModule).paths[pathIndex], nextModuleReference: moduleId}
+                        //return newModule as PrototypeChoiceModule
+                        return newQuestPrototype 
+
+                    }
+                }
+    
+                //@ts-ignore TODO: Create some better type annotations for this
+                return (module as PrototypeRandomModule).paths.map((path, pathIdx) => virtualizeEmptyLink([module.id, path.nextModuleReference], nodes, empty_idx++, getSetRandomSource(pathIdx), {type: 'Random', probability: path.weight}));
+            
+            case 'Passphrase':
+                let setPassphraseSource = (questPrototype: QuestPrototype, moduleId: number) => {
+                    let newQuestPrototype = _.cloneDeep(questPrototype)
+                    let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | PrototypePassphraseModule )
+                    if (!newModule) {
+                        console.log('Source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser code macht depressiv')
+                    }
+                    (newModule as PrototypePassphraseModule).nextModuleReference = moduleId
+                    //return newModule as PrototypeStoryModule
+                    return newQuestPrototype
+                }
+
+                //@ts-ignore TODO: Create some better type annotations for this
+                return [virtualizeEmptyLink([module.id, (module as PrototypePassphraseModule).nextModuleReference], nodes, empty_idx++, setPassphraseSource)];
+
             default:
                 return [];
         }

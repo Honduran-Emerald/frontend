@@ -3,6 +3,7 @@ import React from 'react';
 import { Dimensions, TouchableHighlight, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, TextInput, Text, Divider, Subheading } from 'react-native-paper';
+import { LevelLock } from '../../common/LevelLock';
 import { Colors } from '../../styles';
 
 const displayWidth = Dimensions.get('screen').width;
@@ -19,15 +20,6 @@ export const ModuleTypeChoice: React.FC<IModuleTypeChoice> = ({ modules, setChos
     style={{width: displayWidth}} 
     contentContainerStyle={{justifyContent: 'center', alignContent: 'center', marginVertical: 40}}>
 
-    {/* <TextInput
-      dense
-      style={{margin: 10, marginVertical: 20}}
-      label={I18n.t('moduleObjectiveLabel')}
-      value={objective}
-      onChangeText={setObjective}
-      theme={{colors: {primary: Colors.primary}}} />
-    <Divider/> */}
-
     <View style={{flex: 1, flexDirection: 'row', justifyContent:'center', marginBottom: 50}}>
   
       <View>
@@ -37,8 +29,8 @@ export const ModuleTypeChoice: React.FC<IModuleTypeChoice> = ({ modules, setChos
         </Subheading>
         {modules.map(m => 
           <ModuleCard 
+            key={m}
             moduleType={m} 
-            key={m} 
             setChosenModule={setChosenModuleType} 
             chosen={m === chosenModuleType}
             swiperRef={swiper}/>
@@ -55,6 +47,8 @@ const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) 
     onPress={() => {
       setChosenModule(moduleType);
     }}>
+
+    <LevelLock key={moduleType} permission={moduleType + 'Module'}>
     <Card 
       style={{padding: 0, backgroundColor: chosen ? Colors.primary : 'white', overflow: 'hidden'}}
       >
@@ -69,5 +63,6 @@ const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) 
         </Text>
       </Card.Content>
     </Card>
+    </LevelLock>
   </TouchableHighlight>
 )

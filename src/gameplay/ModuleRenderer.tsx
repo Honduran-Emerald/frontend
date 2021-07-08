@@ -9,6 +9,8 @@ import { EndingModule } from './modules/EndingModule';
 import { LocationModule } from './modules/LocationModule';
 import { Colors } from '../styles';
 import { Location } from "../types/general";
+import { RandomModule } from './modules/RandomModule';
+import { PassphraseModule } from './modules/PassphraseModule';
 
 export interface ModuleRendererProps<ModuleType extends GameplayModule> {
   module: {
@@ -91,6 +93,24 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                 onChoice={onChoice}
                 tracker={tracker}
               />;
+            case 'Random':
+              return <RandomModule
+                module={{
+                  module: module.module,
+                  memento: module.memento
+                }}
+                onChoice={onChoice}
+                tracker={tracker}
+              />
+            case 'Passphrase':
+              return <PassphraseModule
+                module={{
+                  module: module.module,
+                  memento: module.memento
+                }}
+                onChoice={onChoice}
+                tracker={tracker}
+              />
           }
         })()
       }

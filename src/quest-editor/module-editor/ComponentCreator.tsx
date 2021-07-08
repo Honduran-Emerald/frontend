@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import { IconButton, TextInput } from 'react-native-paper';
 import { Colors } from '../../styles';
 import { PrototypeComponent } from '../../types/prototypes';
@@ -91,14 +91,15 @@ const ComponentOption: React.FC<ComponentOptionProps> = ({ component, idx, compo
           }}>
           <View style={{
             flexGrow: 1,
-            alignSelf: 'center'
+            alignSelf: 'center',
+            maxWidth: '80%' //TODO: Jemand findet einen weg das ohne 80% zu machen. thank youuuuu~~~~
                 }}>
             <TextInput 
                 theme={{colors: {primary: Colors.primary}}}
                 value={component.text}
                 underlineColor="transparent"
                 style={{
-                    borderRadius: 5 // What in gods fucking name is this sorcery. I've no idea how to solve this
+                    borderRadius: 5 // What in gods fucking name is this sorcery. I've no idea how to solve this,
                 }}
                 placeholder='Enter text message...'
                 onChangeText={(text) => {

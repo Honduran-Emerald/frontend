@@ -48,7 +48,10 @@ export const RegularModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, s
         }}>
             <View>
             {node.parentTags.map((tag, idx) => <View key={idx} style={{...styles.textcomponent, minHeight: 42, padding: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, marginBottom: -20}}>
-                <Text style={{textAlign: 'center', paddingHorizontal: 13}} ellipsizeMode={'tail'} numberOfLines={1}>{tag.choice}</Text>
+                <Text style={{textAlign: 'center', paddingHorizontal: 13}} ellipsizeMode={'tail'} numberOfLines={1}>{
+                    tag.type === 'Choice' ? tag.choice 
+                    : ((100*tag.probability).toPrecision(2) + '%')
+                }</Text>
             </View>)}
             <Text 
                 style={{...styles.textcomponent, 
