@@ -64,6 +64,7 @@ export const DiscoveryScreen = () => {
                         <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={quests}/>
                         <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={quests}/>
                         <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={[...recentlyVisitedQuests].reverse()}/>
+                        <ScrollMenu header={"Following"} type={"following"} location={location} quests={quests}/>
                     </>)
                 }
                 {quests && search !== '' && location && (
