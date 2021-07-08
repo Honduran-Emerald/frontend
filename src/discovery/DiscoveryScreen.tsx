@@ -16,17 +16,19 @@ export const DiscoveryScreen = () => {
 
     const insets = useSafeAreaInsets();
 
-    const location = useAppSelector(state => state.location.location)
+    const location = useAppSelector(state => state.location.location);
     const [quests, setQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
     const [nearbyQuests, setNearbyQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
     const [search, setSearch] = React.useState('');
+    const recentlyVisitedQuests = useAppSelector(state => state.quests.recentlyVisitedQuests);
 
     useEffect(() => {
-        queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
-        console.log(location?.coords.longitude, location?.coords.latitude)
-        nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 100).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests));
+        getLocation().then(() => {
+            queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
+            console.log("ree", location?.coords.longitude, location?.coords.latitude)
+            //nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests));
+        }).catch(() => {});
         // Get Location Permission and set initial Location
-        getLocation().catch(() => {});
     },[])
 
     const getQuestSearch = () => {
@@ -59,9 +61,9 @@ export const DiscoveryScreen = () => {
             <ScrollView contentContainerStyle={styles.discovery}>
                 {search === '' && (
                     <>
-                        <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={nearbyQuests}/>
+                        <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={quests}/>
                         <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={quests}/>
-                        <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={quests}/>
+                        <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={[...recentlyVisitedQuests].reverse()}/>
                     </>)
                 }
                 {quests && search !== '' && location && (
