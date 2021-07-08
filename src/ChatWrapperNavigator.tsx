@@ -24,7 +24,13 @@ export const ChatWrapperNavigator: React.FC = () => {
         options={({ route }: {route: any}) => 
           ({
               title: route.params?.userName || 'Personal Chat',
-              headerTitle: props => <ChatHeaderTitle {...props} userName={route.params.userName} userImgSource={route.params.userImgSource}/>,
+              headerTitle: props => 
+                <ChatHeaderTitle 
+                  {...props} 
+                  userName={route.params.userName} 
+                  userImgSource={route.params.userImgSource}
+                  userId={route.params.userTargetId}
+                />,
               headerTitleContainerStyle: {left: 50}, headerStyle: {borderTopColor: "#f2f2f2", borderTopWidth: StatusBar2.currentHeight}
           })}/>
 
