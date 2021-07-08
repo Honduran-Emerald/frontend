@@ -26,8 +26,8 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
   return (
     <View style={{paddingHorizontal: 10}}>
       {
-        index === 0 && !tracker?.finished &&
-        <View style={{backgroundColor: Colors.gray, borderRadius: 10, width: '70%', alignSelf: 'center', marginTop: 35, padding: 10}}>
+
+        <View style={{backgroundColor: index === 0 && !tracker?.finished ? Colors.secondary : Colors.gray, borderRadius: 10, width: '70%', alignSelf: 'center', marginTop: 35, padding: 10}}>
           <Text style={{textAlign: 'center', color: Colors.black}}>
             {module.module.objective}
           </Text>
