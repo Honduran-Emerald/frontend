@@ -23,12 +23,11 @@ export const DiscoveryScreen = () => {
     const recentlyVisitedQuests = useAppSelector(state => state.quests.recentlyVisitedQuests);
 
     useEffect(() => {
-        getLocation().then(() => {
-            queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
-            console.log("ree", location?.coords.longitude, location?.coords.latitude)
-            //nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests));
-        }).catch(() => {});
         // Get Location Permission and set initial Location
+        getLocation().catch(() => {});
+        // set quest arrays
+        queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
+        // nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests));
     },[])
 
     const getQuestSearch = () => {
