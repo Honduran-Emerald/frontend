@@ -71,6 +71,12 @@ export const chatSendImageRequest = (userId: string, binaryImage: string) => (re
 // /quest/query/
 export const queryQuestsRequest = (offset: number = 0, ownerId?: string) => (request(`/quest/query/?Offset=${offset}` + (ownerId != null ? `&OwnerId=${ownerId}` : '')))
 
+// /quest/query get nearby quests
+export const nearbyQuestsRequest = (offset: number = 0, long?: number, lat?: number, radius?: number) => (request(`/quest/query/?Offset=${offset}`
+  + (long != null ? `&Location.Longitude=${long}` : '')
+  + (lat != null ? `&Location.Latitude=${lat}` : '')
+  + (radius != null ? `&Radius=${radius}` : '')))
+
 // /quest/queryvoted
 export const queryvotedQuestsRequest = (voteType : string) => (request(`/quest/queryvoted/?voteType=${voteType}`))
 
