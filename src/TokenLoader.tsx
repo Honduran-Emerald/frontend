@@ -12,7 +12,6 @@ import { loadPinnedQuestPath, pinQuest, setAcceptedQuests, setTrackerWithUpdate 
 import { QuestTracker } from './types/quest';
 import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';
-import { Text } from 'react-native'
 import { deleteItemLocally } from './utils/SecureStore';
 import { LocalUpdatedTrackerIds, registerGeofencingTask } from './utils/TaskManager';
 import { getData } from './utils/AsyncStore';
@@ -140,13 +139,9 @@ export const TokenLoader = () => {
       .then(() => setTokenAccepted(true))
   }, [checkingToken, isLoading])
 
-  useEffect(() => {
-    console.log(isLoading, checkingToken, token?.substring(0,10));
-  })
-
   return (
 
-    (isLoading || checkingToken) ? (<><Text>    {JSON.stringify(isLoading)} {JSON.stringify(checkingToken)} {a}</Text><LoadingScreen/></>) : (
+    (isLoading || checkingToken) ? (<LoadingScreen/>) : (
         <NavigationContainer ref={navigationRef}>
         {token && tokenAccepted ? (
             <ExpoNotificationWrapper navigationRef={navigationRef} />
