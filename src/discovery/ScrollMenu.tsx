@@ -5,6 +5,7 @@ import { GameplayQuestHeader } from "../types/quest";
 import { LocationObject } from "expo-location";
 import { QuestPreviewLoader } from './QuestPreviewLoader';
 import { AddDraftCard } from './AddDraftCard';
+import { LevelLock } from '../common/LevelLock';
 
 export default interface ScrollMenuProps {
     header: string
@@ -29,7 +30,7 @@ export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location
                     data={quests || loadingArray}
                     showsHorizontalScrollIndicator={false}
                     ListFooterComponent={addQuest && location && (() => (
-                        <AddDraftCard />
+                        <LevelLock permission={quests?.length + 'quests'}><AddDraftCard /></LevelLock>
                     ))}
                     renderItem={
                         ({ item }: {item: GameplayQuestHeader | undefined}) => <QuestPreviewLoader loading={item === undefined} content={(item === undefined) ? null : {location: location, quest: item}}/>
