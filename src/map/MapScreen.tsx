@@ -134,7 +134,7 @@ export const MapScreen = () => {
             })
           }}>
             <View>
-              <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.primary}/>
+              <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.purple}/>
             </View>
           </Marker>
         ))}
