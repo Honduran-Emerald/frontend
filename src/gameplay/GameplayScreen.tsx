@@ -58,7 +58,7 @@ export const GameplayScreen : React.FC = () => {
     if(isFocused && trackerWithUpdates.includes(route.params.trackerId)) {
       removeUpdatedQuest(route.params.trackerId);
     }
-  }, [isFocused])
+  }, [isFocused, trackerWithUpdates])
 
   useEffect(() => {
     if(trackerWithUpdates.includes(route.params.trackerId)) {
