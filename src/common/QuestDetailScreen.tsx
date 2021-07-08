@@ -43,20 +43,24 @@ export default function QuestDetailScreen({ route }: any) {
   const hideModal = () => setModalVisible(false);
 
   React.useEffect(() => {
-    if(!recentQuests.find((q) => q.id === quest.id)) {
-      const tmp = _.cloneDeep(recentQuests)
-      if(tmp.length > 19) {
-        tmp.splice(0, 1);
+    async function updateRecentQuests() {
+      if(!recentQuests.find((q) => q.id === quest.id)) {
+        const tmp = _.cloneDeep(recentQuests)
+        if(tmp.length > 19) {
+          tmp.splice(0, 1);
+        }
+        tmp.push(quest);
+        await storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
+        dispatch(addRecentlyVisitedQuest(quest));
+      } else {
+        const tmp = recentQuests.filter((curQuest) => quest.id !== curQuest.id);
+        tmp.push(quest);
+        await storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
+        dispatch(refreshRecentlyVisitedQuest(quest))
       }
-      tmp.push(quest);
-      storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
-      dispatch(addRecentlyVisitedQuest(quest));
-    } else {
-      const tmp = recentQuests.filter((curQuest) => quest.id !== curQuest.id);
-      tmp.push(quest);
-      storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
-      dispatch(refreshRecentlyVisitedQuest(quest))
     }
+
+    updateRecentQuests().then(() => {})
   }, [])
 
   const handleAccept = () => {
