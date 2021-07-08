@@ -52,8 +52,7 @@ export default function QuestDetailScreen({ route }: any) {
       storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
       dispatch(addRecentlyVisitedQuest(quest));
     } else {
-      let tmp = _.cloneDeep(recentQuests)
-      tmp = tmp.filter((curQuest) => quest.id !== curQuest.id);
+      const tmp = recentQuests.filter((curQuest) => quest.id !== curQuest.id);
       tmp.push(quest);
       storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
       dispatch(refreshRecentlyVisitedQuest(quest))

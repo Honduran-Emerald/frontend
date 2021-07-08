@@ -122,8 +122,9 @@ export const questsSlice = createSlice({
             state.recentlyVisitedQuests.push(action.payload);
         },
         refreshRecentlyVisitedQuest: (state, action: PayloadAction<QueriedQuest>) => {
-            state.recentlyVisitedQuests = state.recentlyVisitedQuests.filter(quest => quest.id === action.payload.id);
-            state.recentlyVisitedQuests.push(action.payload);
+            const tmp = state.recentlyVisitedQuests.filter(quest => quest.id !== action.payload.id);
+            tmp.push(action.payload);
+            state.recentlyVisitedQuests = tmp;
         },
     }
 })
