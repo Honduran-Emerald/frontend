@@ -19,7 +19,8 @@ export const GameplayNavigator = () => {
         ({
           headerTitle: props => <ChatHeaderTitle {...props} userName={route.params.tracker.agentProfileName !== '' ? route.params.tracker.agentProfileName : route.params.tracker.author}
                                                  userImgSource={getImageAddress(route.params.tracker.agentProfileImageId, route.params.tracker.agentProfileName)}
-                                                 questTitle={route.params.tracker.questName}/>,
+                                                 questTitle={route.params.tracker.questName}
+                                                 noProfileLink/>,
           headerTitleContainerStyle: {left: 50}, headerStyle: {borderTopColor: "#f2f2f2", borderTopWidth: StatusBar2.currentHeight}
         })}/>
       <Stack.Screen name='QuestSettings' component={Dummy}/>
