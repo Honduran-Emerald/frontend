@@ -1,7 +1,8 @@
-import { store } from "../redux/store"
+import {store} from "../redux/store"
 
 import * as Location from "expo-location";
-import { setLocation } from "../redux/location/locationSlice";
+import {LocationAccuracy} from "expo-location";
+import {setLocation} from "../redux/location/locationSlice";
 
 export async function getLocation() {
 
@@ -25,8 +26,21 @@ export async function getLocation() {
         if (lastLocation) {
             store.dispatch(setLocation((lastLocation)));
         }
-        let newLocation = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Balanced});
+        let newLocation = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High});
         store.dispatch(setLocation(newLocation));
     }
 
+}
+
+export async function getLocationSubscription() {
+
+    let {status} = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+        return Promise.reject(new Error("Permission to access location was denied"))
+    }
+
+    return Location.watchPositionAsync(
+      {accuracy: LocationAccuracy.High, distanceInterval: 5, timeInterval: 10000},
+      (location) => store.dispatch(setLocation(location))
+    )
 }

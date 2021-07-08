@@ -19,11 +19,30 @@ import { removeData } from './utils/AsyncStore';
 import { ProfileNavigator } from './profile/ProfileNavigator';
 import { GameplayNavigator } from './gameplay/GameplayNavigator';
 import { LocalUpdatedTrackerIds } from './utils/TaskManager';
+import {getLocationSubscription} from "./utils/locationHandler";
+import * as Location from "expo-location";
 
 const Tab = createBottomTabNavigator();
 
 export default function MainAppNavigator() {
   const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
+
+  const [locationSubscription, setLocationSubscription] = React.useState<Location.LocationSubscription>();
+
+  React.useEffect(() => {
+    (async () => {
+      const unsubscribe = await getLocationSubscription().then((res) => {
+        return res;
+      })
+      setLocationSubscription(unsubscribe);
+    })()
+  }, [])
+
+  React.useEffect(() => {
+    return () => {
+      locationSubscription?.remove();
+    }
+  }, [locationSubscription])
 
   return (
     <Tab.Navigator
