@@ -12,7 +12,7 @@ import { commonTranslations } from './translations';
 import { QueriedQuest, QuestTracker } from '../types/quest';
 import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { acceptQuest, addRecentlyVisitedQuest } from '../redux/quests/questsSlice';
+import {acceptQuest, addRecentlyVisitedQuest, refreshRecentlyVisitedQuest} from '../redux/quests/questsSlice';
 import { User } from '../types/general';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { getImageAddress } from '../utils/imageHandler';
@@ -44,13 +44,25 @@ export default function QuestDetailScreen({ route }: any) {
 
   React.useEffect(() => {
     if(!recentQuests.find((q) => q.id === quest.id)) {
-      dispatch(addRecentlyVisitedQuest(quest));
       const tmp = _.cloneDeep(recentQuests)
       if(tmp.length > 19) {
         tmp.splice(0, 1);
       }
       tmp.push(quest);
       storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
+      dispatch(addRecentlyVisitedQuest(quest));
+    } else {
+      const tmp = _.cloneDeep(recentQuests)
+      const tmpQuest = tmp.find(quest => quest.id === quest.id);
+      if(tmpQuest) {
+        const index = tmp.indexOf(tmpQuest);
+        if(index !== -1) {
+          tmp.splice(index, 1);
+          tmp.push(quest);
+        }
+      }
+      storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
+      dispatch(refreshRecentlyVisitedQuest(quest))
     }
   }, [])
 
