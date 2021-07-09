@@ -9,8 +9,6 @@ import { loadQuest } from "../redux/editor/editorSlice";
 const request = (target: string, type: string = 'GET', body?: any) => {
   const token = store.getState().authentication.token;
 
-  console.log('Sending Body', body)
-
   return fetch(BACKENDIP + target, {
 
     method: type,
@@ -105,7 +103,6 @@ export const createAndPutRequest = (questId: string, questPrototype: QuestProtot
             questId: r.questId,
             questPrototype: {...questPrototype, id: r.questPrototype.id}
           }))
-          console.log('Am here')
           return createPutRequest(
             r.questId,
             {...questPrototype, id: r.questPrototype.id},
