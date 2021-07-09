@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { useAppSelector } from '../redux/hooks';
 import { Colors } from '../styles';
-import { levelLocks } from '../utils/levelLocks';
+import { levelLocks, unlockAll } from '../utils/levelLocks';
 import { BlurView } from 'expo-blur';
 import { Button, Dialog, Paragraph, Portal, Subheading } from 'react-native-paper';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -28,7 +28,7 @@ export const LevelLock: React.FC<LevelLockProps> = ({ children, permission, alte
   const user = useAppSelector(state => state.authentication.user)
   const [showNoMoreQuestsDialog, setShowNoMoreQuestsDialog] = useState<boolean>(false);
 
-  if (user && 
+  if (user && !unlockAll &&
       (permission.type === 'discrete' ? permission.perm in levelLocks && user.level < levelLocks[permission.perm]
        : permission.type === 'quests' ? permission.quests!==undefined && permission.quests >= Math.sqrt(user.level) + 1 : false)) {
         

@@ -1,6 +1,6 @@
 
-const locked = 1/0;
-const unlockAll = false;
+const locked = 1/0; // Infinity; Mathematiker hassen diesen Trick
+export const unlockAll = false; // Removes all level restrictions
 
 export const levelLocks: {[key: string]: number} = !unlockAll ? {
   'ChoiceModule': 3,

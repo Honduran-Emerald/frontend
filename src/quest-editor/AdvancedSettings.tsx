@@ -26,6 +26,10 @@ export const AdvancedSettings: React.FC = () => {
             type: 'discrete',
             perm: 'CustomAgent'
           }}
+          dialog={{
+            title: 'Cannot use Custom Agent',
+            message: 'Level is too low. Complete quests to increase your level.'
+          }}
         >
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <Subheading>Custom Agent</Subheading>
@@ -67,6 +71,10 @@ export const AdvancedSettings: React.FC = () => {
       <LevelLock permission={{
             type: 'discrete',
             perm: 'RelatedQuests'
+          }}
+          dialog={{
+            title: 'Cannot use Related Quests',
+            message: 'Level is too low. Complete quests to increase your level.'
           }}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           
