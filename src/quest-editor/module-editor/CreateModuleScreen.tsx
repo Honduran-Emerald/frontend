@@ -14,6 +14,9 @@ import { PrototypeComponent, PrototypeModule, PrototypeModuleBase } from "../../
 import { LocationModule } from "./module-views/LocationModule";
 import { ComponentCreateScreen } from "./ComponentCreateScreen";
 import { useCallback } from "react";
+import { RandomModule } from "./module-views/RandomModule";
+import { PassphraseModule } from "./module-views/PassphraseModule";
+import { QRModule } from "./module-views/QRModule";
 
 const displayWidth = Dimensions.get("screen").width;
 
@@ -73,7 +76,7 @@ export const CreateModuleScreen = () => {
     }
   }, [finalModule, route.params.moduleId, components])
 
-  const modules = ["Location", "Choice", "Story", "Ending"];
+  const modules = ["Story", "Ending", "Choice", "Location", "Random", "WideArea", "Passphrase", "QrCode"];
 
   const scrollToPreview = useCallback(() => {
     swiper.current?.scrollTo({
@@ -84,7 +87,10 @@ export const CreateModuleScreen = () => {
     Story: <StoryModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview} />,
     Ending: <EndingModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview} />,
     Choice: <ChoiceModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview} />,
-    Location: <LocationModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview}/>
+    Location: <LocationModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview}/>,
+    Random: <RandomModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview}/>,
+    Passphrase: <PassphraseModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview}/>,
+    QrCode: <QRModule setFinalModule={saveModule} setComponents={setComponents} scrollToPreview={scrollToPreview}/>,
   };
 
   useEffect(() => {

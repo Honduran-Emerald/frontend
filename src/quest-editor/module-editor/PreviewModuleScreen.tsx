@@ -43,7 +43,13 @@ export const PreviewModuleScreen: React.FC<IPreviewModuleScreen> = ({ prototypeM
               reject(0);
             }, 1000)
           }))
-          } index={0}/>
+          } onPassphrase={(choiceId) => 
+            (new Promise((resolve, reject) => {
+              setTimeout(() => {
+                reject(0);
+              }, 1000)
+            }))
+            } index={0}/>
       </View>
 
       

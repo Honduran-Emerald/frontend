@@ -40,6 +40,7 @@ export const QuestCreatorWrapper : React.FC<QuestCreatorWrapperProps> = ({ route
         approximateTime: '',
         agentProfileReference: null,
         agentProfileName: '',
+        agentEnabled: false,
         firstModuleReference: 1,
         modules: [],
         images: []
