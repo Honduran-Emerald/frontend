@@ -12,7 +12,7 @@ import { commonTranslations } from './translations';
 import { QueriedQuest, QuestTracker } from '../types/quest';
 import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { acceptQuest, addRecentlyVisitedQuest, refreshRecentlyVisitedQuest } from '../redux/quests/questsSlice';
+import { acceptQuest, addRecentlyVisitedQuest, refreshRecentlyVisitedQuest, removeRecentlyVisitedQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { getImageAddress } from '../utils/imageHandler';
@@ -25,9 +25,9 @@ export default function QuestDetailScreen({ route }: any) {
 
   const user: User | undefined = useAppSelector((state) => state.authentication.user);
   const acceptedQuests: QuestTracker[] = useAppSelector((state) => state.quests.acceptedQuests);
-  const recentQuests: QueriedQuest[] = useAppSelector((state) => state.quests.recentlyVisitedQuests)
+  const recentQuests: QueriedQuest[] = useAppSelector((state) => state.quests.recentlyVisitedQuests);
 
-  const acceptedIds: string[] = acceptedQuests.map(tracker => tracker.questId)
+  const acceptedIds: string[] = acceptedQuests.map(tracker => tracker.questId);
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
@@ -60,34 +60,53 @@ export default function QuestDetailScreen({ route }: any) {
       }
     }
 
-    updateRecentQuests().then(() => {})
+    if(quest.released) {
+      updateRecentQuests().then(() => {})
+    }
   }, [])
 
   const handleAccept = () => {
     setIsButtonDisabled(true);
     createTrackerRequest(quest.id)
-      .then((res) => res.json()
-        .then((data) => {
-          navigation.goBack();
-          setIsButtonDisabled(false);
-          dispatch(acceptQuest(data.trackerModel));
-          if(data.trackerModel.trackerNode.module.type === 'Location') {
-            const newRegion = {
-              identifier: data.trackerModel.trackerId,
-              latitude: data.trackerModel.trackerNode.module.location.latitude,
-              longitude: data.trackerModel.trackerNode.module.location.longitude,
-              radius: SingleGeoFenceLocationRadius,
-              notifyOnEnter: true,
-              notifyOnExit: false,
-            };
-            addGeofencingRegion(newRegion);
+      .then((res) => {
+        if(res.status === 200) {
+          res.json()
+            .then((data) => {
+              navigation.goBack();
+              setIsButtonDisabled(false);
+              dispatch(acceptQuest(data.trackerModel));
+              if (data.trackerModel.trackerNode.module.type === 'Location') {
+                const newRegion = {
+                  identifier: data.trackerModel.trackerId,
+                  latitude: data.trackerModel.trackerNode.module.location.latitude,
+                  longitude: data.trackerModel.trackerNode.module.location.longitude,
+                  radius: SingleGeoFenceLocationRadius,
+                  notifyOnEnter: true,
+                  notifyOnExit: false,
+                };
+                addGeofencingRegion(newRegion);
+              }
+            })
+        } else {
+          if(recentQuests.find((q) => q.id === quest.id)) {
+            dispatch(removeRecentlyVisitedQuest(quest.id));
+            const tmp = recentQuests.filter((q) => q.id !== quest.id);
+            storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
           }
-        }))
+          alert('Error while accepting. Quest may have been deleted.');
+          navigation.goBack();
+        }
+      })
   };
 
   const handleDelete = () => {
     createDeleteQuestRequest(quest.id).then(res => {
       if(res.status === 200) {
+        if(recentQuests.find((q) => q.id === quest.id)) {
+          dispatch(removeRecentlyVisitedQuest(quest.id));
+          const tmp = recentQuests.filter((q) => q.id !== quest.id);
+          storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
+        }
         alert('Quest deleted');
         hideModal();
       } else {

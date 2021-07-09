@@ -126,6 +126,9 @@ export const questsSlice = createSlice({
             tmp.push(action.payload);
             state.recentlyVisitedQuests = tmp;
         },
+        removeRecentlyVisitedQuest: (state, action: PayloadAction<string>) => {
+            state.recentlyVisitedQuests = state.recentlyVisitedQuests.filter(quest => quest.id !== action.payload);
+        },
     }
 })
 
@@ -147,6 +150,7 @@ export const {
     setRecentlyVisitedQuest,
     addRecentlyVisitedQuest,
     refreshRecentlyVisitedQuest,
+    removeRecentlyVisitedQuest,
 } = questsSlice.actions
 
 export default questsSlice.reducer
