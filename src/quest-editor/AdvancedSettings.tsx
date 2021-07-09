@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { StyleSheet, View, ScrollView, Text, TextInput } from 'react-native';
 import { Checkbox, Divider, Headline, Subheading } from 'react-native-paper';
+import { LevelLock } from '../common/LevelLock';
 import { setAgentImageReference, setAgentName } from '../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { Colors, Containers } from '../styles';
@@ -24,6 +25,7 @@ export const AdvancedSettings: React.FC = () => {
       }}>
       <Headline>Advanced Settings</Headline>
       <View style={[styles.group]}>
+        <LevelLock permission='CustomAgent' >
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <Subheading>Custom Agent</Subheading>
           <Checkbox 
@@ -56,9 +58,12 @@ export const AdvancedSettings: React.FC = () => {
           </View>
           
         </View>}
+        </LevelLock>
       </View>
 
-      <View style={[styles.group, styles.disabled]}>
+      <View style={[styles.group]}>
+
+      <LevelLock permission='RelatedQuests' >
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           
           <Subheading>Related Quests</Subheading>
@@ -69,7 +74,7 @@ export const AdvancedSettings: React.FC = () => {
             }}}/>
         </View>
         <Divider />
-
+        </LevelLock>
       </View>
     </ScrollView>
   )
