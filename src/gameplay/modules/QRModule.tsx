@@ -47,7 +47,7 @@ export const QRModule: React.FC<ModuleRendererProps<GameplayQRModule>> = ({ modu
                   handleClick(e.data)
                   setScanned(true)
                 }}
-                barCodeTypes={BarCodeScanner.Constants.BarCodeType.qr}
+                barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
                 style={{width: '100%', height:  '100%'}}
                 
               />
