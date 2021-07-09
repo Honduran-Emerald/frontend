@@ -51,6 +51,10 @@ const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) 
     <LevelLock key={moduleType} permission={{
       type: 'discrete',
       perm: moduleType + 'Module'
+    }}
+    dialog={{
+      title: `Cannot use ${moduleType} Module`,
+      message: 'Level is too low. Complete quests to increase your level.'
     }}>
     <Card 
       style={{padding: 0, backgroundColor: chosen ? Colors.primary : 'white', overflow: 'hidden'}}
