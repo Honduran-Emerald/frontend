@@ -109,8 +109,12 @@ export const questsSlice = createSlice({
             state.newImages.push({
                 image: action.payload.base64,
                 reference: action.payload.reference
-            })
-            
+            })   
+        },
+        toggleAgentEnabled: (state) => {
+            if (state.questPrototype !== undefined) {
+                state.questPrototype.agentEnabled = !state.questPrototype.agentEnabled
+            }
         }
 
     }
@@ -119,6 +123,6 @@ export const questsSlice = createSlice({
 export const { loadQuest, unloadQuest, addOrUpdateQuestModule, deleteQuestModule, setModules,
         setQuestTitle, setQuestDescription, setLocationName, setImagePath, setImages, setImageReference, 
         setEstimatedTime, addOrUpdateMultipleQuestModules, spliceQuestImages, setNewImages, pushNewImages, 
-        setNewImagesAt, setNewImageReference, setAgentImageReference, setAgentName} = questsSlice.actions
+        setNewImagesAt, setNewImageReference, setAgentImageReference, setAgentName, toggleAgentEnabled} = questsSlice.actions
 
 export default questsSlice.reducer

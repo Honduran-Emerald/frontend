@@ -72,7 +72,6 @@ export const QuestPropertiesScreen = () => {
           createAndPutRequest(questId!, questPrototype!, newImages)
             .then(r => r.json())
             .then(data => {dispatch(setImages(questPrototype!.images.concat(data.images)));dispatch(setNewImages([]))})
-            //.catch(() => console.log('Image too large.')) // TODO Compress
             .then(() => setIsSaving(false))
           }}
       >

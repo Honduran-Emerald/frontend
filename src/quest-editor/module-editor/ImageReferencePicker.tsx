@@ -74,7 +74,6 @@ export const ImageReferencePicker : React.FC<ImagePickerProps> = ({aspect, style
       )
       //setLoadedImage(result.uri) //uncomment later
       if (manipulation.base64) {
-        console.log('Image Size', manipulation.base64.length)
         let localRef = reference
         if (!localRef) {
           localRef = Math.max(...newImages.map(im => im.reference).concat(questPrototype?.images.map(im => im.reference) || []), -1) + 1
