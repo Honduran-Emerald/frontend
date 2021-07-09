@@ -39,7 +39,7 @@ export type InternalNode = InternalEmptyNode | InternalFullNode
  * @param setSource function to allow the parents link to be changed from the child component
  * @returns virtualized link
  */
-const virtualizeEmptyLink = (link: [string|number, string|number], nodes: InternalNode[], idx: number, setSource: (questPrototype: QuestPrototype, moduleId: number | null) => QuestPrototype, parentTag?: GraphTag): [string|number, string|number] => {
+const virtualizeEmptyLink = (link: [string|number, string|number|null], nodes: InternalNode[], idx: number, setSource: (questPrototype: QuestPrototype, moduleId: number | null) => QuestPrototype, parentTag?: GraphTag): [string|number, string|number] => {
     if (link[1] == null) {
         const emptyNodeString = `empty${idx}`
         nodes.push({
@@ -56,10 +56,8 @@ const virtualizeEmptyLink = (link: [string|number, string|number], nodes: Intern
         if (parentTag !== undefined) {
             targetNode.parentTags?.push(parentTag)
         } 
-    
-        //console.log('Called on', link[1], '-- length sour sources array', (nodes.find(node => node.id === link[1]) as InternalFullNode).setSources);
     }
-    return link
+    return link as [string|number, string|number]
 }
 
 /**
@@ -133,23 +131,29 @@ export const parseModule = (questPrototype: QuestPrototype): {nodes: InternalNod
             case 'Random':
                 let getSetRandomSource = (pathIndex: number) => {
                     //console.log('generated with idx', choiceIndex)
-                    return (questPrototype: QuestPrototype, moduleId: number) => {
+                    return (questPrototype: QuestPrototype, moduleId: number | null) => {
                         //console.log('Setting sourece:', module.id, '| Index:', choiceIndex, 'to', moduleId)
                         let newQuestPrototype = _.cloneDeep(questPrototype)
                         let newModule = newQuestPrototype.modules.find(m => m.id === module.id) as (undefined | PrototypeRandomModule )
                         if (!newModule) {
                             console.log('Source module does not exist. Kontaktier Lenny und schau dir das bitte nicht an weil dieser code macht depressiv')
                         }
-                        (newModule as PrototypeRandomModule).paths[pathIndex] = {...(newModule as PrototypeRandomModule).paths[pathIndex], nextModuleReference: moduleId}
+                        //(newModule as PrototypeRandomModule).paths[pathIndex] = {...(newModule as PrototypeRandomModule).paths[pathIndex], nextModuleReference: moduleId}
+                        if (pathIndex === 0) {
+                            (newModule as PrototypeRandomModule).nextLeftModuleReference = moduleId
+                        } else {
+                            (newModule as PrototypeRandomModule).nextRightModuleReference = moduleId
+                        }
+                        
                         //return newModule as PrototypeChoiceModule
                         return newQuestPrototype 
 
                     }
                 }
-    
-                //@ts-ignore TODO: Create some better type annotations for this
-                return (module as PrototypeRandomModule).paths.map((path, pathIdx) => virtualizeEmptyLink([module.id, path.nextModuleReference], nodes, empty_idx++, getSetRandomSource(pathIdx), {type: 'Random', probability: path.weight}));
-            
+
+                return [virtualizeEmptyLink([module.id, module.nextLeftModuleReference], nodes, empty_idx++, getSetRandomSource(0), {type: 'Random', probability: module.leftRatio}), 
+                        virtualizeEmptyLink([module.id, module.nextRightModuleReference], nodes, empty_idx++, getSetRandomSource(1), {type: 'Random', probability: 1-module.leftRatio})]
+                
             case 'Passphrase':
                 let setPassphraseSource = (questPrototype: QuestPrototype, moduleId: number) => {
                     let newQuestPrototype = _.cloneDeep(questPrototype)
