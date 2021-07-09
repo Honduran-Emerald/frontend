@@ -14,6 +14,7 @@ import {deleteItemLocally} from "../utils/SecureStore";
 import {logout} from "../redux/authentication/authenticationSlice";
 import {clearQuestState} from "../redux/quests/questsSlice";
 import {Button} from "react-native-paper";
+import {removeData} from "../utils/AsyncStore";
 
 export default interface settingsProps {
     ownProfile: boolean
@@ -29,7 +30,8 @@ export const SettingsScreen = (props: settingsProps) => {
 
     const handleLogout = () => {
         deleteItemLocally('UserToken').then(() => {}, () => {});
-        deleteItemLocally('PinnedQuestTracker').then(() => {}, () => {});
+        removeData('PinnedQuestTracker').then(() => {}, () => {});
+        removeData('RecentlyVisitedQuests').then(() => {}, () => {});
         dispatch(logout())
         dispatch(clearQuestState())
     }
@@ -37,7 +39,7 @@ export const SettingsScreen = (props: settingsProps) => {
     return(
         <View style={[style.screen, { marginBottom: insets.bottom}]}>
             <ScrollView contentContainerStyle={style.settings}>
-                <Button color={'#1D79AC'}> Delete Backend >:( </Button>
+                <Button color={'#1D79AC'}> Delete Backend {">"}:( </Button>
                 <Button color={'#1D79AC'}> Change Language </Button>
                 <Button color={'#1D79AC'}> Delete Account </Button>
                 <Button color={'#1D79AC'}> Legal Disclosure </Button>

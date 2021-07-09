@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StatusBar as StatusBar2, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { RefreshControl, ScrollView, StatusBar as StatusBar2, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProfileTop } from './ProfileTop';
 import { Colors } from '../styles';
@@ -25,6 +24,7 @@ export const ProfileScreen = (props: profileProps) => {
   const location = useAppSelector(state => state.location.location)
   const authenticatedUser = useAppSelector((state) => state.authentication.user);
 
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [user, setUser] = useState<User>();
   const [quests, setQuests] = useState<GameplayQuestHeader[]>([]);
   const [publishedQuests, setPublishedQuests] = useState<GameplayQuestHeader[]>([]);
@@ -36,6 +36,36 @@ export const ProfileScreen = (props: profileProps) => {
   const route = useRoute<RouteProp<{Profile: {userId: string}}, 'Profile'>>();
 
   const lodash = require("lodash")
+
+  const fetchUserData = () => {
+    if(route.params?.userId && route.params.userId !== authenticatedUser?.userId) {
+      getUserRequest(route.params.userId).then(response => response.json()).then(obj => setUser(obj.user));
+    } else {
+      setUser(authenticatedUser);
+    }
+  }
+
+  const fetchQuestData = () => {
+    return Promise.all([
+      queryQuestsRequest(0, route.params?.userId || authenticatedUser?.userId)
+      .then(response => response.json())
+      .then(obj => setPublishedQuests(obj.quests)),
+      
+    ].map(promise => promise.catch(() => {})))
+    
+  }
+  
+  const onRefresh = () => {
+    setRefreshing(true)
+    // fetch user data
+    if(!user)
+      fetchUserData();
+    else
+      getUserRequest(user.userId).then(response => response.json()).then(obj => setUser(obj.user))
+
+    // fetch quest data
+    fetchQuestData().then(() => setRefreshing(false))
+  }
 
   /*useEffect(() => {
     getUserFollowers().then(res => res.json()).then((followers) => setFollowerCount(followers.users.length));
@@ -64,20 +94,18 @@ export const ProfileScreen = (props: profileProps) => {
   },[])*/
 
   useEffect(() => {
-    if(route.params?.userId && route.params.userId !== authenticatedUser?.userId) {
-      getUserRequest(route.params.userId).then(response => response.json()).then(obj => setUser(obj.user));
-    } else {
-      setUser(authenticatedUser);
-    }
-    
-    queryQuestsRequest(0, route.params?.userId || authenticatedUser?.userId)
-      .then(response => response.json())
-      .then(obj => setPublishedQuests(obj.quests));
+    fetchUserData();
+    fetchQuestData();
   }, [])
 
   return(
     <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
-      <ScrollView contentContainerStyle={style.profile}>
+      <ScrollView 
+        contentContainerStyle={style.profile}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} enabled onRefresh={onRefresh}/>
+        }
+      >
         {(authenticatedUser?.userId === user?.userId) &&
           <TouchableOpacity onPress={() => navigation.navigate('Settings')} style={{top: 5, right: 5, position: "absolute"}}>
             <MaterialCommunityIcons name="cog" size={30} color='#1D79AC' />
@@ -112,6 +140,7 @@ const style = StyleSheet.create({
         marginTop: StatusBar2.currentHeight,
     },
     profile: {
+        flex: 1,
         margin: 10,
         paddingBottom: 20,
     },
