@@ -2,7 +2,7 @@
 const locked = 1/0; // Infinity; Mathematiker hassen diesen Trick
 export const unlockAll = false; // Removes all level restrictions
 
-export const levelLocks: {[key: string]: number} = !unlockAll ? {
+export const levelLocks: {[key: string]: number} = {
   'ChoiceModule': 3,
   'LocationModule': 5,
   'RandomModule': 10,
@@ -12,4 +12,4 @@ export const levelLocks: {[key: string]: number} = !unlockAll ? {
 
   'CustomAgent': 7,
   'RelatedQuests': locked,
-} : {}
+}
