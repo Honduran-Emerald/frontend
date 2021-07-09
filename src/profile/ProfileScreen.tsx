@@ -114,9 +114,7 @@ export const ProfileScreen = (props: profileProps) => {
         {user && authenticatedUser && 
           <ProfileTop 
             ownProfile={authenticatedUser.userId === user.userId} 
-            profileData={{userId: user.userId, username: user.userName, followers: user.followerCount, level: user.level, xp: user.experience, profileImageId: user.image, questsCreated: user.questCount, questsPlayed: user.trackerCount}} 
-            following={user.following}
-            friends={user.follower && user.following}
+            profileData={user}
           />
         }
         {(

@@ -11,26 +11,17 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { getImageAddress } from '../utils/imageHandler';
 import { useNavigation } from '@react-navigation/native';
+import { User } from '../types/general';
 
 interface ProfileTopProps {
   ownProfile?: boolean,
-  following: boolean,
-  friends? : boolean,
-  profileData: {
-    userId: string,
-    username: string,
-    profileImageId: string,
-    followers: number,
-    questsCreated: number,
-    questsPlayed: number,
-    level: number,
-    xp: number,
-  }
+  profileData: User
 }
-export const ProfileTop = ({following, ownProfile, friends, profileData} : ProfileTopProps) => {
-  const [image, setImage] = useState<string>(ownProfile ? getImageAddress(profileData.profileImageId, profileData.username): "");
+export const ProfileTop = ({ownProfile, profileData} : ProfileTopProps) => {
+  const [editing, setEditing] = useState<boolean>(false);
+  const [image, setImage] = useState<string>(ownProfile ? getImageAddress(profileData.image, profileData.userName): "");
   const [base64, setBase64] = useState<string>();
-  const [followingState, setFollowingState] = useState<boolean>(following);
+  const [followingState, setFollowingState] = useState<boolean>(profileData.following);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -43,46 +34,52 @@ export const ProfileTop = ({following, ownProfile, friends, profileData} : Profi
           {
             ownProfile ? 
               <ImagePicker setBase64={setBase64} aspect={[4, 4]} image={image} setImage={setImage} style={style.profileImage} />
-              : <Image source={{uri: getImageAddress(profileData.profileImageId, profileData.username)}} style={style.profileImage} />
+              : <Image source={{uri: getImageAddress(profileData.image, profileData.userName)}} style={style.profileImage} />
           }
         </View>
         <View style={style.buttonGroup}>
-          <Text style={style.username}>{profileData.username}</Text>
+          <Text style={style.username}>{profileData.userName}</Text>
           {
+            // only show edit button if own profile
             ownProfile ? 
-              <ButtonOutline label='Edit Profile' onPress={() => {}} /> : 
+              <ButtonOutline label='Edit Profile' onPress={() => {setEditing(true)}} /> : 
               (
                 <>
                   {
+                    // show unfollow or follow button according to if current user is following this profile or not
                     followingState ? 
                       <ButtonOutline label='Unfollow' onPress={() => {setFollowingState(false); userToggleFollow(profileData.userId)}} /> : 
                       <ButtonGradient label='Follow' onPress={() => {setFollowingState(true); userToggleFollow(profileData.userId)}}/>
                   }
                   {
-                    friends && 
+                    // show message button if friends
+                    profileData.follower && followingState && 
                       <ButtonGradient 
                         label='Message' 
                         style={{marginTop: 5}} 
                         onPress={() => {
                           navigation.navigate('ChatPersonal', {
-                            userName: profileData.username,
-                            userImgSource: getImageAddress(profileData.profileImageId, profileData.username),
+                            userName: profileData.userName,
+                            userImgSource: getImageAddress(profileData.image, profileData.userName),
                             userTargetId: profileData.userId
                           })
                         }} 
                       />
-                  
                   }
                 </>
               )
           }
         </View>
       </View>
-      <StatChips followers={profileData.followers} questsCreated={profileData.questsCreated} questsPlayed={profileData.questsPlayed}/>
-      <LevelBar level={profileData.level} xp={profileData.xp} />
+      <StatChips followers={profileData.followerCount} questsCreated={profileData.questCount} questsPlayed={profileData.trackerCount}/>
+      <LevelBar level={profileData.level} xp={profileData.experience} />
     </View>
   );
 }
+
+
+
+
 
 const style = StyleSheet.create({
   outerWrapper: {
