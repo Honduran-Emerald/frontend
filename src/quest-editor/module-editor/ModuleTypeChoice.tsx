@@ -20,7 +20,7 @@ export const ModuleTypeChoice: React.FC<IModuleTypeChoice> = ({ modules, setChos
     style={{width: displayWidth}} 
     contentContainerStyle={{justifyContent: 'center', alignContent: 'center', marginVertical: 40}}>
 
-    <View style={{flex: 1, flexDirection: 'row', justifyContent:'center', marginBottom: 50}}>
+    <View style={{flex: 1, flexDirection: 'row', justifyContent:'center', marginBottom: 150}}>
   
       <View>
         <Subheading 
