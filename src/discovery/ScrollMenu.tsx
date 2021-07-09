@@ -6,6 +6,7 @@ import { LocationObject } from "expo-location";
 import { QuestPreviewLoader } from './QuestPreviewLoader';
 import { AddDraftCard } from './AddDraftCard';
 import { LevelLock } from '../common/LevelLock';
+import { useAppSelector } from '../redux/hooks';
 
 export default interface ScrollMenuProps {
     header: string
@@ -18,6 +19,7 @@ export default interface ScrollMenuProps {
 export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location, addQuest }) => {
 
     const [loadingArray, ] = useState(new Array(2+Math.floor(Math.random()*3)));
+    const user = useAppSelector(state => state.authentication.user)
 
     return (
         <View style={styles.surface}>
@@ -30,7 +32,8 @@ export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location
                     data={quests || loadingArray}
                     showsHorizontalScrollIndicator={false}
                     ListFooterComponent={addQuest && location && (() => (
-                        <LevelLock permission={quests?.length + 'quests'}><AddDraftCard /></LevelLock>
+                        <LevelLock permission={user?.questCount + 'quests' //TODO This will not work in the future
+                    }><AddDraftCard /></LevelLock>
                     ))}
                     renderItem={
                         ({ item }: {item: GameplayQuestHeader | undefined}) => <QuestPreviewLoader loading={item === undefined} content={(item === undefined) ? null : {location: location, quest: item}}/>
