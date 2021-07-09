@@ -31,13 +31,9 @@ export interface PrototypeChoiceModule extends PrototypeModuleBase {
 
 export interface PrototypeRandomModule extends PrototypeModuleBase {
   type: 'Random',
-  paths: [{
-    nextModuleReference: number | null,
-    weight: number
-  }, {
-    nextModuleReference: number | null,
-    weight: number
-  }]
+  nextLeftModuleReference: number | null,
+  nextRightModuleReference: number | null,
+  leftRatio: number,
 }
 
 export interface PrototypeWideAreaModule extends PrototypeModuleBase {
@@ -54,7 +50,8 @@ export interface PrototypePassphraseModule extends PrototypeModuleBase {
 }
 
 export interface PrototypeQRModule extends PrototypeModuleBase {
-  type: 'QR',
+  type: 'QrCode',
+  text: string,
   nextModuleReference: number | null,
 }
 

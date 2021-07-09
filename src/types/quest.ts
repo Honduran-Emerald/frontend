@@ -140,7 +140,7 @@ export interface GameplayPassphraseModule extends GameplayModuleBase {
 }
 
 export interface GameplayQRModule extends GameplayModuleBase {
-    type: 'QR',
+    type: 'QrCode',
 } 
 
 export type GameplayModule = GameplayChoiceModule | GameplayEndingModule | GameplayStoryModule | GameplayLocationModule | GameplayRandomModule | GameplayWideAreaModule | GameplayPassphraseModule | GameplayQRModule

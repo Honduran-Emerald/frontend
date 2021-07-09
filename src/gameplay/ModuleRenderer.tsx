@@ -11,6 +11,7 @@ import { Colors } from '../styles';
 import { Location } from "../types/general";
 import { RandomModule } from './modules/RandomModule';
 import { PassphraseModule } from './modules/PassphraseModule';
+import { QRModule } from './modules/QRModule';
 
 export interface ModuleRendererProps<ModuleType extends GameplayModule> {
   module: {
@@ -18,12 +19,13 @@ export interface ModuleRendererProps<ModuleType extends GameplayModule> {
     memento: any
   }
   index?: number,
-  onChoice: (choiceId: number) => Promise<any>
+  onChoice: (choiceId: number | string) => Promise<any>,
+  onPassphrase: (passphrase: number | string) => Promise<any>,
   tracker?: QuestTracker,
   edit?: boolean
 }
 
-export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index, onChoice, tracker, edit }) => {
+export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index, onChoice, onPassphrase, tracker, edit }) => {
 
   return (
     <View style={{paddingHorizontal: 10}}>
@@ -67,6 +69,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   memento: module.memento
                 }}
                 onChoice={onChoice}
+                onPassphrase={onPassphrase}
               />;
             case 'Choice':
               return <ChoiceModule
@@ -75,6 +78,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   memento: module.memento
                 }}
                 onChoice={onChoice}
+                onPassphrase={onPassphrase}
               />;
             case 'Location':
               return <LocationModule
@@ -83,6 +87,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   memento: module.memento
                 }}
                 onChoice={onChoice}
+                onPassphrase={onPassphrase}
               />;
             case 'Ending':
               return <EndingModule
@@ -91,6 +96,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   memento: module.memento
                 }}
                 onChoice={onChoice}
+                onPassphrase={onPassphrase}
                 tracker={tracker}
               />;
             case 'Random':
@@ -100,6 +106,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   memento: module.memento
                 }}
                 onChoice={onChoice}
+                onPassphrase={onPassphrase}
                 tracker={tracker}
               />
             case 'Passphrase':
@@ -109,6 +116,17 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
                   memento: module.memento
                 }}
                 onChoice={onChoice}
+                onPassphrase={onPassphrase}
+                tracker={tracker}
+              />
+            case 'QrCode':
+              return <QRModule
+                module={{
+                  module: module.module,
+                  memento: module.memento
+                }}
+                onChoice={onChoice}
+                onPassphrase={onPassphrase}
                 tracker={tracker}
               />
           }

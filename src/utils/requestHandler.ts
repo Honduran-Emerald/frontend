@@ -9,6 +9,8 @@ import { loadQuest } from "../redux/editor/editorSlice";
 const request = (target: string, type: string = 'GET', body?: any) => {
   const token = store.getState().authentication.token;
 
+  console.log('Sending Body', body)
+
   return fetch(BACKENDIP + target, {
 
     method: type,
@@ -137,6 +139,12 @@ export const queryTrackerNodesRequest = (trackerId: string) => (request(`/play/q
 export const playEventChoiceRequest = (trackerId: string, choice: number) => (request('/play/event/choice', 'POST', {
   trackerId: trackerId,
   choice: choice
+}))
+
+// /play/event/...
+export const playEventTextRequest = (trackerId: string, text: string | number) => (request('/play/event/text', 'POST', {
+  trackerId: trackerId,
+  text: text
 }))
 
 // /user/updatemessagingtoken

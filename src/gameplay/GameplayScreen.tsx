@@ -17,7 +17,7 @@ import {
   setTrackerVote
 } from '../redux/quests/questsSlice';
 import { GameplayModule, ModuleMememto, QuestPath, QuestTrackerNodeElement } from '../types/quest';
-import { playEventChoiceRequest, playVoteRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
+import { playEventChoiceRequest, playEventTextRequest, playVoteRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
 import { ModuleRenderer } from './ModuleRenderer';
 import { QuestStatsScreen } from './QuestStatsScreen';
 import _ from 'lodash';
@@ -105,7 +105,8 @@ export const GameplayScreen : React.FC = () => {
     }
   }, [pinnedQuest, pinnedQuestPath, route.params.trackerId])
 
-  const handleModuleFinish = useCallback((newModule: GameplayModule, oldMemento: ModuleMememto) => {
+  const handleModuleFinish = (newModule: GameplayModule, oldMemento: ModuleMememto) => {
+
     if (!loadedTrackerNodes) {
       console.log('new module without loaded quest')
       return;
@@ -130,7 +131,7 @@ export const GameplayScreen : React.FC = () => {
       addGeofencingRegion(newRegion);
     }
 
-  }, [loadedTrackerNodes])
+  }
 
   const handleQuestFinish = useCallback((endingFactor: number) => {
     dispatch(setTrackerFinished({ trackerId: route.params.trackerId, finished: true }));
@@ -171,6 +172,34 @@ export const GameplayScreen : React.FC = () => {
       })
   , [route.params, loadedTrackerNodes])
 
+  const onPassphrase = useCallback((passphrase) => 
+    playEventTextRequest(route.params.trackerId, passphrase)
+      .then(res => res.json())
+      .then(res => res.responseEventCollection)
+      .then(res => {
+        const failure = res.responseEvents.find((e: any) => e.type === 'Failure')
+        if (failure) {
+          return Promise.reject(failure)
+        }
+        
+        res.responseEvents.forEach(
+          (responseEvent: any) => {
+            switch (responseEvent.type) {
+              case 'ModuleFinish':
+                new Promise<void>(resolve => setTimeout(() => resolve(), 1500)).then(() => handleModuleFinish(responseEvent.module, res.memento));
+                break;
+              case 'Experience':
+                handleExperience(responseEvent.experience);
+                break;
+              case 'QuestFinish':
+                new Promise<void>(resolve => setTimeout(() => resolve(), 1500)).then(() => handleQuestFinish(responseEvent.endingFactor));
+                break;
+            }
+          }
+        )
+        
+      }), [route.params, loadedTrackerNodes])
+
   const handleVote = useCallback((vote: 'None' | 'Up' | 'Down') => {
     return playVoteRequest(route.params.trackerId, vote).then(res => {
       dispatch(setTrackerVote({ trackerId: route.params.trackerId, vote: vote }))
@@ -188,7 +217,7 @@ export const GameplayScreen : React.FC = () => {
           <FlatList
             data={loadedTrackerNodesList}
             renderItem={
-              ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} tracker={currentTracker}/>
+              ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} onPassphrase={onPassphrase} tracker={currentTracker}/>
             }
             ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref} trackerId={route.params.trackerId}/>}
             ListHeaderComponent={currentTracker?.finished ? <FinishMessage quest={loadedTrackerNodes?.quest} tracker={currentTracker} handleVote={handleVote}/> : null}

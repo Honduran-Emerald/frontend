@@ -33,8 +33,8 @@ export const editorTranslations = {
         'WideArea_ModuleDescription': 'User advances by entering a wide area. The area is much larger than when using a Location Module.',
         'Passphrase_ModuleName': 'Passphrase Module',
         'Passphrase_ModuleDescription': 'User advances by entering the correct passphrase. Might be the solution to a puzzle or a password.',
-        'QR_ModuleName': 'QR Code Module',
-        'QR_ModuleDescription': 'User advances by scanning the correct QR code.',
+        'QrCode_ModuleName': 'QR Code Module',
+        'QrCode_ModuleDescription': 'User advances by scanning the correct QR code.',
 
         'chooseModuleType': 'Choose a Module Type',
         'moduleObjectiveLabel': 'Module Objective',

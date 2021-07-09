@@ -6,16 +6,16 @@ import { GameplayPassphraseModule, GameplayStoryModule } from '../../types/quest
 import { ModuleRendererProps } from '../ModuleRenderer';
 import { Colors } from '../../styles';
 
-export const PassphraseModule: React.FC<ModuleRendererProps<GameplayPassphraseModule>> = ({ module, onChoice }) => {
+export const PassphraseModule: React.FC<ModuleRendererProps<GameplayPassphraseModule>> = ({ module, onPassphrase }) => {
 
   const [hasContinued, setHasContinued] = React.useState(!!module.memento);
   const [inputDisabled, setInputDisabled] = React.useState(false);
   const [incorrectPassphrase, setIncorrectPassphrase] = React.useState(false);
   const [value, setValue] = React.useState('');
 
-  const handleClick = () => {
+  const handleClick = (value: string) => {
     setInputDisabled(true);
-    onChoice(0)
+    onPassphrase(value)
       .then(() => setHasContinued(true))
       .catch(() => {
         // TODO: Add handling of different rejections here
@@ -37,7 +37,7 @@ export const PassphraseModule: React.FC<ModuleRendererProps<GameplayPassphraseMo
             value={value} 
             onChangeText={t => {setValue(t); setIncorrectPassphrase(false)}} 
             placeholderTextColor={incorrectPassphrase ? 'red' : '#777'}/>  
-          <TouchableNativeFeedback onPress={() => inputDisabled ? {} : handleClick()}>
+          <TouchableNativeFeedback onPress={() => inputDisabled ? {} : handleClick(value)}>
 
             <View style={styles.choice}>
               

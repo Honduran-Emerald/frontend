@@ -22,7 +22,7 @@ export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ s
         edit 
         ? { // edit module
             objective: defaultValues!.objective,
-            weight: defaultValues!.paths[0].weight
+            weight: defaultValues!.leftRatio
         }
         : { // new module
             objective: '',
@@ -45,17 +45,9 @@ export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ s
             id: -1,
             type: 'Random',
             components: [],
-            //@ts-ignore
-            paths: edit && defaultValues ? defaultValues.paths.map((path, idx) => ({
-                nextModuleReference: path.nextModuleReference,
-                weight: idx === 0 ? moduleData.weight : (1 - moduleData.weight)
-            })) : ([{
-                nextModuleReference: null,
-                weight: moduleData.weight
-            }, {
-                nextModuleReference: null,
-                weight: 1 - moduleData.weight
-            }]),
+            leftRatio: moduleData.weight,
+            nextLeftModuleReference: defaultValues?.nextLeftModuleReference || null,
+            nextRightModuleReference: defaultValues?.nextRightModuleReference || null,
             objective: moduleData.objective
         })
     }
@@ -91,8 +83,7 @@ export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ s
                 <Text>{moduleData.weight}</Text>
                 <Text>{1-moduleData.weight}</Text>
             </View>
-                
-
+            
             </View>
                 
             <Button 

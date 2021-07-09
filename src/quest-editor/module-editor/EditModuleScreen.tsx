@@ -9,11 +9,12 @@ import { ChoiceModule } from './module-views/ChoiceModule';
 import { EndingModule } from './module-views/EndingModule';
 import { StoryModule } from './module-views/StoryModule';
 import { PreviewModuleScreen } from './PreviewModuleScreen';
-import { PrototypeChoiceModule, PrototypeComponent, PrototypeEndingModule, PrototypeLocationModule, PrototypeModule, PrototypePassphraseModule, PrototypeRandomModule, PrototypeStoryModule } from '../../types/prototypes';
+import { PrototypeChoiceModule, PrototypeComponent, PrototypeEndingModule, PrototypeLocationModule, PrototypeModule, PrototypePassphraseModule, PrototypeQRModule, PrototypeRandomModule, PrototypeStoryModule } from '../../types/prototypes';
 import { LocationModule } from './module-views/LocationModule';
 import { ComponentCreateScreen } from './ComponentCreateScreen';
 import { RandomModule } from './module-views/RandomModule';
 import { PassphraseModule } from './module-views/PassphraseModule';
+import { QRModule } from './module-views/QRModule';
 
 const displayWidth = Dimensions.get('screen').width
 
@@ -51,6 +52,7 @@ export const EditModuleScreen = () => {
     'Location': <LocationModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeLocationModule} setComponents={setComponents} scrollToPreview={scrollToPreview} />,
     'Random': <RandomModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeRandomModule} setComponents={setComponents} scrollToPreview={scrollToPreview} />,
     'Passphrase': <PassphraseModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypePassphraseModule} setComponents={setComponents} scrollToPreview={scrollToPreview} />,
+    'QrCode': <QRModule setFinalModule={saveModule} edit defaultValues={route.params.node.moduleObject as PrototypeQRModule} setComponents={setComponents} scrollToPreview={scrollToPreview} />,
   }
 
   return (
