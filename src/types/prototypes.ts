@@ -46,7 +46,7 @@ export interface PrototypeWideAreaModule extends PrototypeModuleBase {
 
 export interface PrototypePassphraseModule extends PrototypeModuleBase {
   type: 'Passphrase',
-  phrase: string,
+  text: string,
   nextModuleReference: number | null,
 }
 

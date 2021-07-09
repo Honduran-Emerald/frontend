@@ -12,7 +12,7 @@ import { useEffect } from 'react';
 
 
 interface IPassphraseModuleData {
-    phrase: string,
+    text: string,
     objective: string,
 }
 
@@ -20,10 +20,10 @@ export const PassphraseModule: React.FC<ICreateModule<PrototypePassphraseModule>
 
     const [moduleData, setModuleData] = useState<IPassphraseModuleData>(edit 
         ? {
-            phrase: defaultValues?.phrase || '',
+            text: defaultValues?.text || '',
             objective: defaultValues?.objective || '',
         } : {
-            phrase: '', 
+            text: '', 
             objective: ''
         });
 
@@ -44,7 +44,7 @@ export const PassphraseModule: React.FC<ICreateModule<PrototypePassphraseModule>
             objective: moduleData.objective,
             type: 'Passphrase',
             components: [],
-            phrase: moduleData.phrase,
+            text: moduleData.text,
             nextModuleReference: (edit && defaultValues) ? defaultValues.nextModuleReference : null
         })
     }
@@ -72,8 +72,8 @@ export const PassphraseModule: React.FC<ICreateModule<PrototypePassphraseModule>
                 dense
                 style={{marginVertical: 20, marginHorizontal: 10}}
                 label={'Set Passphrase'}
-                value={moduleData.phrase}
-                onChangeText={(data) => setModuleData({...moduleData, phrase: data})}
+                value={moduleData.text}
+                onChangeText={(data) => setModuleData({...moduleData, text: data})}
                 theme={{colors: {primary: Colors.primary}}} />
             <Divider/>
 
