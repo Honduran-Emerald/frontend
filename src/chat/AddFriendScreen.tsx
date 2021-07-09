@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import {ActivityIndicator, FlatList, StyleSheet, Text, View} from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import lodash from 'lodash';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -8,7 +8,7 @@ import { Colors } from '../styles';
 import { FriendItem, getUserSearch } from './FriendlistScreen';
 import { User } from '../types/general';
 import { queryUsersRequest, userToggleFollow } from '../utils/requestHandler';
-import {useAppSelector} from "../redux/hooks";
+import { useAppSelector } from '../redux/hooks';
 
 export default function AddFriendScreen() {
 
@@ -17,31 +17,11 @@ export default function AddFriendScreen() {
   const [users, setUsers] = React.useState<User[]>([])
   const [searchInput, setSearchInput] = React.useState<string>('');
   const [inputUpdated, setInputUpdated] = React.useState<boolean>(true);
-
-  React.useEffect(() => {
-    getUsers().then(() => {})
-  }, [])
+  const [searching, setSearching] = React.useState<boolean>(true);
 
   const updateSearch = (input: string) => {
     setSearchInput(input);
     setInputUpdated(true);
-  }
-
-  const getUsers = () => {
-    return queryUsersRequest()
-      .then((res) => res.json()
-        .then((data) => {
-          if(res.status === 200) {
-            const filteredUsers = data.users.filter((user: User) => user.userId !== currentUser?.userId)
-            filteredUsers.sort((a: User, b: User) => {
-              const textA = a.userName.toUpperCase();
-              const textB = b.userName.toUpperCase();
-              return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-            });
-            setUsers(filteredUsers);
-          }
-        })
-      )
   }
 
   const followUser = (user: User) => {
@@ -60,8 +40,25 @@ export default function AddFriendScreen() {
   }
 
   const searchUsers = () => {
-    setInputUpdated(false);
-    // TODO endpoint needed, normalization maybe
+    setSearching(true);
+    queryUsersRequest(0, searchInput)
+      .then((res) => res.json()
+        .then((data) => {
+          setTimeout(() => {
+            if(res.status === 200) {
+              const filteredUsers = data.users.filter((user: User) => user.userId !== currentUser?.userId)
+              filteredUsers.sort((a: User, b: User) => {
+                const textA = a.userName.toUpperCase();
+                const textB = b.userName.toUpperCase();
+                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+              });
+              setUsers(filteredUsers);
+              setInputUpdated(false);
+              setSearching(false);
+            }
+          }, 200)
+        })
+      )
   }
 
   return (
@@ -75,35 +72,35 @@ export default function AddFriendScreen() {
           theme={{colors: {primary: Colors.primary}}}
         />
       </View>
-      <FlatList
-        data={getUserSearch(users, searchInput)}
-        keyExtractor={(item) => item.userId}
-        renderItem={
-          ({ item }) =>
-            <FriendItem
-              user={item}
-              isFriend={false}
-              hasFollowed={item.following}
-              buttonAction={() => followUser(item)}
-            />
-        }
-      />
       {
-        users.length === 0 && inputUpdated &&
+        !searching &&
+        <FlatList
+          data={getUserSearch(users, searchInput)}
+          keyExtractor={(item) => item.userId}
+          renderItem={
+            ({item}) =>
+              <FriendItem
+                user={item}
+                isFriend={false}
+                hasFollowed={item.following}
+                buttonAction={() => followUser(item)}
+              />
+          }
+        />
+      }
+      {
+        users.length === 0 && !searching &&
         <View style={styles.noFriends}>
           <MaterialCommunityIcons name='magnify' size={48} color={Colors.gray}/>
           <Text style={styles.info}>
-            Search for other players and follow each other to become friends and chat!
+            {inputUpdated ? 'Search for other players and follow each other to become friends and chat!' : 'No users found'}
           </Text>
         </View>
       }
       {
-        users.length === 0 && searchInput !== '' && !inputUpdated &&
+        searching &&
         <View style={styles.noFriends}>
-          <MaterialCommunityIcons name='magnify' size={48} color={Colors.gray}/>
-          <Text style={styles.info}>
-            No users found
-          </Text>
+          <ActivityIndicator color={Colors.primary} size={'large'}/>
         </View>
       }
     </View>
