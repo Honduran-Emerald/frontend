@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { QuestPropertiesScreen } from './QuestPropertiesScreen';
 import { Colors } from '../styles';
 import { ModuleGraphCaller } from './graph/ModuleGraphCaller';
 import { AdvancedSettings } from './AdvancedSettings';
+import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
+import { Button, Dialog, Paragraph, Portal } from 'react-native-paper';
+import { useAppSelector } from '../redux/hooks';
+import { useRef } from 'react';
 
 type TabParams = {
   QuestCreation: {latitude: number, longitude: number},
@@ -14,7 +19,39 @@ type TabParams = {
 const Tab = createMaterialTopTabNavigator<TabParams>();
 export const QuestEditorTabNavigator = () => {
 
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const unsavedChanges = useAppSelector(state => state.editor.unsavedChanges)
+
+  const navigation = useNavigation();
+
+  const unsavedChangesRef = useRef<boolean>(false)
+
+  useEffect(() => {
+    unsavedChangesRef.current = unsavedChanges
+  }, [unsavedChanges])
+
+  useEffect(() => {
+    navigation.addListener('beforeRemove', (e) => {
+      if (e.data.action.source !== undefined || !unsavedChangesRef.current) return;
+      e.preventDefault();
+      setShowDialog(true);
+    })
+  }, [])
+
   return (
+    <>
+      <Portal>
+        <Dialog visible={showDialog} onDismiss={() => setShowDialog(false)}>
+          <Dialog.Title>Leave Quest Editor?</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Everything not saved will be lost</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button color={Colors.primary} onPress={() => setShowDialog(false)}>OK</Button>
+            <Button color={Colors.primary} onPress={() => {setShowDialog(false); navigation.goBack()}}>Go back</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     <Tab.Navigator
       style={{backgroundColor: Colors.background}}
       tabBarOptions={{indicatorStyle: {backgroundColor: Colors.primary}}}
@@ -23,5 +60,6 @@ export const QuestEditorTabNavigator = () => {
       <Tab.Screen name='ModuleGraph' component={ModuleGraphCaller} options={{tabBarLabel: 'Modules'}}/>
       <Tab.Screen name='AdvancedOptions' component={AdvancedSettings} options={{tabBarLabel: 'Advanced'}}/>
     </Tab.Navigator>
+    </>
   );
 };

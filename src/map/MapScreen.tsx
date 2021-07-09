@@ -21,7 +21,7 @@ import { LevelLock } from '../common/LevelLock';
 export const MapScreen = () => {
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [heading, setHeading] = useState<number>();
-  const [magnetometerSubscription, setMagnetometerSubscription] = useState<Subscription | null>(null);
+  const [, setMagnetometerSubscription] = useState<Subscription | null>(null);
   const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription>();
   const [indexPreviewQuest, setIndexPreviewQuest] = useState<Number>();
   const [showNoMoreQuestsDialog, setShowNoMoreQuestsDialog] = useState<boolean>(false);

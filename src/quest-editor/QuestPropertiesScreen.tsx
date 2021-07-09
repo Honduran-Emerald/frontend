@@ -15,8 +15,6 @@ import { useState } from 'react';
 export const QuestPropertiesScreen = () => {
   const questPrototype = useAppSelector(state => state.editor.questPrototype)
   const questId = useAppSelector(state => state.editor.questId)
-  const imagePath = useAppSelector(state => state.editor.imagePath)
-  const [displayImageReference, setDisplayImageReference] = useState<undefined | number>();
   const [isSaving, setIsSaving] = useState(false);
   const newImages = useAppSelector(state => state.editor.newImages)
   const dispatch = useAppDispatch();
