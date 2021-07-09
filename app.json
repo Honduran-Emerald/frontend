@@ -35,7 +35,8 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION",
         "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
+        "WRITE_EXTERNAL_STORAGE",
+        "VIBRATE"
       ],
       "package": "honduran.emerald",
       "googleServicesFile": "./google-services.json"
