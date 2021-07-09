@@ -17,8 +17,6 @@ export const LevelLock: React.FC<LevelLockProps> = ({ children, permission }) =>
 
   const user = useAppSelector(state => state.authentication.user)
 
-  console.log((parseInt(permission.substring(0, permission.length-7)) < Math.sqrt(user!.level)), (parseInt(permission.substring(0, permission.length-6))))
-
   if (user && (permission in levelLocks&& user.level < levelLocks[permission]
     || permission.endsWith('_quests') && (parseInt(permission.substring(0, permission.length-6)) < Math.sqrt(user.level)))) {
     return (
