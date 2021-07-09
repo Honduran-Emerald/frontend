@@ -30,8 +30,8 @@ export const LevelLock: React.FC<LevelLockProps> = ({ children, permission, alte
 
   if (user && 
       (permission.type === 'discrete' ? permission.perm in levelLocks && user.level < levelLocks[permission.perm]
-       : permission.type === 'quests' ? permission.quests && permission.quests > Math.sqrt(user.level) + 1 : false)) {
-  
+       : permission.type === 'quests' ? permission.quests!==undefined && permission.quests >= Math.sqrt(user.level) + 1 : false)) {
+        
     return <>
       {dialog && 
       <Portal><Dialog visible={showNoMoreQuestsDialog} onDismiss={() => setShowNoMoreQuestsDialog(false)}>
