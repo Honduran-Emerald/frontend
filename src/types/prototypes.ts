@@ -10,6 +10,7 @@ export interface QuestPrototype extends QuestBase {
   images: Image[],
   imageReference: number | null,
   agentProfileReference: number | null,
+  agentEnabled: boolean,
 }
 
 //############################# Modules
