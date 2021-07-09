@@ -45,14 +45,35 @@ export const ProfileScreen = (props: profileProps) => {
     }
   }
 
+  useEffect(() => {
+    fetchUserData();
+    fetchQuestData();
+  }, [])
+
   const fetchQuestData = () => {
     return Promise.all([
+      // set published
       queryQuestsRequest(0, route.params?.userId || authenticatedUser?.userId)
       .then(response => response.json())
       .then(obj => setPublishedQuests(obj.quests)),
-      
+      // set drafts
+        createQueryRequest(0).then(res => res.json()).then((quests) => {
+          if (authenticatedUser?.userId === user?.userId) {
+            let drafts: GameplayQuestHeader[] = [];
+            quests.prototypes.forEach(
+              (prototype: any) => {
+                if (prototype.quest !== null && prototype !== null && prototype.title !== null && prototype.outdated) {
+                  let pr = lodash.cloneDeep(prototype);
+                  drafts.push(Object.assign(pr.quest, pr));
+                }
+              }
+            );
+            setDraftQuests(drafts);
+          }
+        }),
+
+
     ].map(promise => promise.catch(() => {})))
-    
   }
   
   const onRefresh = () => {
@@ -93,11 +114,6 @@ export const ProfileScreen = (props: profileProps) => {
     getLocation().catch((err: Error) => {});
   },[])*/
 
-  useEffect(() => {
-    fetchUserData();
-    fetchQuestData();
-  }, [])
-
   return(
     <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
       <ScrollView 
@@ -123,7 +139,8 @@ export const ProfileScreen = (props: profileProps) => {
           <>
             <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={publishedQuests}/>
             <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={quests}/>
-            <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests} addQuest/>
+            {(authenticatedUser?.userId === user?.userId) &&
+            <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests} addQuest/>}
             <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={upvotedQuests}/>
           </>)
         }
