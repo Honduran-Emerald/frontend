@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { StyleSheet, Text } from 'react-native';
-import Svg, { Rect } from 'react-native-svg';
+import { StyleSheet } from 'react-native';
 import { useAppSelector } from '../redux/hooks';
 import { Colors } from '../styles';
 import { levelLocks } from '../utils/levelLocks';
@@ -10,7 +9,13 @@ import { Button, Dialog, Paragraph, Subheading } from 'react-native-paper';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 interface LevelLockProps {
-  permission: string
+  permission: {
+    type: 'discrete',
+    perm: string
+  } | {
+    type: 'quests',
+    quests: number | undefined
+  }
   alternative?: React.ReactNode,
   dialog?: {
     title: string,
@@ -23,8 +28,9 @@ export const LevelLock: React.FC<LevelLockProps> = ({ children, permission, alte
   const user = useAppSelector(state => state.authentication.user)
   const [showNoMoreQuestsDialog, setShowNoMoreQuestsDialog] = useState<boolean>(false);
 
-  if (user && (permission in levelLocks&& user.level < levelLocks[permission]
-    || permission.endsWith('_quests') && (parseInt(permission.substring(0, permission.length-6)) < Math.sqrt(user.level)))) {
+  if (user && 
+      (permission.type === 'discrete' ? permission.perm in levelLocks && user.level < levelLocks[permission.perm]
+       : permission.type === 'quests' ? permission.quests && permission.quests > Math.sqrt(user.level) + 1 : false)) {
   
     return <>
       {dialog && <Dialog visible={showNoMoreQuestsDialog} onDismiss={() => setShowNoMoreQuestsDialog(false)}>

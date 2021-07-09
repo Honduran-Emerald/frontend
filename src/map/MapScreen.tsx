@@ -145,7 +145,10 @@ export const MapScreen = () => {
       )}
 
       {location && location.coords && (
-        <LevelLock permission={user?.questCount + 'quests'} alternative={
+        <LevelLock permission={{
+          type: 'quests',
+          quests: user?.questCount
+        }} alternative={
           <FAB 
             style={{
               position: 'absolute',

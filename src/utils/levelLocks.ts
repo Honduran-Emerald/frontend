@@ -1,7 +1,8 @@
 
-const locked = 1/0
+const locked = 1/0;
+const unlockAll = false;
 
-export const levelLocks: {[key: string]: number} = {
+export const levelLocks: {[key: string]: number} = !unlockAll ? {
   'ChoiceModule': 3,
   'LocationModule': 5,
   'RandomModule': 10,
@@ -11,4 +12,4 @@ export const levelLocks: {[key: string]: number} = {
 
   'CustomAgent': 7,
   'RelatedQuests': locked,
-}
+} : {}

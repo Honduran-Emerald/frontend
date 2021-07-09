@@ -22,7 +22,11 @@ export const AdvancedSettings: React.FC = () => {
       }}>
       <Headline>Advanced Settings</Headline>
       <View style={[styles.group]}>
-        <LevelLock permission='CustomAgent' >
+        <LevelLock permission={{
+            type: 'discrete',
+            perm: 'CustomAgent'
+          }}
+        >
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <Subheading>Custom Agent</Subheading>
           <Checkbox 
@@ -60,7 +64,10 @@ export const AdvancedSettings: React.FC = () => {
 
       <View style={[styles.group]}>
 
-      <LevelLock permission='RelatedQuests' >
+      <LevelLock permission={{
+            type: 'discrete',
+            perm: 'RelatedQuests'
+          }}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           
           <Subheading>Related Quests</Subheading>

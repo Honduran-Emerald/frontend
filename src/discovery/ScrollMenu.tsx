@@ -32,8 +32,10 @@ export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location
                     data={quests || loadingArray}
                     showsHorizontalScrollIndicator={false}
                     ListFooterComponent={addQuest && location && (() => (
-                        <LevelLock permission={user?.questCount + 'quests' //TODO This will not work in the future
-                    }><AddDraftCard /></LevelLock>
+                        <LevelLock permission={{
+                                type: 'quests',
+                                quests: user?.questCount //TODO This will not work in the future
+                            }}><AddDraftCard /></LevelLock>
                     ))}
                     renderItem={
                         ({ item }: {item: GameplayQuestHeader | undefined}) => <QuestPreviewLoader loading={item === undefined} content={(item === undefined) ? null : {location: location, quest: item}}/>

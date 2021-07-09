@@ -2,7 +2,7 @@ import I18n from 'i18n-js';
 import React from 'react';
 import { Dimensions, TouchableHighlight, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Card, TextInput, Text, Divider, Subheading } from 'react-native-paper';
+import { Card, Text, Subheading } from 'react-native-paper';
 import { LevelLock } from '../../common/LevelLock';
 import { Colors } from '../../styles';
 
@@ -48,7 +48,10 @@ const ModuleCard: React.FC<{moduleType: string, setChosenModule: (arg0: string) 
       setChosenModule(moduleType);
     }}>
 
-    <LevelLock key={moduleType} permission={moduleType + 'Module'}>
+    <LevelLock key={moduleType} permission={{
+      type: 'discrete',
+      perm: moduleType + 'Module'
+    }}>
     <Card 
       style={{padding: 0, backgroundColor: chosen ? Colors.primary : 'white', overflow: 'hidden'}}
       >
