@@ -9,6 +9,8 @@ import { useState } from 'react';
 import { Button, Dialog, Paragraph, Portal } from 'react-native-paper';
 import { useAppSelector } from '../redux/hooks';
 import { useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { unloadQuest } from '../redux/editor/editorSlice';
 
 type TabParams = {
   QuestCreation: {latitude: number, longitude: number},
@@ -23,6 +25,7 @@ export const QuestEditorTabNavigator = () => {
   const unsavedChanges = useAppSelector(state => state.editor.unsavedChanges)
 
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const unsavedChangesRef = useRef<boolean>(false)
 
@@ -47,8 +50,8 @@ export const QuestEditorTabNavigator = () => {
             <Paragraph>Everything not saved will be lost</Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button color={Colors.primary} onPress={() => setShowDialog(false)}>OK</Button>
-            <Button color={Colors.primary} onPress={() => {setShowDialog(false); navigation.goBack()}}>Go back</Button>
+            <Button color={Colors.primary} onPress={() => setShowDialog(false)}>Stay</Button>
+            <Button color={Colors.primary} onPress={() => {setShowDialog(false); dispatch(unloadQuest()); navigation.goBack()}}>Drop Changes</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

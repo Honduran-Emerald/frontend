@@ -36,7 +36,6 @@ export const questsSlice = createSlice({
             if (state.questPrototype !== undefined)
                 state.questPrototype.modules = action.payload;
             state.unsavedChanges = true;
-            console.log('1')
         },
         addOrUpdateQuestModule: (state, action: PayloadAction<PrototypeModule>) => {
             if (state.questPrototype !== undefined)
@@ -44,7 +43,6 @@ export const questsSlice = createSlice({
                     .filter(m => m.id !== action.payload.id)
                     .concat(action.payload)
             state.unsavedChanges = true;
-            console.log('2')
         },
         addOrUpdateMultipleQuestModules: (state, action: PayloadAction<PrototypeModule[]>) => {
             if (state.questPrototype !== undefined)
@@ -52,83 +50,69 @@ export const questsSlice = createSlice({
                     .filter(m => !action.payload.find(module => module.id===m.id))
                     .concat(action.payload)
             state.unsavedChanges = true;
-            console.log('3')
         },
         deleteQuestModule: (state, action: PayloadAction<number>) => {
             if (state.questPrototype !== undefined)
                 state.questPrototype.modules = state.questPrototype.modules
                     .filter(m => m.id !== action.payload) 
             state.unsavedChanges = true;
-            console.log('4')
         },
         spliceQuestImages: (state, action: PayloadAction<number>) => {
             if(state.questPrototype?.images !== undefined)
                 state.questPrototype.images.splice(action.payload, 1);
             state.unsavedChanges = true;
-            console.log('5')
         },
         setQuestTitle: (state, action: PayloadAction<string>) => {
             if (state.questPrototype !== undefined)
                 state.questPrototype.title = action.payload
             state.unsavedChanges = true;
-            console.log('6')
         },
         setQuestDescription: (state, action: PayloadAction<string>) => {
             if (state.questPrototype !== undefined)
                 state.questPrototype.description = action.payload
             state.unsavedChanges = true;
-            console.log('7')
         },
         setLocationName: (state, action: PayloadAction<string>) => {
             if (state.questPrototype !== undefined)
                 state.questPrototype.locationName = action.payload
             state.unsavedChanges = true;
-            console.log('8')
         },
         setImages: (state, action: PayloadAction<Image[]>) => {
             if(state.questPrototype !== undefined)
                 state.questPrototype.images = action.payload
             state.unsavedChanges = true;
-            console.log('10')
         },
         setEstimatedTime: (state, action: PayloadAction<string>) => {
             if (state.questPrototype !== undefined)
                 state.questPrototype.approximateTime = action.payload
             state.unsavedChanges = true;
-            console.log('11')
         },
         setImageReference: (state, action: PayloadAction<number>) => {
             if(state.questPrototype !== undefined)
                 state.questPrototype.imageReference = action.payload; 
             state.unsavedChanges = true;
-            console.log('12')
         },
         setAgentImageReference: (state, action: PayloadAction<number>) => {
             if (state.questPrototype !== undefined)
                 state.questPrototype.agentProfileReference = action.payload
             state.unsavedChanges = true;
-            console.log('13')
         },
         setAgentName: (state, action: PayloadAction<string>) => {
             if (state.questPrototype !== undefined)
                 state.questPrototype.agentProfileName = action.payload
             state.unsavedChanges = true;
-            console.log('14')
         },
         setNewImages: (state, action: PayloadAction<NewImage[]>) => {
             state.newImages = action.payload;
             state.unsavedChanges = true;
-            console.log('15')
         },
         pushNewImages: (state, action: PayloadAction<NewImage>) => {
             state.newImages.push(action.payload);
             state.unsavedChanges = true;
-            console.log('16')
         },
         setNewImagesAt: (state, action: PayloadAction<{index: number, value: NewImage}>) => {
             state.newImages[action.payload.index] = action.payload.value; 
             state.unsavedChanges = true;
-            console.log('17')
         },
         setNewImageReference: (state, action: PayloadAction<{base64: string, reference: number}>) => {
             if (state.questPrototype !== undefined) {
@@ -140,21 +124,22 @@ export const questsSlice = createSlice({
                 reference: action.payload.reference
             })
             state.unsavedChanges = true;
-            console.log('18')
         },
         toggleAgentEnabled: (state) => {
             if (state.questPrototype !== undefined) {
                 state.questPrototype.agentEnabled = !state.questPrototype.agentEnabled
             }
             state.unsavedChanges = true;
-            console.log('19')
+        },
+        saveChanges: (state) => {
+            state.unsavedChanges = false
         }
 
     }
 })
 
 export const { loadQuest, unloadQuest, addOrUpdateQuestModule, deleteQuestModule, setModules,
-        setQuestTitle, setQuestDescription, setLocationName, setImages, setImageReference, 
+        setQuestTitle, setQuestDescription, setLocationName, setImages, setImageReference, saveChanges,
         setEstimatedTime, addOrUpdateMultipleQuestModules, spliceQuestImages, setNewImages, pushNewImages, 
         setNewImagesAt, setNewImageReference, setAgentImageReference, setAgentName, toggleAgentEnabled} = questsSlice.actions
 

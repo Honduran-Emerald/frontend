@@ -5,10 +5,9 @@ import { Colors, Containers } from '../styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { setEstimatedTime, setImageReference, setImages, setLocationName, setNewImages, setQuestDescription, setQuestTitle } from '../redux/editor/editorSlice';
+import { saveChanges, setEstimatedTime, setImageReference, setImages, setLocationName, setNewImages, setQuestDescription, setQuestTitle } from '../redux/editor/editorSlice';
 import I18n from 'i18n-js';
 import { createAndPutRequest } from '../utils/requestHandler';
-import { Image, NewImage } from '../types/quest';
 import { ImageReferencePicker } from './module-editor/ImageReferencePicker';
 import { useState } from 'react';
 
@@ -31,8 +30,8 @@ export const QuestPropertiesScreen = () => {
       <TextInput 
         placeholder={I18n.t('propertiesQuestTitle')}
         defaultValue={questPrototype!.title} 
-        onEndEditing={(event) => {
-          dispatch(setQuestTitle(event.nativeEvent.text))
+        onChangeText={(event) => {
+          dispatch(setQuestTitle(event))
         }}
         theme={{colors: {primary: Colors.primary}}} 
         style={[style.container, style.questTitleInput]}
@@ -45,11 +44,11 @@ export const QuestPropertiesScreen = () => {
       <View style={[style.container, style.smallInputsGroup]}>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='map-marker' size={16} color='darkgray'/>
-          <TextInputNative placeholder={I18n.t('propertiesLocName')} defaultValue={questPrototype!.locationName} onEndEditing={event => dispatch(setLocationName(event.nativeEvent.text))} style={{marginHorizontal: 7, flex: 1}}/>
+          <TextInputNative placeholder={I18n.t('propertiesLocName')} defaultValue={questPrototype!.locationName} onChangeText={event => dispatch(setLocationName(event))} style={{marginHorizontal: 7, flex: 1}}/>
         </View>
         <View style={style.smallInputs}>
           <MaterialCommunityIcons name='timer' size={16} color='darkgray'/>
-          <TextInputNative placeholder={I18n.t('propertiesEstTime')} defaultValue={questPrototype!.approximateTime} onEndEditing={event => dispatch(setEstimatedTime(event.nativeEvent.text))} style={{marginHorizontal: 7, flex: 1}}/>
+          <TextInputNative placeholder={I18n.t('propertiesEstTime')} defaultValue={questPrototype!.approximateTime} onChangeText={event => dispatch(setEstimatedTime(event))} style={{marginHorizontal: 7, flex: 1}}/>
         </View>
       </View>
       <MultiLineInput questDescription={questPrototype!.description} setQuestDescription={val => dispatch(setQuestDescription(val))}/>
@@ -71,24 +70,13 @@ export const QuestPropertiesScreen = () => {
             .then(r => r.json())
             .then(data => {dispatch(setImages(questPrototype!.images.concat(data.images)));dispatch(setNewImages([]))})
             .then(() => setIsSaving(false))
+            .then(() => dispatch(saveChanges()))
           }}
       >
         {I18n.t('saveButton')}
       </Button>
     </KeyboardAwareScrollView>
   );
-}
-
-/**
- * 
- * @param images Array of images to search for a free reference
- * @returns The value of a reference that is not occupied yet
- */
-function findFreeReference(images : Array<Image | NewImage>) {
-  for(let i = 0; ; i++) {
-    if(images.findIndex(image => image.reference === i) === -1)
-      return i
-  }
 }
 
 const MultiLineInput : React.FC<{questDescription: string, setQuestDescription: (val: string) => void}> = ({questDescription, setQuestDescription}) => (
@@ -98,7 +86,7 @@ const MultiLineInput : React.FC<{questDescription: string, setQuestDescription: 
       numberOfLines={15}
       style={style.descriptionInput}
       defaultValue={questDescription}
-      onEndEditing={event => setQuestDescription(event.nativeEvent.text)} 
+      onChangeText={event => setQuestDescription(event)} 
       placeholder={I18n.t('propertiesDescription')}
     />
   </View>
