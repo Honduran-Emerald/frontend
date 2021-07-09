@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { Surface } from "react-native-paper";
-import { GameplayQuestHeader } from "../types/quest";
+import {GameplayQuestHeader, QueriedQuest} from "../types/quest";
 import { LocationObject } from "expo-location";
 import { QuestPreviewLoader } from './QuestPreviewLoader';
 import { AddDraftCard } from './AddDraftCard';
@@ -10,7 +10,7 @@ export default interface ScrollMenuProps {
     header: string
     type: string
     location: LocationObject | undefined
-    quests: GameplayQuestHeader[] | undefined
+    quests: GameplayQuestHeader[] | QueriedQuest[] | undefined
     addQuest?: true
 }
 

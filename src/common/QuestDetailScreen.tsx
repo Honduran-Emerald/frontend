@@ -5,17 +5,19 @@ import { Entypo } from '@expo/vector-icons';
 import { Avatar, Modal, Portal, Button as PaperButton, Surface } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import _ from 'lodash';
 
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
 import { QueriedQuest, QuestTracker } from '../types/quest';
 import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { acceptQuest } from '../redux/quests/questsSlice';
+import { acceptQuest, addRecentlyVisitedQuest, refreshRecentlyVisitedQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { getImageAddress } from '../utils/imageHandler';
 import { addGeofencingRegion, SingleGeoFenceLocationRadius } from '../utils/TaskManager';
+import { storeData } from '../utils/AsyncStore';
 
 export default function QuestDetailScreen({ route }: any) {
 
@@ -23,6 +25,7 @@ export default function QuestDetailScreen({ route }: any) {
 
   const user: User | undefined = useAppSelector((state) => state.authentication.user);
   const acceptedQuests: QuestTracker[] = useAppSelector((state) => state.quests.acceptedQuests);
+  const recentQuests: QueriedQuest[] = useAppSelector((state) => state.quests.recentlyVisitedQuests)
 
   const acceptedIds: string[] = acceptedQuests.map(tracker => tracker.questId)
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
@@ -38,6 +41,27 @@ export default function QuestDetailScreen({ route }: any) {
 
   const showModal = () => setModalVisible(true);
   const hideModal = () => setModalVisible(false);
+
+  React.useEffect(() => {
+    async function updateRecentQuests() {
+      if(!recentQuests.find((q) => q.id === quest.id)) {
+        const tmp = _.cloneDeep(recentQuests)
+        if(tmp.length > 19) {
+          tmp.splice(0, 1);
+        }
+        tmp.push(quest);
+        await storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
+        dispatch(addRecentlyVisitedQuest(quest));
+      } else {
+        const tmp = recentQuests.filter((curQuest) => quest.id !== curQuest.id);
+        tmp.push(quest);
+        await storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
+        dispatch(refreshRecentlyVisitedQuest(quest))
+      }
+    }
+
+    updateRecentQuests().then(() => {})
+  }, [])
 
   const handleAccept = () => {
     setIsButtonDisabled(true);
@@ -176,9 +200,6 @@ export default function QuestDetailScreen({ route }: any) {
               </Text>
             </View>
           </View>
-          {
-            // TODO implement go to profile navigation
-          }
           <TouchableNativeFeedback onPress={() => { navigation.navigate('UserProfile', {screen: 'Profile', params: {userId: quest.ownerId}}) }}>
             <View style={styles.authorView}>
               <Avatar.Image
