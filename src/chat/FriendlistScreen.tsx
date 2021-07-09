@@ -89,14 +89,17 @@ export default function FriendlistScreen() {
           </TouchableNativeFeedback>
         </View>
       </View>
-      <View style={styles.searchbar}>
-        <Searchbar
-          placeholder={'Search users'}
-          onChangeText={(input) => setSearchInput(input)}
-          value={searchInput}
-          theme={{colors: {primary: Colors.primary}}}
-        />
-      </View>
+      {
+        friends.length > 0 &&
+        <View style={styles.searchbar}>
+          <Searchbar
+            placeholder={'Search friends'}
+            onChangeText={(input) => setSearchInput(input)}
+            value={searchInput}
+            theme={{colors: {primary: Colors.primary}}}
+          />
+        </View>
+      }
       <FlatList
         data={getUserSearch(friends, searchInput)}
         keyExtractor={(item) => item.userId}
