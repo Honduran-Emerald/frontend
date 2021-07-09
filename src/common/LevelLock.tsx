@@ -5,7 +5,7 @@ import { useAppSelector } from '../redux/hooks';
 import { Colors } from '../styles';
 import { levelLocks } from '../utils/levelLocks';
 import { BlurView } from 'expo-blur';
-import { Button, Dialog, Paragraph, Subheading } from 'react-native-paper';
+import { Button, Dialog, Paragraph, Portal, Subheading } from 'react-native-paper';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 interface LevelLockProps {
@@ -33,7 +33,8 @@ export const LevelLock: React.FC<LevelLockProps> = ({ children, permission, alte
        : permission.type === 'quests' ? permission.quests && permission.quests > Math.sqrt(user.level) + 1 : false)) {
   
     return <>
-      {dialog && <Dialog visible={showNoMoreQuestsDialog} onDismiss={() => setShowNoMoreQuestsDialog(false)}>
+      {dialog && 
+      <Portal><Dialog visible={showNoMoreQuestsDialog} onDismiss={() => setShowNoMoreQuestsDialog(false)}>
         <Dialog.Title>{dialog.title}</Dialog.Title>
         <Dialog.Content>
           <Paragraph>{dialog.message}</Paragraph>
@@ -41,7 +42,7 @@ export const LevelLock: React.FC<LevelLockProps> = ({ children, permission, alte
         <Dialog.Actions>
           <Button color={Colors.primary} onPress={() => setShowNoMoreQuestsDialog(false)}>OK</Button>
         </Dialog.Actions>
-      </Dialog>}
+      </Dialog></Portal>}
       {alternative ? alternative : <TouchableWithoutFeedback>
         <BlurView intensity={100} tint={'default'} >
           <View style={styles.locked}>
@@ -56,7 +57,7 @@ export const LevelLock: React.FC<LevelLockProps> = ({ children, permission, alte
           textAlignVertical: 'center',
           fontSize: 20,
           color: Colors.error,
-          }} onPress={() => {}}>Level too low</Subheading>
+          }} onPress={() => {setShowNoMoreQuestsDialog(true)}}>Level too low</Subheading>
       </TouchableWithoutFeedback>} 
     </>
     

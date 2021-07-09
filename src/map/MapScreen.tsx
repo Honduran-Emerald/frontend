@@ -6,7 +6,7 @@ import * as Location from 'expo-location';
 import { Subscription } from '@unimodules/react-native-adapter';
 import { MagnetometerSubscription } from './MagnetometerSubscription';
 import { Colors, Containers } from '../styles';
-import { Button, Dialog, FAB, Paragraph } from 'react-native-paper';
+import { Button, Dialog, FAB, Paragraph, Portal } from 'react-native-paper';
 import { useAppSelector } from '../redux/hooks';
 import { useDispatch } from 'react-redux';
 import { queryQuestsRequest } from '../utils/requestHandler';
@@ -171,7 +171,7 @@ export const MapScreen = () => {
         </LevelLock>
       )}
 
-      <Dialog visible={showNoMoreQuestsDialog} onDismiss={() => setShowNoMoreQuestsDialog(false)}>
+      <Portal><Dialog visible={showNoMoreQuestsDialog} onDismiss={() => setShowNoMoreQuestsDialog(false)}>
         <Dialog.Title>Cannot create more quests</Dialog.Title>
         <Dialog.Content>
           <Paragraph>Your level is too low. Increase your level to create more quests or delete a quest to make room for this one.</Paragraph>
@@ -179,7 +179,7 @@ export const MapScreen = () => {
         <Dialog.Actions>
           <Button color={Colors.primary} onPress={() => setShowNoMoreQuestsDialog(false)}>OK</Button>
         </Dialog.Actions>
-      </Dialog> 
+      </Dialog></Portal>
 
       <View style={styles.pinnedCard}>
         <PinnedQuestCard/>

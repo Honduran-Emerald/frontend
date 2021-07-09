@@ -35,7 +35,12 @@ export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location
                         <LevelLock permission={{
                                 type: 'quests',
                                 quests: user?.questCount //TODO This will not work in the future
-                            }}><AddDraftCard /></LevelLock>
+                            }}
+                            dialog={{
+                                title: 'Cannot create new quest',
+                                message: 'Your level is too low. Increase your level to create more quests or delete a quest to make room for this one.'
+                            }}
+                            ><AddDraftCard /></LevelLock>
                     ))}
                     renderItem={
                         ({ item }: {item: GameplayQuestHeader | undefined}) => <QuestPreviewLoader loading={item === undefined} content={(item === undefined) ? null : {location: location, quest: item}}/>
