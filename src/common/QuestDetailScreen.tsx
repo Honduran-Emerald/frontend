@@ -1,10 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar} from 'react-native';
+import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar } from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
 import { Avatar, Modal, Portal, Button as PaperButton, Surface } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import _ from 'lodash';
 
 import { Colors } from '../styles';
@@ -65,6 +64,21 @@ export default function QuestDetailScreen({ route }: any) {
     }
   }, [])
 
+  const loadQuestObjectiveScreen = (tracker: QuestTracker | undefined) => {
+    if(tracker) {
+      navigation.navigate('Questlog', {
+        screen: 'GameplayScreen',
+        initial: false,
+        params: {
+          trackerId: tracker.trackerId,
+          tracker: tracker,
+        }
+      })
+    } else {
+      alert('Cannot load quest')
+    }
+  }
+
   const handleAccept = () => {
     setIsButtonDisabled(true);
     createTrackerRequest(quest.id)
@@ -72,7 +86,6 @@ export default function QuestDetailScreen({ route }: any) {
         if(res.status === 200) {
           res.json()
             .then((data) => {
-              navigation.goBack();
               setIsButtonDisabled(false);
               dispatch(acceptQuest(data.trackerModel));
               if (data.trackerModel.trackerNode.module.type === 'Location') {
@@ -86,6 +99,7 @@ export default function QuestDetailScreen({ route }: any) {
                 };
                 addGeofencingRegion(newRegion);
               }
+              loadQuestObjectiveScreen(data.trackerModel);
             })
         } else {
           if(recentQuests.find((q) => q.id === quest.id)) {
@@ -154,9 +168,13 @@ export default function QuestDetailScreen({ route }: any) {
           }
           {
             isAccepted &&
-            <View style={styles.acceptedText}>
-              <MaterialCommunityIcons name='check' size={24} color='green'/>
-              <Text style={{color: 'green'}}>{i18n.t('questAccepted')}</Text>
+            <View style={styles.button}>
+              <Button
+                color={'green'}
+                disabled={isButtonDisabled}
+                title={'Continue Quest'}
+                onPress={() => loadQuestObjectiveScreen(acceptedQuests.find(tracker => tracker.questId === quest.id))}
+              />
             </View>
           }
           {
