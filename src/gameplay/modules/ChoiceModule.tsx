@@ -70,15 +70,16 @@ const styles = StyleSheet.create({
   choice: {
     backgroundColor: Colors.primaryLight,
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 30,
     padding: 10,
+    paddingLeft: 15,
     margin: 5,
   },
   chosen: {
     maxWidth: '70%',
     backgroundColor: Colors.secondary,
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 30,
     padding: 15,
     margin: 5,
   },

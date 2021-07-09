@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
 import { GameplayModule, QuestTracker } from '../types/quest';
 import { ComponentRenderer } from './ComponentRenderer';
@@ -26,15 +26,19 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
   return (
     <View style={{paddingHorizontal: 10}}>
       {
-
-        <View style={{backgroundColor: index === 0 && !tracker?.finished ? Colors.secondary : Colors.gray, borderRadius: 10, width: '70%', alignSelf: 'center', marginTop: 35, padding: 10}}>
-          <Text style={{textAlign: 'center', color: Colors.black}}>
-            {module.module.objective}
-          </Text>
+        index === 0 && !tracker?.finished &&
+        <View style={styles.newLine}>
+            <View style={styles.newBox}>
+                <Text style={{alignSelf: "center", color: Colors.primary}}> New Objective </Text>
+            </View>
         </View>
       }
+      <View style={styles.objective}>
+        <Text style={{textAlign: 'center', color: Colors.black}}>
+          {module.module.objective}
+        </Text>
+      </View>
       <ComponentRenderer components={module.module.components}/>
-
       {
         // TODO remove
         /*<LocationModule
@@ -95,5 +99,36 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
         })()
       }
     </View>
-  );
+  )
 }
+
+  const styles = StyleSheet.create({
+    newLine: {
+      backgroundColor: Colors.primary,
+      borderRadius: 5,
+      width: '100%',
+      height: 5,
+      alignSelf: 'center',
+      marginTop: 35,
+      justifyContent: "center",
+    },
+    newBox: {
+      backgroundColor: Colors.lightGray,
+      borderColor: Colors.primary,
+      borderWidth: 1,
+      borderRadius: 5,
+      width: '50%',
+      height: 25,
+      alignSelf: 'center',
+      justifyContent: "center"
+    },
+    objective: {
+      backgroundColor: Colors.gray,
+      borderRadius: 10,
+      width: '70%',
+      alignSelf: 'center',
+      marginTop: 35,
+      padding: 10
+    },
+
+  });

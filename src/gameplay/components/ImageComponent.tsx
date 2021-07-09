@@ -6,6 +6,7 @@ import { useAppSelector } from '../../redux/hooks';
 import { GameplayImageComponent } from '../../types/quest';
 import { getImageAddress } from '../../utils/imageHandler';
 import { SingleComponentProps } from '../ComponentRenderer';
+import {Colors} from "../../styles";
 
 export const ImageComponent: React.FC<SingleComponentProps<GameplayImageComponent>> = ({ data }) => {
 
@@ -46,8 +47,12 @@ export const ImageComponent: React.FC<SingleComponentProps<GameplayImageComponen
 
 const styles = StyleSheet.create({
   container: {
-    maxWidth: '70%',
+    maxWidth: '80%',
     marginTop: 10,
+    padding: 5,
+    backgroundColor: Colors.primary,
+    borderRadius: 20,
+    borderTopLeftRadius: 3,
   },
   image: {
     width: '100%',
