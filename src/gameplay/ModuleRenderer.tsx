@@ -41,7 +41,7 @@ export const ModuleRenderer: React.FC<ModuleRendererPropsLiveUpdate> = ({ module
         index === 0 && !tracker?.finished &&
         <View style={styles.newLine}>
             <View style={styles.newBox}>
-                <Text style={{alignSelf: "center", color: "#f62d09"}}> New Objective </Text>
+                <Text style={{alignSelf: "center", color: "#f62d09"}}> Current Objective </Text>
             </View>
         </View>
       }
@@ -157,7 +157,8 @@ export const ModuleRenderer: React.FC<ModuleRendererPropsLiveUpdate> = ({ module
       width: '70%',
       alignSelf: 'center',
       marginTop: 35,
-      padding: 10
+      padding: 10,
+      marginBottom: 10,
     },
 
   });

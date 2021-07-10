@@ -48,7 +48,7 @@ export const ImageComponent: React.FC<SingleComponentProps<GameplayImageComponen
 const styles = StyleSheet.create({
   container: {
     maxWidth: '80%',
-    marginTop: 10,
+    marginTop: 5,
     padding: 5,
     backgroundColor: Colors.primary,
     borderRadius: 20,
