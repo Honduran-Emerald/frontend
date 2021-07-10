@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
 import { GameplayModule, QuestTracker } from '../types/quest';
 import { ComponentRenderer } from './ComponentRenderer';
@@ -8,7 +8,6 @@ import { StoryModule } from './modules/StoryModule';
 import { EndingModule } from './modules/EndingModule';
 import { LocationModule } from './modules/LocationModule';
 import { Colors } from '../styles';
-import { Location } from "../types/general";
 import { RandomModule } from './modules/RandomModule';
 import { PassphraseModule } from './modules/PassphraseModule';
 import { QRModule } from './modules/QRModule';
@@ -40,12 +39,18 @@ export const ModuleRenderer: React.FC<ModuleRendererPropsLiveUpdate> = ({ module
     <View style={{paddingHorizontal: 10}}>
       {
         index === 0 && !tracker?.finished &&
-        <View style={{backgroundColor: Colors.gray, borderRadius: 10, width: '70%', alignSelf: 'center', marginTop: 35, padding: 10}}>
-          <Text style={{textAlign: 'center', color: Colors.black}}>
-            {module.module.objective}
-          </Text>
+        <View style={styles.newLine}>
+            <View style={styles.newBox}>
+                <Text style={{alignSelf: "center", color: "#f62d09"}}> New Objective </Text>
+            </View>
         </View>
       }
+
+      <View style={styles.objective}>
+        <Text style={{textAlign: 'center', color: Colors.black}}>
+          {module.module.objective}
+        </Text>
+      </View>
 
       <ComponentRenderer components={module.module.components} onFinishShowing={() => setShownAllComponents(true)} newRender={module.memento === null} liveUpdate={liveUpdate}/>
 
@@ -123,5 +128,36 @@ export const ModuleRenderer: React.FC<ModuleRendererPropsLiveUpdate> = ({ module
         })()
       }
     </View>
-  );
+  )
 }
+
+  const styles = StyleSheet.create({
+    newLine: {
+      backgroundColor: "#f62d09",
+      borderRadius: 5,
+      width: '100%',
+      height: 3,
+      alignSelf: 'center',
+      marginTop: 35,
+      justifyContent: "center",
+    },
+    newBox: {
+      backgroundColor: Colors.lightGray,
+      borderColor: "#f62d09",
+      borderWidth: 1,
+      borderRadius: 5,
+      width: '50%',
+      height: 25,
+      alignSelf: 'center',
+      justifyContent: "center"
+    },
+    objective: {
+      backgroundColor: Colors.gray,
+      borderRadius: 10,
+      width: '70%',
+      alignSelf: 'center',
+      marginTop: 35,
+      padding: 10
+    },
+
+  });
