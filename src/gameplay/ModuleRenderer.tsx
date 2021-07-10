@@ -29,7 +29,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
         index === 0 && !tracker?.finished &&
         <View style={styles.newLine}>
             <View style={styles.newBox}>
-                <Text style={{alignSelf: "center", color: Colors.primary}}> New Objective </Text>
+                <Text style={{alignSelf: "center", color: "#f62d09"}}> New Objective </Text>
             </View>
         </View>
       }
@@ -104,17 +104,17 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
 
   const styles = StyleSheet.create({
     newLine: {
-      backgroundColor: Colors.primary,
+      backgroundColor: "#f62d09",
       borderRadius: 5,
       width: '100%',
-      height: 5,
+      height: 3,
       alignSelf: 'center',
       marginTop: 35,
       justifyContent: "center",
     },
     newBox: {
       backgroundColor: Colors.lightGray,
-      borderColor: Colors.primary,
+      borderColor: "#f62d09",
       borderWidth: 1,
       borderRadius: 5,
       width: '50%',
