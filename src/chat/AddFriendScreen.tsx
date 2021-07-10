@@ -17,7 +17,7 @@ export default function AddFriendScreen() {
   const [users, setUsers] = React.useState<User[]>([])
   const [searchInput, setSearchInput] = React.useState<string>('');
   const [inputUpdated, setInputUpdated] = React.useState<boolean>(true);
-  const [searching, setSearching] = React.useState<boolean>(true);
+  const [searching, setSearching] = React.useState<boolean>(false);
 
   const updateSearch = (input: string) => {
     setSearchInput(input);
