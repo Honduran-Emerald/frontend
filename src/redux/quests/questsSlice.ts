@@ -38,6 +38,9 @@ export const questsSlice = createSlice({
                 }
             }
         },
+        removeAcceptedQuest: (state, action: PayloadAction<string>) => {
+            state.acceptedQuests = state.acceptedQuests.filter(tracker => tracker.trackerId !== action.payload);
+        },
         setTrackerFinished: (state, action: PayloadAction<{ trackerId: string, finished: boolean }>) => {
             const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
             if(oldTracker) {
@@ -135,6 +138,7 @@ export const questsSlice = createSlice({
 export const {
     setLocalQuests,
     setAcceptedQuests,
+    removeAcceptedQuest,
     updateAcceptedQuest,
     setTrackerFinished,
     setTrackerVote,

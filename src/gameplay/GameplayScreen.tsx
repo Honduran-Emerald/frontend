@@ -56,7 +56,7 @@ export const GameplayScreen : React.FC = () => {
 
   useEffect(() => {
     if(isFocused && trackerWithUpdates.includes(route.params.trackerId)) {
-      removeUpdatedQuest(route.params.trackerId);
+      new Promise<void>(resolve => setTimeout(() => resolve(), 500)).then(() => removeUpdatedQuest(route.params.trackerId))
     }
   }, [isFocused, trackerWithUpdates])
 
@@ -172,7 +172,7 @@ export const GameplayScreen : React.FC = () => {
       })
   , [route.params, loadedTrackerNodes])
 
-  const onPassphrase = useCallback((passphrase) => 
+  const onPassphrase = useCallback((passphrase) =>
     playEventTextRequest(route.params.trackerId, passphrase)
       .then(res => res.json())
       .then(res => res.responseEventCollection)
@@ -181,7 +181,7 @@ export const GameplayScreen : React.FC = () => {
         if (failure) {
           return Promise.reject(failure)
         }
-        
+
         res.responseEvents.forEach(
           (responseEvent: any) => {
             switch (responseEvent.type) {
@@ -197,7 +197,7 @@ export const GameplayScreen : React.FC = () => {
             }
           }
         )
-        
+
       }), [route.params, loadedTrackerNodes])
 
   const handleVote = useCallback((vote: 'None' | 'Up' | 'Down') => {
