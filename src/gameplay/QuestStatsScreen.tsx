@@ -1,29 +1,38 @@
 import React from 'react';
-import { Dimensions, FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import { Dimensions, FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../styles';
-import { GameplayQuestHeader } from '../types/quest';
-import { playResetRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
+import { GameplayQuestHeader, QuestTracker } from '../types/quest';
+import { createDeleteTrackerRequest, playResetRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
 import { useNavigation } from '@react-navigation/native';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { Entypo } from '@expo/vector-icons';
-import { Button, FAB, Surface } from 'react-native-paper';
+import { Button as PaperButton, Button, FAB, Modal, Portal, Surface } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { loadPinnedQuestPath, pinQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
-import { addGeofencingRegion, SingleGeoFenceLocationRadius } from '../utils/TaskManager';
+import { loadPinnedQuestPath, pinQuest, removeAcceptedQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
+import { addGeofencingRegion, SingleGeoFenceLocationRadius, updateGeofencingTask } from '../utils/TaskManager';
 
 interface QuestStateScreenProps {
   height: number,
   quest: GameplayQuestHeader | undefined,
   flatListRef: React.RefObject<FlatList<any>>,
-  trackerId: string
+  trackerId: string,
+  currentTracker: QuestTracker|undefined,
 }
 
-export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, quest, flatListRef, trackerId }) => {
+export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, quest, flatListRef, trackerId, currentTracker }) => {
 
   const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
+
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [resetModal, setResetModal] = React.useState(false);
+
+  const showModal = () => setModalVisible(true);
+  const hideModal = () => setModalVisible(false);
+  const showResetModal = () => setResetModal(true);
+  const hideResetModal = () => setResetModal(false);
 
   const resetQuest = () => {
     playResetRequest(trackerId).then((res) => {
@@ -51,7 +60,24 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
             })
           )
       }
-      else alert('Error ' + res.status);
+      else {
+        alert('Error ' + res.status);
+      }
+      hideResetModal();
+    }).then(() => navigation.goBack())
+  }
+
+  const removeQuest = () => {
+    createDeleteTrackerRequest(trackerId).then((res) => {
+      if(res.status === 200) {
+        dispatch(removeAcceptedQuest(trackerId));
+        if(currentTracker?.trackerNode.module.type === 'Location') {
+          updateGeofencingTask(trackerId);
+        }
+      } else {
+        alert('Error while removing.');
+      }
+      hideModal();
     }).then(() => navigation.goBack())
   }
 
@@ -104,8 +130,15 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         style={styles.reset}
         small
         icon="restart"
-        onPress={() => {resetQuest()}}
-        label={"Reset all progress for quest"}
+        onPress={() => showResetModal()}
+        label={"Reset quest"}
+      />
+      <FAB
+        style={styles.reset}
+        small
+        icon="delete-forever"
+        onPress={() => showModal()}
+        label={"Remove quest"}
       />
       <FAB
         style={styles.reset}
@@ -132,6 +165,32 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
           View Quest Details
         </Button>
       </View>
+
+      <Portal>
+        <Modal visible={modalVisible || resetModal} dismissable onDismiss={resetModal ? hideResetModal : hideModal} contentContainerStyle={styles.modal}>
+          <Text style={styles.modalTitle}>
+            {resetModal ? 'Reset this Quest?' : 'Remove from Questlog?'}
+          </Text>
+          <Text style={styles.modalText}>
+            {
+              resetModal ?
+                'This will reset all progress for this quest and update to the newest version if the creator updated this quest. It will stay in your Questlog and you immediately start again'
+                :
+                'This will delete all progress for this quest. You may accept the quest again at a later time'
+            }
+          </Text>
+          <View style={styles.modalButtons}>
+            <View style={styles.modalButton}>
+              <PaperButton color={Colors.error} compact mode={'contained'} onPress={() => resetModal ? resetQuest() : removeQuest()}>
+                {resetModal ? 'Reset Quest' : 'Remove Quest'}
+              </PaperButton>
+            </View>
+          </View>
+          <View style={styles.modalBackButton}>
+            <PaperButton color={Colors.primary} compact onPress={resetModal ? hideResetModal : hideModal}>{'Back'}</PaperButton>
+          </View>
+        </Modal>
+      </Portal>
 
     </View>
   )
@@ -205,5 +264,30 @@ const styles = StyleSheet.create({
   reset: {
     marginBottom: 30,
     backgroundColor: Colors.primary,
+  },
+  modal: {
+    backgroundColor: Colors.background,
+    padding: 20,
+    margin: 20,
+  },
+  modalTitle: {
+    fontSize: 24,
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  modalText: {
+    fontSize: 16,
+  },
+  modalButtons: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  modalButton: {
+    width: '48%',
+  },
+  modalBackButton: {
+    alignItems: 'flex-start',
   },
 })
