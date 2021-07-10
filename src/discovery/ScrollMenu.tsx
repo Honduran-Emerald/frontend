@@ -5,6 +5,8 @@ import {GameplayQuestHeader, QueriedQuest} from "../types/quest";
 import { LocationObject } from "expo-location";
 import { QuestPreviewLoader } from './QuestPreviewLoader';
 import { AddDraftCard } from './AddDraftCard';
+import {Colors} from "../styles";
+import {StoryModule} from "../gameplay/modules/StoryModule";
 
 export default interface ScrollMenuProps {
     header: string
@@ -14,7 +16,7 @@ export default interface ScrollMenuProps {
     addQuest?: true
 }
 
-export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location, addQuest }) => {
+export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location, addQuest, type}) => {
 
     const [loadingArray, ] = useState(new Array(2+Math.floor(Math.random()*3)));
 
@@ -24,6 +26,29 @@ export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location
                 <Text style={styles.header}>
                     {header}
                 </Text>
+                {(quests && quests.length == 0) &&
+                (() => {
+                    switch (type) {
+                        case 'published':
+                            return <View style={styles.placeholder}><Text> No published quests found </Text></View>
+                        case 'drafts':
+                            return <View style={styles.placeholder}><Text> No drafts here yet </Text></View>
+                        case 'completed':
+                            return <View style={styles.placeholder}><Text> No completed quests found </Text></View>
+                        case 'upvoted':
+                            return <View style={styles.placeholder}><Text> No upvoted quests found </Text></View>
+                        case 'nearby':
+                            return <View style={styles.placeholder}><Text> No quests found nearby </Text></View>
+                        case 'checkout':
+                            return <View style={styles.placeholder}><Text> No quests to check out found </Text></View>
+                        case 'recent':
+                            return <View style={styles.placeholder}><Text> You have not visited any quests recently </Text></View>
+                        case 'following':
+                            return <View style={styles.placeholder}><Text> There are no quests made by the users you follow yet </Text></View>
+
+                    }
+                })()
+                }
                 <FlatList
                     horizontal
                     data={quests || loadingArray}
@@ -56,5 +81,11 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingHorizontal: 0,
         height: 240,
+    },
+    placeholder: {
+        height: 190,
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
     },
 });

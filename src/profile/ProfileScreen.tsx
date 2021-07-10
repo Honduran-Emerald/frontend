@@ -6,7 +6,14 @@ import { Colors } from '../styles';
 import { ScrollMenu } from "../discovery/ScrollMenu";
 import { StatusBar } from "expo-status-bar";
 import { getLocation } from "../utils/locationHandler";
-import { createQueryRequest, getUserFollowers, getUserRequest, queryQuestsRequest, queryvotedQuestsRequest } from "../utils/requestHandler";
+import {
+  createQueryRequest,
+  getUserFollowers,
+  getUserRequest,
+  queryfinishedQuestsRequest,
+  queryQuestsRequest,
+  queryvotedQuestsRequest
+} from "../utils/requestHandler";
 import { GameplayQuestHeader } from "../types/quest";
 import { useAppSelector } from '../redux/hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -50,28 +57,31 @@ export const ProfileScreen = (props: profileProps) => {
     fetchQuestData();
   }, [])
 
-  const fetchQuestData = () => {
+  const fetchQuestData = async () => {
     return Promise.all([
       // set published
       queryQuestsRequest(0, route.params?.userId || authenticatedUser?.userId)
       .then(response => response.json())
       .then(obj => setPublishedQuests(obj.quests)),
       // set drafts
-        createQueryRequest(0).then(res => res.json()).then((quests) => {
-          if (authenticatedUser?.userId === user?.userId) {
-            let drafts: GameplayQuestHeader[] = [];
-            quests.prototypes.forEach(
-              (prototype: any) => {
-                if (prototype.quest !== null && prototype !== null && prototype.title !== null && prototype.outdated) {
-                  let pr = lodash.cloneDeep(prototype);
-                  drafts.push(Object.assign(pr.quest, pr));
-                }
+      createQueryRequest(0).then(res => res.json()).then((quests) => {
+        if (authenticatedUser?.userId) {
+          let drafts: GameplayQuestHeader[] = [];
+          quests.prototypes.forEach(
+            (prototype: any) => {
+              if (prototype.quest !== null && prototype !== null && prototype.title !== null && prototype.outdated) {
+                let pr = lodash.cloneDeep(prototype);
+                drafts.push(Object.assign(pr.quest, pr));
               }
-            );
-            setDraftQuests(drafts);
-          }
-        }),
-
+            }
+          );
+          setDraftQuests(drafts);
+        }
+      }),
+      // set completed
+      queryfinishedQuestsRequest(route.params?.userId || authenticatedUser?.userId, 0).then(res => res.json()).then((quests) => {setCompletedQuests(quests.quests)}),
+      // set upvoted
+      queryvotedQuestsRequest("Up", route.params?.userId || authenticatedUser?.userId).then(res => res.json()).then((quests) => setUpvotedQuests(quests.quests)),
 
     ].map(promise => promise.catch(() => {})))
   }
@@ -138,7 +148,7 @@ export const ProfileScreen = (props: profileProps) => {
         {(
           <>
             <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={publishedQuests}/>
-            <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={quests}/>
+            <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={completedQuests}/>
             {(authenticatedUser?.userId === user?.userId) &&
             <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests} addQuest/>}
             <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={upvotedQuests}/>
