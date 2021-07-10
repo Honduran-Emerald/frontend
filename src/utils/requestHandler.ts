@@ -78,7 +78,10 @@ export const nearbyQuestsRequest = (offset: number = 0, long?: number, lat?: num
   + (radius != null ? `&Radius=${radius}` : '')))
 
 // /quest/queryvoted
-export const queryvotedQuestsRequest = (voteType : string) => (request(`/quest/queryvoted/?voteType=${voteType}`))
+export const queryvotedQuestsRequest = (voteType : string, userId? : string) => (request(`/quest/queryvoted/?voteType=${voteType}` + (userId != null ? `&userId=${userId}` : '')))
+
+// /quest/queryfinished
+export const queryfinishedQuestsRequest = (userId? : string, offset : number = 0) => (request(`/quest/queryfinished?offset=${offset}` + (userId != null ? `&userId=${userId}` : '') + (`&finished=true`)))
 
 // /create/query/
 export const createQueryRequest = (offset: number = 0) => (request(`/create/query?offset=${offset}`))
