@@ -6,7 +6,7 @@ import * as Location from 'expo-location';
 import { Subscription } from '@unimodules/react-native-adapter';
 import { MagnetometerSubscription } from './MagnetometerSubscription';
 import { Colors, Containers } from '../styles';
-import { FAB } from 'react-native-paper';
+import { Button, Dialog, FAB, Paragraph, Portal } from 'react-native-paper';
 import { useAppSelector } from '../redux/hooks';
 import { useDispatch } from 'react-redux';
 import { queryQuestsRequest } from '../utils/requestHandler';
@@ -16,18 +16,21 @@ import { useNavigation } from '@react-navigation/core';
 import PinnedQuestCard from './PinnedQuestCard';
 import { setLocation } from '../redux/location/locationSlice';
 import { useFocusEffect } from '@react-navigation/native';
+import { LevelLock } from '../common/LevelLock';
 
 export const MapScreen = () => {
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [heading, setHeading] = useState<number>();
-  const [magnetometerSubscription, setMagnetometerSubscription] = useState<Subscription | null>(null);
+  const [, setMagnetometerSubscription] = useState<Subscription | null>(null);
   const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription>();
   const [indexPreviewQuest, setIndexPreviewQuest] = useState<Number>();
+  const [showNoMoreQuestsDialog, setShowNoMoreQuestsDialog] = useState<boolean>(false);
   const _map : Ref<MapView> = useRef(null);
 
   const localQuests = useAppSelector((state) => state.quests.localQuests);
   const location = useAppSelector((state) => state.location.location);
   const dispatch = useDispatch();
+  const user = useAppSelector(state => state.authentication.user)
 
   const trackedQuests = useAppSelector(state => state.quests.acceptedQuests);
 
@@ -142,13 +145,42 @@ export const MapScreen = () => {
       )}
 
       {location && location.coords && (
+        <LevelLock permission={{
+          type: 'quests',
+          quests: user?.questCount
+        }} alternative={
+          <FAB 
+            style={{
+              position: 'absolute',
+              right: 10,
+              bottom: 90,
+              backgroundColor: Colors.gray
+            }}
+            onPress={() => setShowNoMoreQuestsDialog(true)}
+            icon="plus"
+            color={Colors.primary}
+            />
+          }
+          >
           <FAB
             style={styles.createQuestButton}
             icon="plus"
             onPress={() => navigation.navigate('QuestCreationScreen', {screen: 'QuestCreation', params: {latitude: location?.coords.latitude, longitude: location?.coords.longitude}})}
             color={Colors.primary}
           />
+        </LevelLock>
       )}
+
+      <Portal><Dialog visible={showNoMoreQuestsDialog} onDismiss={() => setShowNoMoreQuestsDialog(false)}>
+        <Dialog.Title>Cannot create more quests</Dialog.Title>
+        <Dialog.Content>
+          <Paragraph>Your level is too low. Increase your level to create more quests or delete a quest to make room for this one.</Paragraph>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button color={Colors.primary} onPress={() => setShowNoMoreQuestsDialog(false)}>OK</Button>
+        </Dialog.Actions>
+      </Dialog></Portal>
+
       <View style={styles.pinnedCard}>
         <PinnedQuestCard/>
       </View>

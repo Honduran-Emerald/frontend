@@ -1,10 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar} from 'react-native';
+import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar } from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
 import { Avatar, Modal, Portal, Button as PaperButton, Surface } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import _ from 'lodash';
 
 import { Colors } from '../styles';
@@ -12,7 +11,7 @@ import { commonTranslations } from './translations';
 import { QueriedQuest, QuestTracker } from '../types/quest';
 import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { acceptQuest, addRecentlyVisitedQuest, refreshRecentlyVisitedQuest } from '../redux/quests/questsSlice';
+import { acceptQuest, addRecentlyVisitedQuest, refreshRecentlyVisitedQuest, removeRecentlyVisitedQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { getImageAddress } from '../utils/imageHandler';
@@ -25,9 +24,9 @@ export default function QuestDetailScreen({ route }: any) {
 
   const user: User | undefined = useAppSelector((state) => state.authentication.user);
   const acceptedQuests: QuestTracker[] = useAppSelector((state) => state.quests.acceptedQuests);
-  const recentQuests: QueriedQuest[] = useAppSelector((state) => state.quests.recentlyVisitedQuests)
+  const recentQuests: QueriedQuest[] = useAppSelector((state) => state.quests.recentlyVisitedQuests);
 
-  const acceptedIds: string[] = acceptedQuests.map(tracker => tracker.questId)
+  const acceptedIds: string[] = acceptedQuests.map(tracker => tracker.questId);
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
@@ -60,34 +59,68 @@ export default function QuestDetailScreen({ route }: any) {
       }
     }
 
-    updateRecentQuests().then(() => {})
+    if(quest.released) {
+      updateRecentQuests().then(() => {})
+    }
   }, [])
+
+  const loadQuestObjectiveScreen = (tracker: QuestTracker | undefined) => {
+    if(tracker) {
+      navigation.navigate('Questlog', {
+        screen: 'GameplayScreen',
+        initial: false,
+        params: {
+          trackerId: tracker.trackerId,
+          tracker: tracker,
+        }
+      })
+    } else {
+      alert('Cannot load quest')
+    }
+  }
 
   const handleAccept = () => {
     setIsButtonDisabled(true);
     createTrackerRequest(quest.id)
-      .then((res) => res.json()
-        .then((data) => {
-          navigation.goBack();
-          setIsButtonDisabled(false);
-          dispatch(acceptQuest(data.trackerModel));
-          if(data.trackerModel.trackerNode.module.type === 'Location') {
-            const newRegion = {
-              identifier: data.trackerModel.trackerId,
-              latitude: data.trackerModel.trackerNode.module.location.latitude,
-              longitude: data.trackerModel.trackerNode.module.location.longitude,
-              radius: SingleGeoFenceLocationRadius,
-              notifyOnEnter: true,
-              notifyOnExit: false,
-            };
-            addGeofencingRegion(newRegion);
+      .then((res) => {
+        if(res.status === 200) {
+          res.json()
+            .then((data) => {
+              setIsButtonDisabled(false);
+              dispatch(acceptQuest(data.trackerModel));
+              if (data.trackerModel.trackerNode.module.type === 'Location') {
+                const newRegion = {
+                  identifier: data.trackerModel.trackerId,
+                  latitude: data.trackerModel.trackerNode.module.location.latitude,
+                  longitude: data.trackerModel.trackerNode.module.location.longitude,
+                  radius: SingleGeoFenceLocationRadius,
+                  notifyOnEnter: true,
+                  notifyOnExit: false,
+                };
+                addGeofencingRegion(newRegion);
+              }
+              loadQuestObjectiveScreen(data.trackerModel);
+            })
+        } else {
+          if(recentQuests.find((q) => q.id === quest.id)) {
+            dispatch(removeRecentlyVisitedQuest(quest.id));
+            const tmp = recentQuests.filter((q) => q.id !== quest.id);
+            storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
           }
-        }))
+          alert('Error while accepting. Quest may have been deleted.');
+          navigation.goBack();
+        }
+      })
   };
 
   const handleDelete = () => {
     createDeleteQuestRequest(quest.id).then(res => {
       if(res.status === 200) {
+        if(recentQuests.find((q) => q.id === quest.id)) {
+          dispatch(removeRecentlyVisitedQuest(quest.id));
+          const tmp = recentQuests.filter((q) => q.id !== quest.id);
+          storeData('RecentlyVisitedQuests', JSON.stringify(tmp)).then(() => {}, () => {});
+        }
         alert('Quest deleted');
         hideModal();
       } else {
@@ -135,9 +168,13 @@ export default function QuestDetailScreen({ route }: any) {
           }
           {
             isAccepted &&
-            <View style={styles.acceptedText}>
-              <MaterialCommunityIcons name='check' size={24} color='green'/>
-              <Text style={{color: 'green'}}>{i18n.t('questAccepted')}</Text>
+            <View style={styles.button}>
+              <Button
+                color={'green'}
+                disabled={isButtonDisabled}
+                title={'Continue Quest'}
+                onPress={() => loadQuestObjectiveScreen(acceptedQuests.find(tracker => tracker.questId === quest.id))}
+              />
             </View>
           }
           {

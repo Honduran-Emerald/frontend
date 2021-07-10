@@ -112,7 +112,6 @@ export const createAndPutRequest = (questId: string, questPrototype: QuestProtot
             questId: r.questId,
             questPrototype: {...questPrototype, id: r.questPrototype.id}
           }))
-          console.log('Am here')
           return createPutRequest(
             r.questId,
             {...questPrototype, id: r.questPrototype.id},
@@ -146,6 +145,12 @@ export const queryTrackerNodesRequest = (trackerId: string) => (request(`/play/q
 export const playEventChoiceRequest = (trackerId: string, choice: number) => (request('/play/event/choice', 'POST', {
   trackerId: trackerId,
   choice: choice
+}))
+
+// /play/event/...
+export const playEventTextRequest = (trackerId: string, text: string | number) => (request('/play/event/text', 'POST', {
+  trackerId: trackerId,
+  text: text
 }))
 
 // /user/updatemessagingtoken

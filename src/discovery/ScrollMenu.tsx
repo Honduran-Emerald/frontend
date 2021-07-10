@@ -7,6 +7,8 @@ import { QuestPreviewLoader } from './QuestPreviewLoader';
 import { AddDraftCard } from './AddDraftCard';
 import {Colors} from "../styles";
 import {StoryModule} from "../gameplay/modules/StoryModule";
+import { LevelLock } from '../common/LevelLock';
+import { useAppSelector } from '../redux/hooks';
 
 export default interface ScrollMenuProps {
     header: string
@@ -19,6 +21,7 @@ export default interface ScrollMenuProps {
 export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location, addQuest, type}) => {
 
     const [loadingArray, ] = useState(new Array(2+Math.floor(Math.random()*3)));
+    const user = useAppSelector(state => state.authentication.user)
 
     return (
         <View style={styles.surface}>
@@ -54,7 +57,15 @@ export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location
                     data={quests || loadingArray}
                     showsHorizontalScrollIndicator={false}
                     ListFooterComponent={addQuest && location && (() => (
-                        <AddDraftCard />
+                        <LevelLock permission={{
+                                type: 'quests',
+                                quests: user?.questCount //TODO This will not work in the future
+                            }}
+                            dialog={{
+                                title: 'Cannot create new quest',
+                                message: 'Your level is too low. Increase your level to create more quests or delete a quest to make room for this one.'
+                            }}
+                            ><AddDraftCard /></LevelLock>
                     ))}
                     renderItem={
                         ({ item }: {item: GameplayQuestHeader | undefined}) => <QuestPreviewLoader loading={item === undefined} content={(item === undefined) ? null : {location: location, quest: item}}/>

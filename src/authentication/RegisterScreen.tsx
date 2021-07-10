@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TextInput as TextInputNative, ScrollView } from 'react-native';
 import { sha512 } from 'js-sha512';
 import i18n from 'i18n-js';
 
-import { Colors } from '../styles';
+import { Colors, Containers } from '../styles';
 import { EMAILREGEX } from '../../GLOBALCONFIG';
 import { useAppDispatch } from '../redux/hooks';
 import { setToken } from '../redux/authentication/authenticationSlice';
@@ -104,57 +104,65 @@ export default function RegisterScreen({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>{i18n.t('appName')}</Text>
-      <TextInput
-        style={{...styles.input, borderColor: errorName ? Colors.error : Colors.black}}
-        onChangeText={(input) => updateUsername(input)}
-        value={username}
-        placeholder={i18n.t('usernamePlaceholder')}
-        returnKeyType={'next'}
-        autoCorrect={false}
-      />
+    <ScrollView style={styles.container} contentContainerStyle={{alignItems: 'center',}}>
+      <Image source={require('../../assets/splash.png')} style={{width: '100%', height: 450, marginTop: 80, marginBottom: -250}}/>
+      <View style={styles.smallInputs}>
+        <TextInputNative
+          style={{marginHorizontal: 5, flex: 1}}
+          onChangeText={(input) => updateUsername(input)}
+          value={username}
+          placeholder={i18n.t('usernamePlaceholder')}
+          returnKeyType={'next'}
+          autoCorrect={false}
+        />
+      </View>
       <View>
         {
           errorName &&
           <Text style={styles.errorText}>{i18n.t('errorNameMessage')}</Text>
         }
       </View>
-      <TextInput
-        style={{...styles.input, borderColor: errorEmail ? Colors.error : Colors.black}}
-        onChangeText={(input) => updateEmail(input)}
-        value={email}
-        placeholder={i18n.t('emailPlaceholder')}
-        keyboardType={'email-address'}
-        returnKeyType={'next'}
-        autoCorrect={false}
-      />
+      <View style={styles.smallInputs}>
+        <TextInputNative
+          style={{marginHorizontal: 5, flex: 1}}
+          onChangeText={(input) => updateEmail(input)}
+          value={email}
+          placeholder={i18n.t('emailPlaceholder')}
+          keyboardType={'email-address'}
+          returnKeyType={'next'}
+          autoCorrect={false}
+        />
+      </View>
       <View>
         {
           errorEmail &&
           <Text style={styles.errorText}>{i18n.t('errorEmailMessage')}</Text>
         }
       </View>
-      <TextInput
-        style={{...styles.input, borderColor: errorPassword ? Colors.error : Colors.black}}
-        onChangeText={(input) => updatePassword(input)}
-        value={password}
-        placeholder={i18n.t('passwordPlaceholder')}
-        returnKeyType={'done'}
-        autoCorrect={false}
-        secureTextEntry={true}
-        onSubmitEditing={handleRegister}
-      />
-      <TextInput
-        style={{...styles.confirmPassword, borderColor: errorPassword ? Colors.error : Colors.black}}
-        onChangeText={(input) => updatePassword2(input)}
-        value={password2}
-        placeholder={i18n.t('password2Placeholder')}
-        returnKeyType={'done'}
-        autoCorrect={false}
-        secureTextEntry={true}
-        onSubmitEditing={handleRegister}
-      />
+      <View style={styles.smallInputs}>
+        <TextInputNative
+          style={{marginHorizontal: 5, flex: 1}}
+          onChangeText={(input) => updatePassword(input)}
+          value={password}
+          placeholder={i18n.t('passwordPlaceholder')}
+          returnKeyType={'done'}
+          autoCorrect={false}
+          secureTextEntry={true}
+          onSubmitEditing={handleRegister}
+        />
+      </View>
+      <View style={styles.smallInputs}>
+        <TextInputNative
+          style={{marginHorizontal: 5, flex: 1}}
+          onChangeText={(input) => updatePassword2(input)}
+          value={password2}
+          placeholder={i18n.t('password2Placeholder')}
+          returnKeyType={'done'}
+          autoCorrect={false}
+          secureTextEntry={true}
+          onSubmitEditing={handleRegister}
+        />
+      </View>
       <View>
         {
           errorPassword &&
@@ -176,7 +184,7 @@ export default function RegisterScreen({ navigation }: any) {
         </View>
       </View>
       <StatusBar style={'auto'}/>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -184,19 +192,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   header: {
     fontSize: 25,
     margin: 24,
   },
-  input: {
-    height: 40,
+  smallInputs: {
+    ...Containers.rounded,
+    flexDirection: 'row',
+    alignItems: 'center',
     width: '80%',
-    margin: 14,
-    borderWidth: 2,
-    paddingLeft: 6,
+    height: 50,
+    fontSize: 15,
+    paddingLeft: 15,
+    backgroundColor: Colors.lightGray,
+    marginVertical: 10,
   },
   confirmPassword: {
     height: 40,
@@ -207,13 +217,15 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
   },
   errorText: {
-    marginTop: -12,
+    marginTop: -5,
+    margin: 10,
     color: Colors.error,
   },
   buttons: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 15,
+    marginBottom: 50,
   },
   button: {
     width: '50%',

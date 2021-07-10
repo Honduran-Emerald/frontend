@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput as TextInputNative, Button, Image } from 'react-native';
 import i18n from 'i18n-js';
 
-import { Colors } from '../styles';
+import { Colors, Containers } from '../styles';
 import { EMAILREGEX } from '../../GLOBALCONFIG';
 import { authTranslations } from './translations';
 
@@ -43,18 +43,19 @@ export default function ForgotPasswordScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>{i18n.t('appName')}</Text>
+      <Image source={require('../../assets/splash.png')} style={{width: '100%', height: 450, marginBottom: -250}}/>
       <Text style={styles.text}>{i18n.t('forgotPasswordText')}</Text>
-      <TextInput
-        style={{...styles.input, borderColor: error ? Colors.error : Colors.black}}
-        onChangeText={(input) => updateEmail(input)}
-        value={email}
-        placeholder={'Email'}
-        keyboardType={'email-address'}
-        returnKeyType={'done'}
-        autoCorrect={false}
-        onSubmitEditing={handleEmailSubmit}
-      />
+      <View style={styles.smallInputs}>
+        <TextInputNative
+          onChangeText={(input) => updateEmail(input)}
+          value={email}
+          placeholder={'Email'}
+          keyboardType={'email-address'}
+          returnKeyType={'done'}
+          autoCorrect={false}
+          onSubmitEditing={handleEmailSubmit}
+        />
+      </View>
       <View>
         {
           error &&
@@ -87,7 +88,18 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 15,
+    width: '72%',
+  },
+  smallInputs: {
+    ...Containers.rounded,
+    flexDirection: 'row',
+    alignItems: 'center',
     width: '80%',
+    height: 50,
+    fontSize: 15,
+    paddingLeft: 15,
+    backgroundColor: Colors.lightGray,
+    marginVertical: 10,
   },
   input: {
     height: 40,
@@ -97,13 +109,15 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
   },
   errorText: {
-    marginTop: -12,
+    marginTop: -5,
+    margin: 10,
     color: Colors.error,
   },
   buttons: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 15,
+    marginBottom: 50,
   },
   button: {
     width: '50%',

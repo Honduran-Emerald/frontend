@@ -1,9 +1,8 @@
 import React from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
 import { StyleSheet, View, ScrollView, Text, TextInput } from 'react-native';
 import { Checkbox, Divider, Headline, Subheading } from 'react-native-paper';
-import { setAgentImageReference, setAgentName } from '../redux/editor/editorSlice';
+import { LevelLock } from '../common/LevelLock';
+import { setAgentImageReference, setAgentName, toggleAgentEnabled } from '../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { Colors, Containers } from '../styles';
 import { ImageReferencePicker } from './module-editor/ImageReferencePicker';
@@ -11,7 +10,6 @@ import { ImageReferencePicker } from './module-editor/ImageReferencePicker';
 export const AdvancedSettings: React.FC = () => {
 
   const prototypeQuest = useAppSelector(state => state.editor.questPrototype);
-  const [agentEnabled, setAgentEnabled] = useState(!!prototypeQuest?.agentProfileName);
   const dispatch = useAppDispatch();
 
   return (
@@ -24,17 +22,26 @@ export const AdvancedSettings: React.FC = () => {
       }}>
       <Headline>Advanced Settings</Headline>
       <View style={[styles.group]}>
+        <LevelLock permission={{
+            type: 'discrete',
+            perm: 'CustomAgent'
+          }}
+          dialog={{
+            title: 'Cannot use Custom Agent',
+            message: 'Level is too low. Complete quests to increase your level.'
+          }}
+        >
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <Subheading>Custom Agent</Subheading>
           <Checkbox 
-            status={agentEnabled ? 'checked' : 'unchecked'}
-            onPress={() => setAgentEnabled(a => !a)}
+            status={prototypeQuest?.agentEnabled ? 'checked' : 'unchecked'}
+            onPress={() => dispatch(toggleAgentEnabled())}
             theme={{colors: {
               accent: Colors.secondary
             }}}/>
         </View>
         <Divider />
-        {agentEnabled && <View style={{
+        {prototypeQuest?.agentEnabled && <View style={{
           marginTop: 10
         }}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 10}}>
@@ -56,9 +63,19 @@ export const AdvancedSettings: React.FC = () => {
           </View>
           
         </View>}
+        </LevelLock>
       </View>
 
-      <View style={[styles.group, styles.disabled]}>
+      <View style={[styles.group]}>
+
+      <LevelLock permission={{
+            type: 'discrete',
+            perm: 'RelatedQuests'
+          }}
+          dialog={{
+            title: 'Cannot use Related Quests',
+            message: 'Level is too low. Complete quests to increase your level.'
+          }}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           
           <Subheading>Related Quests</Subheading>
@@ -69,7 +86,7 @@ export const AdvancedSettings: React.FC = () => {
             }}}/>
         </View>
         <Divider />
-
+        </LevelLock>
       </View>
     </ScrollView>
   )

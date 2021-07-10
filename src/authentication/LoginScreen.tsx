@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TextInput as TextInputNative, ScrollView } from 'react-native';
 import { sha512 } from 'js-sha512';
 import i18n from 'i18n-js';
 
-import { Colors } from '../styles';
+import { Colors, Containers } from '../styles';
 import { EMAILREGEX } from '../../GLOBALCONFIG';
-import {useAppDispatch, useAppSelector} from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setToken } from '../redux/authentication/authenticationSlice';
 import { loginRequest } from '../utils/requestHandler';
 import { saveItemLocally } from '../utils/SecureStore';
@@ -93,39 +93,43 @@ export default function LoginScreen({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>{i18n.t('appName')}</Text>
+    <ScrollView style={styles.container} contentContainerStyle={{alignItems: 'center',}}>
+      <Image source={require('../../assets/splash.png')} style={{width: '100%', height: 450, marginTop: 125, marginBottom: -250}}/>
       <View>
         {
           tokenInvalid &&
           <Text style={styles.errorText}>{i18n.t('invalidSession')}</Text>
         }
       </View>
-      <TextInput
-        style={{...styles.input, borderColor: errorEmail ? Colors.error : Colors.black}}
-        onChangeText={(input) => updateEmail(input)}
-        value={email}
-        placeholder={'Email'}
-        keyboardType={'email-address'}
-        returnKeyType={'next'}
-        autoCorrect={false}
-      />
+      <View style={styles.smallInputs}>
+        <TextInputNative
+          onChangeText={(input) => updateEmail(input)}
+          value={email}
+          placeholder={'Email'}
+          keyboardType={'email-address'}
+          returnKeyType={'next'}
+          autoCorrect={false}
+          style={{marginHorizontal: 5, flex: 1}}
+        />
+      </View>
       <View>
         {
           errorEmail &&
           <Text style={styles.errorText}>{i18n.t('errorEmailMessage')}</Text>
         }
       </View>
-      <TextInput
-        style={{...styles.input, borderColor: errorPassword ? Colors.error : Colors.black}}
-        onChangeText={(input) => updatePassword(input)}
-        value={password}
-        placeholder={'Password'}
-        returnKeyType={'done'}
-        autoCorrect={false}
-        secureTextEntry={true}
-        onSubmitEditing={handleLogin}
-      />
+      <View style={styles.smallInputs}>
+        <TextInputNative
+          style={{marginHorizontal: 5, flex: 1}}
+          onChangeText={(input) => updatePassword(input)}
+          value={password}
+          placeholder={'Password'}
+          returnKeyType={'done'}
+          autoCorrect={false}
+          secureTextEntry={true}
+          onSubmitEditing={handleLogin}
+        />
+      </View>
       <View>
         {
           errorPassword &&
@@ -138,9 +142,11 @@ export default function LoginScreen({ navigation }: any) {
           <Text style={styles.errorText}>{i18n.t('errorFetchMessage')}</Text>
         }
       </View>
-      <View style={styles.forgotPW}>
-        <Text onPress={handleForgotPW} style={{color: Colors.primary}}>{i18n.t('forgotPassword')}</Text>
-      </View>
+      {
+        /*<View style={styles.forgotPW}>
+          <Text onPress={handleForgotPW} style={{color: Colors.primary}}>{i18n.t('forgotPassword')}</Text>
+        </View>*/
+      }
       <View style={styles.buttons}>
         <View style={styles.button}>
           <Button color={Colors.primary} disabled={isButtonDisabled} title={i18n.t('loginButton')} onPress={handleLogin}/>
@@ -150,7 +156,7 @@ export default function LoginScreen({ navigation }: any) {
         </View>
       </View>
       <StatusBar style={'auto'}/>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -158,33 +164,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   header: {
     fontSize: 25,
     margin: 24,
   },
-  input: {
-    height: 40,
+  smallInputs: {
+    ...Containers.rounded,
+    flexDirection: 'row',
+    alignItems: 'center',
     width: '80%',
-    margin: 14,
-    borderWidth: 2,
-    paddingLeft: 6,
+    height: 50,
+    fontSize: 15,
+    paddingLeft: 15,
+    backgroundColor: Colors.lightGray,
+    marginVertical: 10,
   },
   forgotPW: {
     marginTop: -5,
+    margin: 10,
     width: '80%',
     alignItems: 'flex-end',
   },
   errorText: {
-    marginTop: -12,
+    marginTop: -5,
+    margin: 10,
     color: Colors.error,
   },
   buttons: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 15,
+    marginBottom: 50,
   },
   button: {
     width: '50%',

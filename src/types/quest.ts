@@ -125,7 +125,25 @@ export interface GameplayLocationModule extends GameplayModuleBase {
     location: Location,
 }
 
-export type GameplayModule = GameplayChoiceModule | GameplayEndingModule | GameplayStoryModule | GameplayLocationModule
+export interface GameplayRandomModule extends GameplayModuleBase {
+    type: 'Random'
+}
+
+export interface GameplayWideAreaModule extends GameplayModuleBase {
+    type: 'WideArea',
+    location: Location,
+    radius: number
+}
+
+export interface GameplayPassphraseModule extends GameplayModuleBase {
+    type: 'Passphrase'
+}
+
+export interface GameplayQRModule extends GameplayModuleBase {
+    type: 'QrCode',
+} 
+
+export type GameplayModule = GameplayChoiceModule | GameplayEndingModule | GameplayStoryModule | GameplayLocationModule | GameplayRandomModule | GameplayWideAreaModule | GameplayPassphraseModule | GameplayQRModule
 
 export interface ComponentBase {
     componentId: string
