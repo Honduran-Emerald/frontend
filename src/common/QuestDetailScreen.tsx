@@ -172,7 +172,7 @@ export default function QuestDetailScreen({ route }: any) {
               <Button
                 color={'green'}
                 disabled={isButtonDisabled}
-                title={quest.tracker.finished ? 'Quest finished' : 'Continue Quest'}
+                title={(quest.tracker && quest.tracker.finished) ? 'Quest finished' : 'Continue Quest'}
                 onPress={() => loadQuestObjectiveScreen(acceptedQuests.find(tracker => tracker.questId === quest.id))}
               />
             </View>
