@@ -224,7 +224,7 @@ export const GameplayScreen : React.FC = () => {
             renderItem={
               ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} onPassphrase={onPassphrase} tracker={currentTracker} liveUpdate={liveUpdate}/>
             }
-            ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref} trackerId={route.params.trackerId}/>}
+            ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref} trackerId={route.params.trackerId} currentTracker={currentTracker}/>}
             ListHeaderComponent={currentTracker?.finished ? <FinishMessage quest={loadedTrackerNodes?.quest} tracker={currentTracker} handleVote={handleVote}/> : null}
             onLayout={(event) => {
               setInnerHeight(event.nativeEvent.layout.height)
