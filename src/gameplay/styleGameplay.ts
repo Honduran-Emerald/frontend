@@ -3,11 +3,11 @@ import { Colors, Containers } from '../styles';
 
 export const styleGameplay = StyleSheet.create({
   bubble: {
-    maxWidth: '70%',
+    maxWidth: '80%',
     backgroundColor: Colors.primary,
     ...Containers.rounded,
     padding: 20,
-    marginTop: 10,
+    marginTop: 5,
     color: '#fff',
   },
   right: {
