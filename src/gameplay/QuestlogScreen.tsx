@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import i18n from 'i18n-js';
-import {Divider, List, Searchbar} from 'react-native-paper';
+import { List, Searchbar } from 'react-native-paper';
 import { useCallback } from 'react';
 import { useNavigation } from '@react-navigation/core';
 
@@ -63,7 +63,7 @@ export default function QuestlogScreen() {
     if(tracker) dispatch(pinQuest(tracker));
     storeData('PinnedQuestTracker', JSON.stringify(tracker)).then(() => {}, () => {});
   }
-  
+
   const loadQuestObjectiveScreen = useCallback((trackerId: string) => {
     navigation.navigate('GameplayScreen', {
       trackerId: trackerId,
@@ -163,6 +163,7 @@ export default function QuestlogScreen() {
             titleStyle={styles.title}
             descriptionStyle={styles.description}
             left={props => <List.Icon {...props} icon='compass-rose'/>}
+            style={styles.backgroundWhite}
           >
             {
               getQuestSearch(true).map((quest) =>
@@ -199,6 +200,7 @@ export default function QuestlogScreen() {
             theme={{colors: {primary: Colors.primary}}}
             titleStyle={styles.title}
             left={props => <List.Icon {...props} icon='history'/>}
+            style={styles.backgroundWhite}
           >
             {
               getQuestSearch(false).map((quest) =>
@@ -262,5 +264,8 @@ const styles = StyleSheet.create({
   },
   white: {
     color: Colors.background,
+  },
+  backgroundWhite: {
+    backgroundColor: Colors.background,
   },
 });
