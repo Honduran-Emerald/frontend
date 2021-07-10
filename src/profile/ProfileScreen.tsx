@@ -115,6 +115,7 @@ export const ProfileScreen = (props: profileProps) => {
           <ProfileTop 
             ownProfile={authenticatedUser.userId === user.userId} 
             profileData={user}
+            refresh={onRefresh}
           />
         }
         {(

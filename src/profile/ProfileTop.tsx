@@ -19,11 +19,12 @@ import { useRef } from 'react';
 
 interface ProfileTopProps {
   ownProfile?: boolean,
-  profileData: User
+  profileData: User,
+  refresh: Function
 }
-export const ProfileTop = ({ ownProfile, profileData } : ProfileTopProps) => {
+export const ProfileTop = ({ ownProfile, profileData, refresh } : ProfileTopProps) => {
   const [editing, setEditing] = useState<boolean>(false);
-  const [image, setImage] = useState<string>(ownProfile ? getImageAddress(profileData.image, profileData.userName): "");
+  const [imageAddress, setImageAddress] = useState<string>(getImageAddress(profileData.image, profileData.userName));
   const [base64, setBase64] = useState<string>();
   const [followingState, setFollowingState] = useState<boolean>(profileData.following);
   const navigation = useNavigation();
@@ -36,7 +37,7 @@ export const ProfileTop = ({ ownProfile, profileData } : ProfileTopProps) => {
           editing ? 
             <>
               <View style={style.profileImage}>
-                <ImagePicker setBase64={setBase64} aspect={[4, 4]} image={image} setImage={setImage} style={[style.profileImage, {borderColor: Colors.primary, borderWidth: 2}]} />
+                <ImagePicker setBase64={setBase64} aspect={[4, 4]} image={imageAddress} setImage={setImageAddress} style={[style.profileImage, {borderColor: Colors.primary, borderWidth: 2}]} />
               </View>
               <View style={style.buttonGroup}>
                 <View style={{flexDirection: 'row', ...Containers.center}}>
@@ -47,15 +48,17 @@ export const ProfileTop = ({ ownProfile, profileData } : ProfileTopProps) => {
                   label='Save' 
                   onPress={() => {
                     setEditing(false);
-                    base64 && userUpdateImage(base64);
-                    setBase64(undefined)
+                    base64 && userUpdateImage(base64).then(() => {
+                      setBase64(undefined);
+                      refresh();
+                    });
                   }} 
                 />
               </View>
             </> :
             <>
               <View style={style.profileImage}>
-                <Image source={{uri: getImageAddress(profileData.image, profileData.userName)}} style={style.profileImage} />
+                <Image source={{uri: imageAddress}} style={style.profileImage} />
               </View>
               <View style={style.buttonGroup}>
                 <Text style={style.username}>{profileData.userName}</Text>
@@ -68,8 +71,8 @@ export const ProfileTop = ({ ownProfile, profileData } : ProfileTopProps) => {
                         {
                           // show unfollow or follow button according to if current user is following this profile or not
                           followingState ? 
-                            <ButtonOutline label='Unfollow' onPress={() => {setFollowingState(false); userToggleFollow(profileData.userId)}} /> : 
-                            <ButtonGradient label='Follow' onPress={() => {setFollowingState(true); userToggleFollow(profileData.userId)}}/>
+                            <ButtonOutline label='Unfollow' onPress={() => {setFollowingState(false); userToggleFollow(profileData.userId).then(() => refresh());}} /> : 
+                            <ButtonGradient label='Follow' onPress={() => {setFollowingState(true); userToggleFollow(profileData.userId).then(() => refresh());}}/>
                         }
                         {
                           // show message button if friends
