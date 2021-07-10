@@ -61,9 +61,10 @@ export const ComponentRenderer: React.FC<ComponentRendererProps> = ({ components
       <Animatable.View
         animation={(newRender && liveUpdate) ? 'fadeInLeft' : ''}
         duration={700}
+        key={component.componentId}
       >
-        {component.componentType === 'Text' ? <TextComponent key={component.componentId} data={component}/>
-        : component.componentType === 'Image' ? <ImageComponent key={component.componentId} data={component}/> 
+        {component.componentType === 'Text' ? <TextComponent data={component}/>
+        : component.componentType === 'Image' ? <ImageComponent data={component}/> 
         : null}
       </Animatable.View>)}
     </>
