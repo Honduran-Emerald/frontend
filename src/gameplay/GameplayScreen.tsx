@@ -47,6 +47,8 @@ export const GameplayScreen : React.FC = () => {
   const [showXp, setShowXp] = useState<boolean>(false);
   const [xpAmount, setXpAmount] = useState<number>(-1);
 
+  const [liveUpdate, setLiveUpdate] = useState<boolean>(false);
+
   const [loadedTrackerNodesList, setLoadedTrackerNodesList] = useState<QuestTrackerNodeElement[]>([]);
   useEffect(() => {
     setLoadedTrackerNodesList(_.reverse(_.clone(loadedTrackerNodes?.trackerNodes || [])))
@@ -111,6 +113,9 @@ export const GameplayScreen : React.FC = () => {
       console.log('new module without loaded quest')
       return;
     }
+
+    setLiveUpdate(true) // Used for chat animations
+
     const newQuestPath = _.cloneDeep(loadedTrackerNodes);
     const newTracker = {module: newModule, memento: null, creationTime: (new Date()).toString()}
     newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1].memento = oldMemento
@@ -217,7 +222,7 @@ export const GameplayScreen : React.FC = () => {
           <FlatList
             data={loadedTrackerNodesList}
             renderItem={
-              ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} onPassphrase={onPassphrase} tracker={currentTracker}/>
+              ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} onPassphrase={onPassphrase} tracker={currentTracker} liveUpdate={liveUpdate}/>
             }
             ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref} trackerId={route.params.trackerId}/>}
             ListHeaderComponent={currentTracker?.finished ? <FinishMessage quest={loadedTrackerNodes?.quest} tracker={currentTracker} handleVote={handleVote}/> : null}

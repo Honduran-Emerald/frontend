@@ -12,6 +12,7 @@ import { Location } from "../types/general";
 import { RandomModule } from './modules/RandomModule';
 import { PassphraseModule } from './modules/PassphraseModule';
 import { QRModule } from './modules/QRModule';
+import { useState } from 'react';
 
 export interface ModuleRendererProps<ModuleType extends GameplayModule> {
   module: {
@@ -22,10 +23,18 @@ export interface ModuleRendererProps<ModuleType extends GameplayModule> {
   onChoice: (choiceId: number | string) => Promise<any>,
   onPassphrase: (passphrase: number | string) => Promise<any>,
   tracker?: QuestTracker,
-  edit?: boolean
 }
 
-export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ module, index, onChoice, onPassphrase, tracker, edit }) => {
+export interface ModuleRendererPropsLiveUpdate extends ModuleRendererProps<GameplayModule> {
+  liveUpdate: boolean
+}
+
+export const ModuleRenderer: React.FC<ModuleRendererPropsLiveUpdate> = ({ module, index, onChoice, onPassphrase, tracker, liveUpdate }) => {
+
+  const [shownAllComponents, setShownAllComponents] = useState<boolean>(false);
+
+
+  console.log(module.memento)
 
   return (
     <View style={{paddingHorizontal: 10}}>
@@ -37,29 +46,10 @@ export const ModuleRenderer: React.FC<ModuleRendererProps<GameplayModule>> = ({ 
           </Text>
         </View>
       }
-      <ComponentRenderer components={module.module.components}/>
 
-      {
-        // TODO remove
-        /*<LocationModule
-          module={{
-            module: {
-              id: 32432534543632434,
-              type: 'Location',
-              objective: 'Go to Luisenplatz',
-              components: [],
-              locationModel: {
-                latitude:  49.87283,
-                longitude: 8.6512067,
-              },
-            },
-            memento: module.memento
-          }}
-          onChoice={onChoice}
-        />*/
-      }
+      <ComponentRenderer components={module.module.components} onFinishShowing={() => setShownAllComponents(true)} newRender={module.memento === null} liveUpdate={liveUpdate}/>
 
-      {
+      {shownAllComponents &&
         (() => {
           switch (module.module.type) {
             case 'Story':
