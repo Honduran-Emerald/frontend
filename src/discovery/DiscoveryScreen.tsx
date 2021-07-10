@@ -11,85 +11,93 @@ import { WideQuestPreview } from "./WideQuestPreview";
 import { useAppSelector } from "../redux/hooks";
 import { getLocation } from "../utils/locationHandler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export const DiscoveryScreen = () => {
 
-    const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets();
 
-    const location = useAppSelector(state => state.location.location);
-    const [refreshing, setRefreshing] = useState<boolean>(false);
-    const [quests, setQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
-    const [nearbyQuests, setNearbyQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
-    const [search, setSearch] = React.useState('');
-    const recentlyVisitedQuests = useAppSelector(state => state.quests.recentlyVisitedQuests);
+  const location = useAppSelector(state => state.location.location);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [quests, setQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
+  const [nearbyQuests, setNearbyQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
+  const [search, setSearch] = React.useState('');
+  const recentlyVisitedQuests = useAppSelector(state => state.quests.recentlyVisitedQuests);
 
-    useEffect(() => {
-        fetchData();
-    },[])
+  useEffect(() => {
+    fetchData();
+  },[])
 
-    const fetchData = async () => {
-        return Promise.all([
-            // Get Location Permission and set initial Location
-            getLocation().catch(() => {}),
-            // set quest arrays
-            queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests)).then(() => console.log('fetch'))
-            // nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests))
-        ])
-    }
+  const fetchData = async () => {
+    return Promise.all([
+      // Get Location Permission and set initial Location
+      getLocation().catch(() => {}),
+      // set quest arrays
+      queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests)).then(() => console.log('fetch'))
+      // nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests))
+    ])
+  }
 
-    const onRefresh = () => {
-        setRefreshing(true);
-        fetchData().then(() => setRefreshing(false))
-    }
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData().then(() => setRefreshing(false))
+  }
 
-    const getQuestSearch = () => {
-        if (!quests) return [];
-        if (search) {
-            let newQuests: GameplayQuestHeader[] = [];
-            const normalizedSearch = removeSpecialChars(search);
-            quests.map((quest) => {
-                const normalizedQuestName = removeSpecialChars(quest.title);
-                const normalizedAuthor = removeSpecialChars(quest.ownerName);
-                if (normalizedQuestName.includes(normalizedSearch) || normalizedAuthor.includes(normalizedSearch)) {
-                    newQuests.push(quest);
-                }
-            })
-            return newQuests;
+  const getQuestSearch = () => {
+    if (!quests) return [];
+    if (search) {
+      let newQuests: GameplayQuestHeader[] = [];
+      const normalizedSearch = removeSpecialChars(search);
+      quests.map((quest) => {
+        const normalizedQuestName = removeSpecialChars(quest.title);
+        const normalizedAuthor = removeSpecialChars(quest.ownerName);
+        if (normalizedQuestName.includes(normalizedSearch) || normalizedAuthor.includes(normalizedSearch)) {
+          newQuests.push(quest);
         }
-        return quests;
+      })
+      return newQuests;
     }
+    return quests;
+  }
 
-    return (
-        <View style={[styles.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
-            <View style={styles.searchbar}>
-                <Searchbar
-                  placeholder={"Search for quest title or creator"}
-                  onChangeText={(input) => setSearch(input)}
-                  value={search}
-                  theme={{colors: {primary: Colors.primary}}}
-                />
-            </View>
-            <ScrollView contentContainerStyle={styles.discovery} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
-                {search === '' && (
-                    <>
-                        <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={quests}/>
-                        <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={quests}/>
-                        <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={[...recentlyVisitedQuests].reverse()}/>
-                        <ScrollMenu header={"Following"} type={"following"} location={location} quests={quests}/>
-                    </>)
-                }
-                {quests && search !== '' && location && (
-                  <View style={{alignItems: 'center'}}>
-                      {getQuestSearch().map((q, index) => (
-                          <WideQuestPreview key={index} quest={q} location={location}/>
-                        )
-                      )}
-                  </View>)
-                }
-            </ScrollView>
-            <StatusBar style="auto"/>
-        </View>
-    )
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    },[])
+  )
+
+  return (
+    <View style={[styles.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
+      <View style={styles.searchbar}>
+        <Searchbar
+          placeholder={"Search for quest title or creator"}
+          onChangeText={(input) => setSearch(input)}
+          value={search}
+          theme={{colors: {primary: Colors.primary}}}
+        />
+      </View>
+      <ScrollView contentContainerStyle={styles.discovery} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
+        {search === '' && (
+          <>
+            <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={quests}/>
+            <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={quests}/>
+            <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={[...recentlyVisitedQuests].reverse()}/>
+            <ScrollMenu header={"Following"} type={"following"} location={location} quests={quests}/>
+          </>)
+        }
+        {quests && search !== '' && location && (
+          <View style={{alignItems: 'center'}}>
+            {getQuestSearch().map((q, index) => (
+                <WideQuestPreview key={index} quest={q} location={location}/>
+              )
+            )}
+          </View>)
+        }
+      </ScrollView>
+      <StatusBar style="auto"/>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
