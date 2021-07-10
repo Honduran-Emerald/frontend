@@ -18,8 +18,9 @@ import { GameplayQuestHeader } from "../types/quest";
 import { useAppSelector } from '../redux/hooks';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/core";
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import { User } from '../types/general';
+import { useCallback } from 'react';
 
 export default interface profileProps {
     ownProfile: boolean
@@ -56,6 +57,13 @@ export const ProfileScreen = (props: profileProps) => {
     fetchUserData();
     fetchQuestData();
   }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+      fetchQuestData();
+    }, [])
+  )
 
   const fetchQuestData = async () => {
     return Promise.all([

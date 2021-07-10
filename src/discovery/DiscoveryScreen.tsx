@@ -34,7 +34,7 @@ export const DiscoveryScreen = () => {
       // Get Location Permission and set initial Location
       getLocation().catch(() => {}),
       // set quest arrays
-      queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests)).then(() => console.log('fetch'))
+      queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests))
       // nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests))
     ])
   }
@@ -64,7 +64,7 @@ export const DiscoveryScreen = () => {
   useFocusEffect(
     useCallback(() => {
       fetchData();
-    },[])
+    }, [])
   )
 
   return (
