@@ -52,9 +52,19 @@ export const questsSlice = createSlice({
             state.unsavedChanges = true;
         },
         deleteQuestModule: (state, action: PayloadAction<number>) => {
-            if (state.questPrototype !== undefined)
+            if (state.questPrototype !== undefined) {
+                const oldLength = state.questPrototype.modules.length;
                 state.questPrototype.modules = state.questPrototype.modules
                     .filter(m => m.id !== action.payload) 
+                if (oldLength !== state.questPrototype.modules.length && !state.questPrototype.modules.some(m => m.id === state.questPrototype?.firstModuleReference)) {
+                    if (state.questPrototype.modules.length > 0) {
+                        state.questPrototype.firstModuleReference = state.questPrototype.modules[0].id
+                    } else {
+                        state.questPrototype.firstModuleReference = 1
+                    }
+                    
+                }
+            }
             state.unsavedChanges = true;
         },
         spliceQuestImages: (state, action: PayloadAction<number>) => {
@@ -133,12 +143,16 @@ export const questsSlice = createSlice({
         },
         saveChanges: (state) => {
             state.unsavedChanges = false
+        },
+        setFirstModuleReference: (state, action: PayloadAction<number | null>) => {
+            if (state.questPrototype) 
+                state.questPrototype.firstModuleReference = action.payload
         }
 
     }
 })
 
-export const { loadQuest, unloadQuest, addOrUpdateQuestModule, deleteQuestModule, setModules,
+export const { loadQuest, unloadQuest, addOrUpdateQuestModule, deleteQuestModule, setModules, setFirstModuleReference,
         setQuestTitle, setQuestDescription, setLocationName, setImages, setImageReference, saveChanges,
         setEstimatedTime, addOrUpdateMultipleQuestModules, spliceQuestImages, setNewImages, pushNewImages, 
         setNewImagesAt, setNewImageReference, setAgentImageReference, setAgentName, toggleAgentEnabled} = questsSlice.actions

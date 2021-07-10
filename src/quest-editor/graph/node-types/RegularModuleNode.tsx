@@ -2,13 +2,13 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Text } from 'react-native-paper';
-import { setModules } from '../../../redux/editor/editorSlice';
+import { setFirstModuleReference, setModules } from '../../../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { InternalFullNode } from '../utils/linksParser';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
 import { QuestPrototype } from '../../../types/prototypes';
-import { unset } from 'lodash';
+
 export interface IModuleNode {
     node: InternalFullNode,
     linkOnChoice: ((questPrototype: QuestPrototype, module_id: number) => QuestPrototype) | undefined,
@@ -41,12 +41,19 @@ export const RegularModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, s
                     cutModule();
                 }], ['Delete Module', 'delete', () => {
                     deleteModule();
+                }], ['Choose as starting module', 'ray-start', () => {
+                    dispatch(setFirstModuleReference(node.id))
                 }]])
 
                 sheetRef.current?.snapTo(1)
             }
         }}>
             <View>
+            {questPrototype?.firstModuleReference===node.id && <View style={{...styles.textcomponent, minHeight: 42, padding: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, marginBottom: -20}}>
+                <Text style={{textAlign: 'center', paddingHorizontal: 13}} ellipsizeMode={'tail'} numberOfLines={1}>
+                    Initial Module
+                </Text>
+            </View>}
             {node.parentTags.map((tag, idx) => <View key={idx} style={{...styles.textcomponent, minHeight: 42, padding: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, marginBottom: -20}}>
                 <Text style={{textAlign: 'center', paddingHorizontal: 13}} ellipsizeMode={'tail'} numberOfLines={1}>{
                     tag.type === 'Choice' ? tag.choice 

@@ -103,7 +103,7 @@ export const ModuleGraphCaller = () => {
         <BottomSheet
             ref={sheet}
             borderRadius={40}
-            snapPoints={[0, 180, 360]}
+            snapPoints={[0, 240, 360]}
             initialSnap={0}
             enabledContentTapInteraction={false}
             enabledContentGestureInteraction={true}
