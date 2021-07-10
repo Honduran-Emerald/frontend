@@ -12,73 +12,93 @@ import { useEffect } from 'react';
 import { getImageAddress } from '../utils/imageHandler';
 import { useNavigation } from '@react-navigation/native';
 import { User } from '../types/general';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors, Containers } from '../styles';
+import { TextInput } from 'react-native';
+import { useRef } from 'react';
 
 interface ProfileTopProps {
   ownProfile?: boolean,
   profileData: User
 }
-export const ProfileTop = ({ownProfile, profileData} : ProfileTopProps) => {
+export const ProfileTop = ({ ownProfile, profileData } : ProfileTopProps) => {
   const [editing, setEditing] = useState<boolean>(false);
   const [image, setImage] = useState<string>(ownProfile ? getImageAddress(profileData.image, profileData.userName): "");
   const [base64, setBase64] = useState<string>();
   const [followingState, setFollowingState] = useState<boolean>(profileData.following);
   const navigation = useNavigation();
+  const _userNameInput = useRef<TextInput>(null);
 
-  useEffect(() => {
-    base64 && userUpdateImage(base64)
-  }, [base64])
   return(
     <View style={{marginBottom: 35}}>
       <View style={style.outerWrapper}>
-        <View style={style.profileImage}>
-          {
-            ownProfile ? 
-              <ImagePicker setBase64={setBase64} aspect={[4, 4]} image={image} setImage={setImage} style={style.profileImage} />
-              : <Image source={{uri: getImageAddress(profileData.image, profileData.userName)}} style={style.profileImage} />
-          }
-        </View>
-        <View style={style.buttonGroup}>
-          <Text style={style.username}>{profileData.userName}</Text>
-          {
-            // only show edit button if own profile
-            ownProfile ? 
-              <ButtonOutline label='Edit Profile' onPress={() => {setEditing(true)}} /> : 
-              (
-                <>
-                  {
-                    // show unfollow or follow button according to if current user is following this profile or not
-                    followingState ? 
-                      <ButtonOutline label='Unfollow' onPress={() => {setFollowingState(false); userToggleFollow(profileData.userId)}} /> : 
-                      <ButtonGradient label='Follow' onPress={() => {setFollowingState(true); userToggleFollow(profileData.userId)}}/>
-                  }
-                  {
-                    // show message button if friends
-                    profileData.follower && followingState && 
-                      <ButtonGradient 
-                        label='Message' 
-                        style={{marginTop: 5}} 
-                        onPress={() => {
-                          navigation.navigate('ChatPersonal', {
-                            userName: profileData.userName,
-                            userImgSource: getImageAddress(profileData.image, profileData.userName),
-                            userTargetId: profileData.userId
-                          })
-                        }} 
-                      />
-                  }
-                </>
-              )
-          }
-        </View>
+        {
+          editing ? 
+            <>
+              <View style={style.profileImage}>
+                <ImagePicker setBase64={setBase64} aspect={[4, 4]} image={image} setImage={setImage} style={[style.profileImage, {borderColor: Colors.primary, borderWidth: 2}]} />
+              </View>
+              <View style={style.buttonGroup}>
+                <View style={{flexDirection: 'row', ...Containers.center}}>
+                  <TextInput ref={_userNameInput} style={[style.username, {flex: 1}]}>{profileData.userName}</TextInput>
+                  <MaterialCommunityIcons onPress={() => _userNameInput.current?.focus()} name='pencil' size={24} color={Colors.primary}/>
+                </View>
+                <ButtonOutline 
+                  label='Save' 
+                  onPress={() => {
+                    setEditing(false);
+                    base64 && userUpdateImage(base64);
+                    setBase64(undefined)
+                  }} 
+                />
+              </View>
+            </> :
+            <>
+              <View style={style.profileImage}>
+                <Image source={{uri: getImageAddress(profileData.image, profileData.userName)}} style={style.profileImage} />
+              </View>
+              <View style={style.buttonGroup}>
+                <Text style={style.username}>{profileData.userName}</Text>
+                {
+                  // only show edit button if own profile
+                  ownProfile ? 
+                    <ButtonOutline label='Edit Profile' onPress={() => {setEditing(true)}} /> : 
+                    (
+                      <>
+                        {
+                          // show unfollow or follow button according to if current user is following this profile or not
+                          followingState ? 
+                            <ButtonOutline label='Unfollow' onPress={() => {setFollowingState(false); userToggleFollow(profileData.userId)}} /> : 
+                            <ButtonGradient label='Follow' onPress={() => {setFollowingState(true); userToggleFollow(profileData.userId)}}/>
+                        }
+                        {
+                          // show message button if friends
+                          profileData.follower && followingState && 
+                            <ButtonGradient 
+                              label='Message' 
+                              style={{marginTop: 5}} 
+                              onPress={() => {
+                                navigation.navigate('ChatPersonal', {
+                                  userName: profileData.userName,
+                                  userImgSource: getImageAddress(profileData.image, profileData.userName),
+                                  userTargetId: profileData.userId
+                                })
+                              }} 
+                            />
+                        }
+                      </>
+                    )
+                }
+              </View>
+            </>
+        }
+
       </View>
       <StatChips followers={profileData.followerCount} questsCreated={profileData.questCount} questsPlayed={profileData.trackerCount}/>
       <LevelBar level={profileData.level} xp={profileData.experience} />
     </View>
   );
 }
-
-
-
 
 
 const style = StyleSheet.create({
