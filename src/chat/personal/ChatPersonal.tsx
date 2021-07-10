@@ -2,17 +2,12 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, StatusBar, Image, ImageSourcePropType, SafeAreaView, KeyboardAvoidingView, View, TextInput } from 'react-native';
 import { Bubble, GiftedChat, IMessage, Send } from 'react-native-gifted-chat';
-import { appendPersonalChat, loadFromApi, loadPersonalChat } from '../../redux/chat/chatSlice';
+import { appendPersonalChat, loadFromApi, loadPersonalChat, setRead } from '../../redux/chat/chatSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { Colors } from '../../styles';
 import { primary, primaryLight, secondary } from '../../styles/colors';
 import { getImageAddress } from '../../utils/imageHandler';
 import { chatGetRequest, chatSendTextRequest } from '../../utils/requestHandler';
-
-interface ChatPersonalInterface {
-    route: any,
-    navigator: any,
-}
 
 const selfUserId = 1;
 const otherUserId = 2;
@@ -28,6 +23,18 @@ export const ChatPersonal: React.FC = () => {
     const dispatch = useAppDispatch();
     const chats = useAppSelector(state => state.chat.loadedChats)
     const user = useAppSelector(state => state.authentication.user)
+
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        if (user) {
+            const unsubscribe = navigation.addListener('beforeRemove', () => {
+                dispatch(setRead(route.params.userTargetId))
+            })
+            return unsubscribe
+        }
+        
+    }, [user]);
 
     const [messages, setMessages] = useState<IMessage[]>([]);
 

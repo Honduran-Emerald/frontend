@@ -19,7 +19,7 @@ import { removeData } from './utils/AsyncStore';
 import { ProfileNavigator } from './profile/ProfileNavigator';
 import { GameplayNavigator } from './gameplay/GameplayNavigator';
 import { LocalUpdatedTrackerIds } from './utils/TaskManager';
-import {getLocationSubscription} from "./utils/locationHandler";
+import { getLocationSubscription } from "./utils/locationHandler";
 import * as Location from "expo-location";
 
 const Tab = createBottomTabNavigator();
@@ -28,6 +28,7 @@ export default function MainAppNavigator() {
   const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
 
   const [locationSubscription, setLocationSubscription] = React.useState<Location.LocationSubscription>();
+  const chatsPreviewList = useAppSelector(state => state.chat.chatsPreviewList)
 
   React.useEffect(() => {
     (async () => {
@@ -71,7 +72,16 @@ export default function MainAppNavigator() {
               );
             case "Chat":
               iconName = "message-text-outline";
-              break;
+              return (
+                <View>
+                  <MaterialCommunityIcons name={iconName} size={size} color={focused ? Colors.primary : "grey"}/>
+                  <Badge 
+                    visible={chatsPreviewList?.some(chatPreview => Date.parse(chatPreview.lastReceived) <= Date.parse(chatPreview.newestMessage))} 
+                    style={styles.badge} 
+                    theme={{colors: {notification: Colors.primaryLight}}} 
+                    size={13} />
+                </View>
+              );
             case "Profile":
               iconName = "account-outline";
               break;

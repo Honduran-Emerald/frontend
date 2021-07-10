@@ -16,9 +16,6 @@ export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollable}>
-      {/* userName: string,
-        userImgSource: string,
-        userTargetId: string, */}
         <View style={styles.chats}>
           {chatsPreviewList && chatsPreviewList.map((val, idx) =>
             <TouchableOpacity onPress={() => navigation.navigate('ChatPersonal', {
@@ -29,15 +26,12 @@ export const ChatOverview: React.FC<{navigation: any}> = ({ navigation }) => {
                               key={idx}>
 
               <ChatSingleElement
-                userName={val.username}
-                lastMessage={val.lastMessageText}
-                userImgSource={getImageAddress(val.userImageId, val.username)}
+                  preview={val}
                 />
 
             </TouchableOpacity>
             )}
         </View>
-
       </ScrollView>
       <FAB
         style={styles.locationButton}
