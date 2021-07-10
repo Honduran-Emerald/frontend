@@ -133,6 +133,9 @@ export const playVoteRequest = (trackerId: string, vote: 'None' | 'Up' | 'Down')
 // /play/reset
 export const playResetRequest = (trackerId: string) => (request('/play/reset', 'POST', trackerId))
 
+// /play/remove/
+export const createDeleteTrackerRequest = (trackerId: string) => (request('/play/remove/', 'POST', trackerId))
+
 // /play/querytrackernodes
 export const queryTrackerNodesRequest = (trackerId: string) => (request(`/play/querytrackernodes?trackerId=${trackerId}`))
 
