@@ -60,8 +60,12 @@ export const ProfileScreen = (props: profileProps) => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchUserData();
-      fetchQuestData();
+      if(!user)
+        fetchUserData();
+      else
+        getUserRequest(user.userId).then(response => response.json()).then(obj => setUser(obj.user));
+
+      fetchQuestData()
     }, [])
   )
 
