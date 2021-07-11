@@ -111,7 +111,7 @@ export const ProfileScreen = () => {
           <ProfileTop 
             ownProfile={isOwnProfile} 
             profileData={currentUser}
-            refresh={onRefresh}
+            refresh={fetchUserData}
           />
         }
         {(
