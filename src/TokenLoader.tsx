@@ -7,9 +7,9 @@ import { TokenManager } from './utils/TokenManager';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { setToken, setUser } from './redux/authentication/authenticationSlice';
 import i18n from 'i18n-js';
-import { chatQueryRequest, getAllTrackersRequest, getUserSelfRequest, queryTrackerNodesRequest, renewRequest } from './utils/requestHandler';
+import { chatQueryRequest, getAllTrackersRequest, getUserSelfRequest, queryQuestsWithIds, queryTrackerNodesRequest, renewRequest } from './utils/requestHandler';
 import { loadPinnedQuestPath, pinQuest, setAcceptedQuests, setRecentlyVisitedQuest, setTrackerWithUpdate } from './redux/quests/questsSlice';
-import { QuestTracker } from './types/quest';
+import { QueriedQuest, QuestTracker } from './types/quest';
 import { ExpoNotificationWrapper } from './ExpoNotificationWrapper';
 import { loadChatPreview } from './redux/chat/chatSlice';
 import { deleteItemLocally } from './utils/SecureStore';
@@ -120,7 +120,14 @@ export const TokenLoader = () => {
         .then((res) => {
           if(res) {
             const recentQuests = JSON.parse(res);
-            dispatch(setRecentlyVisitedQuest(recentQuests));
+            const ids = recentQuests.map((quest: QueriedQuest) => quest.id)
+            queryQuestsWithIds(ids[0], ids.slice(1)).then((res) => {
+              if(res.status === 200) {
+                res.json().then((data) => dispatch(setRecentlyVisitedQuest(data)))
+              } else {
+                console.log('error while loading recents ' + res.status);
+              }
+            })
           }
         })
     )
