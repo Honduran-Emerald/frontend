@@ -3,20 +3,22 @@ import { View, StyleSheet, ScrollView, StatusBar as StatusBar2, RefreshControl }
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "../styles";
 import { ScrollMenu } from "./ScrollMenu";
-import { GameplayQuestHeader } from "../types/quest";
-import { nearbyQuestsRequest, queryQuestsRequest } from "../utils/requestHandler";
+import { GameplayQuestHeader, QueriedQuest } from "../types/quest";
+import { nearbyQuestsRequest, queryQuestsRequest, queryQuestsWithIds } from "../utils/requestHandler";
 import { Searchbar } from "react-native-paper";
 import { removeSpecialChars } from "../gameplay/QuestlogScreen";
 import { WideQuestPreview } from "./WideQuestPreview";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { getLocation } from "../utils/locationHandler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
+import { setRecentlyVisitedQuest } from "../redux/quests/questsSlice";
 
 export const DiscoveryScreen = () => {
 
   const insets = useSafeAreaInsets();
+  const dispatch = useAppDispatch();
 
   const location = useAppSelector(state => state.location.location);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -30,12 +32,21 @@ export const DiscoveryScreen = () => {
   },[])
 
   const fetchData = async () => {
+    const ids = recentlyVisitedQuests.map((quest: QueriedQuest) => quest.id)
+
     return Promise.all([
       // Get Location Permission and set initial Location
       getLocation().catch(() => {}),
       // set quest arrays
-      queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests))
-      // nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests))
+      queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests)),
+      // nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests)),
+      queryQuestsWithIds(ids[0], ids.slice(1)).then((res) => {
+        if(res.status === 200) {
+          res.json().then((data) => dispatch(setRecentlyVisitedQuest(data)))
+        } else {
+          console.log('error while loading recents ' + res.status);
+        }
+      }),
     ])
   }
 
