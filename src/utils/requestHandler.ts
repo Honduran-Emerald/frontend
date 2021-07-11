@@ -83,6 +83,15 @@ export const queryvotedQuestsRequest = (voteType : string, userId? : string) => 
 // /quest/queryfinished
 export const queryfinishedQuestsRequest = (userId? : string, offset : number = 0) => (request(`/quest/queryfinished?offset=${offset}` + (userId != null ? `&userId=${userId}` : '') + (`&finished=true`)))
 
+// /quest/querynew
+export const querynewQuestsRequest = (offset : number = 0, long?: number, lat?: number, radius?: number) => (request(`/quest/querynew/?offset=${offset}`
+  + (long != null ? `&Longitude=${long}` : '')
+  + (lat != null ? `&Latitude=${lat}` : '')
+  + (radius != null ? `&radius=${radius}` : '')))
+
+// /quest/queryfollowing
+export const queryfollowingQuestsRequest = (offset : number = 0) => (request(`/quest/queryfollowing/?offset=${offset}`))
+
 // /create/query/
 export const createQueryRequest = (offset: number = 0) => (request(`/create/query?offset=${offset}`))
 

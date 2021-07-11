@@ -4,7 +4,12 @@ import { StatusBar } from "expo-status-bar";
 import { Colors } from "../styles";
 import { ScrollMenu } from "./ScrollMenu";
 import { GameplayQuestHeader } from "../types/quest";
-import { nearbyQuestsRequest, queryQuestsRequest } from "../utils/requestHandler";
+import {
+  nearbyQuestsRequest,
+  queryfollowingQuestsRequest,
+  querynewQuestsRequest,
+  queryQuestsRequest
+} from "../utils/requestHandler";
 import { Searchbar } from "react-native-paper";
 import { removeSpecialChars } from "../gameplay/QuestlogScreen";
 import { WideQuestPreview } from "./WideQuestPreview";
@@ -22,6 +27,8 @@ export const DiscoveryScreen = () => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [quests, setQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
   const [nearbyQuests, setNearbyQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
+  const [newQuests, setNewQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
+  const [followingQuests, setFollowingQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
   const [search, setSearch] = React.useState('');
   const recentlyVisitedQuests = useAppSelector(state => state.quests.recentlyVisitedQuests);
 
@@ -34,8 +41,13 @@ export const DiscoveryScreen = () => {
       // Get Location Permission and set initial Location
       getLocation().catch(() => {}),
       // set quest arrays
-      queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests))
-      // nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests))
+      queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests)),
+      // get nearby
+      nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests)),
+      // get checkout
+      // querynewQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNewQuests(quests.quests)),
+      // get following
+      queryfollowingQuestsRequest(0).then(res => res.json()).then((quests) => setFollowingQuests(quests.quests)),
     ])
   }
 
@@ -80,10 +92,10 @@ export const DiscoveryScreen = () => {
       <ScrollView contentContainerStyle={styles.discovery} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
         {search === '' && (
           <>
-            <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={quests}/>
+            <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={nearbyQuests}/>
             <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={quests}/>
             <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={[...recentlyVisitedQuests].reverse()}/>
-            <ScrollMenu header={"Following"} type={"following"} location={location} quests={quests}/>
+            <ScrollMenu header={"Following"} type={"following"} location={location} quests={followingQuests}/>
           </>)
         }
         {quests && search !== '' && location && (
