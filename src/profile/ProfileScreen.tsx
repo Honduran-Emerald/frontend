@@ -86,39 +86,13 @@ export const ProfileScreen = () => {
   
   const onRefresh = () => {
     setRefreshing(true)
+
     // fetch user data
-    
     fetchUserData();
 
     // fetch quest data
     fetchQuestData().then(() => setRefreshing(false))
   }
-
-  /*useEffect(() => {
-    getUserFollowers().then(res => res.json()).then((followers) => setFollowerCount(followers.users.length));
-    queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests));
-    createQueryRequest(0).then(res => res.json()).then((quests) => {
-      let drafts : GameplayQuestHeader[] = [];
-      let published : GameplayQuestHeader[] = [];
-      quests.prototypes.forEach(
-        (prototype : any) => {
-          if (prototype.released) {
-              console.log(JSON.stringify(prototype.quest.title))
-            published.push(prototype.quest);
-          }
-          if (prototype.quest !== null && prototype !== null && prototype.title !== null && prototype.outdated) {
-            let pr = lodash.cloneDeep(prototype);
-            drafts.push(Object.assign(pr.quest, pr));
-          }
-        }
-      );
-      setPublishedQuests(published);
-      setDraftQuests(drafts);
-    });
-    queryvotedQuestsRequest("Up").then(res => res.json()).then((quests) => setUpvotedQuests(quests.quests));
-    // Get Location Permission and set initial Location
-    getLocation().catch((err: Error) => {});
-  },[])*/
 
   return(
     <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
