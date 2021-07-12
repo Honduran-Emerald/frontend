@@ -7,6 +7,7 @@ import { addTrackerExperience, addTrackerWithUpdate, removeTrackerWithUpdate } f
 import { store } from '../redux/store';
 import { getData, storeData } from './AsyncStore';
 import { playEventChoiceRequest } from './requestHandler';
+import { addExperience } from '../redux/authentication/authenticationSlice';
 
 export const GeofencingTask = 'LocationModuleUpdates';
 export const LocationNotifTitle = 'Reached location';
@@ -108,6 +109,7 @@ export function updateQuest(trackerId: string, choice = 0) {
               break;
             case 'Experience':
               console.log('Got XP: +' + responseEvent.experience);
+              store.dispatch(addExperience(responseEvent.experience));
               store.dispatch(addTrackerExperience({ trackerId: trackerId, experience: responseEvent.experience }));
               scheduleGeofenceNotification(responseEvent.experience);
               break;

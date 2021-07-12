@@ -25,6 +25,7 @@ import { Colors } from '../styles';
 import { FinishMessage } from './FinishMessage';
 import { addGeofencingRegion, removeUpdatedQuest, SingleGeoFenceLocationRadius } from '../utils/TaskManager';
 import { useIsFocused } from '@react-navigation/native';
+import { addExperience } from '../redux/authentication/authenticationSlice';
 
 export const GameplayScreen : React.FC = () => {
 
@@ -55,6 +56,17 @@ export const GameplayScreen : React.FC = () => {
   }, [loadedTrackerNodes])
 
   const [innerHeight, setInnerHeight] = useState<number>(Dimensions.get('screen').height);
+
+  const user = useAppSelector(state => state.authentication.user)
+  const [oldLevel, setOldLevel] = useState(user?.level)
+  const [showLevelUp, setShowLevelup] = useState(false);
+
+  useEffect(() => {
+    if (user?.level !== oldLevel) {
+      setShowLevelup(true);
+    }
+    setOldLevel(user?.level)
+  }, [user?.level])
 
   useEffect(() => {
     if(isFocused && trackerWithUpdates.includes(route.params.trackerId)) {
@@ -135,7 +147,6 @@ export const GameplayScreen : React.FC = () => {
       };
       addGeofencingRegion(newRegion);
     }
-
   }
 
   const handleQuestFinish = useCallback((endingFactor: number) => {
@@ -144,6 +155,7 @@ export const GameplayScreen : React.FC = () => {
 
   const handleExperience = useCallback((experience: number) => {
     dispatch(addTrackerExperience({ trackerId: route.params.trackerId, experience: experience }));
+    dispatch(addExperience(experience));
     setXpAmount(experience);
     setShowXp(true);
   }, [])
@@ -224,7 +236,7 @@ export const GameplayScreen : React.FC = () => {
             renderItem={
               ({ item, index }) => <ModuleRenderer module={item} index={index} onChoice={handleChoiceEvent} onPassphrase={onPassphrase} tracker={currentTracker} liveUpdate={liveUpdate}/>
             }
-            ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref} trackerId={route.params.trackerId}/>}
+            ListFooterComponent={<QuestStatsScreen height={innerHeight} quest={loadedTrackerNodes?.quest} flatListRef={ref} trackerId={route.params.trackerId} currentTracker={currentTracker}/>}
             ListHeaderComponent={currentTracker?.finished ? <FinishMessage quest={loadedTrackerNodes?.quest} tracker={currentTracker} handleVote={handleVote}/> : null}
             onLayout={(event) => {
               setInnerHeight(event.nativeEvent.layout.height)
@@ -252,6 +264,19 @@ export const GameplayScreen : React.FC = () => {
             >
               <Text style={styles.xpText}>
                 +{xpAmount}XP
+              </Text>
+            </Animatable.View>
+          }
+          {
+            showLevelUp &&
+            <Animatable.View
+              animation='fadeOutUp'
+              delay={500}
+              onAnimationEnd={() => setShowLevelup(false)}
+              style={styles.lvlAnimationView}
+            >
+              <Text style={styles.xpText}>
+                Reached LVL {user?.level}
               </Text>
             </Animatable.View>
           }
@@ -313,6 +338,15 @@ const styles = StyleSheet.create({
     padding: 10,
     right: 30,
     bottom: 120,
+  },
+  lvlAnimationView: {
+    backgroundColor: Colors.background,
+    elevation: 5,
+    borderRadius: 100,
+    position: 'absolute',
+    padding: 10,
+    right: 30,
+    bottom: 150,
   },
   xpText: {
     color: Colors.primary,
