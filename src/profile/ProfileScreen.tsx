@@ -83,7 +83,7 @@ export const ProfileScreen = () => {
 
     ].map(promise => promise.catch(() => {})))
   }
-  
+
   const onRefresh = () => {
     setRefreshing(true)
 
@@ -96,7 +96,7 @@ export const ProfileScreen = () => {
 
   return(
     <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={style.profile}
         refreshControl={
           <RefreshControl refreshing={refreshing} enabled onRefresh={onRefresh}/>
