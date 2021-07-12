@@ -278,6 +278,7 @@ export const GameplayScreen : React.FC = () => {
             <Animatable.View
               animation='fadeOutUp'
               delay={500}
+              duration={4000}
               onAnimationEnd={() => setShowLevelup(false)}
               style={styles.lvlAnimationView}
             >
@@ -352,7 +353,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     padding: 10,
     right: 30,
-    bottom: 150,
+    bottom: 180,
   },
   xpText: {
     color: Colors.primary,
