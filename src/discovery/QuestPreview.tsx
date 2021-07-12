@@ -54,7 +54,7 @@ export const QuestPreview: React.FC<QuestPreviewProps> = ({ quest, location, isD
 
     return(
         <Card style={styles.quest} onPress={() => navigation.navigate('QuestDetail', {quest: quest, isDraft: isDraft})}>
-            <Card.Cover style={styles.pic} source={quest.imageId != null ? {uri: getImageAddress(quest.imageId, '')} : require('../../assets/background.jpg')} resizeMode='stretch' />
+            <Card.Cover style={styles.pic} source={quest.imageId ? {uri: getImageAddress(quest.imageId, quest.title)} : require('../../assets/Logo_Full_Black.png')} resizeMode='cover' />
             <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={quest.title} />
 
             <View style={{
