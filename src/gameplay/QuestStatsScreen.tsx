@@ -81,7 +81,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         }
         {
           !quest?.imageId &&
-          <Image style={styles.image} source={require('../../assets/background.jpg')}/>
+          <Image style={styles.image} source={require('../../assets/Logo_Full_Black.png')}/>
         }
       </View>
 

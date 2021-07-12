@@ -154,7 +154,7 @@ export default function QuestDetailScreen({ route }: any) {
           }
           {
             !quest.imageId &&
-            <Image style={styles.image} source={require('../../assets/background.jpg')}/>
+            <Image style={styles.image} source={require('../../assets/Logo_Full_Black.png')}/>
           }
           <View style={styles.info}>
             <Entypo name='location-pin' size={24} color='black'/>
