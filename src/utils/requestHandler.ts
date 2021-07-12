@@ -92,6 +92,13 @@ export const querynewQuestsRequest = (offset : number = 0, long?: number, lat?: 
 // /quest/queryfollowing
 export const queryfollowingQuestsRequest = (offset : number = 0) => (request(`/quest/queryfollowing/?offset=${offset}`))
 
+// /quest
+export const queryQuestsWithIds = (firstId : string, moreIds? : string[]) => {
+  let string = '';
+  moreIds?.forEach((id: string) => string +=`&replayIds=${id}`)
+  return (request(`/quest?replayIds=${firstId}` + string))
+}
+
 // /create/query/
 export const createQueryRequest = (offset: number = 0) => (request(`/create/query?offset=${offset}`))
 

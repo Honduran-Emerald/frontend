@@ -147,7 +147,6 @@ export const chatSlice = createSlice({
     setRead: (state, action: PayloadAction<string>) => {
       const preview = state.chatsPreviewList?.find(cp => cp.userId === action.payload) 
       if (preview) {
-        console.log('Heyo')
         preview.lastReceived = (new Date(Date.now())).toJSON()
       }
     }

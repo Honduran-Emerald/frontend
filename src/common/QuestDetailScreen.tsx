@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
 import { QueriedQuest, QuestTracker } from '../types/quest';
-import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest } from '../utils/requestHandler';
+import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest, queryQuestsWithIds } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest, addRecentlyVisitedQuest, refreshRecentlyVisitedQuest, removeRecentlyVisitedQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
@@ -30,13 +30,15 @@ export default function QuestDetailScreen({ route }: any) {
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
-  const quest: QueriedQuest = route.params.quest;
-  const isQuestCreator = quest.ownerId === user?.userId;
-  const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
-  const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0
 
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [quest, setQuest] = React.useState(route.params.quest);
+
+  const isDraft = route.params.isDraft ? route.params.isDraft : undefined
+  const isQuestCreator = quest.ownerId === user?.userId;
+  const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
+  const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0;
 
   const showModal = () => setModalVisible(true);
   const hideModal = () => setModalVisible(false);
@@ -59,8 +61,17 @@ export default function QuestDetailScreen({ route }: any) {
       }
     }
 
-    if(quest.released) {
-      updateRecentQuests().then(() => {})
+    if(quest.released && !isDraft) {
+      queryQuestsWithIds(quest.id)
+        .then((res) => {
+          if(res.status === 200) {
+            res.json().then((data) => setQuest(data[0]))
+            console.log('refreshed quest');
+          } else {
+            console.log('error while refreshing ' + res.status);
+          }
+        })
+        .then(() => updateRecentQuests().then(() => {}))
     }
   }, [])
 

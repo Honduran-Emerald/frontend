@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { loadQuest } from '../redux/editor/editorSlice';
-import { useAppDispatch } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { QuestEditorNavigator } from './QuestEditorNavigator';
 
 interface QuestCreatorWrapperProps {
@@ -21,6 +21,7 @@ export const QuestCreatorWrapper : React.FC<QuestCreatorWrapperProps> = ({ route
 
   const [questCreated, setQuestCreated] = useState(false);
   const dispatch = useAppDispatch();
+  const questPrototype = useAppSelector(state => state.editor.questPrototype)
 
   useEffect(() => {
     dispatch(loadQuest({
@@ -50,7 +51,7 @@ export const QuestCreatorWrapper : React.FC<QuestCreatorWrapperProps> = ({ route
 
   return (
     <>
-      {questCreated && <QuestEditorNavigator />}
+      {questCreated && questPrototype && <QuestEditorNavigator />}
     </>
   )
 }

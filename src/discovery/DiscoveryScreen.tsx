@@ -3,25 +3,28 @@ import { View, StyleSheet, ScrollView, StatusBar as StatusBar2, RefreshControl }
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "../styles";
 import { ScrollMenu } from "./ScrollMenu";
-import { GameplayQuestHeader } from "../types/quest";
+import { GameplayQuestHeader, QueriedQuest } from "../types/quest";
 import {
   nearbyQuestsRequest,
   queryfollowingQuestsRequest,
   querynewQuestsRequest,
+  queryQuestsWithIds,
   queryQuestsRequest
 } from "../utils/requestHandler";
 import { Searchbar } from "react-native-paper";
 import { removeSpecialChars } from "../gameplay/QuestlogScreen";
 import { WideQuestPreview } from "./WideQuestPreview";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { getLocation } from "../utils/locationHandler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
+import { setRecentlyVisitedQuest } from "../redux/quests/questsSlice";
 
 export const DiscoveryScreen = () => {
 
   const insets = useSafeAreaInsets();
+  const dispatch = useAppDispatch();
 
   const location = useAppSelector(state => state.location.location);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -37,6 +40,8 @@ export const DiscoveryScreen = () => {
   },[])
 
   const fetchData = async () => {
+    const ids = recentlyVisitedQuests.length > 0 ? recentlyVisitedQuests.map((quest: QueriedQuest) => quest.id) : undefined
+
     return Promise.all([
       // Get Location Permission and set initial Location
       getLocation().catch(() => {}),
@@ -48,6 +53,14 @@ export const DiscoveryScreen = () => {
       // querynewQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNewQuests(quests.quests)),
       // get following
       queryfollowingQuestsRequest(0).then(res => res.json()).then((quests) => setFollowingQuests(quests.quests)),
+      // refresh recents
+      ids ? queryQuestsWithIds(ids[0], ids.slice(1)).then((res) => {
+        if(res.status === 200) {
+          res.json().then((data) => dispatch(setRecentlyVisitedQuest(data)))
+        } else {
+          console.log('error while loading recents ' + res.status);
+        }
+      }) : undefined,
     ])
   }
 

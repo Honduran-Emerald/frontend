@@ -60,8 +60,12 @@ export const ProfileScreen = (props: profileProps) => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchUserData();
-      fetchQuestData();
+      if(!user)
+        fetchUserData();
+      else
+        getUserRequest(user.userId).then(response => response.json()).then(obj => setUser(obj.user));
+
+      fetchQuestData()
     }, [])
   )
 
@@ -93,7 +97,7 @@ export const ProfileScreen = (props: profileProps) => {
 
     ].map(promise => promise.catch(() => {})))
   }
-  
+
   const onRefresh = () => {
     setRefreshing(true)
     // fetch user data
@@ -134,7 +138,7 @@ export const ProfileScreen = (props: profileProps) => {
 
   return(
     <View style={[style.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={style.profile}
         refreshControl={
           <RefreshControl refreshing={refreshing} enabled onRefresh={onRefresh}/>
@@ -145,9 +149,9 @@ export const ProfileScreen = (props: profileProps) => {
             <MaterialCommunityIcons name="cog" size={30} color='#1D79AC' />
           </TouchableOpacity>
         }
-        {user && authenticatedUser && 
-          <ProfileTop 
-            ownProfile={authenticatedUser.userId === user.userId} 
+        {user && authenticatedUser &&
+          <ProfileTop
+            ownProfile={authenticatedUser.userId === user.userId}
             profileData={user}
             refresh={onRefresh}
           />
@@ -157,7 +161,7 @@ export const ProfileScreen = (props: profileProps) => {
             <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={publishedQuests}/>
             <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={completedQuests}/>
             {(authenticatedUser?.userId === user?.userId) &&
-            <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests} addQuest/>}
+            <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests} isDraft={true} addQuest/>}
             <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={upvotedQuests}/>
           </>)
         }
