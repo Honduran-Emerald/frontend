@@ -26,6 +26,7 @@ export const ProfileTop = ({ ownProfile, profileData, refresh } : ProfileTopProp
   const [editing, setEditing] = useState<boolean>(false);
   const [imageAddress, setImageAddress] = useState<string>(getImageAddress(profileData.image, profileData.userName));
   const [base64, setBase64] = useState<string>();
+  const [loading, setLoading] = useState<boolean>(false);
   const [followingState, setFollowingState] = useState<boolean>(profileData.following);
   const navigation = useNavigation();
   const _userNameInput = useRef<TextInput>(null);
@@ -44,14 +45,22 @@ export const ProfileTop = ({ ownProfile, profileData, refresh } : ProfileTopProp
                   <TextInput ref={_userNameInput} style={[style.username, {flex: 1}]}>{profileData.userName}</TextInput>
                   <MaterialCommunityIcons onPress={() => _userNameInput.current?.focus()} name='pencil' size={24} color={Colors.primary}/>
                 </View>
-                <ButtonOutline 
+                <ButtonOutline
+                  loading={loading}
                   label='Save' 
                   onPress={() => {
-                    setEditing(false);
-                    base64 && userUpdateImage(base64).then(() => {
-                      setBase64(undefined);
-                      refresh();
-                    });
+                    if (base64) {
+                      setLoading(true);
+                      userUpdateImage(base64).then(() => {
+                        setBase64(undefined);
+                        setLoading(false);
+                        refresh();
+                        setEditing(false);
+                      });
+                    } else {
+                      setEditing(false);
+                    }
+                    
                   }} 
                 />
               </View>
