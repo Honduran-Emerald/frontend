@@ -10,13 +10,13 @@ export const LevelBar = ({level, xp} : {level: number, xp: number}) => (
         {'Lvl ' + level}
       </Text>
       <Text style={{fontWeight: 'bold'}}>
-        {xp + '/' + getXpForNextLevel(level)}
+        {(xp - getXpForNextLevel(level-1)) + '/' + (getXpForNextLevel(level) - getXpForNextLevel(level-1))}
       </Text>
     </View>
     <View style={styleLevelBar.levelBar}>
       <LinearGradient
         colors={['#1D79AC', '#40A9B8']}
-        style={[styleLevelBar.levelProgress, {maxWidth: Math.min(xp / getXpForNextLevel(level) * 100, 100) + '%'}]}
+        style={[styleLevelBar.levelProgress, {maxWidth: Math.min((xp - getXpForNextLevel(level-1)) / (getXpForNextLevel(level) - getXpForNextLevel(level-1)) * 100, 100) + '%'}]}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 1 }}
       />
