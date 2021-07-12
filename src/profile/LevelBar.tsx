@@ -17,6 +17,8 @@ export const LevelBar = ({level, xp} : {level: number, xp: number}) => (
       <LinearGradient
         colors={['#1D79AC', '#40A9B8']}
         style={[styleLevelBar.levelProgress, {maxWidth: Math.min(xp / getXpForNextLevel(level) * 100, 100) + '%'}]}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 1 }}
       />
     </View>
   </View>
