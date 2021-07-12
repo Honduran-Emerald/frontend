@@ -6,7 +6,7 @@ import i18n from 'i18n-js';
 import { primary } from '../../../styles/colors';
 import I18n from 'i18n-js';
 import { Colors } from '../../../styles';
-import { PrototypeEndingModule, PrototypeTextComponent } from '../../../types/prototypes';
+import { PrototypeEndingModule } from '../../../types/prototypes';
 
 interface IEndingModuleData {
   objective: string,
@@ -43,11 +43,10 @@ export const EndingModule: React.FC<ICreateModule<PrototypeEndingModule>> = ({ s
 
 
   const parseToModule = (moduleData: IEndingModuleData): PrototypeEndingModule => {
-    console.log('endingFactor: ', moduleData.endingFactor)
     return ({
       id: -1,
       type: 'Ending',
-      endingFactor: moduleData.endingFactor, //TODO Make this dynamic
+      endingFactor: moduleData.endingFactor,
       components: [],
       objective: moduleData.objective
     })
