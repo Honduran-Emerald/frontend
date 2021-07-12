@@ -63,7 +63,7 @@ export interface PrototypeStoryModule extends PrototypeModuleBase {
 
 export interface PrototypeEndingModule extends PrototypeModuleBase {
   type: 'Ending',
-  endingFactor: number,
+  endingFactor: 0 | 0.5 | 1,
 }
 
 export interface PrototypeLocationModule extends PrototypeModuleBase {
