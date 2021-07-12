@@ -43,6 +43,7 @@ export const CreateModuleScreen = () => {
   const [chosenModuleType, setChosenModuleType] = useState("");
   const [finalModule, setFinalModule] = useState<PrototypeModule>();
   const [components, setComponents] = useState<PrototypeComponent[]>([]);
+  const [moduleTypeUpdate, setModuleTypeUpdate] = useState<boolean>(false);
 
   const route = useRoute<RouteProp<{
           params: {
@@ -97,7 +98,7 @@ export const CreateModuleScreen = () => {
     swiper.current?.scrollTo({
       x: displayWidth,
     });
-  }, [chosenModuleType]);
+  }, [moduleTypeUpdate]); 
 
   return (
     <View style={{ margin: 0, borderColor: "black", flexGrow: 1 }}>
@@ -110,7 +111,7 @@ export const CreateModuleScreen = () => {
         <ModuleTypeChoice
           chosenModuleType={chosenModuleType}
           modules={modules}
-          setChosenModuleType={setChosenModuleType}
+          setChosenModuleType={(moduleType) => {setChosenModuleType(moduleType); setModuleTypeUpdate(x => !x)}}
           swiper={swiper}
         />
         {chosenModuleType !== '' && 
