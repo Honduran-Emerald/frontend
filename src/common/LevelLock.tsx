@@ -64,12 +64,13 @@ export const LevelLock: React.FC<LevelLockProps> = ({ children, permission, alte
           width: '100%', 
           height: '100%', 
           textAlignVertical: 'center',
-          fontSize: 20,
+          fontSize: 18,
+          fontWeight: "bold",
           color: Colors.primaryLight,
           }} onPress={() => {setShowNoMoreQuestsDialog(true)}}>
             {permission.type === 'discrete' && permission.perm in levelLocks && levelLocks[permission.perm] < 1/0 ? `Reach level ${levelLocks[permission.perm]} to unlock` 
             : permission.type === 'quests' && permission.quests !== undefined ? `Reach level ${ questLevelLock.questToLevel(permission.quests + 1) } to create more quests`
-            : 'Level too low'}
+            : 'Coming soon'}
             </Subheading>
       </TouchableWithoutFeedback>} 
     </>

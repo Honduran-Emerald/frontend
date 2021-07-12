@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
       marginHorizontal: 7,
       width: 150,
       borderWidth: 1,
-      borderColor: '#0000'
+      borderColor: '#0000',
+      height: 190,
   },
   pic: {
       height: 80,
