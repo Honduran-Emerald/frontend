@@ -17,6 +17,8 @@ import { useCallback } from "react";
 import { RandomModule } from "./module-views/RandomModule";
 import { PassphraseModule } from "./module-views/PassphraseModule";
 import { QRModule } from "./module-views/QRModule";
+import { Button, Dialog, Paragraph, Portal } from "react-native-paper";
+import { Colors } from "../../styles";
 
 const displayWidth = Dimensions.get("screen").width;
 
@@ -68,6 +70,22 @@ export const CreateModuleScreen = () => {
 
   const [combinedModule, setCombinedModule] = useState<PrototypeModule>();
 
+  const unsavedChangesRef = useRef<boolean>(false)
+  const [showDialog, setShowDialog] = useState<any | undefined>();
+
+  useEffect(() => {
+    unsavedChangesRef.current = chosenModuleType !== ''
+  }, [chosenModuleType])
+
+  useEffect(() => {
+    navigation.addListener('beforeRemove', (e) => {
+      if (unsavedChangesRef.current) {
+        e.preventDefault();
+        setShowDialog(() => e.data.action)
+      }
+    })
+  }, [])
+
   useEffect(() => {
     const baseModule = {
       id: route.params?.moduleId,
@@ -102,6 +120,18 @@ export const CreateModuleScreen = () => {
 
   return (
     <View style={{ margin: 0, borderColor: "black", flexGrow: 1 }}>
+      <Portal>
+        <Dialog visible={showDialog!==undefined} onDismiss={() => setShowDialog(undefined)}>
+          <Dialog.Title>Leave Module Editor?</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Everything not saved will be lost.</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button color={Colors.primary} onPress={() => setShowDialog(undefined)}>Stay</Button>
+            <Button color={Colors.primary} onPress={() => {setShowDialog(undefined); navigation.dispatch(showDialog)}}>Drop Changes</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       <ScrollView
         horizontal
         pagingEnabled
