@@ -32,7 +32,7 @@ export const DiscoveryScreen = () => {
   },[])
 
   const fetchData = async () => {
-    const ids = recentlyVisitedQuests.map((quest: QueriedQuest) => quest.id)
+    const ids = recentlyVisitedQuests.length > 0 ? recentlyVisitedQuests.map((quest: QueriedQuest) => quest.id) : undefined
 
     return Promise.all([
       // Get Location Permission and set initial Location
@@ -40,13 +40,13 @@ export const DiscoveryScreen = () => {
       // set quest arrays
       queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests)),
       // nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests)),
-      queryQuestsWithIds(ids[0], ids.slice(1)).then((res) => {
+      ids ? queryQuestsWithIds(ids[0], ids.slice(1)).then((res) => {
         if(res.status === 200) {
           res.json().then((data) => dispatch(setRecentlyVisitedQuest(data)))
         } else {
           console.log('error while loading recents ' + res.status);
         }
-      }),
+      }) : undefined,
     ])
   }
 
