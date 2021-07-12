@@ -92,33 +92,36 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
    */
 
   return (
-    <View style={[styles.stats, {height: height + 40, flexGrow: 1, alignItems: 'center'}]} >
+    <View style={[styles.stats, {height: height, flexGrow: 1, alignItems: 'center'}]}>
 
       <View>
-        {
-          quest?.imageId &&
-          <Image style={styles.image} source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}/>
-        }
-        {
-          !quest?.imageId &&
-          <Image style={styles.image} source={require('../../assets/background.jpg')}/>
-        }
+        <View>
+          {
+            quest?.imageId &&
+            <Image style={styles.image} source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}/>
+          }
+          {
+            !quest?.imageId &&
+            <Image style={styles.image} source={require('../../assets/background.jpg')}/>
+          }
+        </View>
+
+        <View style={styles.info}>
+          <View style={styles.location}>
+            <Entypo name='location-pin' size={24} color='black' style={styles.icon}/>
+            <Text>
+              {quest?.locationName}
+            </Text>
+          </View>
+          <View style={styles.time}>
+            <Entypo name='stopwatch' size={24} color='black' style={styles.icon}/>
+            <Text>
+              {quest?.approximateTime}
+            </Text>
+          </View>
+        </View>
       </View>
 
-      <View style={styles.info}>
-        <View style={styles.location}>
-          <Entypo name='location-pin' size={24} color='black' style={styles.icon}/>
-          <Text>
-            {quest?.locationName}
-          </Text>
-        </View>
-        <View style={styles.time}>
-          <Entypo name='stopwatch' size={24} color='black' style={styles.icon}/>
-          <Text>
-            {quest?.approximateTime}
-          </Text>
-        </View>
-      </View>
 
       <Surface style={styles.block}>
         <Text style={styles.description} ellipsizeMode={'tail'} numberOfLines={10}>
@@ -126,22 +129,29 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         </Text>
       </Surface>
 
+      <View style={{flexDirection: "row"}}>
+        <View>
+          <FAB
+            style={[styles.button, {marginRight: 10,}]}
+            small
+            icon="restart"
+            onPress={() => showResetModal()}
+            label={"Reset progress"}
+          />
+        </View>
+        <View>
+          <FAB
+            style={styles.button}
+            small
+            icon="delete-forever"
+            onPress={() => showModal()}
+            label={"Remove quest"}
+          />
+        </View>
+      </View>
+
       <FAB
-        style={styles.reset}
-        small
-        icon="restart"
-        onPress={() => showResetModal()}
-        label={"Reset quest"}
-      />
-      <FAB
-        style={styles.reset}
-        small
-        icon="delete-forever"
-        onPress={() => showModal()}
-        label={"Remove quest"}
-      />
-      <FAB
-        style={styles.reset}
+        style={[styles.button, {marginTop: -20}]}
         small
         icon="vote"
         onPress={() => {resetQuest()}}
@@ -158,13 +168,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
           })}}
         />
       </View>
-      <View style={{position: 'absolute', bottom: 10}}>
-        <Button style={styles.goUp} icon={"chevron-up"} onPress={() => {flatListRef.current?.scrollToOffset({
-          offset: 100000000,
-        })}} color={Colors.primary}>
-          View Quest Details
-        </Button>
-      </View>
+
 
       <Portal>
         <Modal visible={modalVisible || resetModal} dismissable onDismiss={resetModal ? hideResetModal : hideModal} contentContainerStyle={styles.modal}>
@@ -197,7 +201,13 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
 }
 
 /*
-
+<View style={{position: 'absolute', bottom: 10}}>
+        <Button style={styles.goUp} icon={"chevron-up"} onPress={() => {flatListRef.current?.scrollToOffset({
+          offset: 100000000,
+        })}} color={Colors.primary}>
+          View Quest Details
+        </Button>
+      </View>
  */
 const styles = StyleSheet.create({
   stats: {
@@ -208,19 +218,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     elevation: 5,
     width: "100%",
+    justifyContent: "center",
   },
   image: {
     width: Dimensions.get('screen').width * 0.8,
     height: 200,
     borderRadius: 20,
     marginBottom: 20,
-    marginTop: 25,
+    marginTop: 20,
   },
   info: {
     width: Dimensions.get('screen').width * 0.8,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
   },
   location: {
     flexDirection: 'row',
@@ -255,13 +265,13 @@ const styles = StyleSheet.create({
   },
   downView: {
     position: "absolute",
-    bottom: 70,
+    bottom: 30,
     right: 20,
   },
   goDown: {
     backgroundColor: Colors.primary,
   },
-  reset: {
+  button: {
     marginBottom: 30,
     backgroundColor: Colors.primary,
   },
