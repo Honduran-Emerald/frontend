@@ -12,6 +12,7 @@ import {
   addTrackerExperience,
   loadPinnedQuestPath,
   pinQuest,
+  setLiveUpdate,
   setTrackerFinished,
   setTrackerObjectiveAndTrackerNode,
   setTrackerVote
@@ -48,7 +49,8 @@ export const GameplayScreen : React.FC = () => {
   const [showXp, setShowXp] = useState<boolean>(false);
   const [xpAmount, setXpAmount] = useState<number>(-1);
 
-  const [liveUpdate, setLiveUpdate] = useState<boolean>(false);
+  //const [liveUpdate, setLiveUpdate] = useState<boolean>(false);
+  const liveUpdate = useAppSelector(state => state.quests.liveUpdate)
 
   const [loadedTrackerNodesList, setLoadedTrackerNodesList] = useState<QuestTrackerNodeElement[]>([]);
   useEffect(() => {
@@ -60,6 +62,10 @@ export const GameplayScreen : React.FC = () => {
   const user = useAppSelector(state => state.authentication.user)
   const [oldLevel, setOldLevel] = useState(user?.level)
   const [showLevelUp, setShowLevelup] = useState(false);
+
+  useEffect(() => {
+    dispatch(setLiveUpdate(false))
+  }, [])
 
   useEffect(() => {
     if (user?.level !== oldLevel) {
@@ -126,7 +132,7 @@ export const GameplayScreen : React.FC = () => {
       return;
     }
 
-    setLiveUpdate(true) // Used for chat animations
+    dispatch(setLiveUpdate(true)) // Used for chat animations
 
     const newQuestPath = _.cloneDeep(loadedTrackerNodes);
     const newTracker = {module: newModule, memento: null, creationTime: (new Date()).toString()}
