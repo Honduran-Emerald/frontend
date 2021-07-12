@@ -35,6 +35,7 @@ export default function QuestDetailScreen({ route }: any) {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [quest, setQuest] = React.useState(route.params.quest);
 
+  const isDraft = route.params.isDraft ? route.params.isDraft : undefined
   const isQuestCreator = quest.ownerId === user?.userId;
   const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
   const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0;
@@ -60,7 +61,7 @@ export default function QuestDetailScreen({ route }: any) {
       }
     }
 
-    if(quest.released) {
+    if(quest.released && !isDraft) {
       queryQuestsWithIds(quest.id)
         .then((res) => {
           if(res.status === 200) {

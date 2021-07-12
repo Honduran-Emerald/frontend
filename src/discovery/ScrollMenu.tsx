@@ -16,9 +16,10 @@ export default interface ScrollMenuProps {
     location: LocationObject | undefined
     quests: GameplayQuestHeader[] | QueriedQuest[] | undefined
     addQuest?: true
+    isDraft?: boolean
 }
 
-export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location, addQuest, type}) => {
+export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location, addQuest, type, isDraft}) => {
 
     const [loadingArray, ] = useState(new Array(2+Math.floor(Math.random()*3)));
     const user = useAppSelector(state => state.authentication.user)
@@ -68,7 +69,8 @@ export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location
                             ><AddDraftCard /></LevelLock>
                     ))}
                     renderItem={
-                        ({ item }: {item: GameplayQuestHeader | undefined}) => <QuestPreviewLoader loading={item === undefined} content={(item === undefined) ? null : {location: location, quest: item}}/>
+                        ({ item }: {item: GameplayQuestHeader | undefined}) =>
+                          <QuestPreviewLoader loading={item === undefined} content={(item === undefined) ? null : {location: location, quest: item, isDraft: isDraft}}/>
                     }
                     keyExtractor={(item, idx) => (
                         item ? item.id : idx.toString()
