@@ -3,7 +3,7 @@ import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
 import { LocationGeofencingEventType, LocationRegion } from 'expo-location';
 import { QuestTracker } from '../types/quest';
-import { addTrackerExperience, addTrackerWithUpdate, removeTrackerWithUpdate } from '../redux/quests/questsSlice';
+import { addTrackerExperience, addTrackerWithUpdate, removeTrackerWithUpdate, setLiveUpdate } from '../redux/quests/questsSlice';
 import { store } from '../redux/store';
 import { getData, storeData } from './AsyncStore';
 import { playEventChoiceRequest } from './requestHandler';
@@ -106,6 +106,7 @@ export function updateQuest(trackerId: string, choice = 0) {
           switch (responseEvent.type) {
             case 'ModuleFinish':
               // handled by reloading the path in gameplay screen if there is an update for the quest
+              store.dispatch(setLiveUpdate(true))
               break;
             case 'Experience':
               console.log('Got XP: +' + responseEvent.experience);
