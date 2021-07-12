@@ -21,7 +21,7 @@ type TabParams = {
 const Tab = createMaterialTopTabNavigator<TabParams>();
 export const QuestEditorTabNavigator = () => {
 
-  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [showDialog, setShowDialog] = useState<any | undefined>();
   const unsavedChanges = useAppSelector(state => state.editor.unsavedChanges)
 
   const navigation = useNavigation();
@@ -35,23 +35,24 @@ export const QuestEditorTabNavigator = () => {
 
   useEffect(() => {
     navigation.addListener('beforeRemove', (e) => {
-      if (e.data.action.source !== undefined || !unsavedChangesRef.current) return;
-      e.preventDefault();
-      setShowDialog(true);
+      if (unsavedChangesRef.current) {
+        e.preventDefault();
+        setShowDialog(() => e.data.action)
+      }
     })
   }, [])
 
   return (
     <>
       <Portal>
-        <Dialog visible={showDialog} onDismiss={() => setShowDialog(false)}>
+        <Dialog visible={showDialog!==undefined} onDismiss={() => setShowDialog(undefined)}>
           <Dialog.Title>Leave Quest Editor?</Dialog.Title>
           <Dialog.Content>
             <Paragraph>Everything not saved will be lost</Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button color={Colors.primary} onPress={() => setShowDialog(false)}>Stay</Button>
-            <Button color={Colors.primary} onPress={() => {setShowDialog(false); dispatch(unloadQuest()); navigation.goBack()}}>Drop Changes</Button>
+            <Button color={Colors.primary} onPress={() => setShowDialog(undefined)}>Stay</Button>
+            <Button color={Colors.primary} onPress={() => {setShowDialog(undefined); dispatch(unloadQuest()); navigation.dispatch(showDialog)}}>Drop Changes</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
