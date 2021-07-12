@@ -83,6 +83,13 @@ export const queryvotedQuestsRequest = (voteType : string, userId? : string) => 
 // /quest/queryfinished
 export const queryfinishedQuestsRequest = (userId? : string, offset : number = 0) => (request(`/quest/queryfinished?offset=${offset}` + (userId != null ? `&userId=${userId}` : '') + (`&finished=true`)))
 
+// /quest
+export const queryQuestsWithIds = (firstId : string, moreIds? : string[]) => {
+  let string = '';
+  moreIds?.forEach((id: string) => string +=`&replayIds=${id}`)
+  return (request(`/quest?replayIds=${firstId}` + string))
+}
+
 // /create/query/
 export const createQueryRequest = (offset: number = 0) => (request(`/create/query?offset=${offset}`))
 

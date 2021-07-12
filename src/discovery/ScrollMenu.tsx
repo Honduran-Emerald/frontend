@@ -34,8 +34,6 @@ export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location
                     switch (type) {
                         case 'published':
                             return <View style={styles.placeholder}><Text> No published quests found </Text></View>
-                        case 'drafts':
-                            return <View style={styles.placeholder}><Text> No drafts here yet </Text></View>
                         case 'completed':
                             return <View style={styles.placeholder}><Text> No completed quests found </Text></View>
                         case 'upvoted':
