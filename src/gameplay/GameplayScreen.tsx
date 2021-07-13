@@ -207,7 +207,10 @@ export const GameplayScreen : React.FC = () => {
 
   const handleVote = useCallback((vote: 'None' | 'Up' | 'Down') => {
     return playVoteRequest(route.params.trackerId, vote).then(res => {
-      dispatch(setTrackerVote({ trackerId: route.params.trackerId, vote: vote }))
+      if(res.status === 200) {
+        dispatch(setTrackerVote({trackerId: route.params.trackerId, vote: vote}))
+        return res;
+      }
       return res;
     })
   }, [])
