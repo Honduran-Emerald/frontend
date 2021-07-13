@@ -116,11 +116,11 @@ export const ProfileScreen = () => {
         }
         {(
           <>
-            <ScrollMenu header={"Published Quests"} type={"published"} location={location} quests={publishedQuests}/>
-            <ScrollMenu header={"Completed Quests"} type={"completed"} location={location} quests={completedQuests}/>
+            <ScrollMenu header={`Published Quests (${publishedQuests.length})`} type={"published"} location={location} quests={publishedQuests}/>
+            <ScrollMenu header={`Completed Quests (${completedQuests.length})`} type={"completed"} location={location} quests={completedQuests}/>
             {isOwnProfile &&
-            <ScrollMenu header={"Drafts"} type={"drafts"} location={location} quests={draftQuests} addQuest/>}
-            <ScrollMenu header={"Upvoted Quests"} type={"upvoted"} location={location} quests={upvotedQuests}/>
+            <ScrollMenu header={`Drafts (${draftQuests.length})`} type={"drafts"} location={location} quests={draftQuests} addQuest/>}
+            <ScrollMenu header={`Upvoted Quests (${upvotedQuests.length})`} type={"upvoted"} location={location} quests={upvotedQuests}/>
           </>)
         }
       </ScrollView>
