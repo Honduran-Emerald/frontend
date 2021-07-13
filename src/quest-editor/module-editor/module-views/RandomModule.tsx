@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { Button, IconButton, Subheading, TextInput, Divider } from 'react-native-paper';
+import { Button, Subheading, TextInput, Divider } from 'react-native-paper';
 import { ICreateModule } from '../CreateModuleScreen';
 import I18n from 'i18n-js';
-import { lightGray, primary } from '../../../styles/colors';
 import _ from 'lodash';
 import { Colors, Containers } from '../../../styles';
-import { PrototypeChoiceModule, PrototypeRandomModule } from '../../../types/prototypes';
+import { PrototypeRandomModule } from '../../../types/prototypes';
 import { Text } from 'react-native';
 import Slider from '@react-native-community/slider'
 
@@ -39,7 +38,7 @@ export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ s
                 }
             ])
         }
-    }, [])
+    }, []);
 
     const parseToModule = (moduleData: IRandomModuleData): PrototypeRandomModule => {
         return ({
@@ -54,7 +53,7 @@ export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ s
     }
 
     useEffect(() => {
-        setFinalModule(parseToModule(moduleData))
+        setFinalModule(parseToModule(moduleData));
     }, [moduleData])
 
     return (
@@ -69,8 +68,8 @@ export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ s
             <Divider/>
 
             <Subheading 
-                style={{margin: 10, marginTop: 20}}>
-                Choose Path Weights
+                style={{margin: 10, marginTop: 20, fontSize: 20}}>
+                Choose Path Probabilites
             </Subheading>
             <View 
                 style={{
@@ -78,33 +77,43 @@ export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ s
                 }}>
             <View style={{
                 flex: 1,
-                alignItems: 'baseline',
-                marginTop: 20
+                alignItems: 'center',
+                width: '100%',
+                marginTop: 40,
+                marginBottom: 20
             }}>
-                <Text>Probability of Path 1: {(slider * 100).toFixed()}%</Text>
-                <View style={{transform: [{rotate: '-90deg'}], height: 200}}>
+                <View style={{backgroundColor: '#FFF', borderColor: '#000', borderWidth: 1, ...Containers.rounded, padding: 20}}>
+
+                    <Text style={{fontSize: 18}}>{'Probability of\n' } Path 1: <Text style={{color: Colors.primary}}>{(slider * 100).toFixed()}%</Text></Text>
+                </View>
+                <View style={{ height: 200, alignSelf: 'center'}}>
                     <Slider
-                        style={{width: 200}}
+                        style={{width: 200, height: 200, transform: [{rotate: '-90deg'}]}}
                         minimumValue={0}
                         maximumValue={1}
-                        minimumTrackTintColor="#FFFFFF"
-                        maximumTrackTintColor="#000000"
+                        step={0.05}
+                        minimumTrackTintColor={Colors.primary}
+                        maximumTrackTintColor={'gray'}
+                        thumbTintColor={Colors.primary}
                         value={moduleData.weight}
-                        inverted
                         onValueChange={setSlider}
+                        inverted
                         
                         onSlidingComplete={(value) => {
                             setModuleData({...moduleData, weight: value})
                         }}
                     />
                 </View>
-                <Text>Probability of Path 2: {((1 - slider) * 100).toFixed()}%</Text>
+                <View style={{backgroundColor: '#FFF', borderColor: '#000', borderWidth: 1, ...Containers.rounded, padding: 20}}>
+                    <Text style={{fontSize: 18}}>{'Probability of\n' } Path 2: <Text style={{color: Colors.primary}}>{((1 - slider) * 100).toFixed()}%</Text></Text>
+                </View>
+                
             </View>
             
             </View>
                 
             <Button 
-                theme={{colors: {primary: primary}}}
+                theme={{colors: {primary: Colors.primary}}}
                 mode='contained'
                 style={{marginBottom: 20}}
                 onPress={scrollToPreview}>
