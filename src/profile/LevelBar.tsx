@@ -45,7 +45,8 @@ const styleLevelBar = StyleSheet.create({
     width: '100%',
     height: 18,
     backgroundColor: Colors.gray,
-    ...Containers.rounded
+    ...Containers.rounded,
+    overflow: 'hidden'
   },
   levelProgress: {
     flex: 1,
