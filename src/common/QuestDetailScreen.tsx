@@ -174,7 +174,7 @@ export default function QuestDetailScreen({ route }: any) {
           {
             !isAccepted &&
             <View style={styles.button}>
-              <Button color={Colors.primary} disabled={isButtonDisabled || !quest.released} title={i18n.t('acceptButton')} onPress={handleAccept}/>
+              <Button color={Colors.primary} disabled={isButtonDisabled || !quest.released || isDraft} title={i18n.t('acceptButton')} onPress={handleAccept}/>
             </View>
           }
           {
@@ -182,7 +182,7 @@ export default function QuestDetailScreen({ route }: any) {
             <View style={styles.button}>
               <Button
                 color={'green'}
-                disabled={isButtonDisabled}
+                disabled={isButtonDisabled || isDraft}
                 title={(quest.tracker && quest.tracker.finished) ? 'Quest finished' : 'Continue Quest'}
                 onPress={() => loadQuestObjectiveScreen(acceptedQuests.find(tracker => tracker.questId === quest.id))}
               />
@@ -205,7 +205,7 @@ export default function QuestDetailScreen({ route }: any) {
                 <View style={styles.creatorButton}>
                   <Button
                     color={Colors.primary}
-                    disabled={isButtonDisabled || (quest.released && !quest.outdated)}
+                    disabled={isButtonDisabled || (quest.released && !quest.outdated) || !isDraft}
                     title={'Publish Quest'}
                     onPress={
                       () => createPublishRequest(quest.id)
