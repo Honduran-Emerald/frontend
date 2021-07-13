@@ -96,12 +96,13 @@ export const GameplayScreen : React.FC = () => {
     if (pinnedQuest?.trackerId === route.params.trackerId && pinnedQuestPath) {
       setLoadedTrackerNodes(pinnedQuestPath)
     } else {
+      setHasLoaded(false);
       queryTrackerNodesRequest(route.params.trackerId)
         .then(res => res.json())
         .then(res => setLoadedTrackerNodes(res))
         .then(() => setHasLoaded(true))
     }
-  }, [pinnedQuestPath, trackerWithUpdates])
+  }, [pinnedQuestPath, trackerWithUpdates, route])
 
   const updateQuestPath = useCallback((newQuestPath: QuestPath) => {
     const trackerNode = newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1];
@@ -233,7 +234,7 @@ export const GameplayScreen : React.FC = () => {
   return (
     <View>
       {
-        loadedTrackerNodesList.length > 0 &&
+        loadedTrackerNodesList.length > 0 && hasLoaded &&
         <View>
           {/* avatar image + name, button to quest settings(vote, remove quest) */}
 
@@ -302,7 +303,7 @@ export const GameplayScreen : React.FC = () => {
         </View>
       }
       {
-        loadedTrackerNodesList.length === 0 &&
+        (loadedTrackerNodesList.length === 0 || !hasLoaded) &&
         <View style={styles.loadingView}>
           <ActivityIndicator size={'large'} color={Colors.primary}/>
           <Text style={styles.loadingText}>Loading quest</Text>
