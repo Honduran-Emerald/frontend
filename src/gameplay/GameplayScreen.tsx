@@ -219,10 +219,8 @@ export const GameplayScreen : React.FC = () => {
         <View>
           {/* avatar image + name, button to quest settings(vote, remove quest) */}
 
-          <View >
-            <Button  icon={"chevron-up"} onPress={() => {ref.current?.scrollToOffset({
-              offset: 1000000000000,
-            })}} color={Colors.primary}>
+          <View style={{backgroundColor: Colors.background}}>
+            <Button  icon={"chevron-up"} onPress={() => {ref.current?.scrollToEnd()}} color={Colors.primary}>
               View Quest Details
             </Button>
           </View>
