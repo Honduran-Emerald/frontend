@@ -5,9 +5,10 @@ import { ICreateModule } from '../CreateModuleScreen';
 import I18n from 'i18n-js';
 import { lightGray, primary } from '../../../styles/colors';
 import _ from 'lodash';
-import { Colors } from '../../../styles';
+import { Colors, Containers } from '../../../styles';
 import { PrototypeChoiceModule, PrototypeRandomModule } from '../../../types/prototypes';
 import { Text } from 'react-native';
+import Slider from '@react-native-community/slider'
 
 interface IRandomModuleData {
     objective: string,
@@ -16,7 +17,7 @@ interface IRandomModuleData {
 
 export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ setFinalModule, edit, defaultValues, setComponents, scrollToPreview }) => {
 
-    const [slider, setSlider] = useState(0.5);
+    const [slider, setSlider] = useState(edit ? defaultValues!.leftRatio : 0.5);
 
     const [moduleData, setModuleData] = useState<IRandomModuleData>(
         edit 
@@ -76,12 +77,28 @@ export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ s
                     marginBottom: 20
                 }}>
             <View style={{
-                flexDirection: 'row',
-                justifyContent: 'space-around',
+                flex: 1,
+                alignItems: 'baseline',
                 marginTop: 20
             }}>
-                <Text>{moduleData.weight}</Text>
-                <Text>{1-moduleData.weight}</Text>
+                <Text>Probability of Path 1: {(slider * 100).toFixed()}%</Text>
+                <View style={{transform: [{rotate: '-90deg'}], height: 200}}>
+                    <Slider
+                        style={{width: 200}}
+                        minimumValue={0}
+                        maximumValue={1}
+                        minimumTrackTintColor="#FFFFFF"
+                        maximumTrackTintColor="#000000"
+                        value={moduleData.weight}
+                        inverted
+                        onValueChange={setSlider}
+                        
+                        onSlidingComplete={(value) => {
+                            setModuleData({...moduleData, weight: value})
+                        }}
+                    />
+                </View>
+                <Text>Probability of Path 2: {((1 - slider) * 100).toFixed()}%</Text>
             </View>
             
             </View>
