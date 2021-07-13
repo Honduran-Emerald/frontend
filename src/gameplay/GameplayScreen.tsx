@@ -94,7 +94,9 @@ export const GameplayScreen : React.FC = () => {
       return;
     }
     if (pinnedQuest?.trackerId === route.params.trackerId && pinnedQuestPath) {
+      setHasLoaded(false);
       setLoadedTrackerNodes(pinnedQuestPath)
+      setHasLoaded(true);
     } else {
       setHasLoaded(false);
       queryTrackerNodesRequest(route.params.trackerId)
