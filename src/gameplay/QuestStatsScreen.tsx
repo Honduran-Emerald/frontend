@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import { Dimensions, FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import {Dimensions, FlatList, Image, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
 import { Colors } from '../styles';
 import { GameplayQuestHeader, QuestTracker } from '../types/quest';
 import {
@@ -8,6 +8,7 @@ import {
   playVoteRequest,
   queryTrackerNodesRequest
 } from '../utils/requestHandler';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { Entypo } from '@expo/vector-icons';
@@ -21,6 +22,7 @@ import {
   updateAcceptedQuest
 } from '../redux/quests/questsSlice';
 import { addGeofencingRegion, SingleGeoFenceLocationRadius, updateGeofencingTask } from '../utils/TaskManager';
+import {handleNewVote} from "./FinishMessage";
 
 interface QuestStateScreenProps {
   height: number,
@@ -36,6 +38,11 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
+
+  // vote hooks
+  const [votes, setVotes] = React.useState(quest ? quest.votes : 0);
+  const [hasVoted, setHasVoted] = React.useState(currentTracker?.vote);
+  const [inputDisabled, setInputDisabled] = React.useState(false);
 
   const [modalVisible, setModalVisible] = React.useState(false);
   const [resetModal, setResetModal] = React.useState(false);
@@ -97,6 +104,18 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
 
   const voteQuest = () => {
     hideVoteModal();
+  }
+
+  const handleClick = (vote: 'None' | 'Up' | 'Down') => {
+    const oldVote = currentTracker ? currentTracker.vote : 'None'
+    setInputDisabled(true);
+    handleVote(vote).then((res) => {
+      if(res.status === 200) {
+        handleNewVote(vote, oldVote, votes, setVotes)
+        setHasVoted(vote);
+      }
+      setInputDisabled(false);
+    });
   }
 
   const handleVote = useCallback((vote: 'None' | 'Up' | 'Down') => {
@@ -193,25 +212,47 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
           <Text style={styles.modalTitle}>
             {resetModal ? 'Restart this quest?' : (voteModal ? 'Vote for this quest' : 'Abandon this quest?')}
           </Text>
-          <Text style={styles.modalText}>
+          <Text style={[styles.modalText, {marginBottom: voteModal? -20 : 0, textAlign: voteModal? "center" : "left",}]}>
             {
               resetModal ?
                 'This will reset all progress for this quest and automatically update to the newest version available.\nThe quest will stay in the Questlog.'
                 :
                   (
                       voteModal ?
-                      'insert vote text'
+                        <View style={styles.votes}>
+                          <View style={styles.touchContainer}>
+                            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick(hasVoted === 'Up' ? 'None' : 'Up')}>
+                              <View style={styles.backButton}>
+                                <MaterialCommunityIcons name='chevron-up' size={36} color={hasVoted === 'Up' ? 'lime' : Colors.black}/>
+                              </View>
+                            </TouchableNativeFeedback>
+                          </View>
+                          <Text style={styles.voteNumber}>
+                            {votes}
+                          </Text>
+                          <View style={[styles.touchContainer]}>
+                            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick(hasVoted === 'Down' ? 'None' : 'Down')}>
+                              <View style={[styles.backButton]}>
+                                <MaterialCommunityIcons name='chevron-down' size={36} color={hasVoted === 'Down' ? 'red' : Colors.black}/>
+                              </View>
+                            </TouchableNativeFeedback>
+                          </View>
+                        </View>
                       :
                       'This will reset all progress and remove the quest from the Questlog. You may accept the quest again at a later time.'
                   )
             }
           </Text>
           <View style={styles.modalButtons}>
-            <View style={styles.modalButton}>
-              <PaperButton color={Colors.primary} compact mode={'contained'} onPress={() => resetModal ? resetQuest() : (voteModal ? voteQuest() : removeQuest())}>
-                {resetModal ? 'restart' : (voteModal ? 'vote' : 'Abandon')}
-              </PaperButton>
-            </View>
+
+              {
+                !voteModal &&
+                <View style={styles.modalButton}>
+                <PaperButton color={Colors.primary} compact mode={'contained'} onPress={() => resetModal ? resetQuest() : (voteModal ? voteQuest() : removeQuest())}>
+                  {resetModal ? 'restart' : (voteModal ? 'vote' : 'Abandon')}
+                </PaperButton>
+                </View>
+              }
           </View>
           <View style={styles.modalBackButton}>
             <PaperButton color={Colors.primary} compact onPress={resetModal ? hideResetModal : (voteModal ? hideVoteModal : hideModal)}>{'Back'}</PaperButton>
@@ -314,5 +355,26 @@ const styles = StyleSheet.create({
   },
   modalBackButton: {
     alignItems: 'flex-start',
+  },
+  votes: {
+    marginRight: 10,
+    marginLeft: 100,
+  },
+  touchContainer: {
+    borderRadius: 100,
+    overflow: 'hidden',
+    margin: -5,
+  },
+  backButton: {
+    borderRadius: 100,
+    padding: 10,
+  },
+  round: {
+    borderRadius: 100,
+  },
+  voteNumber: {
+    color: Colors.black,
+    fontSize: 20,
+    textAlign: 'center',
   },
 })
