@@ -28,11 +28,14 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
 
   const [modalVisible, setModalVisible] = React.useState(false);
   const [resetModal, setResetModal] = React.useState(false);
+  const [voteModal, setVoteModal] = React.useState(false);
 
   const showModal = () => setModalVisible(true);
   const hideModal = () => setModalVisible(false);
   const showResetModal = () => setResetModal(true);
   const hideResetModal = () => setResetModal(false);
+  const showVoteModal = () => setVoteModal(true);
+  const hideVoteModal = () => setVoteModal(false);
 
   const resetQuest = () => {
     playResetRequest(trackerId).then((res) => {
@@ -81,15 +84,9 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
     }).then(() => navigation.goBack())
   }
 
-  /*
-  <Text style={{
-        padding: 50
-      }}
-      ellipsizeMode={'tail'}
-      numberOfLines={15}>
-        {JSON.stringify(quest)}
-      </Text>
-   */
+  const voteQuest = () => {
+    hideVoteModal();
+  }
 
   return (
     <View style={[styles.stats, {height: height, flexGrow: 1, alignItems: 'center'}]}>
@@ -136,7 +133,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
             small
             icon="restart"
             onPress={() => showResetModal()}
-            label={"Reset progress"}
+            label={"Restart"}
           />
         </View>
         <View>
@@ -145,7 +142,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
             small
             icon="delete-forever"
             onPress={() => showModal()}
-            label={"Remove quest"}
+            label={"Abandon"}
           />
         </View>
       </View>
@@ -154,7 +151,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         style={[styles.button, {marginTop: -20}]}
         small
         icon="vote"
-        onPress={() => {resetQuest()}}
+        onPress={() => {showVoteModal()}}
         label={"Vote"}
       />
 
@@ -171,27 +168,32 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
 
 
       <Portal>
-        <Modal visible={modalVisible || resetModal} dismissable onDismiss={resetModal ? hideResetModal : hideModal} contentContainerStyle={styles.modal}>
+        <Modal visible={modalVisible || resetModal || voteModal} dismissable onDismiss={resetModal ? hideResetModal : (voteModal ? hideVoteModal : hideModal)} contentContainerStyle={styles.modal}>
           <Text style={styles.modalTitle}>
-            {resetModal ? 'Reset this Quest?' : 'Remove from Questlog?'}
+            {resetModal ? 'Restart this quest?' : (voteModal ? 'Vote for this quest' : 'Abandon this quest?')}
           </Text>
           <Text style={styles.modalText}>
             {
               resetModal ?
-                'This will reset all progress for this quest and update to the newest version if the creator updated this quest. It will stay in your Questlog and you immediately start again'
+                'This will reset all progress for this quest and automatically update to the newest version available.\nThe quest will stay in the Questlog.'
                 :
-                'This will delete all progress for this quest. You may accept the quest again at a later time'
+                  (
+                      voteModal ?
+                      'insert vote text'
+                      :
+                      'This will reset all progress and remove the quest from the Questlog. You may accept the quest again at a later time.'
+                  )
             }
           </Text>
           <View style={styles.modalButtons}>
             <View style={styles.modalButton}>
-              <PaperButton color={Colors.error} compact mode={'contained'} onPress={() => resetModal ? resetQuest() : removeQuest()}>
-                {resetModal ? 'Reset Quest' : 'Remove Quest'}
+              <PaperButton color={Colors.primary} compact mode={'contained'} onPress={() => resetModal ? resetQuest() : (voteModal ? voteQuest() : removeQuest())}>
+                {resetModal ? 'restart' : (voteModal ? 'vote' : 'Abandon')}
               </PaperButton>
             </View>
           </View>
           <View style={styles.modalBackButton}>
-            <PaperButton color={Colors.primary} compact onPress={resetModal ? hideResetModal : hideModal}>{'Back'}</PaperButton>
+            <PaperButton color={Colors.primary} compact onPress={resetModal ? hideResetModal : (voteModal ? hideVoteModal : hideModal)}>{'Back'}</PaperButton>
           </View>
         </Modal>
       </Portal>
@@ -200,15 +202,6 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
   )
 }
 
-/*
-<View style={{position: 'absolute', bottom: 10}}>
-        <Button style={styles.goUp} icon={"chevron-up"} onPress={() => {flatListRef.current?.scrollToOffset({
-          offset: 100000000,
-        })}} color={Colors.primary}>
-          View Quest Details
-        </Button>
-      </View>
- */
 const styles = StyleSheet.create({
   stats: {
     backgroundColor: Colors.background,
@@ -281,9 +274,10 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: 20,
     textAlign: 'center',
     marginBottom: 15,
+    fontWeight: "bold",
   },
   modalText: {
     fontSize: 16,

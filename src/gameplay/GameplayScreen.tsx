@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { ActivityIndicator, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import { FAB } from 'react-native-paper';
+import {Button, FAB} from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
   addTrackerExperience,
@@ -219,6 +219,14 @@ export const GameplayScreen : React.FC = () => {
         <View>
           {/* avatar image + name, button to quest settings(vote, remove quest) */}
 
+          <View >
+            <Button  icon={"chevron-up"} onPress={() => {ref.current?.scrollToOffset({
+              offset: 1000000000000,
+            })}} color={Colors.primary}>
+              View Quest Details
+            </Button>
+          </View>
+
           <FlatList
             data={loadedTrackerNodesList}
             renderItem={
@@ -232,6 +240,7 @@ export const GameplayScreen : React.FC = () => {
             ref={ref}
             style={{
               width: '100%',
+              height: "96%",
             }}
             contentContainerStyle={{
               minHeight: '100%',
