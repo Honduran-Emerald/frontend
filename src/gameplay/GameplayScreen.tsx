@@ -81,6 +81,20 @@ export const GameplayScreen : React.FC = () => {
   }, [isFocused, trackerWithUpdates])
 
   useEffect(() => {
+    if (pinnedQuest?.trackerId === route.params.trackerId && pinnedQuestPath) {
+      setHasLoaded(false);
+      setLoadedTrackerNodes(pinnedQuestPath)
+      setHasLoaded(true);
+    } else {
+      setHasLoaded(false);
+      queryTrackerNodesRequest(route.params.trackerId)
+        .then(res => res.json())
+        .then(res => setLoadedTrackerNodes(res))
+        .then(() => setHasLoaded(true))
+    }
+  }, [pinnedQuestPath, route])
+
+  useEffect(() => {
     if(trackerWithUpdates.includes(route.params.trackerId)) {
       queryTrackerNodesRequest(route.params.trackerId)
         .then(res => res.json())
@@ -93,18 +107,7 @@ export const GameplayScreen : React.FC = () => {
         .then(() => setHasLoaded(true));
       return;
     }
-    if (pinnedQuest?.trackerId === route.params.trackerId && pinnedQuestPath) {
-      setHasLoaded(false);
-      setLoadedTrackerNodes(pinnedQuestPath)
-      setHasLoaded(true);
-    } else {
-      setHasLoaded(false);
-      queryTrackerNodesRequest(route.params.trackerId)
-        .then(res => res.json())
-        .then(res => setLoadedTrackerNodes(res))
-        .then(() => setHasLoaded(true))
-    }
-  }, [pinnedQuestPath, trackerWithUpdates, route])
+  }, [trackerWithUpdates])
 
   const updateQuestPath = useCallback((newQuestPath: QuestPath) => {
     const trackerNode = newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1];
