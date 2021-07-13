@@ -1,14 +1,25 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../styles';
 import { GameplayQuestHeader, QuestTracker } from '../types/quest';
-import { createDeleteTrackerRequest, playResetRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
+import {
+  createDeleteTrackerRequest,
+  playResetRequest,
+  playVoteRequest,
+  queryTrackerNodesRequest
+} from '../utils/requestHandler';
 import { useNavigation } from '@react-navigation/native';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { Entypo } from '@expo/vector-icons';
 import { Button as PaperButton, Button, FAB, Modal, Portal, Surface } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { loadPinnedQuestPath, pinQuest, removeAcceptedQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
+import {
+  loadPinnedQuestPath,
+  pinQuest,
+  removeAcceptedQuest,
+  setTrackerVote,
+  updateAcceptedQuest
+} from '../redux/quests/questsSlice';
 import { addGeofencingRegion, SingleGeoFenceLocationRadius, updateGeofencingTask } from '../utils/TaskManager';
 
 interface QuestStateScreenProps {
@@ -88,8 +99,18 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
     hideVoteModal();
   }
 
+  const handleVote = useCallback((vote: 'None' | 'Up' | 'Down') => {
+    return playVoteRequest(trackerId, vote).then(res => {
+      if(res.status === 200) {
+        dispatch(setTrackerVote({trackerId: trackerId, vote: vote}))
+        return res;
+      }
+      return res;
+    })
+  }, [])
+
   return (
-    <View style={[styles.stats, {height: height, flexGrow: 1, alignItems: 'center'}]}>
+    <View style={[styles.stats, {height: Dimensions.get("window").height - 140, flexGrow: 1, alignItems: 'center'}]}>
 
       <View>
         <View>
