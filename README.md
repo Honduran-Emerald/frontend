@@ -32,7 +32,7 @@ Open `GLOBALCONFIG.tsx` in the top-level directory. Change the variable BACKENDI
 
 Expo allows running the app without building it. This strongly reduces app performance but skips the time needed to wait for a build.
 
-Using the Expo Go App, *Hona* can be run without building the app by using 
+Using the [Expo Go App](https://play.google.com/store/apps/details?id=host.exp.exponent), *Hona* can be run without building the app by using 
 
 > `$ expo start`
 
