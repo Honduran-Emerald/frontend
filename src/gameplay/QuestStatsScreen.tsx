@@ -32,13 +32,14 @@ import {
 } from '../redux/quests/questsSlice';
 import { addGeofencingRegion, SingleGeoFenceLocationRadius, updateGeofencingTask } from '../utils/TaskManager';
 import {handleNewVote} from "./FinishMessage";
+import { addExperience } from '../redux/authentication/authenticationSlice';
 
 interface QuestStateScreenProps {
   height: number,
   quest: GameplayQuestHeader | undefined,
   flatListRef: React.RefObject<FlatList<any>>,
   trackerId: string,
-  currentTracker: QuestTracker|undefined,
+  currentTracker: QuestTracker | undefined,
 }
 
 export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, quest, flatListRef, trackerId, currentTracker }) => {
@@ -71,8 +72,12 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
   const changeDescription = () => setExtended(!extended);
 
   const resetQuest = () => {
+    const currentTrackerXp = currentTracker?.experienceCollected
     playResetRequest(trackerId).then((res) => {
       if(res.status === 200) {
+        if (currentTrackerXp) {
+          dispatch(addExperience(-currentTrackerXp))
+        }
         queryTrackerNodesRequest(trackerId)
           .then((res) => res.json()
             .then((data) => {
@@ -149,13 +154,13 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
       <View>
         <View>
           {
-            quest?.imageId &&
-            <Image style={styles.image} source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}/>
-          }
-          {
-            !quest?.imageId &&
-            <Image style={styles.image} source={require('../../assets/background.jpg')}/>
-          }
+          quest?.imageId &&
+          <Image style={styles.image} source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}/>
+        }
+        {
+          !quest?.imageId &&
+          <Image style={styles.image} source={require('../../assets/Logo_Full_Black.png')}/>
+        }
         </View>
 
         <View style={styles.info}>

@@ -29,15 +29,16 @@ export const EditModuleScreen = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
-  const [previewModule, setPreviewModule] = useState<PrototypeModule | undefined>(undefined)
   const [components, setComponents] = useState<PrototypeComponent[]>(route.params.node.moduleObject.components)
   const swiper = useRef<ScrollView | null>(null);
+
+  const [finalModule, setFinalModule] = useState<PrototypeModule | undefined>();
 
   const saveModule = (finalModule: PrototypeModule) => {
     const baseModule = {
       id: route.params?.node.id,
     }
-    setPreviewModule({...finalModule, ...baseModule, components: components})
+    setFinalModule({...finalModule, ...baseModule}) // , components: components
   }
 
   const scrollToPreview = useCallback(() => {
@@ -69,8 +70,8 @@ export const EditModuleScreen = () => {
       <ScrollView style={{width: displayWidth, margin: 0, padding: 0}}>
         {(route.params.node.moduleObject.type in moduleMap && moduleMap[route.params.node.moduleObject.type])}
       </ScrollView>
-      {previewModule && <PreviewModuleScreen prototypeModule={previewModule} saveModule={() => {
-        dispatch(addOrUpdateQuestModule(previewModule))
+      {finalModule && <PreviewModuleScreen prototypeModule={{...finalModule, components: components}} saveModule={() => {
+        dispatch(addOrUpdateQuestModule({...finalModule, components: components}))
         navigation.navigate('ModuleGraph')
       }} />}
     </ScrollView>

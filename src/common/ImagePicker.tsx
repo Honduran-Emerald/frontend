@@ -3,6 +3,7 @@ import { Image, StyleSheet, View, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as PickImage from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { Colors, Containers } from '../styles';
 
 interface ImagePickerProps {
@@ -33,13 +34,30 @@ export const ImagePicker : React.FC<ImagePickerProps> = ({aspect, image, setImag
       mediaTypes: PickImage.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: aspect ? aspect : [9, 5],
-      quality: 1,
       base64: true
     });
     
     if(!result.cancelled) {
-      setImage(result.uri)
-      result.base64 && setBase64(result.base64)
+      const manipulation = await ImageManipulator.manipulateAsync(
+        result.uri,
+        [
+          {
+            resize: {
+              width: aspect ? 800 * aspect[0] / aspect[1] : 800,
+              height: 800
+            }
+          }
+        ],
+        {
+          base64: true,
+          compress: 0.6
+        }
+      )
+
+      if (manipulation.base64) {
+        setImage(result.uri)
+        manipulation.base64 && setBase64(manipulation.base64)
+      }
     }
   }
 

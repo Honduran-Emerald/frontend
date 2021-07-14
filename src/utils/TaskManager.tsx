@@ -3,10 +3,17 @@ import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
 import { LocationGeofencingEventType, LocationRegion } from 'expo-location';
 import { QuestTracker } from '../types/quest';
-import { addTrackerExperience, addTrackerWithUpdate, removeTrackerWithUpdate } from '../redux/quests/questsSlice';
+import {
+  addTrackerExperience,
+  addTrackerWithUpdate,
+  removeTrackerWithUpdate,
+  setLiveUpdate,
+  setTrackerObjectiveAndTrackerNode
+} from '../redux/quests/questsSlice';
 import { store } from '../redux/store';
 import { getData, storeData } from './AsyncStore';
 import { playEventChoiceRequest } from './requestHandler';
+import { addExperience } from '../redux/authentication/authenticationSlice';
 
 export const GeofencingTask = 'LocationModuleUpdates';
 export const LocationNotifTitle = 'Reached location';
@@ -113,9 +120,17 @@ export function updateQuest(trackerId: string, choice = 0) {
           switch (responseEvent.type) {
             case 'ModuleFinish':
               // handled by reloading the path in gameplay screen if there is an update for the quest
+              const newTrackerNode = {module: responseEvent.module, memento: null, creationTime: (new Date()).toString()}
+              store.dispatch(setTrackerObjectiveAndTrackerNode({
+                trackerId: trackerId,
+                trackerNode: {...newTrackerNode},
+                objective: newTrackerNode.module.objective
+              }));
+              store.dispatch(setLiveUpdate(true))
               break;
             case 'Experience':
               console.log('Got XP: +' + responseEvent.experience);
+              store.dispatch(addExperience(responseEvent.experience));
               store.dispatch(addTrackerExperience({ trackerId: trackerId, experience: responseEvent.experience }));
               scheduleGeofenceNotification(responseEvent.experience);
               break;

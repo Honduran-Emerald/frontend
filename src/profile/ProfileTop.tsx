@@ -5,7 +5,7 @@ import { ButtonOutline } from '../common/ButtonOutline';
 import { StatChips } from './StatChips';
 import { LevelBar } from './LevelBar';
 import { Image } from 'react-native';
-import { userToggleFollow, userUpdateImage } from '../utils/requestHandler';
+import { setUsernameRequest, userToggleFollow, userUpdateImage } from '../utils/requestHandler';
 import { ImagePicker } from '../common/ImagePicker';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -26,6 +26,8 @@ export const ProfileTop = ({ ownProfile, profileData, refresh } : ProfileTopProp
   const [editing, setEditing] = useState<boolean>(false);
   const [imageAddress, setImageAddress] = useState<string>(getImageAddress(profileData.image, profileData.userName));
   const [base64, setBase64] = useState<string>();
+  const [userName, setUsername] = useState<string>(profileData.userName);
+  const [loading, setLoading] = useState<boolean>(false);
   const [followingState, setFollowingState] = useState<boolean>(profileData.following);
   const navigation = useNavigation();
   const _userNameInput = useRef<TextInput>(null);
@@ -41,18 +43,37 @@ export const ProfileTop = ({ ownProfile, profileData, refresh } : ProfileTopProp
               </View>
               <View style={style.buttonGroup}>
                 <View style={{flexDirection: 'row', ...Containers.center}}>
-                  <TextInput ref={_userNameInput} style={[style.username, {flex: 1}]}>{profileData.userName}</TextInput>
+                  <TextInput ref={_userNameInput} onEndEditing={value => setUsername(value.nativeEvent.text)} style={[style.username, {flex: 1}]}>{profileData.userName}</TextInput>
                   <MaterialCommunityIcons onPress={() => _userNameInput.current?.focus()} name='pencil' size={24} color={Colors.primary}/>
                 </View>
-                <ButtonOutline 
+                <ButtonOutline
+                  loading={loading}
                   label='Save' 
                   onPress={() => {
-                    setEditing(false);
-                    base64 && userUpdateImage(base64).then(() => {
-                      setBase64(undefined);
-                      refresh();
-                    });
-                  }} 
+                    if(userName.length < 1) {
+                      alert('Username cannot be empty');
+                      return;
+                    }
+                    
+                    if(base64 || userName !== profileData.userName) {
+                      
+                      setLoading(true);
+                      let promises = [];
+                      if(base64)
+                        promises.push(userUpdateImage(base64));
+                      if(userName !== profileData.userName)
+                        promises.push(setUsernameRequest(userName));
+
+                      Promise.all(promises).then(() => {
+                        setLoading(false);
+                        refresh();
+                        setEditing(false);
+                        setBase64(undefined);
+                      });
+                    } else {
+                      setEditing(false);
+                    }
+                  }}
                 />
               </View>
             </> :
@@ -61,7 +82,7 @@ export const ProfileTop = ({ ownProfile, profileData, refresh } : ProfileTopProp
                 <Image source={{uri: imageAddress}} style={style.profileImage} />
               </View>
               <View style={style.buttonGroup}>
-                <Text style={style.username}>{profileData.userName}</Text>
+                <Text style={style.username}>{userName}</Text>
                 {
                   // only show edit button if own profile
                   ownProfile ? 

@@ -9,16 +9,19 @@ import { useNavigation } from '@react-navigation/native';
 import { getImageAddress } from '../utils/imageHandler';
 import { Colors } from '../styles';
 import Svg, { Path } from 'react-native-svg';
+import { useAppSelector } from '../redux/hooks';
 
 export interface QuestPreviewProps {
   quest: GameplayQuestHeader
   location: LocationObject | undefined
+  isDraft?: boolean
 }
 
-export const QuestPreview: React.FC<QuestPreviewProps> = ({quest, location}) => {
+export const QuestPreview: React.FC<QuestPreviewProps> = ({ quest, location, isDraft }) => {
 
     const [distance, setDistance] = useState('');
-    
+    const acceptedQuests = useAppSelector(state => state.quests.acceptedQuests)
+
     useEffect(() => {
         location && quest.location &&
         setDistance(getDistanceFromLatLonInKm(quest.location.latitude, quest.location.longitude, location.coords.latitude, location.coords.longitude));
@@ -28,14 +31,14 @@ export const QuestPreview: React.FC<QuestPreviewProps> = ({quest, location}) => 
 
     /**
      * The numbers, what do they mean??
-     * 
+     *
      * Am besten du fragst lenny aber wenn du die kurzversion willst. Dat sind parameter zum Anzeigen von den Bezierkurven vom Votes Tag.
-     * Die koordinaten von den Punkten der Kurve sind dabei 
+     * Die koordinaten von den Punkten der Kurve sind dabei
      * - (a, 0)
      * - (b, c)
      * - (d, e)
      * - (0, f)
-     * 
+     *
      * x und y definieren die ausbreitung entlang der bezier kurve
      */
 
@@ -52,10 +55,15 @@ export const QuestPreview: React.FC<QuestPreviewProps> = ({quest, location}) => 
     const navigation = useNavigation();
 
     return(
-        <Card style={styles.quest} onPress={() => navigation.navigate('QuestDetail', {quest: quest})}>
-            <Card.Cover style={styles.pic} source={quest.imageId != null ? {uri: getImageAddress(quest.imageId, '')} : require('../../assets/background.jpg')} resizeMode='stretch' />
-            <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={quest.title} />
-            
+        <Card style={styles.quest} onPress={() => navigation.navigate('QuestDetail', {quest: quest, isDraft: isDraft})}>
+            <Card.Cover style={styles.pic} source={quest.imageId ? {uri: getImageAddress(quest.imageId, quest.title)} : require('../../assets/Logo_Full_Black.png')} resizeMode='cover' />
+            <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={
+            <>
+            {quest.title} {
+                acceptedQuests.find(q => q.questId===quest.id) && <MaterialCommunityIcons name='check' color={Colors.primary} style={{paddingRight: 5}}/>
+            }
+            </>} />
+
             <View style={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
@@ -77,7 +85,7 @@ export const QuestPreview: React.FC<QuestPreviewProps> = ({quest, location}) => 
                     <MaterialCommunityIcons name='clock-time-five' color={Colors.primary} style={{paddingLeft: 5}}/>
                 </View>
             </View>
-            
+
             <View style={{
                     flexDirection: 'row-reverse',
                     marginBottom: 5,
@@ -99,7 +107,7 @@ export const QuestPreview: React.FC<QuestPreviewProps> = ({quest, location}) => 
                             {quest.ownerName}
                         </Text>
                     </View>
-                            
+
                 </View>
 
             <View style={{position: 'absolute'}}>
@@ -115,11 +123,11 @@ export const QuestPreview: React.FC<QuestPreviewProps> = ({quest, location}) => 
                     {/*      Start   [TR ]            ^  [TM ]       |         [BM ]                [BE]   */}
                     {/*      Start   wdt 0   <- 0  XX |  XX YY   XX  v         [BM ]                [BE]   */}
                     {/*     'M 0 0 M 125 0 C 90 0, 70 2, 70 20 C 70 35, 60 40, 25 40 C 0 40, 0 60, 0 75 L 0 0'*/}
-                    {/* 
-                    
+                    {/*
+
                     Three Fixed Points
                     `
-                                M 0 0 
+                                M 0 0
                                 M ${a} 0
                                 C ${a - x[0]} 0, ${b} ${c-y[0]}, ${b} ${c}
                                 C ${b} ${c+y[1]}, ${d+x[1]} ${e}, ${d} ${e}
@@ -135,18 +143,18 @@ export const QuestPreview: React.FC<QuestPreviewProps> = ({quest, location}) => 
                                 L 0 ${e}
                                 L 0 0`}
                         strokeWidth='0'
-                        
+
                     />
                 </Svg>
                 <View style={{
-                    position: 'absolute', 
-                    width: b*130/200, 
-                    height: e*130/200, 
+                    position: 'absolute',
+                    width: b*130/200,
+                    height: e*130/200,
                     paddingHorizontal: 5,
-                    flexDirection: 'row', 
+                    flexDirection: 'row',
                     alignItems: 'center',
-                    alignContent: 'center', 
-                    justifyContent: 'center', 
+                    alignContent: 'center',
+                    justifyContent: 'center',
                     overflow: 'hidden'}}>
                 <Text style={{fontSize: 13, color: Colors.primary, fontWeight: 'bold'}} ellipsizeMode={'head'} numberOfLines={1}>{quest.votes} </Text>
                 <MaterialCommunityIcons name='thumbs-up-down' color={Colors.primary}/>

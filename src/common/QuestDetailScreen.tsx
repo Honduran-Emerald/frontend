@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar, Alert } from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
 import { Avatar, Modal, Portal, Surface, Button } from 'react-native-paper';
@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { Colors } from '../styles';
 import { commonTranslations } from './translations';
 import { QueriedQuest, QuestTracker } from '../types/quest';
-import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest } from '../utils/requestHandler';
+import { createDeleteQuestRequest, createPublishRequest, createTrackerRequest, queryQuestsWithIds } from '../utils/requestHandler';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { acceptQuest, addRecentlyVisitedQuest, refreshRecentlyVisitedQuest, removeRecentlyVisitedQuest } from '../redux/quests/questsSlice';
 import { User } from '../types/general';
@@ -30,13 +30,15 @@ export default function QuestDetailScreen({ route }: any) {
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
-  const quest: QueriedQuest = route.params.quest;
-  const isQuestCreator = quest.ownerId === user?.userId;
-  const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
-  const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0
 
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [quest, setQuest] = React.useState(route.params.quest);
+  const [isDraft, setIsDraft] = React.useState(route.params.isDraft ? route.params.isDraft : undefined);
+
+  const isQuestCreator = quest.ownerId === user?.userId;
+  const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
+  const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0;
 
   const showModal = () => setModalVisible(true);
   const hideModal = () => setModalVisible(false);
@@ -59,8 +61,16 @@ export default function QuestDetailScreen({ route }: any) {
       }
     }
 
-    if(quest.released) {
-      updateRecentQuests().then(() => {})
+    if(quest.released && !isDraft) {
+      queryQuestsWithIds(quest.id)
+        .then((res) => {
+          if(res.status === 200) {
+            res.json().then((data) => setQuest(data[0]))
+          } else {
+            console.log('error while refreshing ' + res.status);
+          }
+        })
+        .then(() => updateRecentQuests().then(() => {}))
     }
   }, [])
 
@@ -113,6 +123,19 @@ export default function QuestDetailScreen({ route }: any) {
       })
   };
 
+  const handlePublish = () => {
+    createPublishRequest(quest.id)
+      .then(res => {
+        if (res.status === 200) {
+          setIsDraft(false);
+          setQuest({...quest, released: true, outdated: false});
+          Alert.alert('Quest released', 'Your quest was successfully released. Players can now find it using their home screen.')
+        } else {
+          Alert.alert('Release failed', 'Check your quest for completeness.')
+        }
+      })
+  }
+
   const handleDelete = () => {
     createDeleteQuestRequest(quest.id).then(res => {
       if(res.status === 200) {
@@ -143,7 +166,7 @@ export default function QuestDetailScreen({ route }: any) {
           }
           {
             !quest.imageId &&
-            <Image style={styles.image} source={require('../../assets/background.jpg')}/>
+            <Image style={styles.image} source={require('../../assets/Logo_Full_Black.png')}/>
           }
           <View style={styles.info}>
             <Entypo name='location-pin' size={24} color='black'/>
@@ -163,7 +186,7 @@ export default function QuestDetailScreen({ route }: any) {
           {
             !isAccepted &&
             <View style={styles.button}>
-              <Button color={Colors.primary} disabled={isButtonDisabled || !quest.released} onPress={handleAccept} mode={'contained'}>
+              <Button color={Colors.primary} disabled={isButtonDisabled || !quest.released || isDraft} onPress={handleAccept} mode={'contained'}>
                 {i18n.t('acceptButton')}
               </Button>
             </View>
@@ -173,7 +196,8 @@ export default function QuestDetailScreen({ route }: any) {
             <View style={styles.button}>
               <Button
                 color={'green'}
-                disabled={isButtonDisabled}
+                disabled={isButtonDisabled || isDraft}
+                title={(quest.tracker && quest.tracker.finished) ? 'Quest finished' : 'Continue Quest'}
                 onPress={() => loadQuestObjectiveScreen(acceptedQuests.find(tracker => tracker.questId === quest.id))}
                 mode={'contained'}
               >
@@ -200,14 +224,11 @@ export default function QuestDetailScreen({ route }: any) {
                 <View style={styles.creatorButton}>
                   <Button
                     color={Colors.primary}
-                    disabled={isButtonDisabled || (quest.released && !quest.outdated)}
-                    onPress={
-                      () => createPublishRequest(quest.id)
-                        .then(res => res.status === 200 ? alert('Quest published') : alert('Server Error'))
-                    }
+                    disabled={isButtonDisabled || (quest.released && !quest.outdated) || !isDraft}
+                    onPress={() => handlePublish()}
                     mode={'contained'}
                   >
-                    {'Publish'}
+                    {'Release'}
                   </Button>
                 </View>
               </View>

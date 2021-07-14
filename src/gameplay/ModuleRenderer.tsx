@@ -32,9 +32,6 @@ export const ModuleRenderer: React.FC<ModuleRendererPropsLiveUpdate> = ({ module
 
   const [shownAllComponents, setShownAllComponents] = useState<boolean>(false);
 
-
-  console.log(module.memento)
-
   return (
     <View style={{paddingHorizontal: 10}}>
       {

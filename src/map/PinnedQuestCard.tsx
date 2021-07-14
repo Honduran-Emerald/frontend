@@ -50,7 +50,7 @@ export default function PinnedQuestCard() {
                     style={styles.questAvatar}
                     theme={{colors: {primary: 'transparent'}}}
                     size={50}
-                    source={require('../../assets/background.jpg')}
+                    source={require('../../assets/Logo_Full_Black.png')}
                   />
                 }
                 <Badge visible={hasUpdate} size={18} theme={{colors: {notification: Colors.primaryLight}}} style={styles.badge}/>

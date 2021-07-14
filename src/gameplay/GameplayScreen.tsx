@@ -12,6 +12,7 @@ import {
   addTrackerExperience,
   loadPinnedQuestPath,
   pinQuest,
+  setLiveUpdate,
   setTrackerFinished,
   setTrackerObjectiveAndTrackerNode,
   setTrackerVote
@@ -25,6 +26,7 @@ import { Colors } from '../styles';
 import { FinishMessage } from './FinishMessage';
 import { addGeofencingRegion, removeUpdatedQuest, SingleGeoFenceLocationRadius } from '../utils/TaskManager';
 import { useIsFocused } from '@react-navigation/native';
+import { addExperience } from '../redux/authentication/authenticationSlice';
 
 export const GameplayScreen : React.FC = () => {
 
@@ -47,7 +49,8 @@ export const GameplayScreen : React.FC = () => {
   const [showXp, setShowXp] = useState<boolean>(false);
   const [xpAmount, setXpAmount] = useState<number>(-1);
 
-  const [liveUpdate, setLiveUpdate] = useState<boolean>(false);
+  //const [liveUpdate, setLiveUpdate] = useState<boolean>(false);
+  const liveUpdate = useAppSelector(state => state.quests.liveUpdate)
 
   const [loadedTrackerNodesList, setLoadedTrackerNodesList] = useState<QuestTrackerNodeElement[]>([]);
   useEffect(() => {
@@ -56,11 +59,40 @@ export const GameplayScreen : React.FC = () => {
 
   const [innerHeight, setInnerHeight] = useState<number>(Dimensions.get('screen').height);
 
+  const user = useAppSelector(state => state.authentication.user)
+  const [oldLevel, setOldLevel] = useState(user?.level)
+  const [showLevelUp, setShowLevelup] = useState(false);
+
+  useEffect(() => {
+    dispatch(setLiveUpdate(false))
+  }, [])
+
+  useEffect(() => {
+    if (user?.level !== oldLevel) {
+      setShowLevelup(true);
+    }
+    setOldLevel(user?.level)
+  }, [user?.level])
+
   useEffect(() => {
     if(isFocused && trackerWithUpdates.includes(route.params.trackerId)) {
       new Promise<void>(resolve => setTimeout(() => resolve(), 500)).then(() => removeUpdatedQuest(route.params.trackerId))
     }
   }, [isFocused, trackerWithUpdates])
+
+  useEffect(() => {
+    if (pinnedQuest?.trackerId === route.params.trackerId && pinnedQuestPath) {
+      setHasLoaded(false);
+      setLoadedTrackerNodes(pinnedQuestPath)
+      setHasLoaded(true);
+    } else {
+      setHasLoaded(false);
+      queryTrackerNodesRequest(route.params.trackerId)
+        .then(res => res.json())
+        .then(res => setLoadedTrackerNodes(res))
+        .then(() => setHasLoaded(true))
+    }
+  }, [pinnedQuestPath, route])
 
   useEffect(() => {
     if(trackerWithUpdates.includes(route.params.trackerId)) {
@@ -75,15 +107,7 @@ export const GameplayScreen : React.FC = () => {
         .then(() => setHasLoaded(true));
       return;
     }
-    if (pinnedQuest?.trackerId === route.params.trackerId && pinnedQuestPath) {
-      setLoadedTrackerNodes(pinnedQuestPath)
-    } else {
-      queryTrackerNodesRequest(route.params.trackerId)
-        .then(res => res.json())
-        .then(res => setLoadedTrackerNodes(res))
-        .then(() => setHasLoaded(true))
-    }
-  }, [pinnedQuestPath, trackerWithUpdates])
+  }, [trackerWithUpdates])
 
   const updateQuestPath = useCallback((newQuestPath: QuestPath) => {
     const trackerNode = newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1];
@@ -114,7 +138,7 @@ export const GameplayScreen : React.FC = () => {
       return;
     }
 
-    setLiveUpdate(true) // Used for chat animations
+    dispatch(setLiveUpdate(true)) // Used for chat animations
 
     const newQuestPath = _.cloneDeep(loadedTrackerNodes);
     const newTracker = {module: newModule, memento: null, creationTime: (new Date()).toString()}
@@ -135,7 +159,6 @@ export const GameplayScreen : React.FC = () => {
       };
       addGeofencingRegion(newRegion);
     }
-
   }
 
   const handleQuestFinish = useCallback((endingFactor: number) => {
@@ -144,6 +167,7 @@ export const GameplayScreen : React.FC = () => {
 
   const handleExperience = useCallback((experience: number) => {
     dispatch(addTrackerExperience({ trackerId: route.params.trackerId, experience: experience }));
+    dispatch(addExperience(experience));
     setXpAmount(experience);
     setShowXp(true);
   }, [])
@@ -218,7 +242,7 @@ export const GameplayScreen : React.FC = () => {
   return (
     <View>
       {
-        loadedTrackerNodesList.length > 0 &&
+        loadedTrackerNodesList.length > 0 && hasLoaded &&
         <View>
           {/* avatar image + name, button to quest settings(vote, remove quest) */}
 
@@ -265,6 +289,20 @@ export const GameplayScreen : React.FC = () => {
               </Text>
             </Animatable.View>
           }
+          {
+            showLevelUp &&
+            <Animatable.View
+              animation='fadeOutUp'
+              delay={500}
+              duration={4000}
+              onAnimationEnd={() => setShowLevelup(false)}
+              style={styles.lvlAnimationView}
+            >
+              <Text style={styles.xpText}>
+                Reached LVL {user?.level}
+              </Text>
+            </Animatable.View>
+          }
           {/* <FAB
         style={{
           position: 'absolute',
@@ -280,7 +318,7 @@ export const GameplayScreen : React.FC = () => {
         </View>
       }
       {
-        loadedTrackerNodesList.length === 0 &&
+        (loadedTrackerNodesList.length === 0 || !hasLoaded) &&
         <View style={styles.loadingView}>
           <ActivityIndicator size={'large'} color={Colors.primary}/>
           <Text style={styles.loadingText}>Loading quest</Text>
@@ -323,6 +361,15 @@ const styles = StyleSheet.create({
     padding: 10,
     right: 30,
     bottom: 120,
+  },
+  lvlAnimationView: {
+    backgroundColor: Colors.background,
+    elevation: 5,
+    borderRadius: 100,
+    position: 'absolute',
+    padding: 10,
+    right: 30,
+    bottom: 180,
   },
   xpText: {
     color: Colors.primary,

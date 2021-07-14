@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { Button, IconButton, Subheading, TextInput, Divider } from 'react-native-paper';
+import { Button, Subheading, TextInput, Divider } from 'react-native-paper';
 import { ICreateModule } from '../CreateModuleScreen';
 import I18n from 'i18n-js';
-import { lightGray, primary } from '../../../styles/colors';
 import _ from 'lodash';
-import { Colors } from '../../../styles';
-import { PrototypeChoiceModule, PrototypeRandomModule } from '../../../types/prototypes';
+import { Colors, Containers } from '../../../styles';
+import { PrototypeRandomModule } from '../../../types/prototypes';
 import { Text } from 'react-native';
+import Slider from '@react-native-community/slider'
 
 interface IRandomModuleData {
     objective: string,
@@ -16,7 +16,7 @@ interface IRandomModuleData {
 
 export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ setFinalModule, edit, defaultValues, setComponents, scrollToPreview }) => {
 
-    const [slider, setSlider] = useState(0.5);
+    const [slider, setSlider] = useState(edit ? defaultValues!.leftRatio : 0.5);
 
     const [moduleData, setModuleData] = useState<IRandomModuleData>(
         edit 
@@ -38,7 +38,7 @@ export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ s
                 }
             ])
         }
-    }, [])
+    }, []);
 
     const parseToModule = (moduleData: IRandomModuleData): PrototypeRandomModule => {
         return ({
@@ -53,7 +53,7 @@ export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ s
     }
 
     useEffect(() => {
-        setFinalModule(parseToModule(moduleData))
+        setFinalModule(parseToModule(moduleData));
     }, [moduleData])
 
     return (
@@ -68,26 +68,52 @@ export const RandomModule: React.FC<ICreateModule<PrototypeRandomModule>> = ({ s
             <Divider/>
 
             <Subheading 
-                style={{margin: 10, marginTop: 20}}>
-                Choose Path Weights
+                style={{margin: 10, marginTop: 20, fontSize: 20}}>
+                Choose Path Probabilites
             </Subheading>
             <View 
                 style={{
                     marginBottom: 20
                 }}>
             <View style={{
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-                marginTop: 20
+                flex: 1,
+                alignItems: 'center',
+                width: '100%',
+                marginTop: 40,
+                marginBottom: 20
             }}>
-                <Text>{moduleData.weight}</Text>
-                <Text>{1-moduleData.weight}</Text>
+                <View style={{backgroundColor: '#FFF', borderColor: '#000', borderWidth: 1, ...Containers.rounded, padding: 20}}>
+
+                    <Text style={{fontSize: 18}}>{'Probability of\n' } Path 1: <Text style={{color: Colors.primary}}>{(slider * 100).toFixed()}%</Text></Text>
+                </View>
+                <View style={{ height: 200, alignSelf: 'center'}}>
+                    <Slider
+                        style={{width: 200, height: 200, transform: [{rotate: '-90deg'}]}}
+                        minimumValue={0}
+                        maximumValue={1}
+                        step={0.05}
+                        minimumTrackTintColor={Colors.primary}
+                        maximumTrackTintColor={'gray'}
+                        thumbTintColor={Colors.primary}
+                        value={moduleData.weight}
+                        onValueChange={setSlider}
+                        inverted
+                        
+                        onSlidingComplete={(value) => {
+                            setModuleData({...moduleData, weight: value})
+                        }}
+                    />
+                </View>
+                <View style={{backgroundColor: '#FFF', borderColor: '#000', borderWidth: 1, ...Containers.rounded, padding: 20}}>
+                    <Text style={{fontSize: 18}}>{'Probability of\n' } Path 2: <Text style={{color: Colors.primary}}>{((1 - slider) * 100).toFixed()}%</Text></Text>
+                </View>
+                
             </View>
             
             </View>
                 
             <Button 
-                theme={{colors: {primary: primary}}}
+                theme={{colors: {primary: Colors.primary}}}
                 mode='contained'
                 style={{marginBottom: 20}}
                 onPress={scrollToPreview}>

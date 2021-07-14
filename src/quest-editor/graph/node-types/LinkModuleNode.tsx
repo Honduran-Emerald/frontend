@@ -65,7 +65,7 @@ export const LinkModuleNode: React.FC<ILinkModuleNode> = ({ setSource, sheetRef,
                 {parentTags.map((tag, idx) => <View key={idx} style={{...styles.component, height: 42, padding: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, marginBottom: -20}}>
                     <Text style={{textAlign: 'center', paddingHorizontal: 13}} ellipsizeMode={'tail'} numberOfLines={1}>{
                         tag.type === 'Choice' ? tag.choice 
-                        : ((100*tag.probability).toPrecision(2) + '%')
+                        : ((100*tag.probability).toFixed() + '%')
                     }</Text>
                 </View>)}
                 <Text style={styles.component}>{I18n.t('addOrConnectModule')}</Text>
