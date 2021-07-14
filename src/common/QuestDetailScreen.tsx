@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar, Alert } from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
 import { Avatar, Modal, Portal, Button as PaperButton, Surface } from 'react-native-paper';
@@ -206,10 +206,10 @@ export default function QuestDetailScreen({ route }: any) {
                   <Button
                     color={Colors.primary}
                     disabled={isButtonDisabled || (quest.released && !quest.outdated)}
-                    title={'Publish Quest'}
+                    title={'Release Quest'}
                     onPress={
                       () => createPublishRequest(quest.id)
-                        .then(res => res.status === 200 ? alert('Quest published') : alert('Server Error'))
+                        .then(res => res.status === 200 ? Alert.alert('Quest released', 'Your quest was successfully released. Players can now find it using their home screen.') : Alert.alert('Release failed', 'Check your quest for completeness.'))
                     }
                   />
                 </View>
