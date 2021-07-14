@@ -38,7 +38,7 @@ TaskManager.defineTask(GeofencingTask, (task) => {
       // @ts-ignore
       addUpdatedQuest(task.data.region.identifier)
       // @ts-ignore
-      updateGeofencingTask(task.data.region);
+      updateGeofencingTask(task.data.region.identifier);
     }
   }
 })
@@ -71,18 +71,26 @@ export async function registerGeofencingTask(acceptedQuests: QuestTracker[]) {
   Location.startGeofencingAsync(GeofencingTask, locations).then(() => console.log('geofencing task registered' + JSON.stringify(locations)), () => console.log('Can\'t start geofencing'))
 }
 
-export function updateGeofencingTask(regionReached: LocationRegion) {
+export function updateGeofencingTask(regionIdentifier: string) {
   TaskManager.getTaskOptionsAsync(GeofencingTask)
     // @ts-ignore
-    .then((options) => options.regions)
+    .then((options) => {
+      if(options) {
+        // @ts-ignore
+        return options.regions;
+      } else {
+        return [];
+      }
+    })
     .then((regions: LocationRegion[]) => {
-      const newRegions = regions.filter((region) => region.identifier !== regionReached.identifier)
+      const newRegions = regions.filter((region) => region.identifier !== regionIdentifier)
       if(newRegions.length === 0) {
         Location.stopGeofencingAsync(GeofencingTask).then(() => console.log('Stopped geofencing'));
         return;
       }
       Location.startGeofencingAsync(GeofencingTask, newRegions).then(() => console.log('geofencing task updated' + JSON.stringify(newRegions)))
     })
+    .catch(() => {})
 }
 
 export function addGeofencingRegion(region: LocationRegion) {

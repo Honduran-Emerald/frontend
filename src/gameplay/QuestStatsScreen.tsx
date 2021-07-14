@@ -1,15 +1,37 @@
-import React from 'react';
-import { Dimensions, FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import React, {useCallback} from 'react';
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text, TouchableHighlight,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { Colors } from '../styles';
 import { GameplayQuestHeader, QuestTracker } from '../types/quest';
-import { playResetRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
+import {
+  createDeleteTrackerRequest,
+  playResetRequest,
+  playVoteRequest,
+  queryTrackerNodesRequest
+} from '../utils/requestHandler';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { BACKENDIP } from '../../GLOBALCONFIG';
 import { Entypo } from '@expo/vector-icons';
-import { Button, FAB, Surface } from 'react-native-paper';
+import { Button as PaperButton, Button, FAB, Modal, Portal, Surface } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { loadPinnedQuestPath, pinQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
-import { addGeofencingRegion, SingleGeoFenceLocationRadius } from '../utils/TaskManager';
+import {
+  loadPinnedQuestPath,
+  pinQuest,
+  removeAcceptedQuest,
+  setTrackerVote,
+  updateAcceptedQuest
+} from '../redux/quests/questsSlice';
+import { addGeofencingRegion, SingleGeoFenceLocationRadius, updateGeofencingTask } from '../utils/TaskManager';
+import {handleNewVote} from "./FinishMessage";
 import { addExperience } from '../redux/authentication/authenticationSlice';
 
 interface QuestStateScreenProps {
@@ -26,6 +48,28 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
+
+  // vote hooks
+  const [votes, setVotes] = React.useState(quest ? quest.votes : 0);
+  const [hasVoted, setHasVoted] = React.useState(currentTracker?.vote);
+  const [inputDisabled, setInputDisabled] = React.useState(false);
+
+  // modal hooks
+  const [modalVisible, setModalVisible] = React.useState(false); //abandon
+  const [resetModal, setResetModal] = React.useState(false);
+  const [voteModal, setVoteModal] = React.useState(false);
+
+  const [extended, setExtended] = React.useState(false);
+
+  // modals
+  const showModal = () => setModalVisible(true);
+  const hideModal = () => setModalVisible(false);
+  const showResetModal = () => setResetModal(true);
+  const hideResetModal = () => setResetModal(false);
+  const showVoteModal = () => setVoteModal(true);
+  const hideVoteModal = () => setVoteModal(false);
+
+  const changeDescription = () => setExtended(!extended);
 
   const resetQuest = () => {
     const currentTrackerXp = currentTracker?.experienceCollected
@@ -57,25 +101,59 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
             })
           )
       }
-      else alert('Error ' + res.status);
+      else {
+        alert('Error ' + res.status);
+      }
+      hideResetModal();
     }).then(() => navigation.goBack())
   }
 
-  /*
-  <Text style={{
-        padding: 50
-      }}
-      ellipsizeMode={'tail'}
-      numberOfLines={15}>
-        {JSON.stringify(quest)}
-      </Text>
-   */
+  const removeQuest = () => {
+    createDeleteTrackerRequest(trackerId).then((res) => {
+      if(res.status === 200) {
+        dispatch(removeAcceptedQuest(trackerId));
+        if(currentTracker?.trackerNode.module.type === 'Location') {
+          updateGeofencingTask(trackerId);
+        }
+      } else {
+        alert('Error while removing.');
+      }
+      hideModal();
+    }).then(() => navigation.goBack())
+  }
+
+  const voteQuest = () => {
+    hideVoteModal();
+  }
+
+  const handleClick = (vote: 'None' | 'Up' | 'Down') => {
+    const oldVote = currentTracker ? currentTracker.vote : 'None'
+    setInputDisabled(true);
+    handleVote(vote).then((res) => {
+      if(res.status === 200) {
+        handleNewVote(vote, oldVote, votes, setVotes)
+        setHasVoted(vote);
+      }
+      setInputDisabled(false);
+    });
+  }
+
+  const handleVote = useCallback((vote: 'None' | 'Up' | 'Down') => {
+    return playVoteRequest(trackerId, vote).then(res => {
+      if(res.status === 200) {
+        dispatch(setTrackerVote({trackerId: trackerId, vote: vote}))
+        return res;
+      }
+      return res;
+    })
+  }, [])
 
   return (
-    <View style={[styles.stats, {height: height + 40, flexGrow: 1, alignItems: 'center'}]} >
+    <View style={[styles.stats, {minHeight: Dimensions.get("window").height - 140, flexGrow: 1, alignItems: 'center'}]}>
 
       <View>
-        {
+        <View>
+          {
           quest?.imageId &&
           <Image style={styles.image} source={{uri: `${BACKENDIP}/image/get/${quest.imageId}`}}/>
         }
@@ -83,41 +161,60 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
           !quest?.imageId &&
           <Image style={styles.image} source={require('../../assets/Logo_Full_Black.png')}/>
         }
+        </View>
+
+        <View style={styles.info}>
+          <View style={styles.location}>
+            <Entypo name='location-pin' size={24} color='black' style={styles.icon}/>
+            <Text>
+              {quest?.locationName}
+            </Text>
+          </View>
+          <View style={styles.time}>
+            <Entypo name='stopwatch' size={24} color='black' style={styles.icon}/>
+            <Text>
+              {quest?.approximateTime}
+            </Text>
+          </View>
+        </View>
       </View>
 
-      <View style={styles.info}>
-        <View style={styles.location}>
-          <Entypo name='location-pin' size={24} color='black' style={styles.icon}/>
-          <Text>
-            {quest?.locationName}
-          </Text>
+      <View style={{width: Dimensions.get('screen').width * 0.9, margin: 20, marginBottom: 25, overflow: "hidden", borderRadius: 20}}>
+        <TouchableHighlight onPress={() => changeDescription()} activeOpacity={0.8} underlayColor="#DDDDDD" >
+          <Surface style={styles.block}>
+            <Text style={styles.description} ellipsizeMode={'tail'} numberOfLines={(extended? undefined : 10)}>
+              {quest?.description}
+            </Text>
+          </Surface>
+        </TouchableHighlight>
+      </View>
+
+      <View style={{flexDirection: "row"}}>
+        <View>
+          <FAB
+            style={[styles.button, {marginRight: 10,}]}
+            small
+            icon="restart"
+            onPress={() => showResetModal()}
+            label={"Restart"}
+          />
         </View>
-        <View style={styles.time}>
-          <Entypo name='stopwatch' size={24} color='black' style={styles.icon}/>
-          <Text>
-            {quest?.approximateTime}
-          </Text>
+        <View>
+          <FAB
+            style={styles.button}
+            small
+            icon="delete-forever"
+            onPress={() => showModal()}
+            label={"Abandon"}
+          />
         </View>
       </View>
 
-      <Surface style={styles.block}>
-        <Text style={styles.description} ellipsizeMode={'tail'} numberOfLines={10}>
-          {quest?.description}
-        </Text>
-      </Surface>
-
       <FAB
-        style={styles.reset}
-        small
-        icon="restart"
-        onPress={() => {resetQuest()}}
-        label={"Reset all progress for quest"}
-      />
-      <FAB
-        style={styles.reset}
+        style={[styles.button, {marginTop: -20}]}
         small
         icon="vote"
-        onPress={() => {resetQuest()}}
+        onPress={() => {showVoteModal()}}
         label={"Vote"}
       />
 
@@ -131,21 +228,68 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
           })}}
         />
       </View>
-      <View style={{position: 'absolute', bottom: 10}}>
-        <Button style={styles.goUp} icon={"chevron-up"} onPress={() => {flatListRef.current?.scrollToOffset({
-          offset: 100000000,
-        })}} color={Colors.primary}>
-          View Quest Details
-        </Button>
-      </View>
+
+
+      <Portal>
+        <Modal visible={modalVisible || resetModal || voteModal} dismissable
+               onDismiss={resetModal ? hideResetModal : (voteModal ? hideVoteModal : hideModal)}
+               contentContainerStyle={styles.modal}
+        >
+          <Text style={styles.modalTitle}>
+            {resetModal ? 'Restart this quest?' : (voteModal ? 'Vote for this quest' : 'Abandon this quest?')}
+          </Text>
+          <Text style={[styles.modalText, {marginBottom: voteModal? -20 : 0, textAlign: voteModal? "center" : "left",}]}>
+            {
+              resetModal ?
+                'This will reset all progress for this quest and automatically update to the newest version available.\nThe quest will stay in the Questlog.'
+                :
+                  (
+                      voteModal ?
+                        <View style={styles.votes}>
+                          <View style={styles.touchContainer}>
+                            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick(hasVoted === 'Up' ? 'None' : 'Up')}>
+                              <View style={styles.backButton}>
+                                <MaterialCommunityIcons name='chevron-up' size={36} color={hasVoted === 'Up' ? 'lime' : Colors.black}/>
+                              </View>
+                            </TouchableNativeFeedback>
+                          </View>
+                          <Text style={styles.voteNumber}>
+                            {votes}
+                          </Text>
+                          <View style={[styles.touchContainer]}>
+                            <TouchableNativeFeedback style={styles.round} onPress={() => inputDisabled ? {} : handleClick(hasVoted === 'Down' ? 'None' : 'Down')}>
+                              <View style={[styles.backButton]}>
+                                <MaterialCommunityIcons name='chevron-down' size={36} color={hasVoted === 'Down' ? 'red' : Colors.black}/>
+                              </View>
+                            </TouchableNativeFeedback>
+                          </View>
+                        </View>
+                      :
+                      'This will reset all progress and remove the quest from the Questlog. You may accept the quest again at a later time.'
+                  )
+            }
+          </Text>
+          <View style={styles.modalButtons}>
+
+              {
+                !voteModal &&
+                <View style={styles.modalButton}>
+                <PaperButton color={Colors.primary} compact mode={'contained'} onPress={() => resetModal ? resetQuest() : (voteModal ? voteQuest() : removeQuest())}>
+                  {resetModal ? 'restart' : (voteModal ? 'vote' : 'Abandon')}
+                </PaperButton>
+                </View>
+              }
+          </View>
+          <View style={styles.modalBackButton}>
+            <PaperButton color={Colors.primary} compact onPress={resetModal ? hideResetModal : (voteModal ? hideVoteModal : hideModal)}>{'Back'}</PaperButton>
+          </View>
+        </Modal>
+      </Portal>
 
     </View>
   )
 }
 
-/*
-
- */
 const styles = StyleSheet.create({
   stats: {
     backgroundColor: Colors.background,
@@ -155,19 +299,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     elevation: 5,
     width: "100%",
+    justifyContent: "center",
   },
   image: {
     width: Dimensions.get('screen').width * 0.8,
     height: 200,
     borderRadius: 20,
     marginBottom: 20,
-    marginTop: 25,
+    marginTop: 20,
   },
   info: {
     width: Dimensions.get('screen').width * 0.8,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
   },
   location: {
     flexDirection: 'row',
@@ -180,15 +324,12 @@ const styles = StyleSheet.create({
     maxWidth: '45%',
   },
   block: {
-    margin: 20,
-    width: Dimensions.get('screen').width * 0.9,
     padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 5,
     borderWidth: 1,
     borderRadius: 20,
-    marginBottom: 25,
   },
   description: {
     textAlign: 'left',
@@ -197,19 +338,64 @@ const styles = StyleSheet.create({
     marginRight: 5,
     marginTop: -5,
   },
-  goUp: {
-
-  },
   downView: {
     position: "absolute",
-    bottom: 70,
+    bottom: 30,
     right: 20,
   },
   goDown: {
     backgroundColor: Colors.primary,
   },
-  reset: {
+  button: {
     marginBottom: 30,
     backgroundColor: Colors.primary,
+  },
+  modal: {
+    backgroundColor: Colors.background,
+    padding: 20,
+    margin: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    textAlign: 'center',
+    marginBottom: 15,
+    fontWeight: "bold",
+  },
+  modalText: {
+    fontSize: 16,
+  },
+  modalButtons: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  modalButton: {
+    width: '48%',
+  },
+  modalBackButton: {
+    alignItems: 'flex-start',
+  },
+  votes: {
+    marginRight: 10,
+    marginLeft: 100,
+  },
+  touchContainer: {
+    borderRadius: 100,
+    overflow: 'hidden',
+    margin: -5,
+  },
+  backButton: {
+    borderRadius: 100,
+    padding: 10,
+  },
+  round: {
+    borderRadius: 100,
+  },
+  voteNumber: {
+    color: Colors.black,
+    fontSize: 20,
+    textAlign: 'center',
   },
 })
