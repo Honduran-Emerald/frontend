@@ -34,8 +34,8 @@ export default function QuestDetailScreen({ route }: any) {
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [quest, setQuest] = React.useState(route.params.quest);
+  const [isDraft, setIsDraft] = React.useState(route.params.isDraft ? route.params.isDraft : undefined);
 
-  const isDraft = route.params.isDraft ? route.params.isDraft : undefined
   const isQuestCreator = quest.ownerId === user?.userId;
   const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
   const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0;
@@ -124,6 +124,19 @@ export default function QuestDetailScreen({ route }: any) {
       })
   };
 
+  const handlePublish = () => {
+    createPublishRequest(quest.id)
+      .then(res => {
+        if (res.status === 200) {
+          setIsDraft(false);
+          setQuest({...quest, released: true, outdated: false});
+          Alert.alert('Quest released', 'Your quest was successfully released. Players can now find it using their home screen.')
+        } else {
+          Alert.alert('Release failed', 'Check your quest for completeness.')
+        }
+      })
+  }
+
   const handleDelete = () => {
     createDeleteQuestRequest(quest.id).then(res => {
       if(res.status === 200) {
@@ -174,7 +187,7 @@ export default function QuestDetailScreen({ route }: any) {
           {
             !isAccepted &&
             <View style={styles.button}>
-              <Button color={Colors.primary} disabled={isButtonDisabled || !quest.released} title={i18n.t('acceptButton')} onPress={handleAccept}/>
+              <Button color={Colors.primary} disabled={isButtonDisabled || !quest.released || isDraft} title={i18n.t('acceptButton')} onPress={handleAccept}/>
             </View>
           }
           {
@@ -182,7 +195,7 @@ export default function QuestDetailScreen({ route }: any) {
             <View style={styles.button}>
               <Button
                 color={'green'}
-                disabled={isButtonDisabled}
+                disabled={isButtonDisabled || isDraft}
                 title={(quest.tracker && quest.tracker.finished) ? 'Quest finished' : 'Continue Quest'}
                 onPress={() => loadQuestObjectiveScreen(acceptedQuests.find(tracker => tracker.questId === quest.id))}
               />
@@ -205,12 +218,9 @@ export default function QuestDetailScreen({ route }: any) {
                 <View style={styles.creatorButton}>
                   <Button
                     color={Colors.primary}
-                    disabled={isButtonDisabled || (quest.released && !quest.outdated)}
+                    disabled={isButtonDisabled || (quest.released && !quest.outdated) || !isDraft}
                     title={'Release Quest'}
-                    onPress={
-                      () => createPublishRequest(quest.id)
-                        .then(res => res.status === 200 ? Alert.alert('Quest released', 'Your quest was successfully released. Players can now find it using their home screen.') : Alert.alert('Release failed', 'Check your quest for completeness.'))
-                    }
+                    onPress={() => handlePublish()}
                   />
                 </View>
               </View>
