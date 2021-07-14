@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar } from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
-import { Avatar, Modal, Portal, Button as PaperButton, Surface } from 'react-native-paper';
+import { Avatar, Modal, Portal, Surface, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import _ from 'lodash';
 
@@ -163,7 +163,9 @@ export default function QuestDetailScreen({ route }: any) {
           {
             !isAccepted &&
             <View style={styles.button}>
-              <Button color={Colors.primary} disabled={isButtonDisabled || !quest.released} title={i18n.t('acceptButton')} onPress={handleAccept}/>
+              <Button color={Colors.primary} disabled={isButtonDisabled || !quest.released} onPress={handleAccept} mode={'contained'}>
+                {i18n.t('acceptButton')}
+              </Button>
             </View>
           }
           {
@@ -172,9 +174,11 @@ export default function QuestDetailScreen({ route }: any) {
               <Button
                 color={'green'}
                 disabled={isButtonDisabled}
-                title={(quest.tracker && quest.tracker.finished) ? 'Quest finished' : 'Continue Quest'}
                 onPress={() => loadQuestObjectiveScreen(acceptedQuests.find(tracker => tracker.questId === quest.id))}
-              />
+                mode={'contained'}
+              >
+                {(quest.tracker && quest.tracker.finished) ? 'Finished' : 'Continue'}
+              </Button>
             </View>
           }
           {
@@ -185,27 +189,33 @@ export default function QuestDetailScreen({ route }: any) {
                   <Button
                     color={Colors.primary}
                     disabled={isButtonDisabled}
-                    title={i18n.t('editButton')}
                     onPress={() => navigation.navigate('QuestEditorScreen', {
                       questId: quest.id
                     })}
-                  />
+                    mode={'contained'}
+                  >
+                    {i18n.t('editButton')}
+                  </Button>
                 </View>
                 <View style={styles.creatorButton}>
                   <Button
                     color={Colors.primary}
                     disabled={isButtonDisabled || (quest.released && !quest.outdated)}
-                    title={'Publish Quest'}
                     onPress={
                       () => createPublishRequest(quest.id)
                         .then(res => res.status === 200 ? alert('Quest published') : alert('Server Error'))
                     }
-                  />
+                    mode={'contained'}
+                  >
+                    {'Publish'}
+                  </Button>
                 </View>
               </View>
               <View style={styles.creatorButtons}>
                 <View style={styles.creatorButton}>
-                  <Button color={Colors.error} disabled={isButtonDisabled} title={i18n.t('deleteButton')} onPress={showModal}/>
+                  <Button color={Colors.error} disabled={isButtonDisabled} onPress={showModal} mode={'contained'}>
+                    {i18n.t('deleteButton')}
+                  </Button>
                 </View>
               </View>
             </View>
@@ -267,11 +277,11 @@ export default function QuestDetailScreen({ route }: any) {
           </Text>
           <View style={styles.modalButtons}>
             <View style={styles.modalButton}>
-              <PaperButton color={Colors.error} compact mode={'contained'} onPress={() => handleDelete()}>{i18n.t('deleteButton')}</PaperButton>
+              <Button color={Colors.error} compact mode={'contained'} onPress={() => handleDelete()}>{i18n.t('modalDeleteButton')}</Button>
             </View>
           </View>
           <View style={styles.modalBackButton}>
-            <PaperButton color={Colors.primary} compact onPress={hideModal}>{i18n.t('modalBackButton')}</PaperButton>
+            <Button color={Colors.primary} compact onPress={hideModal}>{i18n.t('modalBackButton')}</Button>
           </View>
         </Modal>
       </Portal>
@@ -339,7 +349,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   button: {
-    width: '50%',
+    width: '40%',
     marginBottom: 25,
   },
   acceptedText: {
