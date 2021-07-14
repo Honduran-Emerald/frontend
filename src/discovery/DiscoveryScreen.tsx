@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, StatusBar as StatusBar2, RefreshControl } from "react-native";
+import {View, StyleSheet, ScrollView, StatusBar as StatusBar2, RefreshControl, FlatList} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "../styles";
 import { ScrollMenu } from "./ScrollMenu";
@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { setRecentlyVisitedQuest } from "../redux/quests/questsSlice";
+import {QuestPreview} from "./QuestPreview";
 
 export const DiscoveryScreen = () => {
 
@@ -105,24 +106,35 @@ export const DiscoveryScreen = () => {
           theme={{colors: {primary: Colors.primary}}}
         />
       </View>
-      <ScrollView contentContainerStyle={styles.discovery} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
-        {search === '' && (
-          <>
-            <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={nearbyQuests}/>
-            <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={newQuests}/>
-            <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={[...recentlyVisitedQuests].reverse()}/>
-            <ScrollMenu header={"Following"} type={"following"} location={location} quests={followingQuests}/>
-          </>)
-        }
-        {quests && search !== '' && location && (
-          <View style={{alignItems: 'center'}}>
-            {getQuestSearch().map((q, index) => (
-                <WideQuestPreview key={index} quest={q} location={location}/>
-              )
-            )}
-          </View>)
-        }
-      </ScrollView>
+      {
+        search === '' &&
+          <ScrollView contentContainerStyle={styles.discovery} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
+            <>
+              <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={nearbyQuests}/>
+              <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={newQuests}/>
+              <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={[...recentlyVisitedQuests].reverse()}/>
+              <ScrollMenu header={"Following"} type={"following"} location={location} quests={followingQuests}/>
+            </>
+          </ScrollView>
+      }
+      {
+        search !== '' &&
+        <View style={{alignItems: 'center'}}>
+          <FlatList
+            data={getQuestSearch()}
+            renderItem={({item, index}) =>
+              <View style={{marginBottom: 10}}>
+                <QuestPreview key={index} quest={item} location={location}/>
+              </View>
+            }
+            keyExtractor={(quest) => quest.id}
+            numColumns={2}
+            contentContainerStyle={{
+              justifyContent: 'center'
+            }}
+          />
+        </View>
+      }
       <StatusBar style="auto"/>
     </View>
   )
