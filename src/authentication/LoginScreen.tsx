@@ -19,9 +19,8 @@ export default function LoginScreen({ navigation }: any) {
   const dispatch = useAppDispatch();
   const tokenInvalid = useAppSelector((state) => state.authentication.tokenInvalid);
 
-  // TODO remove default mail and pw
-  const [email, setEmail] = React.useState('t3st@test.de');
-  const [password, setPassword] = React.useState('test');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
   const [errorEmail, setErrorEmail] = React.useState(false);
   const [errorPassword, setErrorPassword] = React.useState(false);
   const [errorFetch, setErrorFetch] = React.useState(false);
