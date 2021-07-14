@@ -66,7 +66,6 @@ export default function QuestDetailScreen({ route }: any) {
         .then((res) => {
           if(res.status === 200) {
             res.json().then((data) => setQuest(data[0]))
-            console.log('refreshed quest');
           } else {
             console.log('error while refreshing ' + res.status);
           }
