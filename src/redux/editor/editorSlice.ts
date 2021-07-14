@@ -147,13 +147,19 @@ export const questsSlice = createSlice({
         setFirstModuleReference: (state, action: PayloadAction<number | null>) => {
             if (state.questPrototype) 
                 state.questPrototype.firstModuleReference = action.payload
+        },
+        deleteImageByReference: (state, action: PayloadAction<number | null>) => {
+            state.newImages = state.newImages.filter(im => im.reference!==action.payload);
+            if (state.questPrototype) {
+                state.questPrototype.images = state.questPrototype.images.filter(im => im.reference!==action.payload);
+            }
         }
 
     }
 })
 
 export const { loadQuest, unloadQuest, addOrUpdateQuestModule, deleteQuestModule, setModules, setFirstModuleReference,
-        setQuestTitle, setQuestDescription, setLocationName, setImages, setImageReference, saveChanges,
+        setQuestTitle, setQuestDescription, setLocationName, setImages, setImageReference, saveChanges, deleteImageByReference,
         setEstimatedTime, addOrUpdateMultipleQuestModules, spliceQuestImages, setNewImages, pushNewImages, 
         setNewImagesAt, setNewImageReference, setAgentImageReference, setAgentName, toggleAgentEnabled} = questsSlice.actions
 

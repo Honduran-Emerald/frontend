@@ -1,6 +1,8 @@
 import React from 'react';
 import { Dimensions, View } from 'react-native';
 import { IconButton, TextInput } from 'react-native-paper';
+import { deleteImageByReference } from '../../redux/editor/editorSlice';
+import { useAppDispatch } from '../../redux/hooks';
 import { Colors } from '../../styles';
 import { PrototypeComponent } from '../../types/prototypes';
 import { ImageReferencePicker } from './ImageReferencePicker';
@@ -72,6 +74,9 @@ interface ComponentOptionProps extends ComponentCreatorProps {
 }
 
 const ComponentOption: React.FC<ComponentOptionProps> = ({ component, idx, components, setComponents }) => {
+
+  const dispatch = useAppDispatch();
+
   switch (component.type) {
 
     case 'Text': 
@@ -146,7 +151,10 @@ const ComponentOption: React.FC<ComponentOptionProps> = ({ component, idx, compo
             style={{marginHorizontal: 15}}
             disabled={components.length <= 1}
             color='grey'
-            onPress={() => setComponents(components.filter((_, idx_i) => idx_i !== idx))}
+            onPress={() => {
+              setComponents(components.filter((_, idx_i) => idx_i !== idx));
+              dispatch(deleteImageByReference(component.imageReference))
+            }}
             icon='delete'
             />
         </View>
