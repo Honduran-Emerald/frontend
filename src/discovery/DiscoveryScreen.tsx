@@ -44,13 +44,16 @@ export const DiscoveryScreen = () => {
 
     return Promise.all([
       // Get Location Permission and set initial Location
-      getLocation().catch(() => {}),
+      getLocation().then(async (location) => {
+        await Promise.all([
+          // get nearby quests in range 10km
+          nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10000).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests)),
+          // get new quests in range 10km
+          querynewQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10000).then(res => res.json()).then((quests) => setNewQuests(quests.quests)),
+        ])
+      }).catch(() => {}),
       // set quest arrays
       queryQuestsRequest().then(res => res.json()).then((quests) => setQuests(quests.quests)),
-      // get nearby
-      nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests)),
-      // get checkout
-      // querynewQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10).then(res => res.json()).then((quests) => setNewQuests(quests.quests)),
       // get following
       queryfollowingQuestsRequest(0).then(res => res.json()).then((quests) => setFollowingQuests(quests.quests)),
       // refresh recents
@@ -106,7 +109,7 @@ export const DiscoveryScreen = () => {
         {search === '' && (
           <>
             <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={nearbyQuests}/>
-            <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={quests}/>
+            <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={newQuests}/>
             <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={[...recentlyVisitedQuests].reverse()}/>
             <ScrollMenu header={"Following"} type={"following"} location={location} quests={followingQuests}/>
           </>)

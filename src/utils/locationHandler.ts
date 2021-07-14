@@ -28,7 +28,10 @@ export async function getLocation() {
         }
         let newLocation = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High});
         store.dispatch(setLocation(newLocation));
+        return newLocation
     }
+
+    return location
 
 }
 
