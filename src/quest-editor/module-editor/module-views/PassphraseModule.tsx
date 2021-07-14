@@ -65,7 +65,7 @@ export const PassphraseModule: React.FC<ICreateModule<PrototypePassphraseModule>
             <Divider/>
             <Subheading 
                 style={{margin: 10, marginTop: 20}}>
-                {/* i18n.t('addStoryText') */ 'Choose a passphrase. The user needs to enter this exact passphrase to continue. Make sure they can figure it out.'}
+                {/* i18n.t('addStoryText') */ 'Choose a passphrase. The user needs to enter this exact case-sensitive passphrase to continue. Make sure they can figure it out.'}
             </Subheading>
 
             <TextInput
