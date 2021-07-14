@@ -21,8 +21,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/Dark_FG.png",
-        "backgroundImage": "./assets/Dark_BG.png"
+        "foregroundImage": "./assets/Bright_FG.png",
+        "backgroundImage": "./assets/Bright_BG.png"
       },
       "config": {
         "googleMaps": {
