@@ -34,8 +34,8 @@ export default function QuestDetailScreen({ route }: any) {
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [quest, setQuest] = React.useState(route.params.quest);
+  const [isDraft, setIsDraft] = React.useState(route.params.isDraft ? route.params.isDraft : undefined);
 
-  const isDraft = route.params.isDraft ? route.params.isDraft : undefined
   const isQuestCreator = quest.ownerId === user?.userId;
   const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
   const finishRate: number = quest.plays ? ((quest.finishes / quest.plays) * 100) : 0;
@@ -209,7 +209,14 @@ export default function QuestDetailScreen({ route }: any) {
                     title={'Publish Quest'}
                     onPress={
                       () => createPublishRequest(quest.id)
-                        .then(res => res.status === 200 ? alert('Quest published') : alert('Server Error'))
+                        .then(res => {
+                          if (res.status === 200) {
+                            setIsDraft(false);
+                            setQuest({...quest, released: true, outdated: false});
+                          } else {
+                            alert('Server Error ' + res.status);
+                          }
+                        })
                     }
                   />
                 </View>
