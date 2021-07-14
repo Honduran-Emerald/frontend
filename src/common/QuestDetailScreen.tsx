@@ -124,6 +124,19 @@ export default function QuestDetailScreen({ route }: any) {
       })
   };
 
+  const handlePublish = () => {
+    createPublishRequest(quest.id)
+      .then(res => {
+        if (res.status === 200) {
+          setIsDraft(false);
+          setQuest({...quest, released: true, outdated: false});
+          Alert.alert('Quest released', 'Your quest was successfully released. Players can now find it using their home screen.')
+        } else {
+          Alert.alert('Release failed', 'Check your quest for completeness.')
+        }
+      })
+  }
+
   const handleDelete = () => {
     createDeleteQuestRequest(quest.id).then(res => {
       if(res.status === 200) {
@@ -207,18 +220,7 @@ export default function QuestDetailScreen({ route }: any) {
                     color={Colors.primary}
                     disabled={isButtonDisabled || (quest.released && !quest.outdated) || !isDraft}
                     title={'Release Quest'}
-                    onPress={
-                      () => createPublishRequest(quest.id)
-                        .then(res => {
-                          if (res.status === 200) {
-                            setIsDraft(false);
-                            setQuest({...quest, released: true, outdated: false});
-                            alert('Quest released', 'Your quest was successfully released. Players can now find it using their home screen.')
-                          } else {
-                            alert('Release failed', 'Check your quest for completeness.')
-                          }
-                        })
-                    }
+                    onPress={() => handlePublish()}
                   />
                 </View>
               </View>
