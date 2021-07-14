@@ -33,10 +33,10 @@ export const ProfileScreen = () => {
 
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [foreignUser, setForeignUser] = useState<User | undefined>();
-  const [publishedQuests, setPublishedQuests] = useState<GameplayQuestHeader[]>([]);
-  const [completedQuests, setCompletedQuests] = useState<GameplayQuestHeader[]>([]);
-  const [draftQuests, setDraftQuests] = useState<GameplayQuestHeader[]>([]);
-  const [upvotedQuests, setUpvotedQuests] = useState<GameplayQuestHeader[]>([]);
+  const [publishedQuests, setPublishedQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
+  const [completedQuests, setCompletedQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
+  const [draftQuests, setDraftQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
+  const [upvotedQuests, setUpvotedQuests] = useState<GameplayQuestHeader[] | undefined>(undefined);
 
   const currentUserId = route.params?.userId || authenticatedUser!.userId
   const isOwnProfile = route.params?.userId == null || route.params.userId === authenticatedUser!.userId
@@ -116,11 +116,11 @@ export const ProfileScreen = () => {
         }
         {(
           <>
-            <ScrollMenu header={`Released Quests (${publishedQuests.length})`} type={"published"} location={location} quests={publishedQuests}/>
-            <ScrollMenu header={`Completed Quests (${completedQuests.length})`} type={"completed"} location={location} quests={completedQuests}/>
+            <ScrollMenu header={`Released Quests ${publishedQuests? '(' + publishedQuests?.length + ')' : ''}`} type={"published"} location={location} quests={publishedQuests}/>
+            <ScrollMenu header={`Completed Quests ${completedQuests? '(' + completedQuests?.length + ')' : ''}`} type={"completed"} location={location} quests={completedQuests}/>
             {isOwnProfile &&
-            <ScrollMenu header={`Drafts (${draftQuests.length})`} type={"drafts"} location={location} quests={draftQuests} addQuest isDraft={true}/>}
-            <ScrollMenu header={`Upvoted Quests (${upvotedQuests.length})`} type={"upvoted"} location={location} quests={upvotedQuests}/>
+            <ScrollMenu header={`Drafts ${draftQuests? '(' + draftQuests?.length + ')' : ''}`} type={"drafts"} location={location} quests={draftQuests} addQuest isDraft={true}/>}
+            <ScrollMenu header={`Upvoted Quests ${upvotedQuests? '(' + upvotedQuests?.length + ')' : ''}`} type={"upvoted"} location={location} quests={upvotedQuests}/>
           </>)
         }
       </ScrollView>

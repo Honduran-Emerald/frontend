@@ -19,7 +19,7 @@ import { getLocation } from "../utils/locationHandler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
-import { setRecentlyVisitedQuest } from "../redux/quests/questsSlice";
+import {setLocalQuests, setRecentlyVisitedQuest } from "../redux/quests/questsSlice";
 import {QuestPreview} from "./QuestPreview";
 
 export const DiscoveryScreen = () => {
@@ -47,10 +47,16 @@ export const DiscoveryScreen = () => {
       // Get Location Permission and set initial Location
       getLocation().then(async (location) => {
         await Promise.all([
-          // get nearby quests in range 10km
-          nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10000).then(res => res.json()).then((quests) => setNearbyQuests(quests.quests)),
-          // get new quests in range 10km
-          querynewQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 10000).then(res => res.json()).then((quests) => setNewQuests(quests.quests)),
+          // get nearby quests in range 20km for discovery
+          nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 20000)
+            .then(res => res.json())
+            .then((quests) => setNearbyQuests(quests.quests)),
+          // get nearby quests in range 50km for map
+          nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 50000)
+            .then(res => res.json())
+            .then((quests) => dispatch(setLocalQuests(quests.quests))),
+          // get new quests in range 20km
+          querynewQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 20000).then(res => res.json()).then((quests) => setNewQuests(quests.quests)),
         ])
       }).catch(() => {}),
       // set quest arrays

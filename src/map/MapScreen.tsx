@@ -36,14 +36,6 @@ export const MapScreen = () => {
 
   const navigation = useNavigation();
 
-  // TEMP, REMOVE LATER
-  useEffect(() => {
-    queryQuestsRequest()
-      .then(res => res.json())
-      .then(res => dispatch(setLocalQuests(res.quests)))
-      .catch(err => setErrorMsg(err.message))
-  }, [])
-
   // Get Location Permission and set initial Location
   useFocusEffect(
     useCallback(() => {
