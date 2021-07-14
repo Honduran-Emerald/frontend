@@ -107,9 +107,9 @@ export const ProfileScreen = () => {
             <MaterialCommunityIcons name="cog" size={30} color='#1D79AC' />
           </TouchableOpacity>
         }
-        {currentUser && 
-          <ProfileTop 
-            ownProfile={isOwnProfile} 
+        {currentUser &&
+          <ProfileTop
+            ownProfile={isOwnProfile}
             profileData={currentUser}
             refresh={fetchUserData}
           />
@@ -119,7 +119,7 @@ export const ProfileScreen = () => {
             <ScrollMenu header={`Released Quests (${publishedQuests.length})`} type={"published"} location={location} quests={publishedQuests}/>
             <ScrollMenu header={`Completed Quests (${completedQuests.length})`} type={"completed"} location={location} quests={completedQuests}/>
             {isOwnProfile &&
-            <ScrollMenu header={`Drafts (${draftQuests.length})`} type={"drafts"} location={location} quests={draftQuests} addQuest/>}
+            <ScrollMenu header={`Drafts (${draftQuests.length})`} type={"drafts"} location={location} quests={draftQuests} addQuest isDraft={true}/>}
             <ScrollMenu header={`Upvoted Quests (${upvotedQuests.length})`} type={"upvoted"} location={location} quests={upvotedQuests}/>
           </>)
         }
