@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar, Alert } from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
 import { Avatar, Modal, Portal, Surface, Button } from 'react-native-paper';
@@ -197,7 +197,6 @@ export default function QuestDetailScreen({ route }: any) {
               <Button
                 color={'green'}
                 disabled={isButtonDisabled || isDraft}
-                title={(quest.tracker && quest.tracker.finished) ? 'Quest finished' : 'Continue Quest'}
                 onPress={() => loadQuestObjectiveScreen(acceptedQuests.find(tracker => tracker.questId === quest.id))}
                 mode={'contained'}
               >

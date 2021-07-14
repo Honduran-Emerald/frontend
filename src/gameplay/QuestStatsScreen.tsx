@@ -179,7 +179,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         </View>
       </View>
 
-      <View style={{width: Dimensions.get('screen').width * 0.9, margin: 20, marginBottom: 25}}>
+      <View style={{width: Dimensions.get('screen').width * 0.9, margin: 20, marginBottom: 25, overflow: "hidden", borderRadius: 20}}>
         <TouchableHighlight onPress={() => changeDescription()} activeOpacity={0.8} underlayColor="#DDDDDD" >
           <Surface style={styles.block}>
             <Text style={styles.description} ellipsizeMode={'tail'} numberOfLines={(extended? undefined : 10)}>
