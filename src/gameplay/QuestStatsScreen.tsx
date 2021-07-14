@@ -1,5 +1,14 @@
 import React, {useCallback} from 'react';
-import {Dimensions, FlatList, Image, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text, TouchableHighlight,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { Colors } from '../styles';
 import { GameplayQuestHeader, QuestTracker } from '../types/quest';
 import {
@@ -44,16 +53,22 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
   const [hasVoted, setHasVoted] = React.useState(currentTracker?.vote);
   const [inputDisabled, setInputDisabled] = React.useState(false);
 
-  const [modalVisible, setModalVisible] = React.useState(false);
+  // modal hooks
+  const [modalVisible, setModalVisible] = React.useState(false); //abandon
   const [resetModal, setResetModal] = React.useState(false);
   const [voteModal, setVoteModal] = React.useState(false);
 
+  const [extended, setExtended] = React.useState(false);
+
+  // modals
   const showModal = () => setModalVisible(true);
   const hideModal = () => setModalVisible(false);
   const showResetModal = () => setResetModal(true);
   const hideResetModal = () => setResetModal(false);
   const showVoteModal = () => setVoteModal(true);
   const hideVoteModal = () => setVoteModal(false);
+
+  const changeDescription = () => setExtended(!extended);
 
   const resetQuest = () => {
     playResetRequest(trackerId).then((res) => {
@@ -129,7 +144,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
   }, [])
 
   return (
-    <View style={[styles.stats, {height: Dimensions.get("window").height - 140, flexGrow: 1, alignItems: 'center'}]}>
+    <View style={[styles.stats, {minHeight: Dimensions.get("window").height - 140, flexGrow: 1, alignItems: 'center'}]}>
 
       <View>
         <View>
@@ -159,12 +174,15 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         </View>
       </View>
 
-
-      <Surface style={styles.block}>
-        <Text style={styles.description} ellipsizeMode={'tail'} numberOfLines={10}>
-          {quest?.description}
-        </Text>
-      </Surface>
+      <View style={{width: Dimensions.get('screen').width * 0.9, margin: 20, marginBottom: 25}}>
+        <TouchableHighlight onPress={() => changeDescription()} activeOpacity={0.8} underlayColor="#DDDDDD" >
+          <Surface style={styles.block}>
+            <Text style={styles.description} ellipsizeMode={'tail'} numberOfLines={(extended? undefined : 10)}>
+              {quest?.description}
+            </Text>
+          </Surface>
+        </TouchableHighlight>
+      </View>
 
       <View style={{flexDirection: "row"}}>
         <View>
@@ -301,15 +319,12 @@ const styles = StyleSheet.create({
     maxWidth: '45%',
   },
   block: {
-    margin: 20,
-    width: Dimensions.get('screen').width * 0.9,
     padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 5,
     borderWidth: 1,
     borderRadius: 20,
-    marginBottom: 25,
   },
   description: {
     textAlign: 'left',
