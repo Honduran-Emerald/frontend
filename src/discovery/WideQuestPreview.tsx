@@ -29,7 +29,7 @@ export const WideQuestPreview: React.FC<QuestPreviewProps> = ( props ) => {
         }
         {
           !props.quest.imageId &&
-          <Card.Cover style={styles.pic} source={require('../../assets/background.jpg')}/>
+          <Card.Cover style={styles.pic} source={require('../../assets/Logo_Full_Black.png')}/>
         }
         <Card.Content>
           <Title style={styles.title} numberOfLines={2}>{props.quest.title}</Title>

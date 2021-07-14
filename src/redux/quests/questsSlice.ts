@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { primaryLight } from '../../styles/colors';
 import { QueriedQuest, QuestHeader, QuestPath, QuestTracker, QuestTrackerNode, Vote } from '../../types/quest';
 
 interface QuestsState {
@@ -8,6 +9,7 @@ interface QuestsState {
     pinnedQuestPath: QuestPath | undefined,
     trackerWithUpdates: string[],
     recentlyVisitedQuests: QueriedQuest[],
+    liveUpdate: boolean,
 }
 
 const initialState: QuestsState = {
@@ -17,6 +19,7 @@ const initialState: QuestsState = {
     pinnedQuestPath: undefined,
     trackerWithUpdates: [],
     recentlyVisitedQuests: [],
+    liveUpdate: false,
 }
 
 export const questsSlice = createSlice({
@@ -132,6 +135,9 @@ export const questsSlice = createSlice({
         removeRecentlyVisitedQuest: (state, action: PayloadAction<string>) => {
             state.recentlyVisitedQuests = state.recentlyVisitedQuests.filter(quest => quest.id !== action.payload);
         },
+        setLiveUpdate: (state, action: PayloadAction<boolean>) => {
+            state.liveUpdate = action.payload
+        }
     }
 })
 
@@ -155,6 +161,7 @@ export const {
     addRecentlyVisitedQuest,
     refreshRecentlyVisitedQuest,
     removeRecentlyVisitedQuest,
+    setLiveUpdate,
 } = questsSlice.actions
 
 export default questsSlice.reducer

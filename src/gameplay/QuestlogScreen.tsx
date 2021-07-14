@@ -155,7 +155,7 @@ export default function QuestlogScreen() {
             />
           </View>
           <List.Accordion
-            title={i18n.t('activeTitle')}
+            title={i18n.t('activeTitle') + ` (${activeQuests.length})`}
             description={i18n.t('activeDescription')}
             expanded={activeExpanded}
             onPress={handleActiveExpanded}
@@ -194,7 +194,7 @@ export default function QuestlogScreen() {
             }
           </List.Accordion>
           <List.Accordion
-            title={i18n.t('completedTitle')}
+            title={i18n.t('completedTitle') + ` (${oldQuests.length})`}
             expanded={oldExpanded}
             onPress={handleOldExpanded}
             theme={{colors: {primary: Colors.primary}}}

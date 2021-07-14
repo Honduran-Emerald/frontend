@@ -33,9 +33,16 @@ export const authenticationSlice = createSlice({
             state.token = undefined
             state.user = undefined
         },
+        addExperience: (state, action: PayloadAction<number>) => {
+            console.log('Current xp', state.user?.experience, ' | Increasing to', `${state.user?.experience} + ${action.payload} = ${(state.user?.experience || 0) + action.payload}`)
+            if (state.user) {
+                state.user.experience += action.payload
+                state.user.level = Math.floor(Math.sqrt((state.user.experience + 22562.5) / 250.0) - 8.5)
+            }
+        }
     }
 })
 
-export const { setToken, setUser, unsetToken, logout} = authenticationSlice.actions
+export const { setToken, setUser, unsetToken, logout, addExperience} = authenticationSlice.actions
 
 export default authenticationSlice.reducer

@@ -1,13 +1,17 @@
 import React from 'react'
-import { GestureResponderEvent, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import { ActivityIndicator, GestureResponderEvent, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { Colors } from '../styles';
 
-export const ButtonOutline = ({label, onPress} : {label: string, onPress: ((event: GestureResponderEvent) => void)}) => (
+export const ButtonOutline = ({label, onPress, loading} : {label: string, onPress: ((event: GestureResponderEvent) => void), loading?: boolean}) => (
   <TouchableNativeFeedback style={{elevation: 2}} onPress={onPress}>
     <View style={styleButton.outline}>
-      <Text style={styleButton.textOutline}>
-        {label}
-      </Text>
+      {
+        loading ? 
+          <ActivityIndicator size={24} color={Colors.primary} animating/> : 
+          <Text style={styleButton.textOutline}>
+            {label}
+          </Text>
+      }
     </View>
   </TouchableNativeFeedback>
 );

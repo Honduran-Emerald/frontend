@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, ScrollView, Dimensions, TouchableNativeFeedback, StatusBar, Alert } from 'react-native';
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
 import { Avatar, Modal, Portal, Button as PaperButton, Surface } from 'react-native-paper';
@@ -154,7 +154,7 @@ export default function QuestDetailScreen({ route }: any) {
           }
           {
             !quest.imageId &&
-            <Image style={styles.image} source={require('../../assets/background.jpg')}/>
+            <Image style={styles.image} source={require('../../assets/Logo_Full_Black.png')}/>
           }
           <View style={styles.info}>
             <Entypo name='location-pin' size={24} color='black'/>
@@ -206,15 +206,16 @@ export default function QuestDetailScreen({ route }: any) {
                   <Button
                     color={Colors.primary}
                     disabled={isButtonDisabled || (quest.released && !quest.outdated) || !isDraft}
-                    title={'Publish Quest'}
+                    title={'Release Quest'}
                     onPress={
                       () => createPublishRequest(quest.id)
                         .then(res => {
                           if (res.status === 200) {
                             setIsDraft(false);
                             setQuest({...quest, released: true, outdated: false});
+                            alert('Quest released', 'Your quest was successfully released. Players can now find it using their home screen.')
                           } else {
-                            alert('Server Error ' + res.status);
+                            alert('Release failed', 'Check your quest for completeness.')
                           }
                         })
                     }

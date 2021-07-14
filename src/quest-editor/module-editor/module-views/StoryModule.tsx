@@ -55,6 +55,10 @@ export const StoryModule: React.FC<ICreateModule<PrototypeStoryModule>> = ({ set
 
     return (
         <View style={{marginHorizontal: 10}}>
+            <Subheading 
+                style={{margin: 10, marginTop: 20}}>
+                {/* i18n.t('addStoryText') */ 'Set module Objective'}
+            </Subheading>
             <TextInput
                 dense
                 style={{marginVertical: 20}}
@@ -63,10 +67,6 @@ export const StoryModule: React.FC<ICreateModule<PrototypeStoryModule>> = ({ set
                 onChangeText={(data) => setModuleData({...moduleData, objective: data})}
                 theme={{colors: {primary: Colors.primary}}} />
             <Divider/>
-            <Subheading 
-                style={{margin: 10, marginTop: 20}}>
-                {/* i18n.t('addStoryText') */ 'Add messages to be sent to the user'}
-            </Subheading>
             <Button 
                 theme={{colors: {primary: primary}}}
                 mode='contained'

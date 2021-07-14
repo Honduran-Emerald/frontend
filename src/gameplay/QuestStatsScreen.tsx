@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import { Colors } from '../styles';
-import { GameplayQuestHeader } from '../types/quest';
+import { GameplayQuestHeader, QuestTracker } from '../types/quest';
 import { playResetRequest, queryTrackerNodesRequest } from '../utils/requestHandler';
 import { useNavigation } from '@react-navigation/native';
 import { BACKENDIP } from '../../GLOBALCONFIG';
@@ -10,15 +10,17 @@ import { Button, FAB, Surface } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { loadPinnedQuestPath, pinQuest, updateAcceptedQuest } from '../redux/quests/questsSlice';
 import { addGeofencingRegion, SingleGeoFenceLocationRadius } from '../utils/TaskManager';
+import { addExperience } from '../redux/authentication/authenticationSlice';
 
 interface QuestStateScreenProps {
   height: number,
   quest: GameplayQuestHeader | undefined,
   flatListRef: React.RefObject<FlatList<any>>,
-  trackerId: string
+  trackerId: string,
+  currentTracker: QuestTracker | undefined,
 }
 
-export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, quest, flatListRef, trackerId }) => {
+export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, quest, flatListRef, trackerId, currentTracker }) => {
 
   const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
 
@@ -26,8 +28,12 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
   const dispatch = useAppDispatch();
 
   const resetQuest = () => {
+    const currentTrackerXp = currentTracker?.experienceCollected
     playResetRequest(trackerId).then((res) => {
       if(res.status === 200) {
+        if (currentTrackerXp) {
+          dispatch(addExperience(-currentTrackerXp))
+        }
         queryTrackerNodesRequest(trackerId)
           .then((res) => res.json()
             .then((data) => {
@@ -75,7 +81,7 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         }
         {
           !quest?.imageId &&
-          <Image style={styles.image} source={require('../../assets/background.jpg')}/>
+          <Image style={styles.image} source={require('../../assets/Logo_Full_Black.png')}/>
         }
       </View>
 

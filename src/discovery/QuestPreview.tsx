@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { getImageAddress } from '../utils/imageHandler';
 import { Colors } from '../styles';
 import Svg, { Path } from 'react-native-svg';
+import { useAppSelector } from '../redux/hooks';
 
 export interface QuestPreviewProps {
   quest: GameplayQuestHeader
@@ -19,6 +20,7 @@ export interface QuestPreviewProps {
 export const QuestPreview: React.FC<QuestPreviewProps> = ({ quest, location, isDraft }) => {
 
     const [distance, setDistance] = useState('');
+    const acceptedQuests = useAppSelector(state => state.quests.acceptedQuests)
 
     useEffect(() => {
         location && quest.location &&
@@ -54,8 +56,13 @@ export const QuestPreview: React.FC<QuestPreviewProps> = ({ quest, location, isD
 
     return(
         <Card style={styles.quest} onPress={() => navigation.navigate('QuestDetail', {quest: quest, isDraft: isDraft})}>
-            <Card.Cover style={styles.pic} source={quest.imageId != null ? {uri: getImageAddress(quest.imageId, '')} : require('../../assets/background.jpg')} resizeMode='stretch' />
-            <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={quest.title} />
+            <Card.Cover style={styles.pic} source={quest.imageId ? {uri: getImageAddress(quest.imageId, quest.title)} : require('../../assets/Logo_Full_Black.png')} resizeMode='cover' />
+            <Card.Title style={styles.content} titleStyle={styles.title} titleNumberOfLines={2} title={
+            <>
+            {quest.title} {
+                acceptedQuests.find(q => q.questId===quest.id) && <MaterialCommunityIcons name='check' color={Colors.primary} style={{paddingRight: 5}}/>
+            }
+            </>} />
 
             <View style={{
                     flexDirection: 'row',

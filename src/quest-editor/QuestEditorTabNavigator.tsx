@@ -48,7 +48,7 @@ export const QuestEditorTabNavigator = () => {
         <Dialog visible={showDialog!==undefined} onDismiss={() => setShowDialog(undefined)}>
           <Dialog.Title>Leave Quest Editor?</Dialog.Title>
           <Dialog.Content>
-            <Paragraph>Everything not saved will be lost</Paragraph>
+            <Paragraph>Everything not saved will be lost.</Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
             <Button color={Colors.primary} onPress={() => setShowDialog(undefined)}>Stay</Button>

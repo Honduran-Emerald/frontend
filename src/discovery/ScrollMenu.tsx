@@ -21,7 +21,7 @@ export default interface ScrollMenuProps {
 
 export const ScrollMenu: React.FC<ScrollMenuProps> = ({ header, quests, location, addQuest, type, isDraft}) => {
 
-    const [loadingArray, ] = useState(new Array(2+Math.floor(Math.random()*3)));
+    const [loadingArray, ] = useState(new Array(4));
     const user = useAppSelector(state => state.authentication.user)
 
     return (
