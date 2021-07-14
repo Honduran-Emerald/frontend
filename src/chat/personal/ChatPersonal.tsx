@@ -29,7 +29,8 @@ export const ChatPersonal: React.FC = () => {
     useEffect(() => {
         if (user) {
             const unsubscribe = navigation.addListener('beforeRemove', () => {
-                dispatch(setRead(route.params.userTargetId))
+                dispatch(setRead(route.params.userTargetId));
+                chatGetRequest(route.params.userTargetId, 0) // Reset read value
             })
             return unsubscribe
         }
