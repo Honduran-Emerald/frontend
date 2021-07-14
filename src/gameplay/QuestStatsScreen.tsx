@@ -208,7 +208,10 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
 
 
       <Portal>
-        <Modal visible={modalVisible || resetModal || voteModal} dismissable onDismiss={resetModal ? hideResetModal : (voteModal ? hideVoteModal : hideModal)} contentContainerStyle={styles.modal}>
+        <Modal visible={modalVisible || resetModal || voteModal} dismissable
+               onDismiss={resetModal ? hideResetModal : (voteModal ? hideVoteModal : hideModal)}
+               contentContainerStyle={styles.modal}
+        >
           <Text style={styles.modalTitle}>
             {resetModal ? 'Restart this quest?' : (voteModal ? 'Vote for this quest' : 'Abandon this quest?')}
           </Text>
@@ -315,9 +318,6 @@ const styles = StyleSheet.create({
     marginRight: 5,
     marginTop: -5,
   },
-  goUp: {
-
-  },
   downView: {
     position: "absolute",
     bottom: 30,
@@ -334,6 +334,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     padding: 20,
     margin: 20,
+    borderRadius: 10,
   },
   modalTitle: {
     fontSize: 20,

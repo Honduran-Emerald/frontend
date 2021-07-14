@@ -395,11 +395,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     padding: 20,
     margin: 20,
+    borderRadius: 10,
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: 20,
     textAlign: 'center',
     marginBottom: 15,
+    fontWeight: "bold",
   },
   modalText: {
     fontSize: 16,
