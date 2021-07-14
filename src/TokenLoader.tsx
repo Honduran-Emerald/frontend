@@ -15,6 +15,8 @@ import { loadChatPreview } from './redux/chat/chatSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { LocalUpdatedTrackerIds, registerGeofencingTask } from './utils/TaskManager';
 import { getData } from './utils/AsyncStore';
+import { RequestPermissionScreen } from './permissions/RequestPermissionScreen'
+
 
 
 i18n.fallbacks = true;
@@ -24,6 +26,7 @@ export const TokenLoader = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [checkingToken, setCheckingToken] = React.useState<boolean>(true);
   const [tokenAccepted, setTokenAccepted] = useState<boolean>(false);
+  const [permissionsGranted, setPermissionsGranted] = useState<boolean>(false);
 
   const navigationRef = React.useRef(null);
 
@@ -155,6 +158,12 @@ export const TokenLoader = () => {
       .then(() => setIsLoading(false))
       .then(() => setTokenAccepted(true))
   }, [checkingToken, isLoading])
+
+
+  if(!permissionsGranted)
+    return (
+      <RequestPermissionScreen setPermissionsGranted={setPermissionsGranted}/>
+    )
 
   return (
 
