@@ -198,3 +198,6 @@ export const getUserFriends = () => (request('/user/friends/'))
 
 // /user/query/
 export const queryUsersRequest = (offset: number = 0, searchString?: string) => (request(`/user/query?offset=${offset}` + (searchString != null ? `&search=${searchString}` : '')))
+
+// /user/setusername
+export const setUsernameRequest = (username: string) => (request('/user/setusername', 'POST', username))
