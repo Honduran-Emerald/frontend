@@ -182,7 +182,6 @@ export const GameplayScreen : React.FC = () => {
       .then(res => res.json())
       .then(res => res.responseEventCollection)
       .then(res => {
-        console.log(JSON.stringify(currentTracker))
         res.responseEvents.forEach(
           (responseEvent: any) => {
             switch (responseEvent.type) {
