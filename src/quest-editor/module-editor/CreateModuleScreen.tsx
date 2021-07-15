@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Dimensions, View } from "react-native";
+import { Dimensions, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { StoryModule } from "./module-views/StoryModule";
 import { EndingModule } from "./module-views/EndingModule";
@@ -99,7 +99,7 @@ export const CreateModuleScreen = () => {
 
   const scrollToPreview = useCallback(() => {
     swiper.current?.scrollTo({
-      x: 3 * displayWidth,
+      x: 2 * displayWidth,
     })}, [swiper])
 
   const moduleMap: { [moduleName: string]: JSX.Element } = {
@@ -138,24 +138,27 @@ export const CreateModuleScreen = () => {
         showsHorizontalScrollIndicator
         ref={swiper}
       >
+
         <ModuleTypeChoice
           chosenModuleType={chosenModuleType}
           modules={modules}
           setChosenModuleType={(moduleType) => {setChosenModuleType(moduleType); setModuleTypeUpdate(x => !x)}}
           swiper={swiper}
         />
+
+        {chosenModuleType in moduleMap ? (
+          <ScrollView style={{ width: displayWidth, margin: 0, padding: 0 }}>
+            {moduleMap[chosenModuleType]}
+          </ScrollView>
+        ) : <View style={{width: displayWidth}}>{/* <Text style={{textAlign: 'center'}}>Choose a module to advance.</Text> */}</View>}
+
         {chosenModuleType !== '' && 
           <ComponentCreateScreen 
             components={components}
             setComponents={setComponents}
-            onConfirm={() => swiper.current?.scrollTo({x: 2*displayWidth})}
-
+            onConfirm={() => swiper.current?.scrollTo({x: 3*displayWidth})}
           />}
-        {chosenModuleType in moduleMap && (
-          <ScrollView style={{ width: displayWidth, margin: 0, padding: 0 }}>
-            {moduleMap[chosenModuleType]}
-          </ScrollView>
-        )}
+        
         {combinedModule && (
           <View style={{width: displayWidth}}>
           <PreviewModuleScreen

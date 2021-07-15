@@ -43,7 +43,7 @@ export const EditModuleScreen = () => {
 
   const scrollToPreview = useCallback(() => {
     swiper.current?.scrollTo({
-      x: 2 * displayWidth,
+      x: displayWidth,
     })}, [swiper])
 
   const moduleMap: {[moduleName: string]: JSX.Element} = {
@@ -62,14 +62,16 @@ export const EditModuleScreen = () => {
       pagingEnabled
       showsHorizontalScrollIndicator
       ref={swiper} >
-      <ComponentCreateScreen 
-          components={components}
-          setComponents={setComponents}
-          onConfirm={() => swiper.current?.scrollTo({x: displayWidth})}
-        />
       <ScrollView style={{width: displayWidth, margin: 0, padding: 0}}>
         {(route.params.node.moduleObject.type in moduleMap && moduleMap[route.params.node.moduleObject.type])}
       </ScrollView>
+
+      <ComponentCreateScreen 
+          components={components}
+          setComponents={setComponents}
+          onConfirm={() => swiper.current?.scrollTo({x: 2*displayWidth})}
+        />
+      
       {finalModule && <PreviewModuleScreen prototypeModule={{...finalModule, components: components}} saveModule={() => {
         dispatch(addOrUpdateQuestModule({...finalModule, components: components}))
         navigation.navigate('ModuleGraph')
