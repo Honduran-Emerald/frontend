@@ -12,7 +12,8 @@ export default function PinnedQuestCard() {
 
   const navigation = useNavigation();
 
-  const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
+  const pinnedQuestId = useAppSelector((state) => state.quests.pinnedQuest);
+  const pinnedQuest = useAppSelector((state) => state.quests.acceptedQuests.find((tracker) => tracker.trackerId === pinnedQuestId?.trackerId))
   const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
   const hasUpdate = pinnedQuest ? trackerWithUpdates.includes(pinnedQuest.trackerId) : false;
 
