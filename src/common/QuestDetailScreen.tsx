@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, ScrollView, Dimensions, TouchableNativeF
 import i18n from 'i18n-js';
 import { Entypo } from '@expo/vector-icons';
 import { Avatar, Modal, Portal, Surface, Button } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import _ from 'lodash';
 
 import { Colors } from '../styles';
@@ -30,6 +30,7 @@ export default function QuestDetailScreen({ route }: any) {
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -61,7 +62,8 @@ export default function QuestDetailScreen({ route }: any) {
       }
     }
 
-    if(quest.released && !isDraft) {
+    if(quest.released && !isDraft && isFocused) {
+      console.log('refresh')
       queryQuestsWithIds(quest.id)
         .then((res) => {
           if(res.status === 200) {
@@ -72,7 +74,7 @@ export default function QuestDetailScreen({ route }: any) {
         })
         .then(() => updateRecentQuests().then(() => {}))
     }
-  }, [])
+  }, [isFocused])
 
   const loadQuestObjectiveScreen = (tracker: QuestTracker | undefined) => {
     if(tracker) {
@@ -134,6 +136,14 @@ export default function QuestDetailScreen({ route }: any) {
           Alert.alert('Release failed', 'Check your quest for completeness.')
         }
       })
+      .then(() => queryQuestsWithIds(quest.id)
+        .then((res) => {
+          if(res.status === 200) {
+            res.json().then((data) => setQuest(data[0]))
+          } else {
+            console.log('error while refreshing ' + res.status);
+          }
+        }))
   }
 
   const handleDelete = () => {
@@ -206,7 +216,13 @@ export default function QuestDetailScreen({ route }: any) {
           }
           {
             isQuestCreator &&
-            <View>
+            <View style={{width: '100%'}}>
+              {
+                (quest.released && quest.outdated) &&
+                <Text style={{textAlign: 'center', width: '100%', marginBottom: 10, marginTop: -15, }}>
+                  New version available for release!
+                </Text>
+              }
               <View style={styles.creatorButtons}>
                 <View style={styles.creatorButton}>
                   <Button
@@ -223,7 +239,7 @@ export default function QuestDetailScreen({ route }: any) {
                 <View style={styles.creatorButton}>
                   <Button
                     color={Colors.primary}
-                    disabled={isButtonDisabled || (quest.released && !quest.outdated) || !isDraft}
+                    disabled={isButtonDisabled || (quest.released && !quest.outdated)}
                     onPress={() => handlePublish()}
                     mode={'contained'}
                   >
