@@ -161,9 +161,10 @@ export const queryTrackerNodesRequest = (trackerId: string) => (request(`/play/q
 // /play/event/position
 
 // /play/event/choice
-export const playEventChoiceRequest = (trackerId: string, choice: number) => (request('/play/event/choice', 'POST', {
+export const playEventChoiceRequest = (trackerId: string, choice: number, moduleId: string) => (request('/play/event/choice', 'POST', {
   trackerId: trackerId,
-  choice: choice
+  choice: choice,
+  moduleId: moduleId
 }))
 
 // /play/event/...

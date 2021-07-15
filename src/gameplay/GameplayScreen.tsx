@@ -178,10 +178,11 @@ export const GameplayScreen : React.FC = () => {
   }, [])
 
   const handleChoiceEvent = useCallback((choiceId=0) =>
-    playEventChoiceRequest(route.params.trackerId, choiceId)
+    playEventChoiceRequest(route.params.trackerId, choiceId, currentTracker!.trackerNode.module.id)
       .then(res => res.json())
       .then(res => res.responseEventCollection)
       .then(res => {
+        console.log(JSON.stringify(currentTracker))
         res.responseEvents.forEach(
           (responseEvent: any) => {
             switch (responseEvent.type) {
