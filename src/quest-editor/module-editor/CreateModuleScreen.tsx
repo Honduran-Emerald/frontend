@@ -95,7 +95,7 @@ export const CreateModuleScreen = () => {
     }
   }, [finalModule, route.params.moduleId, components])
 
-  const modules = ["Story", "Ending", "Choice", "Location", "Random", "WideArea", "Passphrase", "QrCode"];
+  const modules = ["Story", "Ending", "Choice", "Location", "Random", "Passphrase", "QrCode", "WideArea"];
 
   const scrollToPreview = useCallback(() => {
     swiper.current?.scrollTo({
