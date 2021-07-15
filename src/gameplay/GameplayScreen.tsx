@@ -200,7 +200,7 @@ export const GameplayScreen : React.FC = () => {
           }
         )
       })
-  , [route.params, loadedTrackerNodes])
+  , [route.params, loadedTrackerNodes, currentTracker])
 
   const onPassphrase = useCallback((passphrase) =>
     playEventTextRequest(route.params.trackerId, passphrase)
