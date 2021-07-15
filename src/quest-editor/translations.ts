@@ -40,7 +40,7 @@ export const editorTranslations = {
         'moduleObjectiveLabel': 'Module Objective',
 
         'createModuleBottomSheet': 'Create Module',
-        'createModuleButton': 'Preview Module',
+        'createModuleButton': 'Continue',
 
         'addStoryText': 'Add text the user will read',
         'addChoiceModuleChoices': '',

@@ -37,7 +37,7 @@ export const ComponentCreateScreen: React.FC<IModuleTypeChoice> = ({ components,
         style={{marginBottom: 20}}
         onPress={onConfirm}
         >
-        {'Choose Module goal'}
+        {'Preview Module'}
     </Button>
 
     </View>

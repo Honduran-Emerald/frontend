@@ -103,7 +103,7 @@ export const QuestPreview: React.FC<QuestPreviewProps> = ({ quest, location, isD
                         source={{uri: getImageAddress(quest.ownerImageId, quest.ownerName)}}
                     />
                     <View style={{flexGrow: 1, alignItems: 'center'}}>
-                        <Text style={{fontSize: 10, color: Colors.black}}>
+                        <Text style={{fontSize: 10, color: Colors.black}} numberOfLines={1} ellipsizeMode='tail'>
                             {quest.ownerName}
                         </Text>
                     </View>
