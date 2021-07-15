@@ -54,12 +54,12 @@ export const DiscoveryScreen = () => {
           nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 20000)
             .then(res => res.json())
             .then((quests) => setNearbyQuests(quests.quests)),
-          // get nearby quests in range 50km for map
+          // get nearby quests in range 500km for map
           nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 500000)
             .then(res => res.json())
             .then((quests) => dispatch(setLocalQuests(quests.quests))),
-          // get new quests in range 20km
-          querynewQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 20000).then(res => res.json()).then((quests) => setNewQuests(quests.quests)),
+          // get new quests in range 50km
+          querynewQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 50000).then(res => res.json()).then((quests) => setNewQuests(quests.quests)),
         ])
       }).catch(() => {}),
       // set quest arrays
@@ -116,7 +116,7 @@ export const DiscoveryScreen = () => {
           <ScrollView contentContainerStyle={styles.discovery} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
             <>
               <ScrollMenu header={"Nearby"} type={"nearby"} location={location} quests={nearbyQuests}/>
-              <ScrollMenu header={"Check out!"} type={"checkout"} location={location} quests={newQuests}/>
+              <ScrollMenu header={"New"} type={"checkout"} location={location} quests={newQuests}/>
               <ScrollMenu header={"Recently Visited"} type={"recent"} location={location} quests={[...recentlyVisitedQuests].reverse()}/>
               <ScrollMenu header={"Following"} type={"following"} location={location} quests={followingQuests}/>
             </>
