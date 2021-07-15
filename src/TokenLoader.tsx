@@ -27,7 +27,7 @@ export const TokenLoader = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [checkingToken, setCheckingToken] = React.useState<boolean>(true);
   const [tokenAccepted, setTokenAccepted] = useState<boolean>(false);
-  const [permissionsGranted, setPermissionsGranted] = useState<boolean>(false);
+  const [permissionsGranted, setPermissionsGranted] = useState<boolean>();
 
   const navigationRef = React.useRef(null);
 
@@ -39,8 +39,8 @@ export const TokenLoader = () => {
   useEffect(() => {
     setIsLoading(true);
     (async () => {
-      const foregroundPermission = await Location.requestForegroundPermissionsAsync();
-      const backgroundPermission = await Location.requestBackgroundPermissionsAsync();
+      const foregroundPermission = await Location.getForegroundPermissionsAsync();
+      const backgroundPermission = await Location.getBackgroundPermissionsAsync();
       setPermissionsGranted(foregroundPermission.status === 'granted' && backgroundPermission.status === 'granted');
     })();
     TokenManager.getToken()
@@ -170,7 +170,7 @@ export const TokenLoader = () => {
   }, [checkingToken, isLoading])
 
 
-  if(!permissionsGranted)
+  if(permissionsGranted !== undefined && !permissionsGranted)
     return (
       <RequestPermissionScreen setPermissionsGranted={setPermissionsGranted}/>
     )
