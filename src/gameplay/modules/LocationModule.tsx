@@ -99,7 +99,7 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
         </View>
       }
       <Portal>
-        <Modal visible={modalVisible} dismissable onDismiss={hideModal}>
+        <Modal visible={modalVisible && !locationReached} dismissable onDismiss={hideModal}>
           <View style={styles.modal}>
             <View style={styles.header}>
               <View style={styles.touchContainer}>
