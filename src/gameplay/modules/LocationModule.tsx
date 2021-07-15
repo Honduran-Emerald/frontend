@@ -81,7 +81,7 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
                 </Marker>
                 <Marker coordinate={module.module.location} tracksViewChanges={false}>
                   <View>
-                    <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.primary}/>
+                    <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.purple}/>
                   </View>
                 </Marker>
               </>
@@ -137,7 +137,7 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
                   </Marker>
                   <Marker coordinate={module.module.location} tracksViewChanges={false}>
                     <View>
-                      <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.primary}/>
+                      <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.purple}/>
                     </View>
                   </Marker>
                 </>
