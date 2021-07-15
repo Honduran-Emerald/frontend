@@ -127,7 +127,8 @@ export function addGeofencingRegion(region: LocationRegion) {
 }
 
 export function updateQuest(trackerId: string, choice = 0) {
-  playEventChoiceRequest(trackerId, choice)
+  const moduleId = store.getState().quests.acceptedQuests.find(tracker => tracker.trackerId === trackerId)!.trackerNode.module.id;
+  playEventChoiceRequest(trackerId, choice, moduleId)
     .then(res => res.json())
     .then(res => res.responseEventCollection)
     .then(res => {

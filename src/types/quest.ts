@@ -99,7 +99,7 @@ export interface QuestPath  {
 export type ModuleMememto = any
 
 export interface GameplayModuleBase {
-    id: number,
+    id: string,
     components: GameplayComponent[],
     objective: string,
     type: string,
@@ -141,7 +141,7 @@ export interface GameplayPassphraseModule extends GameplayModuleBase {
 
 export interface GameplayQRModule extends GameplayModuleBase {
     type: 'QrCode',
-} 
+}
 
 export type GameplayModule = GameplayChoiceModule | GameplayEndingModule | GameplayStoryModule | GameplayLocationModule | GameplayRandomModule | GameplayWideAreaModule | GameplayPassphraseModule | GameplayQRModule
 
