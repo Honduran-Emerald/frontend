@@ -51,6 +51,9 @@ export const PreviewModuleScreen: React.FC<IPreviewModuleScreen> = ({ prototypeM
             }))
             } index={0}/>
       </View>
+      <Text style={{textAlign: 'center', color: Colors.primary}} >
+        Swipe to edit module. 
+      </Text>
 
       
     </ScrollView>
