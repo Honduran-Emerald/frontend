@@ -55,7 +55,7 @@ export const DiscoveryScreen = () => {
             .then(res => res.json())
             .then((quests) => setNearbyQuests(quests.quests)),
           // get nearby quests in range 50km for map
-          nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 50000)
+          nearbyQuestsRequest(0, location?.coords.longitude, location?.coords.latitude, 500000)
             .then(res => res.json())
             .then((quests) => dispatch(setLocalQuests(quests.quests))),
           // get new quests in range 20km
