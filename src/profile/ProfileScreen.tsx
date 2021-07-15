@@ -5,6 +5,7 @@ import { ProfileTop } from './ProfileTop';
 import { Colors } from '../styles';
 import { ScrollMenu } from "../discovery/ScrollMenu";
 import { StatusBar } from "expo-status-bar";
+import _ from 'lodash';
 import {
   createQueryRequest,
   getUserRequest,
@@ -43,7 +44,6 @@ export const ProfileScreen = () => {
   const currentUser = isOwnProfile ? authenticatedUser : foreignUser;
   const setCurrentUser = isOwnProfile ? ((user : User) => dispatch(setUser(user))) : setForeignUser;
 
-
   useFocusEffect(
     useCallback(() => {
       fetchUserData();
@@ -60,7 +60,7 @@ export const ProfileScreen = () => {
       // set published
       queryQuestsRequest(0, currentUserId)
       .then(response => response.json())
-      .then(obj => setPublishedQuests(obj.quests)),
+      .then(obj => setPublishedQuests([...obj.quests].reverse())),
       // set drafts
       createQueryRequest(0).then(res => res.json()).then((quests) => {
         if (isOwnProfile) {
@@ -116,7 +116,7 @@ export const ProfileScreen = () => {
         }
         {(
           <>
-            <ScrollMenu header={`Released Quests ${publishedQuests? '(' + publishedQuests?.length + ')' : ''}`} type={"published"} location={location} quests={publishedQuests?.reverse()}/>
+            <ScrollMenu header={`Released Quests ${publishedQuests? '(' + publishedQuests?.length + ')' : ''}`} type={"published"} location={location} quests={publishedQuests}/>
             <ScrollMenu header={`Completed Quests ${completedQuests? '(' + completedQuests?.length + ')' : ''}`} type={"completed"} location={location} quests={completedQuests}/>
             {isOwnProfile &&
             <ScrollMenu header={`Drafts ${draftQuests? '(' + draftQuests?.length + ')' : ''}`} type={"drafts"} location={location} quests={draftQuests} addQuest isDraft={true}/>}

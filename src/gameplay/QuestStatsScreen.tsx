@@ -189,6 +189,13 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         </TouchableHighlight>
       </View>
 
+      {!currentTracker?.newestQuestVersion &&
+        <Text style={{marginTop: -10, marginBottom: 15}}>
+          This quest has a newer version available, restart to upgrade.
+        </Text>
+      }
+
+
       <View style={{flexDirection: "row"}}>
         <View>
           <FAB
