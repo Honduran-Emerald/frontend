@@ -21,6 +21,7 @@ import { GameplayNavigator } from './gameplay/GameplayNavigator';
 import { LocalUpdatedTrackerIds } from './utils/TaskManager';
 import { getLocationSubscription } from "./utils/locationHandler";
 import * as Location from "expo-location";
+import { OwnProfileNavigator } from './profile/OwnProfileNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -100,7 +101,7 @@ export default function MainAppNavigator() {
       <Tab.Screen name="Questlog" component={GameplayNavigator}/>
       <Tab.Screen name="Map" component={MapNavigator}/>
       <Tab.Screen name="Chat" component={ChatNavigator}/>
-      <Tab.Screen name="Profile" component={ProfileNavigator}/>
+      <Tab.Screen name="Profile" component={OwnProfileNavigator}/>
     </Tab.Navigator>
   );
 }

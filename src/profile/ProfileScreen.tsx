@@ -116,7 +116,7 @@ export const ProfileScreen = () => {
         }
         {(
           <>
-            <ScrollMenu header={`Released Quests ${publishedQuests? '(' + publishedQuests?.length + ')' : ''}`} type={"published"} location={location} quests={publishedQuests}/>
+            <ScrollMenu header={`Released Quests ${publishedQuests? '(' + publishedQuests?.length + ')' : ''}`} type={"published"} location={location} quests={publishedQuests?.reverse()}/>
             <ScrollMenu header={`Completed Quests ${completedQuests? '(' + completedQuests?.length + ')' : ''}`} type={"completed"} location={location} quests={completedQuests}/>
             {isOwnProfile &&
             <ScrollMenu header={`Drafts ${draftQuests? '(' + draftQuests?.length + ')' : ''}`} type={"drafts"} location={location} quests={draftQuests} addQuest isDraft={true}/>}
