@@ -6,4 +6,4 @@ export const background = "#FFF";
 export const black = '#000';
 export const lightGray = '#EEEEEE';
 export const gray = '#DCDADA';
-export const purple = '#773FDE'
+export const purple = '#9f39b8'
