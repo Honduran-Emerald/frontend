@@ -15,6 +15,7 @@ import { getData, storeData } from './AsyncStore';
 import { playEventChoiceRequest } from './requestHandler';
 import { addExperience } from '../redux/authentication/authenticationSlice';
 import { setLocation } from '../redux/location/locationSlice';
+import _ from "lodash";
 
 export const GeofencingTask = 'LocationModuleUpdates';
 export const LocationNotifTitle = 'Reached location';
@@ -134,7 +135,6 @@ export function updateQuest(trackerId: string, choice = 0) {
         (responseEvent: any) => {
           switch (responseEvent.type) {
             case 'ModuleFinish':
-              // handled by reloading the path in gameplay screen if there is an update for the quest
               const newTrackerNode = {module: responseEvent.module, memento: null, creationTime: (new Date()).toString()}
               store.dispatch(setTrackerObjectiveAndTrackerNode({
                 trackerId: trackerId,
@@ -152,6 +152,12 @@ export function updateQuest(trackerId: string, choice = 0) {
                   notifyOnExit: false,
                 };
                 addGeofencingRegion(newRegion);
+              }
+              const newQuestPath = _.cloneDeep(store.getState().quests.pinnedQuestPath);
+              if(trackerId === store.getState().quests.pinnedQuest?.trackerId && newQuestPath) {
+                newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1].memento = res.memento
+                newQuestPath.trackerNodes.push(newTrackerNode)
+                newQuestPath.quest.tracker.trackerNode = {...newTrackerNode, creationTime: newTrackerNode.creationTime.toString()}
               }
               break;
             case 'Experience':
