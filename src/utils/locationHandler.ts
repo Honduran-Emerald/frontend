@@ -57,5 +57,5 @@ export async function registerBackgroundLocationTask() {
         }
     }
     Location.startLocationUpdatesAsync(BackgroundLocationTask, {accuracy: LocationAccuracy.Highest, timeInterval: 5000})
-      .then(() => console.log('Background location task registered'))
+      .then(() => console.log('Background location task registered'), (err: any) => console.log(JSON.stringify(err)))
 }

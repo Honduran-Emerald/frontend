@@ -15,7 +15,7 @@ import { loadChatPreview } from './redux/chat/chatSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { LocalUpdatedTrackerIds, registerGeofencingTask } from './utils/TaskManager';
 import { getData } from './utils/AsyncStore';
-import {getLocationSubscription} from "./utils/locationHandler";
+import {getLocationSubscription, registerBackgroundLocationTask} from "./utils/locationHandler";
 
 
 i18n.fallbacks = true;
@@ -134,7 +134,7 @@ export const TokenLoader = () => {
     )
 
     promises.push(
-      getLocationSubscription().then((res) => console.log('background registered'))
+      registerBackgroundLocationTask()
     )
 
     promises.push(

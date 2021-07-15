@@ -14,6 +14,7 @@ import { store } from '../redux/store';
 import { getData, storeData } from './AsyncStore';
 import { playEventChoiceRequest } from './requestHandler';
 import { addExperience } from '../redux/authentication/authenticationSlice';
+import { setLocation } from '../redux/location/locationSlice';
 
 export const GeofencingTask = 'LocationModuleUpdates';
 export const LocationNotifTitle = 'Reached location';
