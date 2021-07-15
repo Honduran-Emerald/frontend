@@ -35,7 +35,7 @@ export default function QuestDetailScreen({ route }: any) {
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [quest, setQuest] = React.useState(route.params.quest);
-  const [isDraft, setIsDraft] = React.useState(route.params.isDraft ? route.params.isDraft : undefined);
+  const [isDraft,] = React.useState(route.params.isDraft ? route.params.isDraft : undefined);
 
   const isQuestCreator = quest.ownerId === user?.userId;
   const creationDate = quest.creationTime ?  new Date(Date.parse(quest.creationTime)) : new Date();
@@ -129,7 +129,6 @@ export default function QuestDetailScreen({ route }: any) {
     createPublishRequest(quest.id)
       .then(res => {
         if (res.status === 200) {
-          setIsDraft(false);
           setQuest({...quest, released: true, outdated: false});
           Alert.alert('Quest released', 'Your quest was successfully released. Players can now find it using their home screen.')
         } else {
