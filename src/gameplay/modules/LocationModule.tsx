@@ -81,7 +81,7 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
                 </Marker>
                 <Marker coordinate={module.module.location} tracksViewChanges={false}>
                   <View>
-                    <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.primary}/>
+                    <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.purple}/>
                   </View>
                 </Marker>
               </>
@@ -99,7 +99,7 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
         </View>
       }
       <Portal>
-        <Modal visible={modalVisible} dismissable onDismiss={hideModal}>
+        <Modal visible={modalVisible && !locationReached} dismissable onDismiss={hideModal}>
           <View style={styles.modal}>
             <View style={styles.header}>
               <View style={styles.touchContainer}>
@@ -137,7 +137,7 @@ export const LocationModule: React.FC<ModuleRendererProps<GameplayLocationModule
                   </Marker>
                   <Marker coordinate={module.module.location} tracksViewChanges={false}>
                     <View>
-                      <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.primary}/>
+                      <MaterialCommunityIcons name='map-marker-question' size={40} color={Colors.purple}/>
                     </View>
                   </Marker>
                 </>

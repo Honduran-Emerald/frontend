@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, Ref, useCallback} from 'react';
+import React, {useState, useRef, Ref, useCallback} from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,8 +9,6 @@ import { Colors, Containers } from '../styles';
 import { Button, Dialog, FAB, Paragraph, Portal } from 'react-native-paper';
 import { useAppSelector } from '../redux/hooks';
 import { useDispatch } from 'react-redux';
-import { queryQuestsRequest } from '../utils/requestHandler';
-import { setLocalQuests } from '../redux/quests/questsSlice';
 import { QuestMarker } from './QuestMarker';
 import { useNavigation } from '@react-navigation/core';
 import PinnedQuestCard from './PinnedQuestCard';
@@ -110,7 +108,7 @@ export const MapScreen = () => {
         initialRegion={{latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0461, longitudeDelta: 0.0210}}
       >
         <UserMarker rotation={heading} coordinate={location.coords}/>
-        {localQuests && localQuests.map((quest, index) => (
+        {localQuests && localQuests.filter((quest) => !trackedQuests.find((tracker) => tracker.questId === quest.id)).map((quest, index) => (
           quest && quest.location &&
             <QuestMarker key={quest.id} quest={quest} showPreview={indexPreviewQuest === index} setShowPreview={() => setIndexPreviewQuest(index)}/>
         ))}
@@ -141,7 +139,7 @@ export const MapScreen = () => {
           type: 'quests',
           quests: user?.questCount
         }} alternative={
-          <FAB 
+          <FAB
             style={{
               position: 'absolute',
               right: 10,

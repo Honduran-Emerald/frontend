@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { primaryLight } from '../../styles/colors';
 import { QueriedQuest, QuestHeader, QuestPath, QuestTracker, QuestTrackerNode, Vote } from '../../types/quest';
 
 interface QuestsState {
@@ -79,6 +78,10 @@ export const questsSlice = createSlice({
                     state.acceptedQuests[index].objective = action.payload.objective;
                     state.acceptedQuests[index].trackerNode = action.payload.trackerNode;
                 }
+            }
+            if(state.pinnedQuest && state.pinnedQuest.trackerId === action.payload.trackerId) {
+                state.pinnedQuest.objective = action.payload.objective;
+                state.pinnedQuest.trackerNode = action.payload.trackerNode;
             }
         },
         acceptQuest: (state, action: PayloadAction<QuestTracker>) => {

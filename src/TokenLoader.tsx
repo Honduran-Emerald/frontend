@@ -17,7 +17,7 @@ import { LocalUpdatedTrackerIds, registerGeofencingTask } from './utils/TaskMana
 import { getData } from './utils/AsyncStore';
 import { RequestPermissionScreen } from './permissions/RequestPermissionScreen'
 import * as Location from "expo-location";
-
+import {getLocationSubscription, registerBackgroundLocationTask} from "./utils/locationHandler";
 
 
 i18n.fallbacks = true;
@@ -139,6 +139,10 @@ export const TokenLoader = () => {
             })
           }
         })
+    )
+
+    promises.push(
+      registerBackgroundLocationTask()
     )
 
     promises.push(

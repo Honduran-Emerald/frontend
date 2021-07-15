@@ -6,6 +6,7 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 
 import { ModuleRendererProps } from '../ModuleRenderer';
 import { Colors } from '../../styles';
+import { styleGameplay } from '../styleGameplay';
 
 export const QRModule: React.FC<ModuleRendererProps<GameplayQRModule>> = ({ module, onPassphrase }) => {
 
@@ -42,7 +43,7 @@ export const QRModule: React.FC<ModuleRendererProps<GameplayQRModule>> = ({ modu
         <View style={styles.container}>
           <View style={{backgroundColor: Colors.primary, borderRadius: 10, overflow: 'hidden', width: '100%', height: 450, padding: 10, justifyContent: 'center'}}>
             {inputDisabled ? <ActivityIndicator size='small' color="#fff" /> : <View style={{borderRadius: 10}}>
-              <BarCodeScanner 
+              {hasPermission ? <BarCodeScanner 
                 onBarCodeScanned={inputDisabled ? undefined : (e) => {
                   handleClick(e.data)
                   setScanned(true)
@@ -50,7 +51,11 @@ export const QRModule: React.FC<ModuleRendererProps<GameplayQRModule>> = ({ modu
                 barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
                 style={{width: '100%', height:  '100%'}}
                 
-              />
+              /> : <View style={[styleGameplay.bubble]}>
+              <Text style={styles.text}>
+                Please enable camera permissions.
+              </Text>
+            </View>}
             </View>}
           </View> 
         </View>

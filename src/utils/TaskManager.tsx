@@ -14,12 +14,28 @@ import { store } from '../redux/store';
 import { getData, storeData } from './AsyncStore';
 import { playEventChoiceRequest } from './requestHandler';
 import { addExperience } from '../redux/authentication/authenticationSlice';
+import { setLocation } from '../redux/location/locationSlice';
+import _ from "lodash";
 
 export const GeofencingTask = 'LocationModuleUpdates';
 export const LocationNotifTitle = 'Reached location';
 export const GeofenceNotifType = 'GeofenceNotification';
 export const LocalUpdatedTrackerIds = 'LocalUpdatedTrackerIds';
 export const SingleGeoFenceLocationRadius = 30;
+
+export const BackgroundLocationTask = 'BackgroundLocationTask';
+
+TaskManager.defineTask(BackgroundLocationTask, (task) => {
+  if(task.error) {
+    console.log('BackgroundLocation error: ' + task.error.message);
+  }
+  if(task.data) {
+    // @ts-ignore
+    store.dispatch(setLocation(task.data.locations[0]))
+  }
+  // @ts-ignore
+  console.log('Received new locations', task.data.locations);
+});
 
 TaskManager.defineTask(GeofencingTask, (task) => {
   console.log(JSON.stringify(task))
@@ -34,9 +50,9 @@ TaskManager.defineTask(GeofencingTask, (task) => {
       // @ts-ignore
       console.log('reached location ' + task.data.region.identifier);
       // @ts-ignore
-      updateQuest(task.data.region.identifier, 0)
+      updateQuest(task.data.region.identifier, 0);
       // @ts-ignore
-      addUpdatedQuest(task.data.region.identifier)
+      addUpdatedQuest(task.data.region.identifier);
       // @ts-ignore
       updateGeofencingTask(task.data.region.identifier);
     }
@@ -119,7 +135,6 @@ export function updateQuest(trackerId: string, choice = 0) {
         (responseEvent: any) => {
           switch (responseEvent.type) {
             case 'ModuleFinish':
-              // handled by reloading the path in gameplay screen if there is an update for the quest
               const newTrackerNode = {module: responseEvent.module, memento: null, creationTime: (new Date()).toString()}
               store.dispatch(setTrackerObjectiveAndTrackerNode({
                 trackerId: trackerId,
@@ -127,6 +142,23 @@ export function updateQuest(trackerId: string, choice = 0) {
                 objective: newTrackerNode.module.objective
               }));
               store.dispatch(setLiveUpdate(true))
+              if(responseEvent.module.type === 'Location') {
+                const newRegion = {
+                  identifier: trackerId,
+                  latitude: responseEvent.module.location.latitude,
+                  longitude: responseEvent.module.location.longitude,
+                  radius: SingleGeoFenceLocationRadius,
+                  notifyOnEnter: true,
+                  notifyOnExit: false,
+                };
+                addGeofencingRegion(newRegion);
+              }
+              const newQuestPath = _.cloneDeep(store.getState().quests.pinnedQuestPath);
+              if(trackerId === store.getState().quests.pinnedQuest?.trackerId && newQuestPath) {
+                newQuestPath.trackerNodes[newQuestPath.trackerNodes.length-1].memento = res.memento
+                newQuestPath.trackerNodes.push(newTrackerNode)
+                newQuestPath.quest.tracker.trackerNode = {...newTrackerNode, creationTime: newTrackerNode.creationTime.toString()}
+              }
               break;
             case 'Experience':
               console.log('Got XP: +' + responseEvent.experience);
