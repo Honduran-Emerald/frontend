@@ -121,13 +121,13 @@ export const CreateModuleScreen = () => {
   return (
     <View style={{ margin: 0, borderColor: "black", flexGrow: 1 }}>
       <Portal>
-        <Dialog visible={showDialog!==undefined} onDismiss={() => setShowDialog(undefined)}>
+        <Dialog visible={showDialog!==undefined} onDismiss={() => setShowDialog(undefined)} style={{borderRadius: 10}}>
           <Dialog.Title>Leave Module Editor?</Dialog.Title>
           <Dialog.Content>
             <Paragraph>Everything not saved will be lost.</Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button color={Colors.primary} onPress={() => setShowDialog(undefined)}>Stay</Button>
+            <Button color={Colors.primary} onPress={() => setShowDialog(undefined)}>Cancel</Button>
             <Button color={Colors.primary} onPress={() => {setShowDialog(undefined); navigation.dispatch(showDialog)}}>Drop Changes</Button>
           </Dialog.Actions>
         </Dialog>

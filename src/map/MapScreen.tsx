@@ -161,7 +161,7 @@ export const MapScreen = () => {
         </LevelLock>
       )}
 
-      <Portal><Dialog visible={showNoMoreQuestsDialog} onDismiss={() => setShowNoMoreQuestsDialog(false)}>
+      <Portal><Dialog visible={showNoMoreQuestsDialog} onDismiss={() => setShowNoMoreQuestsDialog(false)} style={{borderRadius: 10}}>
         <Dialog.Title>Cannot create more quests</Dialog.Title>
         <Dialog.Content>
           <Paragraph>Your level is too low. Increase your level to create more quests or delete a quest to make room for this one.</Paragraph>

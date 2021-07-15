@@ -166,15 +166,19 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
         <View style={styles.info}>
           <View style={styles.location}>
             <Entypo name='location-pin' size={24} color='black' style={styles.icon}/>
-            <Text>
-              {quest?.locationName}
-            </Text>
+            {quest?.locationName &&
+              <Text>
+                {quest?.locationName}
+              </Text>
+            }
           </View>
           <View style={styles.time}>
             <Entypo name='stopwatch' size={24} color='black' style={styles.icon}/>
+            {quest?.approximateTime &&
             <Text>
               {quest?.approximateTime}
             </Text>
+            }
           </View>
         </View>
       </View>
@@ -182,9 +186,11 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
       <View style={{width: Dimensions.get('screen').width * 0.9, margin: 20, marginBottom: 25, overflow: "hidden", borderRadius: 20}}>
         <TouchableHighlight onPress={() => changeDescription()} activeOpacity={0.8} underlayColor="#DDDDDD" >
           <Surface style={styles.block}>
-            <Text style={styles.description} ellipsizeMode={'tail'} numberOfLines={(extended? undefined : 10)}>
+            {quest?.description &&
+            <Text style={styles.description} ellipsizeMode={'tail'} numberOfLines={(extended ? undefined : 10)}>
               {quest?.description}
             </Text>
+            }
           </Surface>
         </TouchableHighlight>
       </View>
@@ -194,7 +200,6 @@ export const QuestStatsScreen: React.FC<QuestStateScreenProps> = ({ height, ques
           This quest has a newer version available, restart to upgrade.
         </Text>
       }
-
 
       <View style={{flexDirection: "row"}}>
         <View>
