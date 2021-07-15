@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, TextInput as TextInputNative, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput as TextInputNative, ScrollView } from 'react-native';
 import { sha512 } from 'js-sha512';
 import i18n from 'i18n-js';
+import { Button } from 'react-native-paper';
 
 import { Colors, Containers } from '../styles';
 import { EMAILREGEX } from '../../GLOBALCONFIG';
@@ -148,10 +149,16 @@ export default function LoginScreen({ navigation }: any) {
       }
       <View style={styles.buttons}>
         <View style={styles.button}>
-          <Button color={Colors.primary} disabled={isButtonDisabled} title={i18n.t('loginButton')} onPress={handleLogin}/>
+          <Button color={Colors.primary} disabled={isButtonDisabled} onPress={handleLogin} mode={'contained'}>
+            {i18n.t('loginButton')}
+          </Button>
         </View>
         <View style={styles.button}>
-          <Button color={Colors.primaryLight} disabled={isButtonDisabled} title={i18n.t('createAccountButton')} onPress={handleRegister}/>
+          <Button color={Colors.primaryLight} disabled={isButtonDisabled} onPress={handleRegister} mode={'contained'}>
+            <Text style={{color: '#fff'}}>
+              {i18n.t('createAccountButton')}
+            </Text>
+          </Button>
         </View>
       </View>
       <StatusBar style={'auto'}/>

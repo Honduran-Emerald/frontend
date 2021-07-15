@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, TextInput as TextInputNative, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput as TextInputNative, ScrollView } from 'react-native';
 import { sha512 } from 'js-sha512';
 import i18n from 'i18n-js';
+import { Button } from 'react-native-paper';
 
 import { Colors, Containers } from '../styles';
 import { EMAILREGEX } from '../../GLOBALCONFIG';
@@ -11,7 +12,6 @@ import { setToken } from '../redux/authentication/authenticationSlice';
 import { registerRequest } from '../utils/requestHandler';
 import { saveItemLocally } from '../utils/SecureStore';
 import { authTranslations } from './translations';
-
 
 export default function RegisterScreen({ navigation }: any) {
 
@@ -177,10 +177,16 @@ export default function RegisterScreen({ navigation }: any) {
       </View>
       <View style={styles.buttons}>
         <View style={styles.button}>
-          <Button color={Colors.primary} disabled={isButtonDisabled} title={i18n.t('createAccountConfirm')} onPress={handleRegister}/>
+          <Button color={Colors.primary} disabled={isButtonDisabled} onPress={handleRegister} mode={'contained'}>
+            {i18n.t('createAccountConfirm')}
+          </Button>
         </View>
         <View style={styles.button}>
-          <Button color={Colors.primaryLight} disabled={isButtonDisabled} title={i18n.t('backButton')} onPress={() => {navigation.navigate('Login')}}/>
+          <Button color={Colors.primaryLight} disabled={isButtonDisabled} onPress={() => {navigation.navigate('Login')}} mode={'contained'}>
+            <Text style={{color: '#fff'}}>
+              {i18n.t('backButton')}
+            </Text>
+          </Button>
         </View>
       </View>
       <StatusBar style={'auto'}/>
