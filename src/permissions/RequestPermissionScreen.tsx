@@ -29,7 +29,6 @@ export const RequestPermissionScreen = ({setPermissionsGranted} : {setPermission
 
           setIsGranted({backgroundLocation: statusBackground.status === 'granted', foregroundLocation: statusForeground.status === 'granted'});
         })();
-        console.log('test');
       }}>
         Grant Permission
       </Button>
