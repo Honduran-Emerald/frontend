@@ -39,6 +39,9 @@ export const questsSlice = createSlice({
                     state.acceptedQuests[index] = action.payload;
                 }
             }
+            if(state.pinnedQuest && state.pinnedQuest.trackerId === action.payload.trackerId) {
+                state.pinnedQuest = action.payload;
+            }
         },
         removeAcceptedQuest: (state, action: PayloadAction<string>) => {
             state.acceptedQuests = state.acceptedQuests.filter(tracker => tracker.trackerId !== action.payload);
@@ -51,6 +54,9 @@ export const questsSlice = createSlice({
                     state.acceptedQuests[index].finished = action.payload.finished;
                 }
             }
+            if(state.pinnedQuest && state.pinnedQuest.trackerId === action.payload.trackerId) {
+                state.pinnedQuest.finished = action.payload.finished;
+            }
         },
         setTrackerVote: (state, action: PayloadAction<{ trackerId: string, vote: Vote }>) => {
             const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
@@ -60,6 +66,9 @@ export const questsSlice = createSlice({
                     state.acceptedQuests[index].vote = action.payload.vote;
                 }
             }
+            if(state.pinnedQuest && state.pinnedQuest.trackerId === action.payload.trackerId) {
+                state.pinnedQuest.vote = action.payload.vote;
+            }
         },
         addTrackerExperience: (state, action: PayloadAction<{ trackerId: string, experience: number }>) => {
             const oldTracker = state.acceptedQuests.find(tracker => tracker.trackerId === action.payload.trackerId);
@@ -68,6 +77,9 @@ export const questsSlice = createSlice({
                 if(index !== -1) {
                     state.acceptedQuests[index].experienceCollected = state.acceptedQuests[index].experienceCollected + action.payload.experience;
                 }
+            }
+            if(state.pinnedQuest && state.pinnedQuest.trackerId === action.payload.trackerId) {
+                state.pinnedQuest.experienceCollected = state.pinnedQuest.experienceCollected + action.payload.experience;
             }
         },
         setTrackerObjectiveAndTrackerNode: (state, action: PayloadAction<{ trackerId: string, objective: string, trackerNode: QuestTrackerNode }>) => {
