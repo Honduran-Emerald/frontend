@@ -17,7 +17,7 @@ import { WideQuestPreview } from "./WideQuestPreview";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { getLocation } from "../utils/locationHandler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import { useCallback } from 'react';
 import {setLocalQuests, setRecentlyVisitedQuest } from "../redux/quests/questsSlice";
 import {QuestPreview} from "./QuestPreview";
@@ -26,6 +26,7 @@ export const DiscoveryScreen = () => {
 
   const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
+  const isFocused = useIsFocused();
 
   const location = useAppSelector(state => state.location.location);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -37,8 +38,10 @@ export const DiscoveryScreen = () => {
   const recentlyVisitedQuests = useAppSelector(state => state.quests.recentlyVisitedQuests);
 
   useEffect(() => {
-    fetchData();
-  },[])
+    if (isFocused) {
+      fetchData();
+    }
+  },[isFocused])
 
   const fetchData = async () => {
     const ids = recentlyVisitedQuests.length > 0 ? recentlyVisitedQuests.map((quest: QueriedQuest) => quest.id) : undefined
@@ -96,11 +99,7 @@ export const DiscoveryScreen = () => {
     return quests;
   }
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchData();
-    }, [])
-  )
+
 
   return (
     <View style={[styles.screen, {marginTop: insets.top, marginBottom: insets.bottom}]}>
