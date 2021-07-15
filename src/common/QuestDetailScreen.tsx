@@ -18,7 +18,7 @@ import { getImageAddress } from '../utils/imageHandler';
 import { addGeofencingRegion, SingleGeoFenceLocationRadius } from '../utils/TaskManager';
 import { storeData } from '../utils/AsyncStore';
 
-export default function QuestDetailScreen({ route }: any) {
+export default function QuestDetailScreen({ route, navigation }: any) {
 
   i18n.translations = commonTranslations;
 
@@ -29,7 +29,7 @@ export default function QuestDetailScreen({ route }: any) {
   const acceptedIds: string[] = acceptedQuests.map(tracker => tracker.questId);
   const isAccepted: boolean = acceptedIds.includes(route.params.quest.id);
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
+  //const navigation = useNavigation();
   const isFocused = useIsFocused();
 
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
@@ -282,7 +282,7 @@ export default function QuestDetailScreen({ route }: any) {
               </Text>
             </View>
           </View>
-          <TouchableNativeFeedback onPress={() => { navigation.navigate('UserProfile', {screen: 'Profile', params: {userId: quest.ownerId}}) }}>
+          <TouchableNativeFeedback onPress={() => { navigation.push('UserProfile', {screen: 'Profile', params: {userId: quest.ownerId}}) }}>
             <View style={styles.authorView}>
               <Avatar.Image
                 style={styles.authorAvatar}
