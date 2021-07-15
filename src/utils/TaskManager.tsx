@@ -49,9 +49,9 @@ TaskManager.defineTask(GeofencingTask, (task) => {
       // @ts-ignore
       console.log('reached location ' + task.data.region.identifier);
       // @ts-ignore
-      updateQuest(task.data.region.identifier, 0)
+      updateQuest(task.data.region.identifier, 0);
       // @ts-ignore
-      addUpdatedQuest(task.data.region.identifier)
+      addUpdatedQuest(task.data.region.identifier);
       // @ts-ignore
       updateGeofencingTask(task.data.region.identifier);
     }
@@ -142,6 +142,17 @@ export function updateQuest(trackerId: string, choice = 0) {
                 objective: newTrackerNode.module.objective
               }));
               store.dispatch(setLiveUpdate(true))
+              if(responseEvent.module.type === 'Location') {
+                const newRegion = {
+                  identifier: trackerId,
+                  latitude: responseEvent.module.location.latitude,
+                  longitude: responseEvent.module.location.longitude,
+                  radius: SingleGeoFenceLocationRadius,
+                  notifyOnEnter: true,
+                  notifyOnExit: false,
+                };
+                addGeofencingRegion(newRegion);
+              }
               break;
             case 'Experience':
               console.log('Got XP: +' + responseEvent.experience);

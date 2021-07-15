@@ -4,6 +4,7 @@ import * as Location from "expo-location";
 import {LocationAccuracy} from "expo-location";
 import {setLocation} from "../redux/location/locationSlice";
 import {BackgroundLocationTask} from "./TaskManager";
+import {Colors} from '../styles';
 
 export async function getLocation() {
 
@@ -56,6 +57,7 @@ export async function registerBackgroundLocationTask() {
             return console.log('Permission to access background location was denied');
         }
     }
-    Location.startLocationUpdatesAsync(BackgroundLocationTask, {accuracy: LocationAccuracy.Highest, timeInterval: 5000})
+    Location.startLocationUpdatesAsync(BackgroundLocationTask, {accuracy: LocationAccuracy.Highest, timeInterval: 5000,
+        foregroundService: {notificationTitle: 'Hona', notificationBody: 'Hona is tracking your location', notificationColor: Colors.primary}})
       .then(() => console.log('Background location task registered'), (err: any) => console.log(JSON.stringify(err)))
 }
