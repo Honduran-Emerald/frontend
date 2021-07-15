@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {StatusBar as StatusBar2, StyleSheet, View, Text} from 'react-native';
+import {StatusBar as StatusBar2, StyleSheet, View, Text, Image, Dimensions} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProfileTop } from './ProfileTop';
@@ -15,6 +15,8 @@ import {logout} from "../redux/authentication/authenticationSlice";
 import {clearQuestState} from "../redux/quests/questsSlice";
 import {Button, Divider} from "react-native-paper";
 import {removeData} from "../utils/AsyncStore";
+import Constants from 'expo-constants';
+
 
 export default interface settingsProps {
     ownProfile: boolean
@@ -43,13 +45,15 @@ export const SettingsScreen = (props: settingsProps) => {
     return(
         <View style={[style.screen, { marginBottom: insets.bottom}]}>
             <ScrollView contentContainerStyle={style.settings}>
+                <Image source={require('../../assets/Logo_Full_Black.png')} style={{width: Dimensions.get('screen').width, height: 170, borderWidth: 10, alignSelf: 'center'}} resizeMethod='resize' />
+                <Divider/>
                 <Button icon={'logout-variant'} color={'#1D79AC'} onPress={handleLogout} contentStyle={{height: 100}}> Logout </Button>
                 <Divider/>
                 <Button color={'#1D79AC'} onPress={disclosure} contentStyle={{height: 100}}> Legal Disclosure </Button>
                 <Divider/>
                 {
                     openDisclosure &&
-                    <View style={{margin: 10}}>
+                    <><View style={{margin: 10}}>
                         <Text>
                             We are doing our best to prepare the content of this app.
                             However, Hona cannot warranty the expressions and suggestions of the contents, as well as its accuracy.
@@ -64,7 +68,13 @@ export const SettingsScreen = (props: settingsProps) => {
                             Plus, any losses or damages occurred from using these contents or the internet generally.
                         </Text>
                     </View>
+                    <Divider/></>
                 }
+                <Text style={{height: 100, textAlign: 'center', textAlignVertical: 'center', color: Colors.gray}}>
+                    Hona Version {Constants.manifest.version}
+                </Text>
+                <Divider/>
+
             </ScrollView>
             <StatusBar style="auto"/>
         </View>
