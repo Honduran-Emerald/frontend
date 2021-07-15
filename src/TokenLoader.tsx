@@ -15,6 +15,8 @@ import { loadChatPreview } from './redux/chat/chatSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { LocalUpdatedTrackerIds, registerGeofencingTask } from './utils/TaskManager';
 import { getData } from './utils/AsyncStore';
+import { RequestPermissionScreen } from './permissions/RequestPermissionScreen'
+import * as Location from "expo-location";
 import {getLocationSubscription, registerBackgroundLocationTask} from "./utils/locationHandler";
 
 
@@ -25,6 +27,7 @@ export const TokenLoader = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [checkingToken, setCheckingToken] = React.useState<boolean>(true);
   const [tokenAccepted, setTokenAccepted] = useState<boolean>(false);
+  const [permissionsGranted, setPermissionsGranted] = useState<boolean>(false);
 
   const navigationRef = React.useRef(null);
 
@@ -35,6 +38,11 @@ export const TokenLoader = () => {
 
   useEffect(() => {
     setIsLoading(true);
+    (async () => {
+      const foregroundPermission = await Location.requestForegroundPermissionsAsync();
+      const backgroundPermission = await Location.requestBackgroundPermissionsAsync();
+      setPermissionsGranted(foregroundPermission.status === 'granted' && backgroundPermission.status === 'granted');
+    })();
     TokenManager.getToken()
       .then(token => {
           if (token) {
@@ -160,6 +168,12 @@ export const TokenLoader = () => {
       .then(() => setIsLoading(false))
       .then(() => setTokenAccepted(true))
   }, [checkingToken, isLoading])
+
+
+  if(!permissionsGranted)
+    return (
+      <RequestPermissionScreen setPermissionsGranted={setPermissionsGranted}/>
+    )
 
   return (
 

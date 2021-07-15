@@ -8,7 +8,6 @@ import { Image } from 'react-native';
 import { setUsernameRequest, userToggleFollow, userUpdateImage } from '../utils/requestHandler';
 import { ImagePicker } from '../common/ImagePicker';
 import { useState } from 'react';
-import { useEffect } from 'react';
 import { getImageAddress } from '../utils/imageHandler';
 import { useNavigation } from '@react-navigation/native';
 import { User } from '../types/general';
@@ -54,7 +53,7 @@ export const ProfileTop = ({ ownProfile, profileData, refresh } : ProfileTopProp
                       alert('Username cannot be empty');
                       return;
                     }
-                    
+
                     if(base64 || userName !== profileData.userName) {
                       
                       setLoading(true);
