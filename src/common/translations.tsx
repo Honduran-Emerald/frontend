@@ -1,7 +1,7 @@
 export const commonTranslations = {
   en: {
     'loading': 'Getting things ready',
-    'acceptButton': 'Accept quest',
+    'acceptButton': 'Accept',
     'questAccepted': 'Quest accepted',
     'votes': 'VOTES',
     'plays': 'PLAYED',
@@ -12,13 +12,14 @@ export const commonTranslations = {
     'completedTitle': 'Completed quests',
     'modalDeleteTitle': 'Delete Quest?',
     'modalDeleteText': 'Do you really want to permanently delete this quest?',
-    'deleteButton': 'Delete Quest',
+    'deleteButton': 'Delete',
+    'modalDeleteButton': 'Delete Quest',
     'modalBackButton': 'Back',
-    'editButton': 'Edit Quest',
+    'editButton': 'Edit',
   },
   de: {
     'loading': 'Bereite App vor',
-    'acceptButton': 'Quest akzeptieren',
+    'acceptButton': 'Akzeptieren',
     'questAccepted': 'Quest akzeptiert',
     'votes': 'VOTES',
     'plays': 'GESPIELT',
@@ -29,8 +30,9 @@ export const commonTranslations = {
     'completedTitle': 'Abgeschlossene Quests',
     'modalDeleteTitle': 'Quest löschen?',
     'modalDeleteText': 'Willst du diese Quest wirklich permanent löschen?',
-    'deleteButton': 'Quest löschen',
+    'deleteButton': 'Löschen',
+    'modalDeleteButton': 'Quest löschen',
     'modalBackButton': 'Zurück',
-    'editButton': 'Quest ändern',
+    'editButton': 'Bearbeiten',
   },
 };

@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { ActivityIndicator, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import { FAB } from 'react-native-paper';
+import {Button, FAB} from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
   addTrackerExperience,
@@ -231,7 +231,10 @@ export const GameplayScreen : React.FC = () => {
 
   const handleVote = useCallback((vote: 'None' | 'Up' | 'Down') => {
     return playVoteRequest(route.params.trackerId, vote).then(res => {
-      dispatch(setTrackerVote({ trackerId: route.params.trackerId, vote: vote }))
+      if(res.status === 200) {
+        dispatch(setTrackerVote({trackerId: route.params.trackerId, vote: vote}))
+        return res;
+      }
       return res;
     })
   }, [])
@@ -242,6 +245,12 @@ export const GameplayScreen : React.FC = () => {
         loadedTrackerNodesList.length > 0 && hasLoaded &&
         <View>
           {/* avatar image + name, button to quest settings(vote, remove quest) */}
+
+          <View style={{backgroundColor: Colors.background}}>
+            <Button  icon={"chevron-up"} onPress={() => {ref.current?.scrollToEnd()}} color={Colors.primary}>
+              View Quest Details
+            </Button>
+          </View>
 
           <FlatList
             data={loadedTrackerNodesList}
@@ -256,6 +265,7 @@ export const GameplayScreen : React.FC = () => {
             ref={ref}
             style={{
               width: '100%',
+              height: "96%",
             }}
             contentContainerStyle={{
               minHeight: '100%',
