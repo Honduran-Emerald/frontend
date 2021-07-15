@@ -58,7 +58,7 @@ export const QuestPropertiesScreen = () => {
             && questPrototype!.locationName 
             && questPrototype!.approximateTime  
             && questPrototype!.description
-          ) && isSaving
+          ) || isSaving
         } 
         theme={{colors: {primary: Colors.primary}}} 
         icon='content-save' 
