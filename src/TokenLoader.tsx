@@ -16,6 +16,7 @@ import { deleteItemLocally } from './utils/SecureStore';
 import { LocalUpdatedTrackerIds, registerGeofencingTask } from './utils/TaskManager';
 import { getData } from './utils/AsyncStore';
 import { RequestPermissionScreen } from './permissions/RequestPermissionScreen'
+import * as Location from "expo-location";
 
 
 
@@ -37,6 +38,11 @@ export const TokenLoader = () => {
 
   useEffect(() => {
     setIsLoading(true);
+    (async () => {
+      const foregroundPermission = await Location.requestForegroundPermissionsAsync();
+      const backgroundPermission = await Location.requestBackgroundPermissionsAsync();
+      setPermissionsGranted(foregroundPermission.status === 'granted' && backgroundPermission.status === 'granted');
+    })();
     TokenManager.getToken()
       .then(token => {
           if (token) {

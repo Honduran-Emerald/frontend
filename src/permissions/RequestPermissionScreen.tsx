@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StatusBar, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import * as Location from "expo-location";
 import { useEffect } from 'react';
@@ -17,10 +17,10 @@ export const RequestPermissionScreen = ({setPermissionsGranted} : {setPermission
 
   return (
     <View style={style.container}>
-      <Image source={require('../../assets/Logo_Full_Black.png')} style={{height: 190, resizeMode: 'center', marginBottom: 30}}/>
+      <Image source={require('../../assets/Logo_Full_Black.png')} style={{height: 190, resizeMode: 'center', marginBottom: 10}}/>
       <Text style={style.text}>
-        To use this app, you need to allow access to location services.
-        You can also allow access to background location to increase accuracy and performance of the app.
+        Hona makes use of positioning data to anchor quests in the real world. 
+        You will need to allow both foreground and background location permissions for Hona to work.
       </Text>
       <Button mode={'contained'} theme={{colors: {primary: Colors.primary}}} style={style.button} onPress={() => {
         (async () => {
@@ -42,13 +42,13 @@ const style = StyleSheet.create({
     flex: 1,
     ...Containers.center,
     height: '100%',
-    paddingHorizontal: 60,
+    paddingHorizontal: 70,
   },
   text: {
     fontSize: 20,
     textAlign: 'center'
   },
   button: {
-    marginTop: 20,
+    marginTop: 40,
   },
 });
