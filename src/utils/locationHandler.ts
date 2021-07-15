@@ -3,6 +3,7 @@ import {store} from "../redux/store"
 import * as Location from "expo-location";
 import {LocationAccuracy} from "expo-location";
 import {setLocation} from "../redux/location/locationSlice";
+import {BackgroundLocationTask} from "./TaskManager";
 
 export async function getLocation() {
 
@@ -43,7 +44,18 @@ export async function getLocationSubscription() {
     }
 
     return Location.watchPositionAsync(
-      {accuracy: LocationAccuracy.High, distanceInterval: 5, timeInterval: 10000},
+      {accuracy: LocationAccuracy.Highest, distanceInterval: 5, timeInterval: 5000},
       (location) => store.dispatch(setLocation(location))
     )
+}
+
+export async function registerBackgroundLocationTask() {
+    {
+        let {status} = await Location.getBackgroundPermissionsAsync();
+        if (status !== 'granted') {
+            return console.log('Permission to access background location was denied');
+        }
+    }
+    Location.startLocationUpdatesAsync(BackgroundLocationTask, {accuracy: LocationAccuracy.Highest, timeInterval: 5000})
+      .then(() => console.log('Background location task registered'))
 }

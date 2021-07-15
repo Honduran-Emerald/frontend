@@ -21,6 +21,20 @@ export const GeofenceNotifType = 'GeofenceNotification';
 export const LocalUpdatedTrackerIds = 'LocalUpdatedTrackerIds';
 export const SingleGeoFenceLocationRadius = 30;
 
+export const BackgroundLocationTask = 'BackgroundLocationTask';
+
+TaskManager.defineTask(BackgroundLocationTask, (task) => {
+  if(task.error) {
+    console.log('BackgroundLocation error: ' + task.error.message);
+  }
+  if(task.data) {
+    // @ts-ignore
+    store.dispatch(setLocation(task.data.locations[0]))
+  }
+  // @ts-ignore
+  console.log('Received new locations', task.data.locations);
+});
+
 TaskManager.defineTask(GeofencingTask, (task) => {
   console.log(JSON.stringify(task))
   if(task.error) {
