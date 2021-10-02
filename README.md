@@ -1,3 +1,8 @@
+# Hona Teaser
+
+Watch a short teaser of our final result!
+https://www.youtube.com/watch?v=UA2LOtBUgtg
+
 # Frontend
 
 ## Setup
