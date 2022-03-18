@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "quest",
-    "slug": "quest",
-    "version": "1.0.0",
+    "name": "Hona",
+    "slug": "hona",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -11,7 +11,7 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 100
     },
     "assetBundlePatterns": [
       "**/*"
@@ -21,14 +21,23 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/Bright_FG.png",
+        "backgroundImage": "./assets/Bright_BG.png"
       },
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyA5hcQYAQCq2gsMM6_LhYRpt6-eA9WaKaM"
         }
       },
+      "permissions": [
+        "CAMERA",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "VIBRATE"
+      ],
       "package": "honduran.emerald",
       "googleServicesFile": "./google-services.json"
     },

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { Divider, Menu } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { PrototypeModule, QuestPrototype } from '../../types/quest';
 import { AddModuleNode } from './node-types/AddModuleNode';
 import { LinkModuleNode as LinkModuleNode } from './node-types/LinkModuleNode';
 import { parseModule } from './utils/linksParser';
@@ -13,6 +12,7 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Graph } from 'graphlib';
 import { addOrUpdateMultipleQuestModules, addOrUpdateQuestModule, deleteQuestModule, setModules } from '../../redux/editor/editorSlice';
+import { QuestPrototype } from '../../types/prototypes';
 
 export const ModuleGraphCaller = () => {
 
@@ -25,10 +25,8 @@ export const ModuleGraphCaller = () => {
 
     const questPrototype = useAppSelector((state) => state.editor.questPrototype); // redux selector
 
-    const [sheetOptions, setSheetOptions] = useState<[string, string, (() => void)][]>([['hi', 'plus', (() => console.log(5))], ['hi there', 'plus', (() => console.log(6))]])
+    const [sheetOptions, setSheetOptions] = useState<[string, string, (() => void)][]>([])
     const sheet = useRef<BottomSheet>(null);
-
-    console.log('Current Quest', JSON.stringify(questPrototype))
 
     const dispatch = useAppDispatch();
 
@@ -63,7 +61,7 @@ export const ModuleGraphCaller = () => {
                 dispatch(setModules(node.setSources.reduce((acc, current) => current(acc, null), questPrototype).modules))
                 dispatch(deleteQuestModule(node.id))
             }}/> // regular node. can be adjusted to return different types of nodes
-            : <LinkModuleNode setSource={node.setSource} setLinkOnChoice={setLinkOnChoice} sheetRef={sheet} setSheetOptions={setSheetOptions} setLinkSourceId={setLinkSourceId} parentId={node.parentId}/> // empty node. clicking will allow to add a new or link to an existing module
+            : <LinkModuleNode setSource={node.setSource} setLinkOnChoice={setLinkOnChoice} sheetRef={sheet} setSheetOptions={setSheetOptions} setLinkSourceId={setLinkSourceId} parentId={node.parentId} parentTags={node.parentTags}/> // empty node. clicking will allow to add a new or link to an existing module
         })), links);
 
         if (positions.length > 0) {
@@ -105,7 +103,7 @@ export const ModuleGraphCaller = () => {
         <BottomSheet
             ref={sheet}
             borderRadius={40}
-            snapPoints={[0, 180, 360]}
+            snapPoints={[0, 240, 360]}
             initialSnap={0}
             enabledContentTapInteraction={false}
             enabledContentGestureInteraction={true}

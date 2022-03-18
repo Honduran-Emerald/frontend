@@ -1,10 +1,10 @@
 export const authTranslations = {
   en: {
-    appName: 'HONDURAN EMERALD',
+    appName: 'HONA',
     invalidSession: 'Your session timed out. Please log in again.',
     forgotPassword: 'Forgot Password?',
     loginButton: 'Login',
-    createAccountButton: 'Create new account',
+    createAccountButton: 'Sign up',
     emailPlaceholder: 'Email',
     passwordPlaceholder: 'Password',
     errorEmailMessage: 'Enter a valid email',
@@ -23,11 +23,11 @@ export const authTranslations = {
     sendResetEmail: 'Reset password',
   },
   de: {
-    appName: 'HONDURAN EMERALD',
+    appName: 'HONA',
     invalidSession: 'Die Session ist ausgelaufen. Loggen sie sich erneut ein.',
     forgotPassword: 'Passwort vergessen?',
     loginButton: 'Einloggen',
-    createAccountButton: 'Neuen Account erstellen',
+    createAccountButton: 'Neu anmelden',
     emailPlaceholder: 'Email',
     passwordPlaceholder: 'Passwort',
     errorEmailMessage: 'Gib eine gültige Email an',

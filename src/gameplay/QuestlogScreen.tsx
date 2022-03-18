@@ -1,10 +1,12 @@
 import React from 'react';
-import {ActivityIndicator, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import i18n from 'i18n-js';
-import {List, Searchbar} from 'react-native-paper';
+import { List, Searchbar } from 'react-native-paper';
+import { useCallback } from 'react';
+import { useNavigation } from '@react-navigation/core';
 
 import { Colors } from '../styles';
-import { commonTranslations } from './translations';
+import { commonTranslations } from '../common/translations';
 import { getAllTrackersRequest } from '../utils/requestHandler';
 import { QuestTracker } from '../types/quest';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -34,9 +36,11 @@ export default function QuestlogScreen() {
 
   i18n.translations = commonTranslations;
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
 
   const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
   const acceptedQuests = useAppSelector((state) => state.quests.acceptedQuests);
+  const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
 
   const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -45,6 +49,7 @@ export default function QuestlogScreen() {
   const [search, setSearch] = React.useState('');
   const [activeQuests, setActiveQuests] = React.useState<QuestTracker[]>([]);
   const [oldQuests, setOldQuests] = React.useState<QuestTracker[]>([]);
+
 
   React.useEffect(() => {
     sortTrackers(acceptedQuests);
@@ -55,9 +60,16 @@ export default function QuestlogScreen() {
   const handleOldExpanded = () => setOldExpanded(!oldExpanded);
 
   const setPinnedQuest = (tracker: QuestTracker) => {
-    dispatch(pinQuest(tracker));
+    if(tracker) dispatch(pinQuest(tracker));
     storeData('PinnedQuestTracker', JSON.stringify(tracker)).then(() => {}, () => {});
   }
+
+  const loadQuestObjectiveScreen = useCallback((trackerId: string) => {
+    navigation.navigate('GameplayScreen', {
+      trackerId: trackerId,
+      tracker: acceptedQuests.find(tracker => tracker.trackerId === trackerId),
+    })
+  }, [acceptedQuests])
 
   const sortTrackers = (trackers: QuestTracker[]) => {
     if(trackers.length === 0) {
@@ -129,9 +141,11 @@ export default function QuestlogScreen() {
             />
           }
         >
-          <Text style={styles.header}>
-            Questlog
-          </Text>
+        <View style={styles.headerView}>
+            <Text style={styles.header}>
+                Questlog
+            </Text>
+        </View>
           <View style={styles.searchbar}>
             <Searchbar
               placeholder={i18n.t('searchbarPlaceholder')}
@@ -141,7 +155,7 @@ export default function QuestlogScreen() {
             />
           </View>
           <List.Accordion
-            title={i18n.t('activeTitle')}
+            title={i18n.t('activeTitle') + ` (${activeQuests.length})`}
             description={i18n.t('activeDescription')}
             expanded={activeExpanded}
             onPress={handleActiveExpanded}
@@ -149,6 +163,7 @@ export default function QuestlogScreen() {
             titleStyle={styles.title}
             descriptionStyle={styles.description}
             left={props => <List.Icon {...props} icon='compass-rose'/>}
+            style={styles.backgroundWhite}
           >
             {
               getQuestSearch(true).map((quest) =>
@@ -157,9 +172,10 @@ export default function QuestlogScreen() {
                     title={quest.questName}
                     description={quest.objective}
                     key={quest.trackerId}
-                    onPress={() => alert('Open Quest objective screen')}
+                    onPress={() => loadQuestObjectiveScreen(quest.trackerId)}
                     onLongPress={() => setPinnedQuest(quest)}
                     left={() => <List.Icon color={Colors.background} icon='pin'/>}
+                    right={() => trackerWithUpdates.includes(quest.trackerId) ? <List.Icon color={Colors.background} icon={'email-alert'}/> : null}
                     titleStyle={styles.white}
                     descriptionStyle={styles.white}
                     style={styles.trackedActive}
@@ -169,19 +185,22 @@ export default function QuestlogScreen() {
                     title={quest.questName}
                     description={quest.objective}
                     key={quest.trackerId}
-                    onPress={() => alert('Open Quest objective screen')}
+                    onPress={() => loadQuestObjectiveScreen(quest.trackerId)}
                     onLongPress={() => setPinnedQuest(quest)}
+                    left={() => <List.Icon color={Colors.background} icon='pin'/>}
+                    right={() => trackerWithUpdates.includes(quest.trackerId) ? <List.Icon color={Colors.primary} icon={'email-alert'}/> : null}
                   />
               )
             }
           </List.Accordion>
           <List.Accordion
-            title={i18n.t('completedTitle')}
+            title={i18n.t('completedTitle') + ` (${oldQuests.length})`}
             expanded={oldExpanded}
             onPress={handleOldExpanded}
             theme={{colors: {primary: Colors.primary}}}
             titleStyle={styles.title}
             left={props => <List.Icon {...props} icon='history'/>}
+            style={styles.backgroundWhite}
           >
             {
               getQuestSearch(false).map((quest) =>
@@ -189,11 +208,12 @@ export default function QuestlogScreen() {
                   title={quest.questName}
                   description={quest.author}
                   key={quest.trackerId}
-                  onPress={() => alert('Open Quest objective screen')}
+                  onPress={() => loadQuestObjectiveScreen(quest.trackerId)}
                 />
               )
             }
           </List.Accordion>
+          <View style={{paddingBottom: 40}}/>
         </ScrollView>
       }
     </View>
@@ -218,9 +238,18 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    textAlign: 'center',
-    fontSize: 25,
-    marginTop: 10,
+    textAlign: 'left',
+    fontWeight: "600",
+    includeFontPadding: true,
+    fontSize: 20,
+    top: 14,
+    left: 16,
+    height: 50,
+  },
+  headerView: {
+    height: 55,
+    backgroundColor: Colors.background,
+    elevation: 5,
   },
   title: {
     fontSize: 20,
@@ -235,5 +264,8 @@ const styles = StyleSheet.create({
   },
   white: {
     color: Colors.background,
+  },
+  backgroundWhite: {
+    backgroundColor: Colors.background,
   },
 });

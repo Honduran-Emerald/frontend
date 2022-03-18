@@ -1,13 +1,14 @@
-import React, { MutableRefObject } from 'react';
-import { StyleSheet } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Text } from 'react-native-paper';
-import { addOrUpdateQuestModule, setModules } from '../../../redux/editor/editorSlice';
+import { setFirstModuleReference, setModules } from '../../../redux/editor/editorSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { PrototypeModule, QuestPrototype } from '../../../types/quest';
 import { InternalFullNode } from '../utils/linksParser';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
+import { QuestPrototype } from '../../../types/prototypes';
+
 export interface IModuleNode {
     node: InternalFullNode,
     linkOnChoice: ((questPrototype: QuestPrototype, module_id: number) => QuestPrototype) | undefined,
@@ -28,9 +29,7 @@ export const RegularModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, s
     return (
         <TouchableOpacity onPress={() => {
             if (linkOnChoice !== undefined && questPrototype !== undefined && linkable) {
-                console.log('PreLink \nModules ---------', linkOnChoice(questPrototype, node.id as number).modules)
                 dispatch(setModules(linkOnChoice(questPrototype, node.id as number).modules))
-                console.log('PostLink')
                 setLinkOnChoice(undefined)
             } else {
                 // Sheet Options on Click
@@ -42,11 +41,25 @@ export const RegularModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, s
                     cutModule();
                 }], ['Delete Module', 'delete', () => {
                     deleteModule();
+                }], ['Choose as starting module', 'ray-start', () => {
+                    dispatch(setFirstModuleReference(node.id))
                 }]])
 
                 sheetRef.current?.snapTo(1)
             }
         }}>
+            <View>
+            {questPrototype?.firstModuleReference===node.id && <View style={{...styles.textcomponent, minHeight: 42, padding: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, marginBottom: -20}}>
+                <Text style={{textAlign: 'center', paddingHorizontal: 13}} ellipsizeMode={'tail'} numberOfLines={1}>
+                    Initial Module
+                </Text>
+            </View>}
+            {node.parentTags.map((tag, idx) => <View key={idx} style={{...styles.textcomponent, minHeight: 42, padding: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, marginBottom: -20}}>
+                <Text style={{textAlign: 'center', paddingHorizontal: 13}} ellipsizeMode={'tail'} numberOfLines={1}>{
+                    tag.type === 'Choice' ? tag.choice 
+                    : ((100*tag.probability).toFixed() + '%')
+                }</Text>
+            </View>)}
             <Text 
                 style={{...styles.textcomponent, 
                     backgroundColor: 'white',
@@ -55,6 +68,7 @@ export const RegularModuleNode: React.FC<IModuleNode> = ({ node, linkOnChoice, s
             }}>
                     {node.moduleObject.objective}
             </Text>
+            </View>
         </TouchableOpacity>
         
     )

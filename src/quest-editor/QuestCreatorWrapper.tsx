@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { loadQuest } from '../redux/editor/editorSlice';
-import { useAppDispatch } from '../redux/hooks';
-import { createQuestRequest } from '../utils/requestHandler';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { QuestEditorNavigator } from './QuestEditorNavigator';
 
 interface QuestCreatorWrapperProps {
@@ -22,35 +21,37 @@ export const QuestCreatorWrapper : React.FC<QuestCreatorWrapperProps> = ({ route
 
   const [questCreated, setQuestCreated] = useState(false);
   const dispatch = useAppDispatch();
+  const questPrototype = useAppSelector(state => state.editor.questPrototype)
 
   useEffect(() => {
-    // latitude, longitude
-    createQuestRequest()
-      .then(r => r.json())
-      .then(r => dispatch(loadQuest({questId: r.questId, questPrototype: {
-        id: r.questPrototype.id,
-        approximateTime: '',
-        creationTime: '',
+    dispatch(loadQuest({
+      questId: '',
+      questPrototype: {
+        id: '',
+        title: '',
         description: '',
-        firstModuleReference: 1,
-        imageId: '',
+        tags: [],
+        locationName: '',
         location: {
           latitude: route.params.params.latitude,
           longitude: route.params.params.longitude
         },
-        locationName: '',
-        modules: [],
-        agentProfileImageId: '',
+        imageReference: null,
+        approximateTime: '',
+        agentProfileReference: null,
         agentProfileName: '',
-        tags: [],
-        title: ''
-      }})))
-      .then(() => setQuestCreated(true))
+        agentEnabled: false,
+        firstModuleReference: 1,
+        modules: [],
+        images: []
+      }
+    }));
+    setQuestCreated(true);
   }, [])
 
   return (
     <>
-      {questCreated && <QuestEditorNavigator />}
+      {questCreated && questPrototype && <QuestEditorNavigator />}
     </>
   )
 }

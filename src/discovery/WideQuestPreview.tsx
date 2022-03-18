@@ -3,12 +3,13 @@ import { useNavigation } from '@react-navigation/core';
 import { Button, Card, Title } from 'react-native-paper';
 import { StyleSheet, Text, View } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { getDistanceFromLatLonInKm, questProps } from './ScrollMenu';
 import { Colors } from '../styles';
 import { BACKENDIP } from '../../GLOBALCONFIG';
+import { getDistanceFromLatLonInKm } from './locationUtils';
+import { QuestPreviewProps } from './QuestPreview';
 
 
-export const WideQuestPreview = (props:questProps) => {
+export const WideQuestPreview: React.FC<QuestPreviewProps> = ( props ) => {
 
   const [distance, setDistance] = useState("");
 
@@ -28,7 +29,7 @@ export const WideQuestPreview = (props:questProps) => {
         }
         {
           !props.quest.imageId &&
-          <Card.Cover style={styles.pic} source={require('../../assets/background.jpg')}/>
+          <Card.Cover style={styles.pic} source={require('../../assets/Logo_Full_Black.png')}/>
         }
         <Card.Content>
           <Title style={styles.title} numberOfLines={2}>{props.quest.title}</Title>
@@ -54,7 +55,8 @@ const styles = StyleSheet.create({
   },
   pic: {
     height: '100%',
-    width: '25%'
+    width: '25%',
+    borderRadius: 5,
   },
   title: {
     marginTop: 5,

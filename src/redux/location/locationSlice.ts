@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {LocationObject} from "expo-location";
+import { LocationObject } from "expo-location";
 
 interface LocationState {
     location: LocationObject | undefined

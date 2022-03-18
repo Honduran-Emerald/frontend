@@ -2,9 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash'
 import { IMessage } from 'react-native-gifted-chat';
 import { ChatMessage, ChatMessageNotif } from '../../types/general';
-import { getImageAddress } from '../../utils/requestHandler';
+import { getImageAddress } from '../../utils/imageHandler';
 
-interface ChatPreview {
+export interface ChatPreview {
   userId: string,
   username: string,
   userImageId: string | null,
@@ -94,8 +94,8 @@ export const chatSlice = createSlice({
       })
         const previewObject = state.chatsPreviewList?.find(cp => cp.userId === action.payload.other.id)
         if (previewObject) {
-          previewObject.lastMessageText = action.payload.messages[0].text
-          previewObject.newestMessage = action.payload.messages[0].creationTime.toString()
+          previewObject.lastMessageText = action.payload.messages.length>0 ? action.payload.messages[0].text : ''
+          previewObject.newestMessage = action.payload.messages.length>0 ? action.payload.messages[0].creationTime.toString() : (new Date).toString()
           state.chatsPreviewList = _.orderBy(state.chatsPreviewList, 'newestMessage', 'desc')
         }
     },
@@ -143,10 +143,17 @@ export const chatSlice = createSlice({
           }
         })
       }
+    },
+    setRead: (state, action: PayloadAction<string>) => {
+      const preview = state.chatsPreviewList?.find(cp => cp.userId === action.payload) 
+      if (preview) {
+        preview.lastReceived = (new Date(Date.now())).toJSON()
+      }
     }
   }
+
 })
 
-export const { setToken, unsetToken, loadChatPreview, updateChatPreview, loadPersonalChat, appendPersonalChat, loadFromApi, getMessage } = chatSlice.actions
+export const { setToken, unsetToken, loadChatPreview, updateChatPreview, loadPersonalChat, appendPersonalChat, loadFromApi, getMessage, setRead } = chatSlice.actions
 
 export default chatSlice.reducer

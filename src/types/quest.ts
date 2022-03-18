@@ -1,19 +1,25 @@
 import { Location } from './general';
 
 export interface QuestBase {
-
     id: string,
     title: string,
     description: string,
-    imageId: string,
-    creationTime: string,
+    //creationTime: string,
     location: Location,
     tags: string[],
-    agentProfileImageId: string,
     agentProfileName: string,
     locationName: string,
     approximateTime: string,
+}
 
+export interface Image {
+    reference: number,
+    imageId: string
+}
+
+export interface NewImage {
+    reference: number,
+    image: string
 }
 
 /**
@@ -28,6 +34,37 @@ export interface QuestHeader extends QuestBase {
     votes: number,
     plays: number,
     finishes: number,
+    creationTime: string,
+}
+
+export interface GameplayQuestHeader extends QuestHeader {
+    imageId: string,
+    agentProfileImageId: string,
+}
+
+export interface QueriedQuest {
+    id: string,
+    ownerId: string,
+    tracker: QuestTracker,
+    ownerName: string,
+    ownerImageId: string,
+    public: boolean,
+    version: number,
+    approximateTime: string,
+    locationName: string,
+    title: string,
+    description: string,
+    tags: string[],
+    location: Location,
+    imageId: string,
+    agentProfileImageId: string,
+    agentProfileName: string,
+    creationTime: string,
+    votes: number,
+    plays: number,
+    finishes: number,
+    released: boolean,
+    outdated: boolean,
 }
 
 export interface QuestBaseUpdate {
@@ -40,75 +77,113 @@ export interface QuestBaseUpdate {
     agentProfileImageId?: string,
     agentProfileName?: string,
     locationName?: string,
-
 }
 
-export interface QuestPath extends QuestHeader {
+export interface QuestWithTopTrackerNode extends GameplayQuestHeader {
+    tracker: QuestTracker
+}
+export interface QuestPath extends GameplayQuestHeader {
 
     modules: {
-        module: PrototypeModule,
+        module: GameplayModule,
         memento: ModuleMememto
     }[]
 
 }
 
+export interface QuestPath  {
+    trackerNodes: QuestTrackerNodeElement[],
+    quest: QuestWithTopTrackerNode
+}
+
 export type ModuleMememto = any
 
-export interface QuestPrototype extends QuestBase {
-
-    approximateTime: string,
-    firstModuleReference: number | null,
-    modules: PrototypeModule[]
-
-}
-
-export interface PrototypeModuleBase {
-    id: number,
-    type: string,
+export interface GameplayModuleBase {
+    id: string,
+    components: GameplayComponent[],
     objective: string,
-    components: PrototypeComponent[]
-  
+    type: string,
 }
 
-export interface PrototypeChoiceModule extends PrototypeModuleBase{
+export interface GameplayChoiceModule extends GameplayModuleBase {
+    type: 'Choice'
     choices: {
         text: string,
-        nextModuleReference: number | null,
     }[]
 }
 
-export interface PrototypeStoryModule extends PrototypeModuleBase{  
-    nextModuleReference: number | null,
+export interface GameplayStoryModule extends GameplayModuleBase {
+    type: 'Story'
 }
 
-export interface PrototypeEndingModule extends PrototypeModuleBase{
-    endingFactor: number,
+export interface GameplayEndingModule extends GameplayModuleBase {
+    type: 'Ending',
 }
 
-export type PrototypeModule = PrototypeChoiceModule | PrototypeEndingModule | PrototypeStoryModule
+export interface GameplayLocationModule extends GameplayModuleBase {
+    type: 'Location',
+    location: Location,
+}
 
-export interface TextComponent {
-    type: 'text',
+export interface GameplayRandomModule extends GameplayModuleBase {
+    type: 'Random'
+}
+
+export interface GameplayWideAreaModule extends GameplayModuleBase {
+    type: 'WideArea',
+    location: Location,
+    radius: number
+}
+
+export interface GameplayPassphraseModule extends GameplayModuleBase {
+    type: 'Passphrase'
+}
+
+export interface GameplayQRModule extends GameplayModuleBase {
+    type: 'QrCode',
+}
+
+export type GameplayModule = GameplayChoiceModule | GameplayEndingModule | GameplayStoryModule | GameplayLocationModule | GameplayRandomModule | GameplayWideAreaModule | GameplayPassphraseModule | GameplayQRModule
+
+export interface ComponentBase {
+    componentId: string
+}
+
+export interface GameplayTextComponent extends ComponentBase {
+    componentType: 'Text',
     text: string,
 }
 
-export interface ImageComponent {
-    type: 'image',
-    imageReference: string,
+export interface GameplayImageComponent extends ComponentBase {
+    componentType: 'Image',
+    imageId: string,
 }
 
-export type PrototypeComponent = TextComponent | ImageComponent
+export type GameplayComponent = GameplayTextComponent | GameplayImageComponent
 
 export interface QuestTracker {
     questId: string,
     trackerId: string,
     newestQuestVersion: boolean,
     finished: boolean,
-    vote: string,
+    vote: Vote,
     creationTime: string,
     questName: string,
     agentProfileImageId: string,
     agentProfileName: string,
     objective: string,
-    author: string
+    author: string,
+    experienceCollected: number
+    trackerNode: QuestTrackerNode
 }
+
+export type QuestTrackerNode = QuestTrackerNodeElement
+
+export interface QuestTrackerNodeElement {
+    module: GameplayModule,
+    memento: ModuleMememto,
+    creationTime: string
+}
+
+export type Vote = 'None' | 'Up' | 'Down'
+

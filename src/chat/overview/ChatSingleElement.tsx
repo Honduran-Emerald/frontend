@@ -1,30 +1,40 @@
 import React from 'react';
 import { Dimensions, Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native';
+import { Badge } from 'react-native-paper';
+import { ChatPreview } from '../../redux/chat/chatSlice';
+import { Colors } from '../../styles';
+import { getImageAddress } from '../../utils/imageHandler';
 
 
 interface ChatSingleElementInterface {
-  userName: string,
-  userImgSource: string,
-  //userImgSource: ImageSourcePropType,
-  lastMessage: string,
+  preview: ChatPreview,
 }
 
-export const ChatSingleElement: React.FC<ChatSingleElementInterface> = ({ userName, userImgSource, lastMessage }) => {
+export const ChatSingleElement: React.FC<ChatSingleElementInterface> = ({ preview }) => {
   return (
     <View style={styles.singleChatContainer}>
       <Image 
         source={{
-          uri: userImgSource
+          uri: getImageAddress(preview.userImageId, preview.username) 
         }}
         style={styles.pbImage} />
       <View style={styles.singleChatTextContainer}>
-        <Text style={styles.bold}>
-          {userName}
+        <Text style={styles.bold} numberOfLines={1}>
+          {preview.username}
         </Text>
         <Text numberOfLines={1}>
-          {lastMessage}
+          {preview.lastMessageText}
         </Text>
       </View>
+      <View style={{width: 30, height: 50, justifyContent: 'center'}}>
+
+        <Badge 
+          visible={Date.parse(preview.lastReceived) <= Date.parse(preview.newestMessage)} 
+          style={styles.badge} 
+          theme={{colors: {notification: Colors.primaryLight}}} 
+          size={17} />
+      </View>
+      
     </View>
   )
 }
@@ -50,10 +60,18 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 20,
     justifyContent: 'space-around',
-    width: Dimensions.get('window').width - imageSize
+    maxWidth: Dimensions.get('window').width - imageSize - 60,
+    flexGrow: 1
   },
   bold: {
     fontWeight: 'bold',
     fontSize: 15
-  }
+  },
+  badge: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    
+    borderWidth: 2,
+    borderColor: Colors.background,
+  },
 })

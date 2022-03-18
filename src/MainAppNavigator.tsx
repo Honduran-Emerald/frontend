@@ -8,20 +8,44 @@ import { Badge } from 'react-native-paper';
 
 import { MapNavigator } from './map/MapNavigator';
 import { DiscoveryNavigator } from "./discovery/DiscoveryNavigator";
-
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { logout, setToken } from './redux/authentication/authenticationSlice';
 import { getUserSelfRequest, queryQuestsRequest } from './utils/requestHandler';
-import QuestlogScreen from './common/QuestlogScreen';
 import { clearQuestState } from './redux/quests/questsSlice';
 import { deleteItemLocally } from './utils/SecureStore';
 import { Colors } from './styles';
 import { ChatNavigator } from './chat/ChatNavigator';
 import { removeData } from './utils/AsyncStore';
+import { ProfileNavigator } from './profile/ProfileNavigator';
+import { GameplayNavigator } from './gameplay/GameplayNavigator';
+import { LocalUpdatedTrackerIds } from './utils/TaskManager';
+import { getLocationSubscription } from "./utils/locationHandler";
+import * as Location from "expo-location";
+import { OwnProfileNavigator } from './profile/OwnProfileNavigator';
 
 const Tab = createBottomTabNavigator();
 
 export default function MainAppNavigator() {
+  const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
+
+  const [locationSubscription, setLocationSubscription] = React.useState<Location.LocationSubscription>();
+  const chatsPreviewList = useAppSelector(state => state.chat.chatsPreviewList)
+
+  React.useEffect(() => {
+    (async () => {
+      const unsubscribe = await getLocationSubscription().then((res) => {
+        return res;
+      })
+      setLocationSubscription(unsubscribe);
+    })()
+  }, [])
+
+  React.useEffect(() => {
+    return () => {
+      locationSubscription?.remove();
+    }
+  }, [locationSubscription])
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -37,7 +61,7 @@ export default function MainAppNavigator() {
               return (
                 <View>
                   <MaterialCommunityIcons name={iconName} size={size} color={focused ? Colors.primary : "grey"}/>
-                  <Badge visible={true} style={styles.badge} theme={{colors: {notification: Colors.primaryLight}}} size={13}/>
+                  <Badge visible={trackerWithUpdates.length > 0} style={styles.badge} theme={{colors: {notification: Colors.primaryLight}}} size={13}/>
                 </View>
               );
             case "Map":
@@ -49,7 +73,16 @@ export default function MainAppNavigator() {
               );
             case "Chat":
               iconName = "message-text-outline";
-              break;
+              return (
+                <View>
+                  <MaterialCommunityIcons name={iconName} size={size} color={focused ? Colors.primary : "grey"}/>
+                  <Badge 
+                    visible={chatsPreviewList?.some(chatPreview => Date.parse(chatPreview.lastReceived) <= Date.parse(chatPreview.newestMessage))} 
+                    style={styles.badge} 
+                    theme={{colors: {notification: Colors.primaryLight}}} 
+                    size={13} />
+                </View>
+              );
             case "Profile":
               iconName = "account-outline";
               break;
@@ -60,14 +93,15 @@ export default function MainAppNavigator() {
       })}
       tabBarOptions={{
         showLabel: false,
-        activeTintColor: "#1D79AC"
+        activeTintColor: "#1D79AC",
+        keyboardHidesTabBar: true
       }}
     >
       <Tab.Screen name="Home" component={DiscoveryNavigator}/>
-      <Tab.Screen name="Questlog" component={QuestlogScreen}/>
+      <Tab.Screen name="Questlog" component={GameplayNavigator}/>
       <Tab.Screen name="Map" component={MapNavigator}/>
       <Tab.Screen name="Chat" component={ChatNavigator}/>
-      <Tab.Screen name="Profile" component={Dummy} />
+      <Tab.Screen name="Profile" component={OwnProfileNavigator}/>
     </Tab.Navigator>
   );
 }
@@ -83,6 +117,7 @@ const Dummy = () => {
   const handleLogout = () => {
     deleteItemLocally('UserToken').then(() => {}, () => {});
     removeData('PinnedQuestTracker').then(() => {}, () => {});
+    removeData(LocalUpdatedTrackerIds).then(() => {}, () => {});
     dispatch(logout())
     dispatch(clearQuestState())
   }
@@ -100,13 +135,11 @@ const Dummy = () => {
         queryQuestsRequest()
         .then(x => x.json())
         .then(x => st(x))
-        .catch(x => console.log('hkkek'))
       }}/>
       <Button color={'#1D79AC'} title={'Get Self'} onPress={() => {
         getUserSelfRequest()
         .then(x => x.json())
         .then(x => su(x))
-        .catch(x => console.log('joynere kek'))
       }}/>
       <Button color={'#1D79AC'} title={'Poison Token'} onPress={() => {
         dispatch(setToken('ABC'))

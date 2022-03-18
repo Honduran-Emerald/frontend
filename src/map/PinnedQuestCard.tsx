@@ -2,6 +2,7 @@ import React from 'react';
 import { StatusBar, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
 import { Avatar, Badge } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/core';
 
 import { Colors } from '../styles';
 import { useAppSelector } from '../redux/hooks';
@@ -9,20 +10,29 @@ import { BACKENDIP } from '../../GLOBALCONFIG';
 
 export default function PinnedQuestCard() {
 
-  const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
+  const navigation = useNavigation();
 
-  const [objectiveComplete, setObjectiveComplete] = React.useState(false);
+  const pinnedQuest = useAppSelector((state) => state.quests.pinnedQuest);
+  const trackerWithUpdates = useAppSelector((state) => state.quests.trackerWithUpdates);
+  const hasUpdate = pinnedQuest ? trackerWithUpdates.includes(pinnedQuest.trackerId) : false;
+
+  const loadQuestObjectiveScreen = () => {
+    navigation.navigate('Questlog', { screen: 'GameplayScreen', initial: false,  params: {
+      trackerId: pinnedQuest?.trackerId,
+      tracker: pinnedQuest,
+    }});
+  }
 
   return (
     <View style={styles.outer}>
       {
         pinnedQuest &&
         <View style={styles.container}>
-          <TouchableNativeFeedback useForeground={true} onPress={() => { setObjectiveComplete(!objectiveComplete) }}>
+          <TouchableNativeFeedback useForeground={true} onPress={() => loadQuestObjectiveScreen()}>
             <LinearGradient
               colors={[Colors.primaryLight, 'white']}
               start={{ x: 1, y: 1 }}
-              end={{ x: objectiveComplete ? 0.2 : 0.6, y: objectiveComplete ? 0.2 : 0.6 }}
+              end={{ x: hasUpdate ? 0.2 : 0.6, y: hasUpdate ? 0.2 : 0.6 }}
             >
               <View style={{flexDirection: 'row', alignItems: 'center',}}>
                 {
@@ -40,10 +50,10 @@ export default function PinnedQuestCard() {
                     style={styles.questAvatar}
                     theme={{colors: {primary: 'transparent'}}}
                     size={50}
-                    source={require('../../assets/background.jpg')}
+                    source={require('../../assets/Logo_Full_Black.png')}
                   />
                 }
-                <Badge visible={objectiveComplete} size={18} theme={{colors: {notification: Colors.primaryLight}}} style={styles.badge}/>
+                <Badge visible={hasUpdate} size={18} theme={{colors: {notification: Colors.primaryLight}}} style={styles.badge}/>
                 <View style={{flexDirection: 'column', width: '100%'}}>
                   <Text style={styles.questName} numberOfLines={1}>
                     {pinnedQuest.questName}
